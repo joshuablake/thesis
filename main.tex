@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+
+\def\reals{\mathbb{R}}
+\def\nats{\mathbb{N}}
+\def\sampSpace{\mathcal{X}}
+\def\dist{\sim}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\V}{\mathbb{V}}
+\DeclareMathOperator{\prob}{\mathbb{P}}
+\DeclareMathOperator{\var}{\mathbb{V}}
+\DeclareMathOperator{\indicator}{\mathbb{I}}
+\DeclareMathOperator{\cov}{Cov}
+\DeclareMathOperator{\Ber}{Bernoulli}
+\DeclareMathOperator{\Bin}{Binomial}
+\DeclareMathOperator{\Poi}{Poisson}
+\def\matr{\bm}
+\def\set{\mathcal}
+\renewcommand{\vec}{\bm}
+
+
+\usepackage{subfiles} % Best loaded last in the preamble
+
+\title{Estimating the incidence of SARS-CoV-2 from prevalence data}
+\author{Joshua Blake}
+\date{2023}
+
+\begin{document}
+
+\maketitle
+abc
+\section{Chapter 1}
+
+\subfile{chapter1/chapter1}
+
+\begin{align}
+    \cov
+\end{align}
+
+\end{document}

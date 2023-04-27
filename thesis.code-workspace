@@ -9,7 +9,7 @@
 			  {
 				"name": "latexrun",
 				"tools": ["latexrun"]
-			}
+			},
 			{
 				"name": "latexmk",
 				"tools": [
@@ -70,12 +70,13 @@
 					"tectonic"
 				]
 			}
-		]
-		"latex.tools": [
+		],
+		"latex-workshop.latex.tools": [
 			{
 				"name": "latexrun",
-				"command": "wsl",
-				"args": ["latexrun", "--latex-cmd", "pdflatex", "%DOC%"]
+				"command": "./latexrun",
+				"args": ["%DOC%"]
 			},
 		]
+	}
 }
