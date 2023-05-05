@@ -1,1 +1,2 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qchapter1/main\\E$"}
+{"rule":"FILE_EXTENSIONS_CASE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Poisson pmf \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q as gamma pdf \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Note that \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q recovers the previous derivation (up to proportionality).\\E$"}

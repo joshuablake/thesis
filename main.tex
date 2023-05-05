@@ -1,13 +1,13 @@
-\documentclass{article}
+\documentclass[a4paper]{report}
 \usepackage{graphicx}
-\graphicspath{{images/}}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{textcomp} % provide euro and other symbols
+\usepackage{textcomp} % provide symbols
+\usepackage{microtype}
 
 \def\reals{\mathbb{R}}
 \def\nats{\mathbb{N}}
@@ -26,20 +26,22 @@
 \def\set{\mathcal}
 \renewcommand{\vec}{\bm}
 
-
-\usepackage{subfiles} % Best loaded last in the preamble
-
 \title{Estimating the incidence of SARS-CoV-2 from prevalence data}
 \author{Joshua Blake}
-\date{2023}
+\date{\today}
+
+\usepackage[backend=biber,style=authoryear]{biblatex}
+
+\usepackage{subfiles} % Best loaded last in the preamble
+\addbibresource{references.bib}
 
 \begin{document}
 
 \maketitle
-abc
-\section{Chapter 1}
 
-\subfile{chapter1/chapter1}
+\chapter{Survival analysis with perfect testing}
+
+\subfile{cis-perfect-testing}
 
 \begin{align}
     \cov

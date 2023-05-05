@@ -1,0 +1,6 @@
+eg
+iid
+ie
+untruncated
+multinomially
+pmf

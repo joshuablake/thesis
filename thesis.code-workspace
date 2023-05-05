@@ -6,6 +6,7 @@
 	],
 	"settings": {
 		"latex-workshop.latex.recipes": [
+
 			  {
 				"name": "latexrun",
 				"tools": ["latexrun"]
@@ -75,7 +76,7 @@
 			{
 				"name": "latexrun",
 				"command": "./latexrun",
-				"args": ["%DOC%"]
+				"args": ["%DOC%", "--bibtex-cmd=biber"]
 			},
 		]
 	}
