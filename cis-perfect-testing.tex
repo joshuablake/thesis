@@ -1,11 +1,24 @@
 \documentclass[main.tex]{subfiles}
 
-\title{The model for observing infections}
+\title{Estimating duration using survival analysis}
 \author{Joshua Blake}
 \date{\today}
 
 \begin{document}
 \maketitle
+
+This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (ie: no misclassification bias).
+I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation); these issues are explained fully below.
+Through a simulation study, I show the applicability of these methods.
+However, application in reality must account for misclassification bias, the subject of the following chapter.
+
+This chapter proceeds as follows.
+\begin{itemize}
+\item  In section~\ref{cpt:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
+\item  In section~\ref{cpt:sec:parameters-priors} I discuss parameterisation of this model and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
+\item  Section~\ref{cpt:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
+\item  Section~\ref{cpt:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
+\end{itemize}
 
 \section{Introduction}\label{introduction}
 
