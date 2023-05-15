@@ -8,29 +8,10 @@
 \maketitle
 
 This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (ie: no misclassification bias).
-I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation); these issues are explained fully below.
+I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation), explained in the following paragraphs.
 Through a simulation study, I show the applicability of these methods.
 However, application in reality must account for misclassification bias, the subject of the following chapter.
 
-This chapter proceeds as follows.
-\begin{itemize}
-\item  In section~\ref{cpt:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-\item  In section~\ref{cpt:sec:parameters-priors} I discuss parameterisation of this model and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
-\item  Section~\ref{cpt:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
-\item  Section~\ref{cpt:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
-\end{itemize}
-
-\section{Introduction}\label{introduction}
-
-This paper discusses a model for observing duration of PCR positivity in
-the Coronavirus (COVID-19) Infection Survey (CIS). The CIS continually
-enrols individuals and tests them on an ongoing basis, following a
-specified testing protocol. The protocol specifies that the initial five
-tests are spaced every 7 days, then the spacing is every 28 days.
-However, real-world considerations often lead to variations in test
-times and missed tests. Our analysis focuses solely on the binary result
-(positive or negative) of these tests, assuming no misclassification
-bias
 
 Two major challenges arise when dealing with this data: double interval
 censoring and left truncation. Double interval censoring arises because
@@ -65,7 +46,24 @@ data with unobserved times of infection or any information on the
 truncated infections; this is due to the large number of infections
 (>4000) making this approach computationally expensive.
 
-\section{Data}\label{data}
+This chapter proceeds as follows.
+\begin{itemize}
+\item  I introduce the motivating dataset in section~\ref{cpt:sec:data}. This is the CIS dataset previously encountered, processed to form "episodes" of infection.
+\item  In section~\ref{cpt:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
+\item  In section~\ref{cpt:sec:parameters-priors} I discuss parameterisation of the survival function and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
+\item  Section~\ref{cpt:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
+\item  Section~\ref{cpt:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
+\end{itemize}
+
+\section{Data}\label{cpt:sec:data}
+
+The CIS continually enrols individuals and tests them on an ongoing basis, following a
+specified testing protocol. The protocol specifies that the initial five
+tests are spaced every 7 days, then the spacing is every 28 days.
+However, real-world considerations often lead to variations in test
+times and missed tests. Our analysis focuses solely on the binary result
+(positive or negative) of these tests, assuming no misclassification
+bias
 
 Episodes are taken from the data extract of the 3rd Jan 2023, as
 computed by SARAH using her updated episode definition. Only tests taken
@@ -85,7 +83,7 @@ criteria are applied.
   recorded.
 \end{itemize}
 
-\section{Notation and assumptions}\label{notation-and-assumptions}
+\section{Modelling the duration}\label{cpt:sec:model}
 
 \begin{itemize}
 \item
@@ -129,9 +127,9 @@ criteria are applied.
 \end{itemize}
 
 
-\section{Individual model}\label{individual-model}
+\subsection{Individual model}\label{cpt:sec:individual-model}
 
-\subsection{Likelihood}\label{likelihood}
+\subsubsection{Likelihood}\label{cpt:sec:likelihood}
 
 Episode $i$ can be fully characterised by the pair $(b_i, e_i)$ of
 start and end dates of the episode, which belong to the state space
@@ -150,9 +148,9 @@ Formally (and following \textcite{heiseyModelling}), we
 define three sets which partition the space of possible infection and
 recovery (ie: are strict subsets of $T \times T$) given the
 observations associated with episode $i$ (graphically shown in Figure
-\ref{fig:partitionSpace}). Each episode, whether observed or not, must
+\ref{cpt:fig:partitionSpace}). Each episode, whether observed or not, must
 fall into one of these three classes with a probability that is a
-function of $\theta$ (see section \ref{sec:deriv-probs}).
+function of $\theta$ (see section \ref{cpt:sec:deriv-probs}).
 
 \begin{itemize}
 \item
@@ -188,7 +186,7 @@ individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Purple region is $\alpha_i$, orange region (which includes all
 negative infection times) is $\Omega_i^C$ and unshaded region is
-$\beta_i$.\label{fig:partitionSpace}}
+$\beta_i$.\label{cpt:fig:partitionSpace}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually
@@ -220,18 +218,13 @@ and hence allow derivation of the $p$s.
 \end{align}
 where the last line follows by assuming prior independence.
 
-In the following sections, we derive the expressions for $p_{ia}$ and
+In the remainder of the section, we derive the expressions for $p_{ia}$ and
 $p_{it}$ in terms of the data, and analytical solutions for the sum
 under different priors.
 
-\subsubsection{Solution for the sum}\label{solution-for-the-sum}
-
-This section is concerned with finding analytical solutions to
-$\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i)$ under two different
-assumptions for $p(n_i)$. First, we consider the improper prior
-$p(n_i) \propto 1/n_i$ which has several convenient properties. Then,
-we consider a negative binomial distribution (including the geometric
-and Poisson distributions as a special and limiting case respectively).
+First, I derive an analytical solution to $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i)$ under two different assumptions for $p(n_i)$.
+First, we consider the improper prior $p(n_i) \propto 1/n_i$, this prior has several attractive properties.
+Then, we consider a negative binomial distribution (which includes the geometric and Poisson distributions as a special and limiting case respectively).
 
 The prior $p(n_i) \propto 1/n_i$ means that the model coincides with
 the frequentist likelihood-based approach, up to the priors on other
@@ -306,7 +299,7 @@ of this is
 \frac{(r+1)\mu p_{it}}{r+\mu(1-p_{it})}
 \end{align}
 
-\subsubsection{Derivations of probabilities} \label{sec:deriv-probs}
+Next, I derive $p_{ia}$ and $p_{it}$.
 
 By definition, we have
 \begin{align}
@@ -346,7 +339,7 @@ t^N_{it} &= \min \{ t' \in t_i : t' \geq t \} - t.
 &= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(t_{ib}^N + 1)
 \end{align}
 
-\subsection{Full posterior}\label{full-posterior}
+\subsubsection{Full posterior}\label{cpt:sec:full-posterior}
 
 Under the prior $p(n_i) \propto 1/n_i$:
 \begin{align}
@@ -364,7 +357,7 @@ Under the prior $N_i \sim \text{NegBinom}(\mu, r)$:
 &= p(\theta) \prod_{i=1}^{n_a} \frac{\sum_{b=l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(r_i^{(e)} - b - 1) - S_\theta(l_i^{(e)} - b - 1) \right)}{\left( r+\mu/T \left( \sum_{b=\min(t_i)}^T S_\theta(t_{ib}^N + 1) \right) \right)^{(r+1)}} \\
 \end{align}
 
-\section{Total model}\label{total-model}
+\subsection{Total model}\label{cpt:sec:total-model}
 
 We now consider all $N$ individuals in the CIS cohort who have at
 least one test during the period of interest, this includes those
@@ -451,109 +444,10 @@ p(n_\text{tot} \mid \text{data}, \theta)
 which is a negative binomial pmf with size parameter $r + n_a$ and
 probability parameter $\frac{r+\mu(1-p_t)}{r+\mu}$.
 
-\section{False negatives}\label{false-negatives}
+\section{Parameterisation and priors for the survival function} \label{cpt:sec:parameters-priors}
 
-In this section, we relax the assumption of perfect testing to allow
-some false negatives. We use a fairly simplified model to ensure the
-likelihood is tractable. This requires modifying both $p_{ia}$ to
-allow for the episode possibly being longer than observed, and
-$p_{it}$ to allow for additional episodes being missed.
+\section{Simulation study} \label{cpt:sec:simulation-study}
 
-Specifically, we introduce a constant test sensitivity $p_\text{sens}$
-such that:
-\begin{align}
-\prob(y_i(t) = 1) = \begin{cases} p_\text{sens} &b_i \leq t \leq e_i \\ 0 &\text{otherwise.}\end{cases}
-\end{align}
-
-In practice, it is likely that the test sensitivity is a function of the
-viral load of an individual (the concentration of viral material in the
-part of the body being sampled). For this initial attempt at modelling
-the sensitivity, we ignore this complication.
-
-\subsection{Modifying $p_{ia}$} \label{modifying-p_ia}
-
-The idea when modifying $p_{ia}$ is to allow for the negative test
-following the last positive to be either a true or false negative. If it
-is a true negative, then we have a bound on the length of the episode.
-If it is a false negative, then we consider the episode's length
-right-censored. The likelihood contribution for an episode is then a
-mixture of these two scenarios, with the mixture probability determined
-by the test sensitivity.
-
-For tractability, we assume that the tests bounding the start of the
-infection ($l_i^{(b)}$ and $r_i^{(b)}$) are true results and hence
-$b_i \in [l_i^{(b)}, r_i^{(b)}]$. Furthermore, we consider the tests
-only between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive
-tests providing a lower bound on the length of the episode). Denote
-these tests by
-$t'_i = \{ t \in t_i : r_i^{(b)} \leq t \leq l_i^{(e)} \}$ and their
-results by $y_i'$. We know that the test results at times in $t_i'$
-are either true positives or false negatives. By definition, the test at
-$r_i^{(e)}$ is a false negative if and only if $e_i > r_i^{(e)}$. We
-proceed by considering the two cases.
-
-First, if $e_i \leq r_i^{(e)}$. In this case, the test at
-$r_i^{(e)}$ is a true negative, as are all other tests not in
-$t_i'$, and these occur with probability 1.
-\begin{align}
-&p(y_i', e_i \leq r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
-&= p(y_i', l_i^{(e)} \leq e_i \leq r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\ % &\text{as no false positives}
-&= p(y_i' \mid l_i^{(e)} \leq e_i \leq r_i^{(e)}, t_i, b_i, p_\text{sens}, \theta) p(l_i^{(e)} \leq e_i \leq r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) \right)
-\end{align}
-
-Second, if $e_i > r_i^{(e)}$. In this case, the test at
-$r_i^{(e)}$ is a false negative, occurring with probability
-$(1 - p_\text{sens})$, and we have no upper bound on the end of the
-infection.
-\begin{align}
-&p(y_i', e_i > r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
-&= p(y_i \mid e_i > r_i^{(e)}, t_i, b_i, p_\text{sens}, \theta) p(e_i > r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1)
-\end{align}
-
-Combining the above, the replacement for $p_{ia}$ is:
-\begin{align}
-p_{ia}'
-&= p(y_i' \mid p_\text{sens}, \theta) \\
-&= \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( p(y_i', b_i, e_i \leq r_i^{(e)} \mid p_\text{sens}, \theta) p(y_i', b_i e_i > r_i^{(e)} \mid p_\text{sens}, \theta) \right) p(b_i \mid p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \\ & \ \times \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) + (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1) \right) p(b_i \mid p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right)\sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - p_\text{sens} S_\theta(r_i^{(e)} - b_i - 1) \right) p(b_i \mid p_\text{sens}, \theta).
-\end{align}
-Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
-
-\subsection{Modifying $p_{it}$} \label{modifying-p_it}
-
-With false negatives, an episode with can be truncated in the following
-ways:
-
-\begin{enumerate}
-\item
-  The episode begins before $\min(t_i)$ (assuming there is a
-  negligible probability of a false negative test at this point).
-\item
-  The duration of the episode is less than $t_{ib_i}^N$. These first
-  two mechanisms are how truncation previously occurred, with
-  probability $p_{it}$.
-\item
-  The duration of the episode is at least as long as $t_{it}^N$ but
-  less than the time to the second test after $t$, $t_{it}^{2N}$,
-  and a false negative episode occurred at the first test after $t$.
-  This occurs with probability:
-  \begin{math}
-    (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(t_i)}^T \left( S_\theta(t_{ib}^N + 1) - S_\theta(t_{ib}^{2N} + 1)\right).
-  \end{math}
-\item
-  The duration of the episode is at least as long as $t_{it}^{2N}$,
-  and all the tests within the episode (at least two) are false
-  negatives. We assume this occurs with negligible probability.
-\end{enumerate}
-
-Hence, the replacement for $1 - p_{it}$ is:
-\begin{align}
-1 - p_{it}'
-&= 1 - p_{it} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(t_i)}^T \left( S_\theta(t_{ib}^N + 1) - S_\theta(t_{ib}^{2N} + 1)\right) \\
-&= \frac{1}{T} \sum_{b=\min(t_i)}^T \left( p_\text{sens} S_\theta(t_{ib}^N + 1) + (1 - p_\text{sens}) S_\theta(t_{ib}^{2N} + 1)\right) \\
-\end{align}
+\section{Conclusion} \label{cpt:sec:conclusion}
 
 \end{document}
