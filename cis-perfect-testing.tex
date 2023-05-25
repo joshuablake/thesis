@@ -7,11 +7,14 @@
 \begin{document}
 \maketitle
 
+\listoftodos
+
+\pagebreak
+
 This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (ie: no misclassification bias).
 I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation), explained in the following paragraphs.
 Through a simulation study, I show the applicability of these methods.
 However, application in reality must account for misclassification bias, the subject of the following chapter.
-
 
 Two major challenges arise when dealing with this data: double interval
 censoring and left truncation. Double interval censoring arises because
@@ -20,26 +23,14 @@ individual's test results transitioning from negative to positive and
 vice versa. Left truncation occurs because an individual is infected at
 time $t$ is only observed if their infection duration is at least
 $t^N - t$ days long, where $t^N$ is the time of their next test.
+\todo[inline]{Add figures demonstrating the censoring and truncation here}
 
 To address these challenges, we employ two distinct approaches: the
 ``individual'' model and the ``total'' model.
+\todo[inline]{\textbf{Should I cut one of the models?}}
 
-The individual model considers only individuals with observed (i.e., not
-truncated) episodes. This approach is similar to methods used in
-previous studies, such as \textcite{heiseyModelling},
-\textcite{dempsterMaximum}, and
-\textcite{turnbullEmpirical}. The conceptual
-approach here is to form a cohort of individuals for which we observe at
-least one positive test, and then consider a study which had only
-enrolled these individuals. The modelling approach then corrects for
-this selection bias.
-
-In contrast, the total model also takes into account data from
-individuals without any observed episodes. These individuals may have
-truncated episodes or may not have been infected at all. This approach
-utilises their test times to estimate the probability of truncated
-infections, ultimately providing an interpretable estimate of the number
-of truncated episodes in the cohort.
+\todo[inline]{Need to think about what of the below belongs here in the introduction, and turn these parts into a proper literature review}
+\todo[inline]{\textbf{Is it better to have a large literature review here, or to discuss relevant literature in each section (the papers on survival analysis in the model section, the papers on priors in that section, COVID estimates where I use them, etc.)?}}
 
 Unlike most Bayesian methods (eg: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the
 data with unobserved times of infection or any information on the
@@ -48,28 +39,46 @@ truncated infections; this is due to the large number of infections
 
 This chapter proceeds as follows.
 \begin{itemize}
-\item  I introduce the motivating dataset in section~\ref{cpt:sec:data}. This is the CIS dataset previously encountered, processed to form "episodes" of infection.
-\item  In section~\ref{cpt:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-\item  In section~\ref{cpt:sec:parameters-priors} I discuss parameterisation of the survival function and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
-\item  Section~\ref{cpt:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
-\item  Section~\ref{cpt:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
+\item  I introduce the motivating dataset in section~\ref{perf-test:sec:data}. This is the CIS dataset previously encountered, processed to form "episodes" of infection.
+\item  In section~\ref{perf-test:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
+\item  In section~\ref{perf-test:sec:parameters-priors} I discuss parameterisation of the survival function and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
+\item  Section~\ref{perf-test:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
+\item  Section~\ref{perf-test:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
 \end{itemize}
 
-\section{Data}\label{cpt:sec:data}
+\section{Problem description}\label{perf-test:sec:data}
 
-The CIS continually enrols individuals and tests them on an ongoing basis, following a
-specified testing protocol. The protocol specifies that the initial five
-tests are spaced every 7 days, then the spacing is every 28 days.
-However, real-world considerations often lead to variations in test
-times and missed tests. Our analysis focuses solely on the binary result
-(positive or negative) of these tests, assuming no misclassification
-bias
+Consider a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
+We wish to estimate the distribution of time for which an individual is positive for.
+An individual could have multiple infections, in which case we refer to "infection episodes", where each episode corresponds to a single infection event.
 
-Episodes are taken from the data extract of the 3rd Jan 2023, as
-computed by SARAH using her updated episode definition. Only tests taken
-as part of CIS are included (ie: no pillar 2 testing). The following
-criteria are applied.
+I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \autoref{imperf-test}).
+In this chapter I will assume that the time between infection and becoming detectable is negligible.
+The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days and hence this is at least 1 day.
+Note that the relationship between positivity and infectiousness is complex\todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+An episode is \emph{detected} if they test positive at least once; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
 
+I take a survival analysis approach to analysing this data.
+Survival analysis is the area of statistics which estimate the distribution of times between events.
+It is broadly applicable to many domains, such as the time-to-failure for a mechanical system or the effect of a treatment on time spent in hospital.
+In this context, the distribution to estimate is that of duration of positivity.
+
+The reason for this approach, over modelling biomarkers (as in chapter\todo{ref chapter on ATACCC}) is...
+
+The methods in this chapter deal with modelling two issues that arise from the data. False negatives are not dealt with and left to chapter X.
+
+The first issue is double interval censoring.
+Explain issue, brief overview of literature.
+
+The second issue is truncation.
+
+These combination of issues are rarely encountered in biomedical data (ref). 
+
+I use the CIS data described in section\todo{ref description of CIS data}, with positive tests heuristically divided into episodes.
+The episode definition was developed by Sarah Walker and is as follows~\citePersonalComms:
+\todo[inline]{Insert episode definition}
+
+I filter the episodes as follows.
 \begin{itemize}
 \item
   The first positive in the episode occurred between 16th Oct 2020 and
@@ -79,16 +88,24 @@ criteria are applied.
   beginning (this could have happened at any time, including prior to
   16th Oct).
 \item
-  A negative test following the final positive in the episode has been
-  recorded.
+  A negative test to end the episode (ie: following the final positive in the episode) has been recorded.
 \end{itemize}
 
-\section{Modelling the duration}\label{cpt:sec:model}
+\todo[inline]{Descriptive analyses of the data here}
 
+\section{Modelling the duration}\label{perf-test:sec:model}
+
+The individual model considers only individuals with observed (i.e., not truncated) episodes.
+This approach is similar to methods used in previous studies, such as \textcite{heiseyModelling}, \textcite{dempsterMaximum}, and \textcite{turnbullEmpirical}.
+The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
+The modelling approach then corrects for this selection bias.
+
+In contrast, the total model also takes into account data from individuals without any observed episodes.
+These individuals may have truncated episodes or may not have been infected at all. This approach utilises their test times to estimate the probability of truncated infections, ultimately providing an interpretable estimate of the number of truncated episodes in the cohort.
+
+\subsection{Notation and assumptions}
+\todo[inline]{Some of this will possibly be defined elsewhere, such as in the introduction where CIS is introduced}
 \begin{itemize}
-\item
-  We initially assume perfect testing (no misclassification), although
-  later relax this assumption.
 \item
   Time is discrete: $1, \dots, T$.
 \item
@@ -127,9 +144,9 @@ criteria are applied.
 \end{itemize}
 
 
-\subsection{Individual model}\label{cpt:sec:individual-model}
+\subsection{Individual model}\label{perf-test:sec:individual-model}
 
-\subsubsection{Likelihood}\label{cpt:sec:likelihood}
+\subsubsection{Likelihood}\label{perf-test:sec:likelihood}
 
 Episode $i$ can be fully characterised by the pair $(b_i, e_i)$ of
 start and end dates of the episode, which belong to the state space
@@ -148,9 +165,9 @@ Formally (and following \textcite{heiseyModelling}), we
 define three sets which partition the space of possible infection and
 recovery (ie: are strict subsets of $T \times T$) given the
 observations associated with episode $i$ (graphically shown in Figure
-\ref{cpt:fig:partitionSpace}). Each episode, whether observed or not, must
+\ref{perf-test:fig:partitionSpace}). Each episode, whether observed or not, must
 fall into one of these three classes with a probability that is a
-function of $\theta$ (see section \ref{cpt:sec:deriv-probs}).
+function of $\theta$ (see section \ref{perf-test:sec:likelihood}).
 
 \begin{itemize}
 \item
@@ -186,7 +203,7 @@ individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Purple region is $\alpha_i$, orange region (which includes all
 negative infection times) is $\Omega_i^C$ and unshaded region is
-$\beta_i$.\label{cpt:fig:partitionSpace}}
+$\beta_i$.\label{perf-test:fig:partitionSpace} \todo[inline]{Digitalise figure of regions.}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually
@@ -339,7 +356,7 @@ t^N_{it} &= \min \{ t' \in t_i : t' \geq t \} - t.
 &= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(t_{ib}^N + 1)
 \end{align}
 
-\subsubsection{Full posterior}\label{cpt:sec:full-posterior}
+\subsubsection{Full posterior}\label{perf-test:sec:full-posterior}
 
 Under the prior $p(n_i) \propto 1/n_i$:
 \begin{align}
@@ -357,7 +374,7 @@ Under the prior $N_i \sim \text{NegBinom}(\mu, r)$:
 &= p(\theta) \prod_{i=1}^{n_a} \frac{\sum_{b=l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(r_i^{(e)} - b - 1) - S_\theta(l_i^{(e)} - b - 1) \right)}{\left( r+\mu/T \left( \sum_{b=\min(t_i)}^T S_\theta(t_{ib}^N + 1) \right) \right)^{(r+1)}} \\
 \end{align}
 
-\subsection{Total model}\label{cpt:sec:total-model}
+\subsection{Total model}\label{perf-test:sec:total-model}
 
 We now consider all $N$ individuals in the CIS cohort who have at
 least one test during the period of interest, this includes those
@@ -444,10 +461,110 @@ p(n_\text{tot} \mid \text{data}, \theta)
 which is a negative binomial pmf with size parameter $r + n_a$ and
 probability parameter $\frac{r+\mu(1-p_t)}{r+\mu}$.
 
-\section{Parameterisation and priors for the survival function} \label{cpt:sec:parameters-priors}
+\section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
-\section{Simulation study} \label{cpt:sec:simulation-study}
+\todo[inline]{Section is currently notes: expand into prose which can largely come from previous documents}
 
-\section{Conclusion} \label{cpt:sec:conclusion}
+Define hazard and survival (maybe this should be done previously?).
+
+The hazard is convenient to use because it is unconstrained except in the interval [0 ,1]; include REFs.
+Survival needs to be monotonic.
+
+Discuss literature on Beta Process priors (maybe this should be in a broader literature review part?).
+
+\subsection{Independent priors}
+
+Traditional uninformative priors, such as Beta(1, 1) or Beta(0.5, 0.5), are unsuitable.
+
+Instead propose Beta(0.1, 1.9), linking to previous literature for a point estimate and showing vague figures.
+
+\subsection{Smoothing priors}
+
+\subsection{Informative priors}
+
+ATACCC can be used to provide prior information for the CIS analysis.
+
+Intuition: ATACCC informs early part, CIS informs late part.
+
+Problem: do not believe late part of ATACCC analysis.
+
+First, transform ATACCC analsysis into a posterior over survival time.
+
+Second, approximate ATACCC analysis with multivariate normal distribution.
+Show that this is a good approximation.
+
+Finally, use a Beta Process to "discount" some of the information in ATACCC towards a vague prior (as in the previous section).
+
+\section{Simulation study} \label{perf-test:sec:simulation-study}
+
+\subsection{Setup}
+
+\subsubsection{Testing and infection times}
+
+\subsubsection{Duration of positivity}
+
+We require a ground truth for the distribution giving duration of positivity.
+The majority of this distribution is based on \autoref{ATACCC}'s estimates from the ATACCC data.
+However, the tail is modified based on Sarah Walker's (unpublished) work based on CIS data.
+ATACCC is thought to estimate accurately the majority of the distribution but not the tail due to a small sample size and model uncertainty.
+These curves and the combined curve are compared in figure \@ref(fig:duration-curves).
+Individual $i$'s duration of positivity, $d_i$, is then an independent draw from this distribution.
+
+Sarah uses survival analysis to estimate the duration from CIS data.
+The initiating event is assumed known as the time the episode was detected.
+The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
+A flexible, spline-based form is assumed for the baseline survival function (@roystonSTPM; @roystonFlexible) with covariates introduced via proportional odds.
+
+We know of two biases introduced from this analysis: “There is a bias in estimating the clearance distribution because the analysis used to estimate how long a person stays positive only starts from their first positive test. Since (most) people will have become positive on an earlier day, this will bias the clearance curves downwards (making the estimates too short). However, there is another bias due to the survey missing positive episodes entirely if they are short. This means that our dataset has fewer short positive episodes than in the population as a whole, and that the sample used to run the survival analysis is biased towards people with longer positive episodes. This will bias the clearance curves upwards (making the estimates too long).”~\autocite{cisMethodsONS}.
+
+To form the duration distribution used in the simulation, we combine these two estimates.
+The first 30 days of the distribution is proportional to the ATACCC estimate, with the rest proportional to this CIS-based estimates.
+The CIS-based estimates are shifted 3 days in order to make this smooth; this counteracts the above bias of missing the start of the infection (for times above 30 days, the other bias, missing short infections, is negligible).
+Denote by $f_A(t)$ the distribution function estimated from ATACCC and $f_C(t)$ that from these CIS-based estimates.
+Define:
+$$
+f_S'(t) = \begin{cases}
+	f_A(t) &t \leq 30 \\
+	f_C(t-3) &t > 30
+\end{cases}
+$$
+Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
+
+\todo[inline]{Figure with duration distributions}
+
+\subsubsection{Test results and episode summaries}
+\todo[inline]{Make notation here consistent with elsewhere}
+
+The first day individual $i$ can be positive is their day of infection, $t_i^\text{onset}$, the last day is $t_i^\text{final} = t_i^\text{onset} + d_i - 1$ where $d_i$ is the duration of positivity for individual $i$.
+Outside of this period, all tests are negative (ie: no false positives occur). 
+Any test between $t_i^\text{onset}$ and $t_i^\text{final}$ (inclusive) is positive with probability $p_{sens}$ (that is, each test is an independent Bernoulli trial).
+
+Each individual is then summarised into an "episode" (when working with CIS data, the same individual can have multiple episodes due to reinfections, these are split heuristically but a negligible number in the pre-Omicron period and hence ignored within the simulation).
+An episode is characterised by:
+
+- The total number of positive tests observed per individual, $n_i^\text{pos}$.
+- The time of an individual's first positive test $V'_i$.
+- The time of an individual's last negative test prior to $V_i'$, $E'_i$.
+- The time of an individual's last positive test, $L_i'$.
+- The time of an individual's first negative test after $L_i'$, $R_i'$.
+
+\subsubsection{Restrictions and sample size}
+
+When using the real testing schedules, we then filter the episodes to replicate the process used when working with the CIS data.
+First, we discard any episodes where $n_i^\text{pos}=0$ as they are never detected.
+We then apply the same criteria as that applied to the modelling dataset (see Section \@ref(design)).
+Finally, of those remaining episodes, we select a random subset to match the number of episodes in the simulation to the number of episodes in the modelling cohort.
+The last step is required because we infect everyone in the simulation which does not happen in reality.
+
+In the fixed testing schedules, there is no automatic choice of sample size.
+We simulate a large number of episodes, and then choose to keep 4800 episodes\todo{Check how many this is} where at least one positive test was returned.
+
+\subsection{Descriptive analyses of simulated data}
+
+\subsection{Results}
+
+\todo[inline]{Need to decide what exactly to include... There's lots of possible results but need to form some coherent story here!}
+
+\section{Conclusion} \label{perf-test:sec:conclusion}
 
 \end{document}

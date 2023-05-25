@@ -5,8 +5,10 @@
 \usepackage{amssymb}
 \usepackage{bm}
 \usepackage[T1]{fontenc}
+\usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{textcomp} % provide symbols
+\usepackage{todonotes}
 % \usepackage{microtype}
 
 \def\reals{\mathbb{R}}
@@ -26,6 +28,9 @@
 \def\set{\mathcal}
 \renewcommand{\vec}{\bm}
 
+\newcommand{\citePersonalComms}{(personal communication)}
+
+
 \title{Estimating the incidence of SARS-CoV-2 from prevalence data}
 \author{Joshua Blake}
 \date{\today}
@@ -39,11 +44,51 @@
 
 \maketitle
 
-\chapter{Survival analysis with perfect testing}
+\chapter{Text to use}
+
+\section{Data}
+The CIS continually enrols individuals and tests them on an ongoing basis, following a
+specified testing protocol. The protocol specifies that the initial five
+tests are spaced every 7 days, then the spacing is every 28 days.
+However, real-world considerations often lead to variations in test
+times and missed tests. Our analysis focuses solely on the binary result
+(positive or negative) of these tests, assuming no misclassification
+bias.
+
+The CIS (Coronavirus Infection Survey) is a longitudinal study on a representative sample of households.
+A full description of the study can be found in the supplementary materials of [Pouwels et al. 2020](https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(20)30282-6/fulltext#supplementaryMaterial) or [the study protocol](https://www.ndm.ox.ac.uk/covid-19/covid-19-infection-survey/protocol-and-information-sheets).
+In brief, households are invited to the study from databases held by the ONS.
+The number invited was to satisfy various target number of individuals swabbing per fortnight; relevant to the discussion in this document is that the target increased from 2,500 by the end of May 2020 to 150,000 in October 2020.
+Within a household, all indvidiuals aged 2 and over were invited to participate.
+Once invited, an enrolement swab would be taken followed by 4 further weekly swabs (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolement) after which monthly swabs are taken.
+
+During the period we consider, the total cohort size expands due to the continuous recruitment into the study.
+Following this, the number then decreases and stabilises as those recruited to meet the October target transition from weekly onto monthly testing.
+See figure \@ref(fig:test-schedules) for further detail.
+
+\todo[inline]{Add some descriptive figures eg those in ~/COVID/ons-incidence/duration_estimation/reproducible-sims/reports/simulation-studies.pdf}
+
+\section{Producing duration from ATACCC}
+
+The ATACCC analysis produces a posterior distribution for some population-level parameters, $\phi$.
+Taking a posterior sample for this, $\phi^{(i)}$, we can then draw the parameters which determine the viral
+load trajectory for a random individual $j$, $\theta_j$, from which that individual's duration $d_j^{(i)}$ can be calculated ([see this Overleaf paper for further details](https://www.overleaf.com/9549594748zbvpgjgvmgsd)).
+By drawing $\theta_1, \theta_2, \dots, \theta_n$ from the distribution $p(\theta_j \mid\phi^{(i)})$, the density of the duration distribution, $f_A(t)$, can be
+calculated for the posterior sample $i$ as:
+$$
+f^{(i)}_A(t) = \frac{1}{n}\sum_{j=1}^n \mathbb{I} \left( t-0.5 < d_j^{(i)} < t+0.5 \right)
+$$
+Given $f_A(t)$, the cumulative density and hazard functions can be calculated.
+Repeating this for $N$ posterior samples of $\phi$ gives the posterior distribution.
+I have used $N = 1000$ and $n = 100,000$, 
+Since implementing this solution, I have found that Monte Carlo integration to calculate durations given $\theta_i$ is more accurate by avoiding discretisation errors.
+However, the results here do not use this for consistency.
+
+\chapter{Survival analysis with perfect testing} \label{perf-test}
 
 \subfile{cis-perfect-testing}
 
-\chapter{Survival analysis with misclassification}
+\chapter{Survival analysis with misclassification} \label{imperf-test}
 
 \subfile{cis-imperfect-testing}
 
