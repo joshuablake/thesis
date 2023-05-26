@@ -1,0 +1,1 @@
+The formatting for this thesis is based on the [PhD thesis template by Krishna Kumar (Copyright © 2013 Krishna Kumar)](https://github.com/kks32/phd-thesis-template), licensed under [The MIT Licence](https://github.com/kks32/phd-thesis-template/blob/master/license.md).
