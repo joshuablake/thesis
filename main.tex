@@ -1,12 +1,13 @@
 \documentclass[a4paper]{report}
 \usepackage{graphicx}
+\usepackage[utf8]{inputenc}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\usepackage[style=british]{csquotes}
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
-\usepackage[utf8]{inputenc}
 \usepackage{textcomp} % provide symbols
 \usepackage{todonotes}
 % \usepackage{microtype}
@@ -44,29 +45,7 @@
 
 \maketitle
 
-\chapter{Text to use}
-
-\section{Data}
-The CIS continually enrols individuals and tests them on an ongoing basis, following a
-specified testing protocol. The protocol specifies that the initial five
-tests are spaced every 7 days, then the spacing is every 28 days.
-However, real-world considerations often lead to variations in test
-times and missed tests. Our analysis focuses solely on the binary result
-(positive or negative) of these tests, assuming no misclassification
-bias.
-
-The CIS (Coronavirus Infection Survey) is a longitudinal study on a representative sample of households.
-A full description of the study can be found in the supplementary materials of [Pouwels et al. 2020](https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(20)30282-6/fulltext#supplementaryMaterial) or [the study protocol](https://www.ndm.ox.ac.uk/covid-19/covid-19-infection-survey/protocol-and-information-sheets).
-In brief, households are invited to the study from databases held by the ONS.
-The number invited was to satisfy various target number of individuals swabbing per fortnight; relevant to the discussion in this document is that the target increased from 2,500 by the end of May 2020 to 150,000 in October 2020.
-Within a household, all indvidiuals aged 2 and over were invited to participate.
-Once invited, an enrolement swab would be taken followed by 4 further weekly swabs (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolement) after which monthly swabs are taken.
-
-During the period we consider, the total cohort size expands due to the continuous recruitment into the study.
-Following this, the number then decreases and stabilises as those recruited to meet the October target transition from weekly onto monthly testing.
-See figure \@ref(fig:test-schedules) for further detail.
-
-\todo[inline]{Add some descriptive figures eg those in ~/COVID/ons-incidence/duration_estimation/reproducible-sims/reports/simulation-studies.pdf}
+\chapter{Duration from biomarkers} \label{ATACCC}
 
 \section{Producing duration from ATACCC}
 
@@ -92,5 +71,32 @@ However, the results here do not use this for consistency.
 
 \subfile{cis-imperfect-testing}
 
+\appendix
+
+\chapter{Text to use}
+
+Random bits of text that I've written that don't currently fit anywhere but will likely be useful in future
+
+\section{CIS study description}
+The CIS continually enrols individuals and tests them on an ongoing basis, following a
+specified testing protocol. The protocol specifies that the initial five
+tests are spaced every 7 days, then the spacing is every 28 days.
+However, real-world considerations often lead to variations in test
+times and missed tests. Our analysis focuses solely on the binary result
+(positive or negative) of these tests, assuming no misclassification
+bias.
+
+The CIS (Coronavirus Infection Survey) is a longitudinal study on a representative sample of households.
+A full description of the study can be found in the supplementary materials of \textcite{pouwelsCommunity} or the study protocol~\autoref{cisProtocol}.
+In brief, households are invited to the study from databases held by the ONS.
+The number invited was to satisfy various target number of individuals swabbing per fortnight; relevant to the discussion in this document is that the target increased from 2,500 by the end of May 2020 to 150,000 in October 2020.
+Within a household, all individuals aged 2 and over were invited to participate.
+Once invited, an enrolment swab would be taken followed by 4 further weekly swabs (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolment) after which monthly swabs are taken.
+
+During the period we consider, the total cohort size expands due to the continuous recruitment into the study.
+Following this, the number then decreases and stabilises as those recruited to meet the October target transition from weekly onto monthly testing.
+See figure \@ref(fig:test-schedules) for further detail.
+
+\todo[inline]{Add some descriptive figures e.g. those in ~/COVID/ons-incidence/duration_estimation/reproducible-sims/reports/simulation-studies.pdf}
 
 \end{document}
