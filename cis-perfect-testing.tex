@@ -1,29 +1,12 @@
 \documentclass[main.tex]{subfiles}
 
-\title{Estimating duration using survival analysis}
-\author{Joshua Blake}
-\date{\today}
-
 \begin{document}
-\maketitle
-
-\listoftodos
-
-\pagebreak
+\chapter{Survival analysis with perfect testing} \label{perf-test}
 
 This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (i.e.: no misclassification bias).
 I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation), explained in the following paragraphs.
 Through a simulation study, I show the applicability of these methods.
 However, application in reality must account for misclassification bias, the subject of the following chapter.
-
-This chapter proceeds as follows.
-\begin{itemize}
-\item  I introduce the motivating dataset in section~\ref{perf-test:sec:data}. This is the CIS dataset previously encountered, processed to form "episodes" of infection.
-\item  In section~\ref{perf-test:sec:model}, I develop a model accounting for double interval censoring and truncation. This builds on previous work in both biomedical and bird nesting studies. The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern which is neither simple left nor right truncation, has not previously been explored in the literature. Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster) which are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-\item  In section~\ref{perf-test:sec:parameters-priors} I discuss parameterisation of the survival function and the challenges of specifying a vague prior. Whether a prior is vague or not depends on the parameterisation chosen, and for independent priors on the parameters, it is not possible to be vague on all sensible parameterisations. I also discuss the appeal of informative priors, and how the estimates in the previous chapter could be incorporated.
-\item  Section~\ref{perf-test:sec:simulation-study} is a simulation study showing the applicability of this method to the CIS. I show that the model developed previously is able to estimate the duration distribution in this setting under vague or informative priors. However, I also show that, within the simulation considered, only the survival, and not the hazard, function are identifiable.
-\item  Section~\ref{perf-test:sec:conclusion} concludes the chapter, discussing the limitations of this model. The following chapter will motivate and consider relaxing the perfect testing assumption.
-\end{itemize}
 
 \section{Problem description}\label{perf-test:sec:data}
 
@@ -76,7 +59,7 @@ I filter the episodes as follows.
   beginning (this could have happened at any time, including prior to
   16th Oct).
 \item
-  A negative test to end the episode (ie: following the final positive in the episode) has been recorded.
+  A negative test to end the episode (i.e.: following the final positive in the episode) has been recorded.
 \end{itemize}
 
 \todo[inline]{Descriptive analyses of the data here}
@@ -86,7 +69,7 @@ Now I develop a model accounting for double interval censoring and truncation, b
 The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern and is neither simple left nor right truncation, has not previously been explored in the literature.
 Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster).
 Only limited resources are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-Therefore, unlike most Bayesian methods (eg: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the data with unobserved times of infection or any information on the truncated infections; this is due to the large number of infections (>4000 in the time period considered) making this approach computationally expensive.
+Therefore, unlike most Bayesian methods (e.g.: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the data with unobserved times of infection or any information on the truncated infections; this is due to the large number of infections (>4000 in the time period considered) making this approach computationally expensive.
 
 The individual model considers only individuals with observed (i.e., not truncated) episodes.
 This approach is similar to methods used in previous studies, such as \textcite{heiseyModelling}, \textcite{dempsterMaximum}, and \textcite{turnbullEmpirical}.
@@ -156,7 +139,7 @@ to as the ``ghosts'' of $i$.
 
 Formally (and following \textcite{heiseyModelling}), we
 define three sets which partition the space of possible infection and
-recovery (ie: are strict subsets of $T \times T$) given the
+recovery (i.e.: are strict subsets of $T \times T$) given the
 observations associated with episode $i$ (graphically shown in Figure
 \ref{perf-test:fig:partitionSpace}). Each episode, whether observed or not, must
 fall into one of these three classes with a probability that is a
@@ -189,13 +172,14 @@ complement of $\Omega^C_i$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/images/likelihood_areas.jpg}
+\todo[inline]{Digitalise figure of regions.}
 \caption{Admissible, $\alpha_i$, inadmissible, $\beta_i$ and
 untruncated, $\Omega_i^C$ regions for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Purple region is $\alpha_i$, orange region (which includes all
 negative infection times) is $\Omega_i^C$ and unshaded region is
-$\beta_i$.\label{perf-test:fig:partitionSpace} \todo[inline]{Digitalise figure of regions.}}
+$\beta_i$.\label{perf-test:fig:partitionSpace}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually
@@ -235,10 +219,9 @@ First, I derive an analytical solution to $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 
 First, we consider the improper prior $p(n_i) \propto 1/n_i$, this prior has several attractive properties.
 Then, we consider a negative binomial distribution (which includes the geometric and Poisson distributions as a special and limiting case respectively).
 
-The prior $p(n_i) \propto 1/n_i$ means that the model coincides with
-the frequentist likelihood-based approach, up to the priors on other
-parameters~\cites[section 4.2]{dempsterMaximum}{heiseyModelling}[section 8.7.5]{gelmanBayesian}, and is
-the reference prior for this quantity\autocite{heBayesiana}. Under this prior,
+The prior $p(n_i) \propto 1/n_i$ means that the model coincides with the frequentist conditional likelihood approach, up to the priors on other parameters~\cites[section 4.2]{dempsterMaximum}{heiseyModelling}[section 8.7.5]{gelmanBayesian}.
+Furthermore, this is the reference prior for this quantity\autocite{heBayesiana}.
+Under this prior,
 $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \propto \sum_{n_i=1}^\infty p_{it}^{n_i-1} = 1/(1-p_{it})$.
 % (\protect\hyperlink{ref-dempsterMaximum}{Dempster, Laird, and
 % Rubin} (\protect\hyperlink{ref-dempsterMaximum}{1977}) section 4.2;
@@ -541,7 +524,7 @@ Then the distribution used in the simulation is the normalised version of this: 
 \todo[inline]{Make notation here consistent with elsewhere}
 
 The first day individual $i$ can be positive is their day of infection, $t_i^\text{onset}$, the last day is $t_i^\text{final} = t_i^\text{onset} + d_i - 1$ where $d_i$ is the duration of positivity for individual $i$.
-Outside this period, all tests are negative (ie: no false positives occur). 
+Outside this period, all tests are negative (i.e.: no false positives occur). 
 Any test between $t_i^\text{onset}$ and $t_i^\text{final}$ (inclusive) is positive with probability $p_{sens}$ (that is, each test is an independent Bernoulli trial).
 
 Each individual is then summarised into an "episode" (when working with CIS data, the same individual can have multiple episodes due to reinfections, these are split heuristically but a negligible number in the pre-Omicron period and hence ignored within the simulation).
@@ -568,5 +551,7 @@ The last step is required because we infect everyone in the simulation which doe
 \todo[inline]{Need to decide what exactly to include... There's lots of possible results but need to form some coherent story here!}
 
 \section{Conclusion} \label{perf-test:sec:conclusion}
+
+\listoftodos
 
 \end{document}
