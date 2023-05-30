@@ -3,7 +3,7 @@
 \begin{document}
 \chapter{Survival analysis with perfect testing} \label{perf-test}
 
-This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (i.e.: no misclassification bias).
+This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (\ie: no misclassification bias).
 I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation), explained in the following paragraphs.
 Through a simulation study, I show the applicability of these methods.
 However, application in reality must account for misclassification bias, the subject of the following chapter.
@@ -15,19 +15,17 @@ We wish to estimate the distribution of time for which an individual is positive
 An individual could have multiple infections, in which case define \emph{infection episodes}, corresponding to a single infection event.
 
 I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \autoref{imperf-test}).
-The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days and hence this is at least 1 day.
-Note that the relationship between positivity and infectiousness is complex\todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
+Note that the relationship between positivity and infectiousness is complex, \todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+
 An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
 
-Series of positive tests within CIS were heuristically categorised into episodes by Sarah Walker (see \autoref{episode-def}).
-These tests are assumed to have been due to a single infection event.
-
-I take a survival analysis approach to analysing this data.
-Survival analysis is the area of statistics which estimate the distribution of times between events.
+I utilise survival analysis for analysing this data.
+Survival analysis is the area of statistics concerned with estimating the distribution of the times between events.
 It is broadly applicable to many domains, such as the time-to-failure for a mechanical system or the effect of a treatment on time spent in hospital.
-In this context, the distribution to estimate is that of duration of positivity.
-The \emph{initiating event} is when the duration starts, here becoming detectable.
-The \emph{terminating event} is when the duration starts, here becoming no longer detectable.
+In the context of this thesis, the distribution to estimate is that of duration of positivity.
+The \emph{initiating event} is when the duration starts, \ie becoming detectable.
+The \emph{terminating event} is when the duration starts, \ie becoming no longer detectable.
 
 The reason for this approach, over modelling biomarkers (as in chapter\todo{ref chapter on ATACCC}) is...
 \todo[inline]{Justify approach}
@@ -38,7 +36,7 @@ False negatives are not dealt with and left to \autoref{imperf-test}.
 The first issue is double interval censoring.
 An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
 Censoring is a very widely studied problem, and a central consideration in any survival analysis.
-Interval censoring arises in CIS because we only observe the change from being not detectable (i.e.: negative) at one test, to detectable (i.e.: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \autoref{perf-test:fig:double-interval-censor}).
+Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \autoref{perf-test:fig:double-interval-censor}).
 \emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem, reviewed by \textcite{sunStatisticala}.
 In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored.
 \begin{figure}
@@ -56,8 +54,7 @@ We do not know how
 This combination of issues are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}. 
 
 I use the CIS data described in section\todo{ref description of CIS data}, with positive tests heuristically divided into episodes.
-The episode definition was developed by Sarah Walker and is as follows~\citePersonalComms:
-\todo[inline]{Insert episode definition}
+Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \autoref{episode-def}).
 
 I filter the episodes as follows.
 \begin{itemize}
@@ -69,7 +66,7 @@ I filter the episodes as follows.
   beginning (this could have happened at any time, including prior to
   16th Oct).
 \item
-  A negative test to end the episode (i.e.: following the final positive in the episode) has been recorded.
+  A negative test to end the episode (\ie: following the final positive in the episode) has been recorded.
 \end{itemize}
 
 \todo[inline]{Descriptive analyses of the data here}
@@ -81,7 +78,7 @@ Furthermore, I explore a Bayesian framework where the amount of explicit data au
 Only limited resources are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
 Therefore, unlike most Bayesian methods (e.g.: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the data with unobserved times of infection or any information on the truncated infections; this is due to the large number of infections (>4000 in the time period considered) making this approach computationally expensive.
 
-The individual model considers only individuals with observed (i.e., not truncated) episodes.
+The individual model considers only individuals with observed (\ie, not truncated) episodes.
 This approach is similar to methods used in previous studies, such as \textcite{heiseyModelling}, \textcite{dempsterMaximum}, and \textcite{turnbullEmpirical}.
 The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
 The modelling approach then corrects for this selection bias.
@@ -149,7 +146,7 @@ to as the ``ghosts'' of $i$.
 
 Formally (and following \textcite{heiseyModelling}), we
 define three sets which partition the space of possible infection and
-recovery (i.e.: are strict subsets of $T \times T$) given the
+recovery (\ie: are strict subsets of $T \times T$) given the
 observations associated with episode $i$ (graphically shown in Figure
 \ref{perf-test:fig:partitionSpace}). Each episode, whether observed or not, must
 fall into one of these three classes with a probability that is a
@@ -533,7 +530,7 @@ Then the distribution used in the simulation is the normalised version of this: 
 \todo[inline]{Make notation here consistent with elsewhere}
 
 The first day individual $i$ can be positive is their day of infection, $t_i^\text{onset}$, the last day is $t_i^\text{final} = t_i^\text{onset} + d_i - 1$ where $d_i$ is the duration of positivity for individual $i$.
-Outside this period, all tests are negative (i.e.: no false positives occur). 
+Outside this period, all tests are negative (\ie: no false positives occur). 
 Any test between $t_i^\text{onset}$ and $t_i^\text{final}$ (inclusive) is positive with probability $p_{sens}$ (that is, each test is an independent Bernoulli trial).
 
 Each individual is then summarised into an "episode" (when working with CIS data, the same individual can have multiple episodes due to reinfections, these are split heuristically but a negligible number in the pre-Omicron period and hence ignored within the simulation).
