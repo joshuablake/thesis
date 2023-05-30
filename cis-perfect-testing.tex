@@ -12,12 +12,15 @@ However, application in reality must account for misclassification bias, the sub
 
 Consider a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
 We wish to estimate the distribution of time for which an individual is positive for.
-An individual could have multiple infections, in which case we refer to "infection episodes", where each episode corresponds to a single infection event.
+An individual could have multiple infections, in which case define \emph{infection episodes}, corresponding to a single infection event.
 
 I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \autoref{imperf-test}).
 The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days and hence this is at least 1 day.
 Note that the relationship between positivity and infectiousness is complex\todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
 An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
+
+Series of positive tests within CIS were heuristically categorised into episodes by Sarah Walker (see \autoref{episode-def}).
+These tests are assumed to have been due to a single infection event.
 
 I take a survival analysis approach to analysing this data.
 Survival analysis is the area of statistics which estimate the distribution of times between events.
@@ -27,14 +30,21 @@ The \emph{initiating event} is when the duration starts, here becoming detectabl
 The \emph{terminating event} is when the duration starts, here becoming no longer detectable.
 
 The reason for this approach, over modelling biomarkers (as in chapter\todo{ref chapter on ATACCC}) is...
+\todo[inline]{Justify approach}
 
 The methods in this chapter deal with modelling two issues that arise from the data.
-False negatives are not dealt with and left to chapter X.
+False negatives are not dealt with and left to \autoref{imperf-test}.
 
 The first issue is double interval censoring.
-An event (either the initiating or terminating) is \emph{interval censored} if its value is only to lie within a range.
-\emph{Double interval censoring} means both the initiating and the terminating events are interval censored.
-The initiating event is censored because we only observe the change from being not detectable (i.e.: negative) at one test, to detectable (i.e.: positive) at the following test; at the terminating event we see the opposite occurring (see\todo{interval censoring figure}).
+An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
+Censoring is a very widely studied problem, and a central consideration in any survival analysis.
+Interval censoring arises in CIS because we only observe the change from being not detectable (i.e.: negative) at one test, to detectable (i.e.: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \autoref{perf-test:fig:double-interval-censor}).
+\emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem, reviewed by \textcite{sunStatisticala}.
+In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored.
+\begin{figure}
+  \todo[inline]{Copy over figure demonstrating double interval censoring}
+  \caption{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. \label{perf-test:fig:double-interval-censor}}
+\end{figure}
 
 Interval censoring is a well-studied area in the biostatistics and broader statistical literature\todo{interval censoring refs}.
 Double interval censoring is less frequent, although has been considered previously\todo{double interval censoring refs}.
@@ -171,8 +181,7 @@ consistency with \textcite{heiseyModelling}), and is the
 complement of $\Omega^C_i$.
 
 \begin{figure}
-\includegraphics[width=\textwidth]{cis-perfect-testing/images/likelihood_areas.jpg}
-\todo[inline]{Digitalise figure of regions.}
+\includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
 \caption{Admissible, $\alpha_i$, inadmissible, $\beta_i$ and
 untruncated, $\Omega_i^C$ regions for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent

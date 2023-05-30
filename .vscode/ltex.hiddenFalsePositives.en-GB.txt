@@ -1,2 +1,6 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qchapter1/main\\E$"}
 {"rule":"FILE_EXTENSIONS_CASE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Poisson pmf \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q as gamma pdf \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q Note that \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q recovers the previous derivation (up to proportionality).\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QThe prior \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q means that the model coincides with the frequentist conditional likelihood approach, up to the priors on other parameters [section 4.2]dempsterMaximum heiseyModelling[section 8.7.5]gelmanBayesian.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q under the assumption of uniform probability of infection time.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QThen: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
