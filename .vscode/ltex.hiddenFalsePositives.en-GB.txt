@@ -4,3 +4,5 @@
 {"rule":"SENTENCE_WHITESPACE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q under the assumption of uniform probability of infection time.\\E$"}
 {"rule":"SENTENCE_WHITESPACE","sentence":"^\\QThen: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
 {"rule":"SENTENCE_WHITESPACE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
+{"rule":"DOUBLE_PUNCTUATION","sentence":"^\\Q..\\E$"}
+{"rule":"ET_AL","sentence":"^\\Qe.g.e.g E.g i.e.i.e I.e c.f C.f etc vs w.r.t d.o.f et al\\E$"}
