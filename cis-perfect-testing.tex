@@ -8,7 +8,7 @@ I take a survival analysis approach, considering that neither the start nor end 
 Through a simulation study, I show the applicability of these methods.
 However, application in reality must account for misclassification bias, the subject of the following chapter.
 
-\section{Problem description}\label{perf-test:sec:data}
+\section{Problem description and approach}\label{perf-test:sec:data}
 
 Consider a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
 We wish to estimate the distribution of time for which an individual is positive for.
@@ -16,7 +16,7 @@ An individual could have multiple infections, in which case define \emph{infecti
 
 I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \autoref{imperf-test}).
 The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
-Note that the relationship between positivity and infectiousness is complex, \todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+Note that the relationship between positivity (\ie the result of a PCR test) and infectiousness (\ie an individual's ability to pass on the virus) is complex, \todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
 
 An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
 
@@ -27,33 +27,45 @@ In the context of this thesis, the distribution to estimate is that of duration 
 The \emph{initiating event} is when the duration starts, \ie becoming detectable.
 The \emph{terminating event} is when the duration starts, \ie becoming no longer detectable.
 
-The reason for this approach, over modelling biomarkers (as in chapter\todo{ref chapter on ATACCC}) is...
-\todo[inline]{Justify approach}
+The reason for this approach, over modelling biomarkers (as in \autoref{ATACCC}) is due to two factors.
+First, the large sample size in CIS means that approaches where the number of parameters scales with the number of observed infections (as it does with random effect based approaches) would be computationally challenging; this challenge is compounded by the data being stored in a trusted research environment limiting the computational power and tools available.
+Second, the data is coarse with most episodes having only a single positive test; therefore, the trajectory of the viral load would not be well-identified in an individual.
+Combined, these factors outweighed the downside of survival analysis only considering the binary outcome (\ie positive or negative) or the test rather than the additional information on the viral load.
 
-The methods in this chapter deal with modelling two issues that arise from the data.
+The methods in this chapter deal with modelling two elements of the data-generating process, double interval censoring and truncation.
 False negatives are not dealt with and left to \autoref{imperf-test}.
 
-The first issue is double interval censoring.
+Double interval censoring is a special case of censoring, a common and well-studied challenge encountered when dealing with survival data.
 An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
-Censoring is a very widely studied problem, and a central consideration in any survival analysis.
 Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \autoref{perf-test:fig:double-interval-censor}).
 \emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem, reviewed by \textcite{sunStatisticala}.
 In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored.
 \begin{figure}
-  \todo[inline]{Copy over figure demonstrating double interval censoring}
-  \caption{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. \label{perf-test:fig:double-interval-censor}}
+  \centering \includegraphics{cis-perfect-testing/double-interval-censor}
+  \caption{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who transitions negative at time 7 to positive at time 14, bounding the start of the episode; similarly, the transition positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
 \end{figure}
 
 Interval censoring is a well-studied area in the biostatistics and broader statistical literature\todo{interval censoring refs}.
 Double interval censoring is less frequent, although has been considered previously\todo{double interval censoring refs}.
 
-The second issue is truncation.
-Truncation occurs because we do not observe some episodes: an episode can occur between tests and hence the episode is never detected (see figure\todo{truncation figure}).
-We do not know how 
+The second element is truncation.
+Truncation occurs because we do not observe some episodes: an episode can occur between tests and hence the episode is never detected (see \autoref{perf-test:fig:truncation}).
+We do not know how many infections we do not detect.
+Failure to model truncation will lead to estimating too long durations because the detected episodes are a biased sample with a longer duration.
+To see why they are shorter, consider the undetected infection in the bottom of \autoref{perf-test:fig:truncation}.
+This individual was infected at time 33 for 10 days.
+If instead there infection was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
 
-This combination of issues are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}. 
+Truncation is a large problem when individuals move to the infrequent testing schedule within CIS.
+Consider that, based on the estimates in \autoref{ATACCC}, the median length of an episode is 14 days \todo{check this number} we would not expect many episodes to last the 28 days that can occur between tests.
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/truncation}
+  \caption{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
+\end{figure}
 
-I use the CIS data described in section\todo{ref description of CIS data}, with positive tests heuristically divided into episodes.
+This combination of censoring and truncation are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}. 
+
+I use the CIS data described in \autoref{intro:sec:cis}, with positive tests heuristically divided into episodes.
 Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \autoref{episode-def}).
 
 I filter the episodes as follows.
@@ -555,6 +567,10 @@ The last step is required because we infect everyone in the simulation which doe
 \subsection{Results}
 
 \todo[inline]{Need to decide what exactly to include... There's lots of possible results but need to form some coherent story here!}
+
+\section{Discussion}
+
+\todo[inline]{Add discussion after deciding on results}
 
 \section{Conclusion} \label{perf-test:sec:conclusion}
 
