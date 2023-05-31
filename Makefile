@@ -1,9 +1,9 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
-SHARED_DEPS = main.tex references.bib cam-thesis.cls
+SHARED_DEPS = thesis.tex references.bib cam-thesis.cls
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png
 
-main.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) CollegeShields/*.eps
+thesis.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
 cis-imperfect-testing.pdf: $(SHARED_DEPS) $(IMPERF_DEPS)
@@ -21,4 +21,4 @@ cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.pn
 clean:
 	./latexrun --clean
 
-all: main.pdf
+all: thesis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf
