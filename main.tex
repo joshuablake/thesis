@@ -1,4 +1,6 @@
-\documentclass[a4paper,12pt,custombib,times]{PhDThesisPSnPDF} % add print option for printing
+\documentclass{cam-thesis}
+\usepackage{setspace}
+\onehalfspacing
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 
@@ -49,41 +51,37 @@
 
 \title{Estimating the incidence of SARS-CoV-2 from prevalence data}
 \author{Joshua Blake}
-\supervisor{Prof.~D.~De Angelis \newline Dr.~P.~Birrell}
 \date{\today}
-\dept{MRC Biostatistics Unit}
-\university{University of Cambridge}
-\crest{\includegraphics[width=0.45\textwidth]{University_Crest_Long}}
+\subjectline{MRC Biostatistics Unit}
 \college{Jesus College}
-\collegeshield{\includegraphics[width=0.2\textwidth]{jesus}}
-\degreetitle{Doctor of Philosophy}
+\collegeshield{CollegeShields/jesus}
+% \keywords{one two three}
+
+%% Submission date [optional]:
+% \submissiondate{November, 2042}
+
+%% You can redefine the submission notice [optional]:
+% \submissionnotice{A badass thesis submitted on time for the Degree of PhD}
+
 
 \usepackage[backend=biber,style=authoryear,uniquename=false]{biblatex}
 
 \usepackage{subfiles} % Best loaded last in the preamble
 \addbibresource{references.bib}
 
+\abstract{%
+    TODO
+}
+
+\acknowledgements{%
+  TODO
+}
+
 \begin{document}
 
-\frontmatter
-
-\maketitle
-
-\begin{declaration}
-    This thesis is my own work and contains nothing which is the outcome of work done in collaboration with others except as specified in the text and Acknowledgements.
-    It is not substantially the same as any work that has already been submitted before for any degree or other qualification except as declared in the preface and specified in the text.
-    The thesis contains no more than 60,000 words (excluding figures, photographs, tables, appendices, and bibliography).
-\end{declaration}
-
-\begin{acknowledgements}      
-    \todo[inline]{Acknowledgements here}    
-\end{acknowledgements}
-
-\tableofcontents
+\frontmatter{}
 
 \listoffigures
-
-\mainmatter
 
 \chapter{Duration from biomarkers} \label{ATACCC}
 

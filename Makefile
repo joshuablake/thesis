@@ -1,6 +1,5 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
-
-main.pdf: main.tex cis-imperfect-testing.pdf cis-perfect-testing.pdf references.bib PhDThesisPSnPDF.cls
+main.pdf: main.tex cis-imperfect-testing.pdf cis-perfect-testing.pdf references.bib PhDThesisPSnPDF.cls  CollegeShields/*.eps
 	$(LATEX_CMD)
 
 cis-imperfect-testing.pdf: cis-imperfect-testing.tex main.tex references.bib PhDThesisPSnPDF.cls
