@@ -19,7 +19,7 @@ test_lines = function(values, result) {
 }
 
 shade_alpha = 0.3
-ggplot() +
+plot = ggplot() +
     test_lines(pos_test_dates, TRUE) +
     test_lines(neg_test_dates, FALSE) +
     theme_minimal() +
@@ -30,6 +30,13 @@ ggplot() +
         y = "Recovery time",
         colour = "Test results",
         fill = "Regions"
+    ) +
+    scale_fill_manual(
+        values = c(
+            "Admissible" = "purple",
+            "Truncated" = "Red",
+            "Impossible" = "black"
+        )
     ) +
     scale_colour_manual(
         values = c(
@@ -76,11 +83,14 @@ ggplot() +
         ymax = 55,
         alpha = shade_alpha
     ) +
-    scale_fill_manual(
-        values = c(
-            "Admissible" = "purple",
-            "Truncated" = "Red",
-            "Impossible" = "black"
+    coord_fixed() +
+    guides(
+        fill = guide_legend(
+            override.aes = list(alpha = shade_alpha),
         )
+    ) +
+    theme(
+        legend.position = "bottom",
+        legend.box = "vertical"
     )
-ggsave("cis-perfect-testing/regions_diag.png")
+ggsave("cis-perfect-testing/regions_diag.png", width = 6, height = 5.5)

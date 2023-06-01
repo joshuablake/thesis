@@ -14,6 +14,28 @@ likelihood is tractable. This requires modifying both $p_{ia}$ to
 allow for the episode possibly being longer than observed, and
 $p_{it}$ to allow for additional episodes being missed.
 
+\section{Data}
+
+I use the CIS data described in \cref{intro:sec:cis}, with positive tests heuristically divided into episodes.
+Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{episode-def}).
+
+I filter the episodes as follows.
+\begin{itemize}
+\item
+  The first positive in the episode occurred between 16th Oct 2020 and
+  5th Dec 2020 inclusive.
+\item
+  The individual had recorded a negative test prior to their episode
+  beginning (this could have happened at any time, including prior to
+  16th Oct).
+\item
+  A negative test to end the episode (\ie: following the final positive in the episode) has been recorded.
+\end{itemize}
+
+\todo[inline]{Descriptive analyses of the data here}
+
+\section{Modelling}
+
 Specifically, we introduce a constant test sensitivity $p_\text{sens}$
 such that:
 \begin{align}
@@ -25,7 +47,7 @@ viral load of an individual (the concentration of viral material in the
 part of the body being sampled). For this initial attempt at modelling
 the sensitivity, we ignore this complication.
 
-\section{Modifying $p_{ia}$} \label{modifying-p_ia}
+\subsection{Modifying $p_{ia}$} \label{modifying-p_ia}
 
 The idea when modifying $p_{ia}$ is to allow for the negative test
 following the last positive to be either a true or false negative. If it
@@ -77,7 +99,7 @@ p_{ia}'
 \end{align}
 Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
-\section{Modifying $p_{it}$} \label{modifying-p_it}
+\subsection{Modifying $p_{it}$} \label{modifying-p_it}
 
 With false negatives, an episode with can be truncated in the following
 ways:

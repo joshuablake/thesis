@@ -6,10 +6,10 @@ PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-per
 thesis.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
-cis-imperfect-testing.pdf: $(SHARED_DEPS) $(IMPERF_DEPS)
+cis-imperfect-testing.pdf: $(IMPERF_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
-cis-perfect-testing.pdf: $(SHARED_DEPS) $(PERF_DEPS)
+cis-perfect-testing.pdf: $(PERF_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 cis-perfect-testing/regions_diag.png: cis-perfect-testing/regions_diag.R

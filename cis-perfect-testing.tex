@@ -3,22 +3,33 @@
 \begin{document}
 \chapter{Survival analysis with perfect testing} \label{perf-test}
 
-This chapter aims to estimate the duration of SARS-CoV-2 PCR positivity from CIS data if perfect testing can be assumed (\ie: no misclassification bias).
-I take a survival analysis approach, considering that neither the start nor end time of positivity are known exactly (double interval censoring) and that infections may be missed (truncation), explained in the following paragraphs.
-Through a simulation study, I show the applicability of these methods.
-However, application in reality must account for misclassification bias, the subject of the following chapter.
+The estimation of incidence from prevalence is sensitive to the tail of the duration distribution.
+In \cref{ATACCC} I estimated the duration distribution from the ATACCC data, however, this study suffered from a small sample size and only 20 days of follow-up.
+Therefore, the estimation of the tail of the duration distribution is driven by model assumptions.
+This chapter develops methods to estimate the distribution using CIS data, which has less frequent sampling but a large sample size and long follow-up.
 
-\section{Problem description and approach}\label{perf-test:sec:data}
+I take a survival analysis approach to model the coarse sampling of the CIS (see \cref{perf-test:sec:problem}).
+The problem of priors can be important to the results here, due to the lack of information in the data; in addition, the prior can be used to combine the information in the CIS with the results of \cref{ATACCC} (see \cref{perf-test:sec:parameters-priors}).
+Through a simulation study (see \cref{perf-test:sec:simulation-study}), I show that these methods perform well, and in this context are not sensitive to model or prior specification.
+However, application in reality must account for misclassification bias, the subject of \cref{imperf-testing}.
 
-Consider a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
+\section{Problem description and approach} \label{perf-test:sec:problem}
+
+\todo[inline]{Some of these definitions likely need to be moved elsewhere as they will be needed in other chapters (e.g. ATACCC analysis).}
+Consider the CIS data.
+It consists of a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
 We wish to estimate the distribution of time for which an individual is positive for.
-An individual could have multiple infections, in which case define \emph{infection episodes}, corresponding to a single infection event.
+An individual could have multiple infections, and hence I refer to \emph{infection episodes}.
 
-I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \autoref{imperf-test}).
-The episode's \emph{duration of positivity} is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
+I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \cref{imperf-test}).
+Episode $i$'s \emph{duration of positivity}, $D_i$ is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
 Note that the relationship between positivity (\ie the result of a PCR test) and infectiousness (\ie an individual's ability to pass on the virus) is complex, \todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+I define an episode as starting at time $B_i$ and ends at $E_i$, hence $D_i = E_i - B_i + 1$.
 
 An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
+
+Formally, the survival time function, parameterised by $\theta$, is the probability that an episode lasts at least $t$ days: $S_\theat(t) = \prob(D_i \geq t \mid B_i = b, \theta)$ where $D_i$ and $B_i$ are the duration and starting time of episode $i$ respectively.
+We make the standard assumption that $D_i$ and $B_i$ are independent and hence: $S_\theta(t) = \prob(D_i \geq t \mid \theta)$.
 
 I utilise survival analysis for analysing this data.
 Survival analysis is the area of statistics concerned with estimating the distribution of the times between events.
@@ -27,17 +38,17 @@ In the context of this thesis, the distribution to estimate is that of duration 
 The \emph{initiating event} is when the duration starts, \ie becoming detectable.
 The \emph{terminating event} is when the duration starts, \ie becoming no longer detectable.
 
-The reason for this approach, over modelling biomarkers (as in \autoref{ATACCC}) is due to two factors.
+The reason for this approach, over modelling biomarkers (as in \cref{ATACCC}) is due to two factors.
 First, the large sample size in CIS means that approaches where the number of parameters scales with the number of observed infections (as it does with random effect based approaches) would be computationally challenging; this challenge is compounded by the data being stored in a trusted research environment limiting the computational power and tools available.
 Second, the data is coarse with most episodes having only a single positive test; therefore, the trajectory of the viral load would not be well-identified in an individual.
 Combined, these factors outweighed the downside of survival analysis only considering the binary outcome (\ie positive or negative) or the test rather than the additional information on the viral load.
 
 The methods in this chapter deal with modelling two elements of the data-generating process, double interval censoring and truncation.
-False negatives are not dealt with and left to \autoref{imperf-test}.
+False negatives are not dealt with and left to \cref{imperf-test}.
 
 Double interval censoring is a special case of censoring, a common and well-studied challenge encountered when dealing with survival data.
 An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
-Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \autoref{perf-test:fig:double-interval-censor}).
+Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa; \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring (see \cref{perf-test:fig:double-interval-censor}).
 \emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem, reviewed by \textcite{sunStatisticala}.
 In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored.
 \begin{figure}
@@ -49,39 +60,24 @@ Interval censoring is a well-studied area in the biostatistics and broader stati
 Double interval censoring is less frequent, although has been considered previously\todo{double interval censoring refs}.
 
 The second element is truncation.
-Truncation occurs because we do not observe some episodes: an episode can occur between tests and hence the episode is never detected (see \autoref{perf-test:fig:truncation}).
+Truncation occurs because we do not observe some episodes: an episode can occur between tests and hence the episode is never detected (see \cref{perf-test:fig:truncation}).
 We do not know how many infections we do not detect.
 Failure to model truncation will lead to estimating too long durations because the detected episodes are a biased sample with a longer duration.
-To see why they are shorter, consider the undetected infection in the bottom of \autoref{perf-test:fig:truncation}.
+To see why they are shorter, consider the undetected infection in the bottom of \cref{perf-test:fig:truncation}.
 This individual was infected at time 33 for 10 days.
 If instead there infection was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
 
 Truncation is a large problem when individuals move to the infrequent testing schedule within CIS.
-Consider that, based on the estimates in \autoref{ATACCC}, the median length of an episode is 14 days \todo{check this number} we would not expect many episodes to last the 28 days that can occur between tests.
+Consider that, based on the estimates in \cref{ATACCC}, the median length of an episode is 14 days \todo{check this number} we would not expect many episodes to last the 28 days that can occur between tests.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/truncation}
   \caption{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
-This combination of censoring and truncation are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}. 
+This combination of censoring and truncation are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}.
 
-I use the CIS data described in \autoref{intro:sec:cis}, with positive tests heuristically divided into episodes.
-Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \autoref{episode-def}).
-
-I filter the episodes as follows.
-\begin{itemize}
-\item
-  The first positive in the episode occurred between 16th Oct 2020 and
-  5th Dec 2020 inclusive.
-\item
-  The individual had recorded a negative test prior to their episode
-  beginning (this could have happened at any time, including prior to
-  16th Oct).
-\item
-  A negative test to end the episode (\ie: following the final positive in the episode) has been recorded.
-\end{itemize}
-
-\todo[inline]{Descriptive analyses of the data here}
+While this chapter sets up the framework for analysing the CIS data, applying the method to CIS data requires modelling false negatives.
+That is the subject of \cref{imperf-test} and hence a full description of the data and processing of it is deferred to that chapter.
 
 \section{Modelling the duration}\label{perf-test:sec:model}
 Now I develop a model accounting for double interval censoring and truncation, building on prior work in both biomedical and bird nesting studies.
@@ -90,7 +86,7 @@ Furthermore, I explore a Bayesian framework where the amount of explicit data au
 Only limited resources are unavailable within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
 Therefore, unlike most Bayesian methods (e.g.: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the data with unobserved times of infection or any information on the truncated infections; this is due to the large number of infections (>4000 in the time period considered) making this approach computationally expensive.
 
-The individual model considers only individuals with observed (\ie, not truncated) episodes.
+The individual model considers only individuals with detected episodes.
 This approach is similar to methods used in previous studies, such as \textcite{heiseyModelling}, \textcite{dempsterMaximum}, and \textcite{turnbullEmpirical}.
 The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
 The modelling approach then corrects for this selection bias.
@@ -195,9 +191,7 @@ complement of $\Omega^C_i$.
 untruncated, $\Omega_i^C$ regions for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
-and 28. Purple region is $\alpha_i$, orange region (which includes all
-negative infection times) is $\Omega_i^C$ and unshaded region is
-$\beta_i$.\label{perf-test:fig:partitionSpace}}
+and 28. \label{perf-test:fig:partitionSpace}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually
@@ -233,7 +227,7 @@ In the remainder of the section, we derive the expressions for $p_{ia}$ and
 $p_{it}$ in terms of the data, and analytical solutions for the sum
 under different priors.
 
-First, I derive an analytical solution to $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i)$ under two different assumptions for $p(n_i)$.
+I derive an analytical solution to $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i)$ under two different assumptions for $p(n_i)$.
 First, we consider the improper prior $p(n_i) \propto 1/n_i$, this prior has several attractive properties.
 Then, we consider a negative binomial distribution (which includes the geometric and Poisson distributions as a special and limiting case respectively).
 
@@ -458,11 +452,19 @@ probability parameter $\frac{r+\mu(1-p_t)}{r+\mu}$.
 
 \todo[inline]{Section is currently notes: expand into prose which can largely come from previous documents}
 
-In this section, I consider the various parameterisation of the survival function that are available.
-This has implications for the choice of prior  it is not possible to be vague on all sensible parameterisations.
-Informative priors might also be attractive, and allow the incorporation of the estimates from \autoref{ATACCC}.
+The form of $S_\theta(t)$ is yet to be specified.
+As frequently observed in the literature\todo{refs for parameterisation}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
+This is because the mass function must sum to one and the survival must be monotonically decreasing, while there are no constraints across multiple hazards.
+The only constraint on the hazard is to be in the interval $[0, 1]$, since they are probabilities.
 
-Define hazard and survival (maybe this should be done previously?).
+Flat or uninformative priors on the hazard lead to very informative priors on the survival, favouring short survival times.
+This is because...
+Our prior belief is not well-represented by this prior, and in fact a priori viewed as extremely unlikely (see \cref{perf-test:fig:flat-priors}),
+Therefore, I favour a prior which is weakly informative on the survival, or an informative prior used to represent our belief from the \cref{ATACCC} analysis.
+
+In this section, I consider the various parameterisation of the survival function that are available.
+This has implications for the choice of prior it is not possible to be vague on all sensible parameterisations.
+Informative priors might also be attractive, and allow the incorporation of the estimates from \cref{ATACCC}.
 
 The hazard is convenient to use because it is unconstrained except in the interval [0, 1]\todo{ref where been used previously}.
 Survival needs to be monotonic.
@@ -502,10 +504,10 @@ Finally, use a Beta Process to discount some information in ATACCC towards a vag
 \subsubsection{Duration of positivity}
 
 We require a ground truth for the distribution giving duration of positivity.
-The majority of this distribution is based on \autoref{ATACCC}'s estimates from the ATACCC data.
+The majority of this distribution is based on \cref{ATACCC}'s estimates from the ATACCC data.
 However, the tail is modified based on Sarah Walker's (unpublished) work based on CIS data.
 ATACCC is thought to estimate accurately the majority of the distribution but not the tail due to a small sample size and model uncertainty.
-These curves and the combined curve are compared in \autoref{perf-test:fig:duration-dist}.
+These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
 Individual $i$'s duration of positivity, $d_i$, is then an independent draw from this distribution.
 
 \begin{figure}
