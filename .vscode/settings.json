@@ -1,0 +1,5 @@
+{
+    "ltex.latex.commands": {
+        "\\collegeshield{}": "ignore"
+    }
+}

@@ -4,3 +4,5 @@ multinomially
 pmf
 parameterisations
 ATACCC
+logit-hazard
+logit

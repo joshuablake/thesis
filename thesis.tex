@@ -21,13 +21,12 @@
 \makeatletter
 \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
 \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
-
-\def\eg{\emph{e.g}\onedot} \def\Eg{\emph{E.g}\onedot}
-\def\ie{\emph{i.e}\onedot} \def\Ie{\emph{I.e}\onedot}
-\def\cf{\emph{c.f}\onedot} \def\Cf{\emph{C.f}\onedot}
-\def\etc{\emph{etc}\onedot} \def\vs{\emph{vs}\onedot}
+\def\eg{e.g\onedot} \def\Eg{\emph{E.g}\onedot}
+\def\ie{i.e\onedot} \def\Ie{\emph{I.e}\onedot}
+\def\cf{c.f\onedot} \def\Cf{\emph{C.f}\onedot}
+\def\etc{etc\onedot} \def\vs{\emph{vs}\onedot}
 \def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
-\def\etal{\emph{et al}\onedot}
+\def\etal{et al\onedot}
 \makeatother
 
 \def\reals{\mathbb{R}}
@@ -40,9 +39,13 @@
 \DeclareMathOperator{\var}{\mathbb{V}}
 \DeclareMathOperator{\indicator}{\mathbb{I}}
 \DeclareMathOperator{\cov}{Cov}
+\DeclareMathOperator{\logit}{logit}
 \DeclareMathOperator{\Ber}{Bernoulli}
 \DeclareMathOperator{\Bin}{Binomial}
 \DeclareMathOperator{\Poi}{Poisson}
+\DeclareMathOperator{\Beta}{Beta}
+\DeclareMathOperator{\NegBin}{NegBin}
+\DeclareMathOperator{\GamDist}{Gamma}
 \def\matr{\bm}
 \def\set{\mathcal}
 \renewcommand{\vec}{\bm}
@@ -77,6 +80,10 @@
 \acknowledgements{%
   TODO
 }
+
+\usepackage{geometry}
+\setlength{\marginparwidth}{3cm}
+\geometry{margin=3.8cm}
 
 \begin{document}
 

@@ -6,3 +6,6 @@
 {"rule":"SENTENCE_WHITESPACE","sentence":"^\\QHence: \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}
 {"rule":"DOUBLE_PUNCTUATION","sentence":"^\\Q..\\E$"}
 {"rule":"ET_AL","sentence":"^\\Qe.g.e.g E.g i.e.i.e I.e c.f C.f etc vs w.r.t d.o.f et al\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qand ??.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qand ??\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qare considered, and each individual is assigned an infection time \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q uniformly at random from ??.\\E$"}
