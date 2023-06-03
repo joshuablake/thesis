@@ -19,6 +19,8 @@ However, application in reality must account for misclassification bias, the sub
   Somehwere, I need to fit in what exactly is novel here, and issues with the pre-existing work. What to cover is the application to both double interval censored and arbitrarily truncated data (which existed in some of the theoretical frameworks but not used); the issues with the conditional likelihood method of \textcite{bacchettiNonparametric}; and the lack of much work this century.
 }
 
+\todo[inline]{Need to discuss interpretation of the ghosts in the individual model, why this is hard, and the implications for setting a prior here. Not even clear in simulation what it should be!}
+
 \section{Problem description and approach} \label{perf-test:sec:problem}
 
 \todo[inline]{Some of these definitions likely need to be moved elsewhere as they will be needed in other chapters (e.g. ATACCC analysis).}
@@ -394,24 +396,22 @@ A Beta distribution for each hazard parameter, $\lambda_t$, is a natural choice 
 An uninformative prior would be $\lambda_t \dist \Beta(\alpha, \alpha)$, with common choices of $\alpha$ being $0.5$, Jeffreys' Prior, or $1$, a flat prior.
 Flat or uninformative priors on the hazard lead to very informative priors on the survival, favouring short survival times.
 The sharp falloff can be seen by noting that these priors have expectation 0.5, hence $\E(S(t)) = \E \left( \prod_{i=1}^{t-1} (1-\lambda_t) \right) = 0.5^{t-1}$ which decreases very quickly.
-Our prior belief is not well-represented by this prior, and in fact a priori viewed as extremely unlikely (see \cref{perf-test:fig:flat-priors}),
+Our prior belief is not well-represented by this prior, and in fact a priori viewed as extremely unlikely (see \cref{perf-test:fig:flat-prior}),
 Therefore, I favour a prior which is weakly informative on the survival, or an informative prior used to represent our belief from the \cref{ATACCC} analysis.
 \todo{Ref ATACCC chapter}
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/flat-prior}
-  \todo[inline]{Create flat priors figure}
-  \caption{The prior predictive survival time (shown) is very short when using either a Beta(1, 1) flat prior or Beta(0.5, 0.5) uninformative prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
+  \caption{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
 \end{figure}
 
 Instead, I propose a weakly informative prior Beta(0.1, 1.9), linking to previous literature for a point estimate and showing vague figures.
 
-A Beta(0.1, 1.9) prior has mean 0.05 while not having much information (the informativeness of a Beta distribution is related to $\alpha + \beta$ which here equals 2, the same as the flat prior case); and the central 95\% mass is 0.00-0.47.
-The central estimate reflects previous estimates that the median duration is in the range 15-20 days~\autocite{cevikShedding}, which would translate to hazard of around 0.05.
+A Beta(0.1, 1.9) prior has mean 0.05 while not having much information (the informativeness of a Beta distribution is related to $\alpha + \beta$ which here equals 2, the same as the flat prior case); and the central 95\% mass is 0.00--0.47.
+The central estimate reflects previous estimates that the median duration is in the range 15--20 days~\autocite{cevikShedding}, which would translate to hazard of around 0.05.
 The prior predictive distribution on the survival time implied by this prior is very vague (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
-  \centering %\includegraphics{cis-perfect-testing/vague-priors}
-  \todo[inline]{Create vague prior figure}
-  \caption{The prior predictive survival time (shown) is very vague using a Beta(0.1, 1.9) prior. \label{perf-test:fig:vague-prior}}
+  \centering \includegraphics{cis-perfect-testing/vague-prior}
+  \caption{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
 \end{figure}
 
 \subsection{Informative priors}
@@ -423,9 +423,8 @@ Therefore, the survival distribution from that analysis should be reliable throu
 CIS can then inform the remainder of the distribution where the previous analysis is based on extrapolation.
 
 The model structure assumed in \cref{ATACCC} leads to positive correlation in the posterior estimates of the hazard.
-\todo{Ref ATACCC chapter}
 It is important to propagate this correlation as part of the prior uncertainty into the present analysis.
-We do this in two parts: first, approximate the previous posterior estimate of the logit-hazard as a multivariate normal (which can be viewed as an approximation of Markov melding~\autoref{goudieJoining}).
+We do this in two parts: first, approximate the previous posterior estimate of the logit-hazard as a multivariate normal (which can be viewed as an approximation of Markov melding~\autocite{goudieJoining}).
 Then, use a Beta process to add additional uncertainty to this.
 
 There are two reasons to increase the uncertainty relative to the \cref{ATACCC} posterior.
@@ -542,21 +541,64 @@ For each preserved infection episode, calculate $(l_i^{(b)}, r_i^{b}, l_i^{(e)},
 
 \subsection{Inference and hyperparameters}
 
+Stan including settings
+
+Priors on missed infections.
+
+Survival prior hyperparameters (maybe this should just go in the previous section though?)
+
+Criteria for assessing convergence (Rhat, ESS, divergent transitions)
+
 \subsection{Results}
 
-\todo[inline]{Need to decide what exactly to include... There's lots of possible results but need to form some coherent story here!}
+Points to make:
+
+\begin{enumerate}
+  \item Convergence assessment
+  \item Repeated simulation showed very little variation (large sample size)
+  \item Recovers true value of survival well with little difference between priors, \cref{perf-test:fig:survival-results}
+  \item RW2 performs poorly considering hazard and when little information in prior very uncertain, \cref{perf-test:fig:hazard-results}; not clear why this is (\cref{perf-test:fig:hazard-pairs-results})
+  \item Do I need some quantitive performance measures or is just showing plots enough?
+\end{enumerate}
+
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/survival-results}
+  \caption{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:survival-results}}
+\end{figure}
+
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/hazard-results}
+  \caption{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:hazard-results}}
+\end{figure}
+
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/hazard-pairs-results}
+  \todo[inline]{Probably scrap this (correlation) plot}
+  \caption{Correlation between posterior estimates of the hazard when using the vague prior. \label{perf-test:fig:hazard-pairs-results}}
+\end{figure}
 
 \section{Discussion} \label{perf-test:sec:discussion}
 
-\todo[inline]{Add discussion after deciding on results}
+Discussion points:
+\begin{enumerate}
+  \item Other priors (GPs?)
+  \item Inclusion of covariates
+  \item Individual vs total model
+  \item Consideration of smaller sample size
+\end{enumerate}
+
+Limitations to include:
+\begin{enumerate}
+  \item Assumption of constant incidence
+\end{enumerate}
 
 \section{Conclusion} \label{perf-test:sec:conclusion}
-
-\listoftodos
 
 \appendix
 
 \chapter{Including all CIS individuals in survival analysis}\label{perf-test:sec:total-model} \label{appendix:total-model}
+
+\todo[inline]{Add an intro to this and maybe a plot of results in simulation}
 
 We now consider all $N$ individuals in the CIS cohort who have at
 least one test during the period of interest, this includes those
@@ -642,5 +684,7 @@ p(n_\text{tot} \mid \text{data}, \theta)
 \end{align}
 which is a negative binomial pmf with size parameter $r + n_a$ and
 probability parameter $\frac{r+\mu(1-p_t)}{r+\mu}$.
+
+\listoftodos
 
 \end{document}
