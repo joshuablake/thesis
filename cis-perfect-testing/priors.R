@@ -9,6 +9,7 @@ source(here::here("utils.R"))
 flat_params = c(0.5, 1)
 dist_levels = c(
   map_chr(flat_params, ~glue::glue("Beta({.x}, {.x})")),
+  "Beta(0.1, 1.9)",
   "ATACCC"
 )
 
@@ -49,30 +50,35 @@ beta_plot_dens = function(alpha, beta) {
   standard_plot_theming()
 }
 
-beta_plot_surv = function(alpha, beta, prior_len = 30) {
-  purrr::map2(
+beta_plot_surv = function(alpha, beta, prior_len = 30, include_ATACCC = FALSE) {
+  priors = purrr::map2(
     alpha, beta,
     ~sample_constant_prior(.x, .y, prior_len) |>
       mutate(dist = glue::glue("Beta({.x}, {.y})"))
   ) |>
-  bind_rows(
-    ataccc_posterior |>
-      mutate(dist = "ATACCC")
-  ) |>
-  group_by(dist, time) |>
-  mean_qi(S, .simple.names = FALSE) |>
-  mutate(dist = factor(dist, levels = dist_levels)) |>
-  ggplot(aes(time, S, ymin = S.lower, ymax = S.upper, group = dist)) +
-  geom_line(aes(colour = dist)) +
-  geom_ribbon(aes(fill = dist), alpha = 0.5) +
-  labs(
-    x = "Day",
-    y = "Survival",
-    colour = "Distribution",
-    fill = "Distribution"
-  ) +
-  coord_cartesian(c(0, prior_len)) +
-  standard_plot_theming()
+  bind_rows()
+  if (include_ATACCC) {
+    priors = bind_rows(
+      priors,
+      ataccc_posterior |>
+        mutate(dist = "ATACCC")
+    )
+  }
+  priors |>
+    group_by(dist, time) |>
+    mean_qi(S, .simple.names = FALSE) |>
+    mutate(dist = factor(dist, levels = dist_levels)) |>
+    ggplot(aes(time, S, ymin = S.lower, ymax = S.upper, group = dist)) +
+    geom_line(aes(colour = dist)) +
+    geom_ribbon(aes(fill = dist), alpha = 0.5) +
+    labs(
+      x = "Day",
+      y = "Survival",
+      colour = "Distribution",
+      fill = "Distribution"
+    ) +
+    coord_cartesian(c(0, prior_len)) +
+    standard_plot_theming()
 }
 
 ataccc_posterior = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
@@ -86,7 +92,21 @@ ggsave(
   filename = "cis-perfect-testing/flat-prior.png",
   plot = p_flat,
   width = 15,
-  height = 10,
+  height = 9,
+  units = "cm",
+  dpi = 300
+)
+
+p_vague_dens = beta_plot_dens(0.1, 1.9) +
+  theme(legend.position = "none")
+p_vague_surv = beta_plot_surv(0.1, 1.9, prior_len = 30) +
+  theme(legend.position = "none")
+p_vague = p_vague_dens + p_vague_surv
+ggsave(
+  filename = "cis-perfect-testing/vague-prior.png",
+  plot = p_vague,
+  width = 15,
+  height = 9,
   units = "cm",
   dpi = 300
 )
