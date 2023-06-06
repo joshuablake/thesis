@@ -24,13 +24,13 @@ Discuss a bit why this is a problem (single positives and bias).
 
 Discuss very low sensitivity needed and changing sensitivity over time (ATACCC and CIS plots).
 
+\section{Modelling} \label{imperf-test:sec:modelling}
+
 In this section, we relax the assumption of perfect testing to allow
 some false negatives. We use a fairly simplified model to ensure the
 likelihood is tractable. This requires modifying both $p_{ia}$ to
 allow for the episode possibly being longer than observed, and
 $p_{it}$ to allow for additional episodes being missed.
-
-\section{Modelling} \label{imperf-test:sec:modelling}
 
 Specifically, we introduce a constant test sensitivity $p_\text{sens}$
 such that:
