@@ -6,9 +6,17 @@
 
 \begin{document}
 
-\chapter{Survival analysis with misclassification} \label{imperf-test}
+\chapter{Survival analysis with false negatives} \label{imperf-test}
 
-\section{The issues of false negatives}
+In \cref{perf-test}, a framework for analysing the CIS to produce estimates of the duration of positivity was developed.
+However, initial application of this framework produced implausibly short estimates; I identified the issue as being due to the presence of false negatives, a form of misclassification bias, within the CIS (\cref{imperf-test:sec:issue}).
+There exists little prior work on the incorporation of misclassification bias within similar survival analysis frameworks.
+\todo[inline]{Check exactly what has been done and verify exactly what I can claim here}
+In this chapter, I modify the previous model to include false negatives (\cref{imperf-test:sec:modelling}).
+I show in simulation that this model will recover the duration distribution (\cref{imperf-test:sec:sim-study}) and apply it to the CIS data (\cref{imperf-test:sec:application}).
+Plausible estimates of the duration distribution are produced, however, they require assuming that the test sensitivity (the probability of testing positive given being detectable) is known; I discuss what would be required to relax this assumption in \cref{imperf-test:sec:discussion}.
+
+\section{The issues of false negatives} \label{imperf-test:sec:issue}
 
 Demonstrate the likely issue of false negatives (Armitage talk).
 
@@ -22,7 +30,7 @@ likelihood is tractable. This requires modifying both $p_{ia}$ to
 allow for the episode possibly being longer than observed, and
 $p_{it}$ to allow for additional episodes being missed.
 
-\section{Modelling}
+\section{Modelling} \label{imperf-test:sec:modelling}
 
 Specifically, we introduce a constant test sensitivity $p_\text{sens}$
 such that:
@@ -78,6 +86,7 @@ infection.
 \end{align}
 
 Combining the above, the replacement for $p_{ia}$ is:
+\todo[inline]{Fix the length of the lines of these equations}
 \begin{align}
 p_{ia}'
 &= p(y_i' \mid p_\text{sens}, \theta) \\
@@ -121,17 +130,15 @@ Hence, the replacement for $1 - p_{it}$ is:
 &= \frac{1}{T} \sum_{b=\min(t_i)}^T \left( p_\text{sens} S_\theta(t_{ib}^N + 1) + (1 - p_\text{sens}) S_\theta(t_{ib}^{2N} + 1)\right) \\
 \end{align}
 
-\section{Simulation study}
+\section{Simulation study} \label{imperf-test:sec:sim-study}
 
 \subsection{Setup}
 
 Each test that was previously positive, is now positive with probability $p_\text{sens}$.
 
-\section{Application to CIS data}
+\section{Application to CIS data} \label{imperf-test:sec:application}
 
 \subsection{Data}
-
-\section{Data}
 
 I use the CIS data described in \cref{intro:sec:cis}, with positive tests heuristically divided into episodes.
 Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{episode-def}).
@@ -150,5 +157,16 @@ I filter the episodes as follows.
 \end{itemize}
 
 \todo[inline]{Descriptive analyses of the data here}
+
+\subsection{Methods}
+
+Think about what I need to include here.
+Might include hyperparameters etc or assumptions made?
+
+\subsection{Results}
+
+\section{Discussion} \label{imperf-test:sec:discussion}
+
+\section{Conclusion} \label{imperf-test:sec:conclusion}
 
 \end{document}
