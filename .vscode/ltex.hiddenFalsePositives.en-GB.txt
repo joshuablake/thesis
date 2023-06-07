@@ -9,3 +9,5 @@
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qand ??.\\E$"}
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qand ??\\E$"}
 {"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qare considered, and each individual is assigned an infection time \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q uniformly at random from ??.\\E$"}
+{"rule":"DID_FOUND_AMBIGUOUS","sentence":"^\\QWe can approximately bound the test sensitivity by assuming that all intermittent negatives are false negatives, that the negative following the last positive in an episode could be either a true or false negative, and all other negatives are true negatives.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QModifying \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.pia.\\E$"}
