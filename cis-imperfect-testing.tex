@@ -24,7 +24,7 @@ In particular, I estimate a very high probability of the episode lasting less th
 \begin{figure}
   \centering %\includegraphic{}
   \todo[inline]{Figure showing estimates without false negatives}
-  \caption{\label{imperf-test:fig:problem-cis-estimates}}
+  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{perf-test} gives implausibly short estimates. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
 Comparing the simulated and CIS data suggested that this is due to the high frequency of single positive episodes in the CIS data.
@@ -80,7 +80,7 @@ In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produc
 While the bounds are broad, they clearly suggest a declining test sensitivity over the course of an episode.
 \begin{figure}
   \todo[inline]{Include the analysis of CIS data with bounding test sensitivity}
-  \caption{Bounding the test sensitivity using CIS data as a function of time since the infection was detected (see main text for explanation of how the bounds are formed).\label{imperf-test:fig:bounding-cis-sensitivity}}
+  \caption[Bounding test sensitivity using CIS data]{Bounding the test sensitivity using CIS data as a function of time since the infection was detected (see main text for explanation of how the bounds are formed).\label{imperf-test:fig:bounding-cis-sensitivity}}
 \end{figure}
 
 I propose the following model for test sensitivity compatible with \cref{imperf-test:fig:bounding-cis-sensitivity}, consisting of a linearly declining period then a constant period:
