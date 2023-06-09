@@ -4,13 +4,11 @@
 \author{Joshua Blake}
 \date{\today}
 
-\newcommand{\psens}{p_\text{sens}}
-
 \begin{document}
 
 \chapter{Survival analysis with false negatives} \label{imperf-test}
 
-In \cref{perf-test}, a framework for analysing the CIS to produce estimates of the duration of positivity was developed.
+In \cref{E-perf-test}, a framework for analysing the CIS to produce estimates of the duration of positivity was developed.
 However, initial application of this framework produced implausibly short estimates; I identified the issue as being due to the presence of false negatives, a form of misclassification bias, within the CIS (\cref{imperf-test:sec:problem}).
 There exists little prior work on the incorporation of misclassification bias within similar survival analysis frameworks.
 \todo[inline]{Check exactly what has been done and verify exactly what I can claim here}
@@ -21,7 +19,7 @@ Plausible estimates of the duration distribution are produced, however, they req
 \section{The problem} \label{imperf-test:sec:problem}
 
 Applying the method of \cref{perf-test} to CIS data gave implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
-In particular, I estimate a very high probability of the episode lasting less than five days, in conflict with the results of \cref{ATACCC} and other prior work (\eg: \autocite{cevikShedding}).
+In particular, I estimate a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work (\eg: \autocite{cevikShedding}).
 
 \begin{figure}
   \centering %\includegraphic{}
@@ -38,21 +36,21 @@ Furthermore, simulations building in even a few excess single positive episodes 
 \todo[inline]{My previous application and discussion of \textcite{shenNonparametrica} in this setting would need quite significant reworking to include; is this needed or is this slightly hand-wavy discussion enough?}
 
 Discussion and interrogation of the data led me to believe the most likely reason for an unexpectedly high number of single positive episodes was the presence of false negatives, meaning a false negative as a negative test result returned by a detectable individual.
-This can occur for a variety of reasons, most commonly that an individual swabs themselves poorly and hence the concentration of virus on the swab is too low to be detected by the PCR process.
-\todo{Maybe I need a better description of the swabbing process?}
+This can occur for a variety of reasons, most commonly that an individual swabs themselves poorly and hence the concentration of virus on the swab is too low to be detected by the PCR process (see \cref{E-intro:sec:PCR}).
+\todo{Ref to section in intro explaining PCR testing}
 Plausibly, a variety of other reasons could also lead to a false negative such as logistical issues or mislabelling of samples.
 Consideration of these reasons are beyond the scope of this thesis, and I group all of these possible reasons together.
 
 There are two strands of evidence that support this hypothesis.
-First, it is well known that PCR testing can return false negatives \todo{refs for sensitivity} and I needed to explicitly include these in the viral load model of \cref{ATACCC}; they can be directly observed within CIS as intermittent negatives (see below).
-Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate})
+First, it is well known that PCR testing can return false negatives \todo{refs for sensitivity} and I needed to explicitly include these in the viral load model of \cref{E-ATACCC}; they can be directly observed within CIS as intermittent negatives (see below).
+Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate})
 
 \emph{Intermittent negatives} are the clearest example of a false negative.
 An intermittent negative is when an individual tests negative but tested positive previously and subsequently.
-I explicitly included these in the viral load model of \cref{ATACCC} but ignored in \cref{perf-test}.
-Intermittent negatives stripped out when creating the dataset used for all duration analyses in this chapter (as described in \cref{episode-def}), but demonstrate that false negatives do occur.
+I explicitly included these in the viral load model of \cref{E-ATACCC} but ignored in \cref{E-perf-test}.
+Intermittent negatives are stripped out when creating the dataset used for all duration analyses in this chapter (as described in \cref{E-episode-def}), but demonstrate that false negatives do occur.
 
-Whether a future positive is part of the same episode of a reinfection is not always trivial; I rely on a process developed previously by Sarah Walker, see \cref{episode-def}.
+Whether a future positive is part of the same episode of a reinfection is not always trivial; I rely on a process developed previously by Sarah Walker, see \cref{E-episode-def}.
 However, up until the emergence of the Omicron variant, reinfections are rare, especially in a short time frame, and hence the tricky cases are rare until this time (late 2021).
 
 \section{Simulating false negatives} \label{imperf-test:sec:simulate}
@@ -71,7 +69,7 @@ However, an implausibly low value for $\psens$ is required to reproduce the rate
 \todo[inline]{Figure demonstrating this and references to what reasonable test sensitivities are, including the estimate from the ATACCC chapter}
 More plausibly, the rate of false negatives varies over the course of an episode.
 False negatives are more likely to occur when the viral load of an individual is low, because there is less virus in their body to be sampled.
-Following the short, initial period of growth, viral load largely declines monotonically with time (see \cref{ATACCC}).
+Following the short, initial period of growth, viral load largely declines monotonically with time (see \cref{E-ATACCC}).
 \todo{Reference to ATCCCC chapter, although maybe the specific section with this result would be better}
 This suggests that a model with a declining test sensitivity as a function of time since infection might be more suitable.
 
@@ -204,8 +202,8 @@ Each test that was previously positive, is now positive with probability $p_\tex
 
 \subsection{Data}
 
-I use the CIS data described in \cref{intro:sec:cis}, with positive tests heuristically divided into episodes.
-Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{episode-def}).
+I use the CIS data described in \cref{E-intro:sec:cis}, with positive tests heuristically divided into episodes.
+Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{E-episode-def}).
 
 I filter the episodes as follows.
 \begin{itemize}

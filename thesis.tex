@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{textcomp} % provide symbols
 \usepackage{todonotes}
+\usepackage{xr}
 % \usepackage{microtype}
 
 % Macros for common abbreviations to get the spacing right
@@ -29,6 +30,7 @@
 \def\etal{et al\onedot}
 \makeatother
 
+% Generic maths commands
 \def\reals{\mathbb{R}}
 \def\nats{\mathbb{N}}
 \def\sampSpace{\mathcal{X}}
@@ -49,6 +51,9 @@
 \def\matr{\bm}
 \def\set{\mathcal}
 \renewcommand{\vec}{\bm}
+
+% Thesis-specific maths commands
+\newcommand{\psens}{p_\text{sens}}
 
 \newcommand{\citePersonalComms}{(personal communication)}
 
@@ -72,6 +77,7 @@
 
 \usepackage{subfiles} % Best loaded last in the preamble
 \addbibresource{references.bib}
+\externaldocument[E-]{\subfix{thesis}}
 
 \abstract{%
     TODO
@@ -93,11 +99,11 @@
 
 \chapter{Duration from biomarkers} \label{ATACCC}
 
-\section{Producing duration from ATACCC}
+\section{Producing duration from parameter estimates}
 
 The ATACCC analysis produces a posterior distribution for some population-level parameters, $\phi$.
 Taking a posterior sample for this, $\phi^{(i)}$, we can then draw the parameters which determine the viral
-load trajectory for a random individual $j$, $\theta_j$, from which that individual's duration $d_j^{(i)}$ can be calculated ([see this Overleaf paper for further details](https://www.overleaf.com/9549594748zbvpgjgvmgsd)).
+load trajectory for a random individual $j$, $\theta_j$, from which that individual's duration $d_j^{(i)}$ can be calculated.
 By drawing $\theta_1, \theta_2, \dots, \theta_n$ from the distribution $p(\theta_j \mid\phi^{(i)})$, the density of the duration distribution, $f_A(t)$, can be
 calculated for the posterior sample $i$ as:
 $$
@@ -114,6 +120,12 @@ However, the results here do not use this for consistency.
 \subfile{cis-imperfect-testing}
 
 \appendix
+
+\subfile{appendix-cis-perfect-testing}
+
+\chapter{CIS episode definitions} \label{episode-def}
+
+\todo[inline]{Get this from SARAH}
 
 \chapter{Text to use}
 
@@ -140,9 +152,5 @@ Following this, the number then decreases and stabilises as those recruited to m
 See figure \@ref(fig:test-schedules) for further detail.
 
 \todo[inline]{Add some descriptive figures e.g. those in \url{~/COVID/ons-incidence/duration_estimation/reproducible-sims/reports/simulation-studies.pdf}}
-
-\chapter{CIS episode definitions} \label{episode-def}
-
-\todo[inline]{Get this from SARAH}
 
 \end{document}
