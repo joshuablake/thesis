@@ -6,6 +6,9 @@ PERF_DEPS = cis-perfect-testing.tex appendix-cis-perfect-testing.tex cis-perfect
 thesis.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
+latex.out/thesis.aux: thesis.tex
+	$(LATEX_CMD)	
+
 clean:
 	./latexrun --clean
 

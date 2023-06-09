@@ -60,7 +60,7 @@ In CIS, we have \emph{double interval censoring} meaning that both the initiatin
 \todo{double interval censoring refs}.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/double-interval-censor}
-  \caption{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
+  \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
 \end{figure}
 
 The second element is truncation.
@@ -75,7 +75,7 @@ Truncation is a large problem within CIS, especially when individuals move to th
 Consider that, based on the estimates in \cref{E-ATACCC}, the median length of an episode is 14 days \todo{check this number} we would not expect many episodes to last the 28 days that can occur between tests.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/truncation}
-  \caption{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
+  \caption[Truncation in CIS data]{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
 This combination of censoring and truncation are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}.
@@ -189,7 +189,7 @@ complement of $\Omega^C_i$.
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
 \todo[inline]{Fix the impossible region to fill out the RHS; label the inadmissible regoin.}
-\caption{Admissible, $\alpha_i$, inadmissible, $\beta_i$ and
+\caption[Admissible, inadmissible, and untruncated infections]{Admissible, $\alpha_i$, inadmissible, $\beta_i$ and
 untruncated, $\Omega_i^C$ regions for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
@@ -388,7 +388,7 @@ This prior expresses extreme scepticism in estimates from previous studies, such
 Therefore, I favour a prior which is weakly informative on the survival, or an informative prior used to represent our belief from the \cref{E-ATACCC} analysis.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/flat-prior}
-  \caption{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
+  \caption[Uninformative priors for the hazard]{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
 \end{figure}
 
 Instead, I propose a weakly informative prior Beta(0.1, 1.9), linking to previous literature for a point estimate and showing vague figures.
@@ -398,7 +398,7 @@ The central estimate reflects previous estimates that the median duration is in 
 The prior predictive distribution on the survival time implied by this prior is very vague (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/vague-prior}
-  \caption{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
+  \caption[Weakly informative priors for the hazard]{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
 \end{figure}
 
 \subsection{Informative priors}
@@ -417,7 +417,7 @@ There are two reasons to increase the uncertainty relative to the \cref{E-ATACCC
 First, we do not have full belief in these estimates due to the extrapolation problem previously discussed.
 Second, the results may not fully generalise between the two studies.
 The samples are tested using different laboratories, with different PCR machines, and hence may not have the same characteristics~\autocite{punchooLaboratory}.
-The study participants, while both targeting a general population cohort, may also differ because ATACCC recruited through NHS Test and Trace while CIS recruited by sampling from a database of addresses (see \cref{E-intro:sec:data}).
+The study participants, while both targeting a general population cohort, may also differ because ATACCC recruited through NHS Test and Trace while CIS recruited by sampling from a database of addresses (see \cref{E-intro:sec:studies}).
 
 The first step, approximating the \cref{E-ATACCC} posterior hazard as a multivariate normal on the logit scale, is done through the method of moments.
 The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC}).
@@ -480,7 +480,7 @@ Individual $i$'s duration of positivity, $D_i$, is then an independent draw from
 
 \begin{figure}
   \todo[inline]{Find figure comparing different duration distributions}
-  \caption{Comparison of the duration distributions, see main text for details of how each is derived. \label{perf-test:fig:duration-dist}}
+  \caption[Comparison of duration distributions]{Comparison of the duration distributions, see main text for details of how each is derived. \label{perf-test:fig:duration-dist}}
 \end{figure}
 
 Sarah uses survival analysis to estimate the duration from CIS data.
@@ -547,18 +547,18 @@ Points to make:
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/survival-results}
-  \caption{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:survival-results}}
+  \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:survival-results}}
 \end{figure}
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/hazard-results}
-  \caption{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:hazard-results}}
+  \caption[Comparison of hazard estimates under different priors]{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. \label{perf-test:fig:hazard-results}}
 \end{figure}
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/hazard-pairs-results}
   \todo[inline]{Probably scrap this (correlation) plot}
-  \caption{Correlation between posterior estimates of the hazard when using the vague prior. \label{perf-test:fig:hazard-pairs-results}}
+  \caption[Correlation between hazard estimates]{Correlation between posterior estimates of the hazard when using the vague prior. \label{perf-test:fig:hazard-pairs-results}}
 \end{figure}
 
 \section{Discussion} \label{perf-test:sec:discussion}
