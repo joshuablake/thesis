@@ -54,9 +54,11 @@ False negatives are not dealt with and left to \cref{E-imperf-test}.
 
 Double interval censoring is a special case of censoring, a common and well-studied challenge encountered when dealing with survival data.
 An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
-Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa (see \cref{perf-test:fig:double-interval-censor}); \textcite{bogaertsSurvival} review many statistical methods applicable to interval censoring.
-\emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem, reviewed by \textcite{sunStatisticala}.
-In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored.
+Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa (see \cref{perf-test:fig:double-interval-censor}).
+Left and right censoring can be viewed as special cases of interval censoring where the lower bound is negative infinity or the upper bound is positive infinity respectively.
+\emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem.
+Doubly censored data is more challenging to handle because the initiating event time and duration must be jointly modelled~\autocite[and references therein]{liSemiparametric}.
+In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored; approaches are reviewd by \textcite{sunAnalysis,bogaertsSurvival}.
 \todo{double interval censoring refs}.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/double-interval-censor}
@@ -78,18 +80,32 @@ Consider that, based on the estimates in \cref{E-ATACCC}, the median length of a
   \caption[Truncation in CIS data]{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
-This combination of censoring and truncation are rarely encountered in biomedical data\todo{refs to combining double interval censoring with truncation}.
-A more familiar setting for this work 
+Few studies consider the combination of both double censoring (of any type) and truncation, especially within the human biostatistical literature, although the general frameworks developed in the 1970s do include this case \autocites{turnbullEmpirical}{dempsterMaximum}.
+Perhaps the main use of human studies involving double interval censoring and truncation are those estimating the incubation period of HIV/AIDS (the incubation period in that context is the time from being infected with HIV to developing AIDS symptoms).
+\Textcite{sunEmpirical,bacchettiNonparametric} discuss this, however, they use a conditional likelihood approach which conditions on both the truncation (a selection effect) and the time of the infection.
+The reason for the latter is unclear, perhaps though the infection time is considered to provide little information on the incubation period~\citePersonalComms{Nick Jewell}; a similar approach is taken by \textcite{shenNonparametric}.
+Within CIS, detected infections are more likely to occur in the period where there is frequent testing, and hence conditioning on the infection time ovestates the probability of the infection being detected.
+Furthermore, the interpretation and justification of a conditional likelihood approach is unclear in a Bayesian framework.
+
+A more common setting for this work is estimating the survival time of bird nests~\autocite{heiseyABCs}.
+In this setting, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring; this is the approach I adopt in \cref{perf-test:sec:model}.
+In bird nesting studies, the visit times are normally global (all nests could be detected on the same days), while in CIS each individual has their own visit schedule; with global visit times the probability of being detected is the same for all participants in the study, simplifying the likelihood.
+
+I use a Bayesian framework for this analysis for two reasons.
+First, asymptotic results for the variance of frequentist estimators do not apply.
+\todo{Check why asymptotic results don't work}
+This complicates the construction of confidence intervals, which may require bootstrapping or other computationally intensive methods.
+Second, a prior naturally allows the inclusion information from previous studies, such as that from \cref{E-ATACCC}, and/or a belief that the hazard changes smoothly (see \cref{perf-test:sec:parameters-priors}).
+These assumptions may be needed to combat the lack of information in the data due to the trunction~\autocite{caoBias}.
+
+Bayesian methods have previously been applied to nest survival~\autocites{heBayesiana}{heBayesian}{caoModeling} but these augment the data with unobserved times of infection; this would be computationally expensive with the large number of episodes in CIS (>4000 in the time period considered in the main analysis of \cref{E-imperf-test}).
+I develop a Bayesian framework where there is no explicit data augmentation, allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster), as only limited resources are available within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
 
 While this chapter sets up the framework for analysing the CIS data, applying the method to CIS data requires modelling false negatives.
 That is the subject of \cref{E-imperf-test} and hence a full description of the data and processing of it is deferred to that chapter.
 
 \section{Modelling the duration}\label{perf-test:sec:model}
-In this section, I develop a model accounting for double interval censoring and truncation, building on prior work in both biomedical and bird nesting studies.
-The arbitrary nature of truncation in CIS, where each individual has a unique truncation pattern and is neither simple left nor right truncation, has not previously been explored in the literature.
-Furthermore, I explore a Bayesian framework where the amount of explicit data augmentation is limited allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster), as only limited resources are available within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-Therefore, unlike most Bayesian methods (e.g.: \textcite{heBayesiana}, \textcite{heBayesian}, and \textcite{caoModeling}) we avoid augmenting the data with unobserved times of infection or any information on the truncated infections; this would be computationally expensive with the large number of episodes in CIS (>4000 in the time period considered in the main analysis of \cref{E-imperf-test}).
-
+In this section, I develop a model accounting for double interval censoring and truncation.
 I model only individuals with detected episodes.
 This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}.
 The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.

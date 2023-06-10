@@ -30,24 +30,24 @@ In particular, I estimate a very high probability of the episode lasting less th
 Comparing the simulated and CIS data suggested that this is due to the high frequency of single positive episodes in the CIS data.
 A single positive episode is one in which the episode contains exactly one positive test, intuitively these cause short estimates because there is no lower bound on the length of time the episode lasts.
 Furthermore, due to the truncation, there is little or no ability to upper bound the number of very short episodes because these would almost all be missed.
-\Textcite{shenNonparametrica} (building on \textcite{panNote}) showed that in a related setting that the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
+\Textcite{shenNonparametrica} (building on \textcite{panNote}) showed, in a related setting, that the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
 While the result is not directly applicable, and can not simply be extended, to the more complex scenario within CIS, it does still build an intuition that these single positive episodes could be causing this issue.
 Furthermore, simulations building in even a few excess single positive episodes led to problematic estimation even within the CIS setting.
 \todo[inline]{My previous application and discussion of \textcite{shenNonparametrica} in this setting would need quite significant reworking to include; is this needed or is this slightly hand-wavy discussion enough?}
 
 Discussion and interrogation of the data led me to believe the most likely reason for an unexpectedly high number of single positive episodes was the presence of false negatives, meaning a false negative as a negative test result returned by a detectable individual.
 This can occur for a variety of reasons, most commonly that an individual swabs themselves poorly and hence the concentration of virus on the swab is too low to be detected by the PCR process (see \cref{E-intro:sec:PCR}).
-\todo{Ref to section in intro explaining PCR testing}
 Plausibly, a variety of other reasons could also lead to a false negative such as logistical issues or mislabelling of samples.
 Consideration of these reasons are beyond the scope of this thesis, and I group all of these possible reasons together.
 
 There are two strands of evidence that support this hypothesis.
 First, it is well known that PCR testing can return false negatives \todo{refs for sensitivity} and I needed to explicitly include these in the viral load model of \cref{E-ATACCC}; they can be directly observed within CIS as intermittent negatives (see below).
-Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate})
+Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate}).
+
+\todo[inline]{These next two paragraphs are kinda disjointed but not sure how to bring them in}
 
 \emph{Intermittent negatives} are the clearest example of a false negative.
 An intermittent negative is when an individual tests negative but tested positive previously and subsequently.
-I explicitly included these in the viral load model of \cref{E-ATACCC} but ignored in \cref{E-perf-test}.
 Intermittent negatives are stripped out when creating the dataset used for all duration analyses in this chapter (as described in \cref{E-episode-def}), but demonstrate that false negatives do occur.
 
 Whether a future positive is part of the same episode of a reinfection is not always trivial; I rely on a process developed previously by Sarah Walker, see \cref{E-episode-def}.
@@ -196,8 +196,6 @@ Hence, the replacement for $1 - p_{it}$ is:
 
 \section{Simulation study results} \label{imperf-test:sec:sim-study-results}
 
-Each test that was previously positive, is now positive with probability $p_\text{sens}$.
-
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
 \subsection{Data}
@@ -230,5 +228,9 @@ Might include hyperparameters etc or assumptions made?
 \section{Discussion} \label{imperf-test:sec:discussion}
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
+
+\ifSubfilesClassLoaded{
+  \listoftodos
+}{}
 
 \end{document}
