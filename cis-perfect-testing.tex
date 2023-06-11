@@ -13,8 +13,6 @@ Flat priors can be unintentionally very informative, and hence weakly informativ
 Through a simulation study (see \cref{perf-test:sec:simulation-study}), I show that these methods perform well, and in this context are not sensitive to model or prior specification.
 However, application in reality must account for misclassification bias, the subject of \cref{E-imperf-test}.
 
-\todo[inline]{Need to discuss interpretation of the ghosts in the individual model, why this is hard, and the implications for setting a prior here. Not even clear in simulation what it should be!}
-
 \section{Problem description and approach} \label{perf-test:sec:problem}
 
 \todo[inline]{Some of these definitions likely need to be moved elsewhere as they will be needed in other chapters (e.g. ATACCC analysis).}
@@ -55,7 +53,6 @@ Left and right censoring can be viewed as special cases of interval censoring wh
 \emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem.
 Doubly censored data is more challenging to handle because the initiating event time and duration must be jointly modelled~\autocite[and references therein]{liSemiparametric}.
 In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored; approaches are reviewd by \textcite{sunAnalysis,bogaertsSurvival}.
-\todo{double interval censoring refs}.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/double-interval-censor}
   \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
@@ -77,7 +74,7 @@ Consider that, based on the estimates in \cref{E-ATACCC}, the median length of a
 \end{figure}
 
 Few studies consider the combination of both double censoring (of any type) and truncation, especially within the human biostatistical literature, although the general frameworks developed in the 1970s do include this case \autocites{turnbullEmpirical}{dempsterMaximum}.
-Perhaps the main use of human studies involving double interval censoring and truncation are those estimating the incubation period of HIV/AIDS (the incubation period in that context is the time from being infected with HIV to developing AIDS symptoms).
+Perhaps the main use of human studies involving both double censoring and truncation are those estimating the incubation period of HIV/AIDS (the incubation period in that context is the time from being infected with HIV to developing AIDS symptoms).
 \Textcite{sunEmpirical,bacchettiNonparametric} discuss this, however, they use a conditional likelihood approach which conditions on both the truncation (a selection effect) and the time of the infection.
 The reason for the latter is unclear, perhaps though the infection time is considered to provide little information on the incubation period~\citePersonalComms{Nick Jewell}; a similar approach is taken by \textcite{shenNonparametric}.
 Within CIS, detected infections are more likely to occur in the period where there is frequent testing, and hence conditioning on the infection time ovestates the probability of the infection being detected.
@@ -100,19 +97,8 @@ I develop a Bayesian framework where there is no explicit data augmentation, all
 While this chapter sets up the framework for analysing the CIS data, applying the method to CIS data requires modelling false negatives.
 That is the subject of \cref{E-imperf-test} and hence a full description of the data and processing of it is deferred to that chapter.
 
-\section{Modelling the duration}\label{perf-test:sec:model}
-In this section, I develop a model accounting for double interval censoring and truncation.
-I model only individuals with detected episodes.
-This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}.
-The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
-The modelling approach then corrects for this selection bias, by considering \emph{ghost} infections that occur in identical individuals but were truncated.
-
-I have also considered a model including individuals without any observed episodes (see \cref{E-appendix:total-model} for details).
-These individuals may have truncated episodes or may not have been infected at all.
-However, I found that this model has little difference in results while increasing computational complexity and requiring assumptions on reinfection (discussed in \cref{perf-test:sec:discussion}).
-
-\subsection{Notation and assumptions}
-\todo[inline]{Some of this will possibly be defined elsewhere, such as in the introduction where CIS is introduced}
+\section{Notation and assumptions}
+\todo[inline]{To be rewritten with some or all moved to the thesis introduction. Currently just being left here as a reference.}
 \begin{itemize}
 \item
   Time is discrete: $1, \dots, T$.
@@ -151,19 +137,33 @@ However, I found that this model has little difference in results while increasi
   upper-case random variables is used.
 \end{itemize}
 
+\section{Modelling the duration}\label{perf-test:sec:model}
+
 \subsection{Likelihood}\label{perf-test:sec:likelihood}
 
-Episode $i$ can be fully characterised by the pair $(b_i, e_i)$ of
-start and end dates of the episode, which belong to the state space
-$T \times T$. If the individual in which the episode occurs is tested
-between $b_i$ and $e_i$ (inclusive), then we observe the episode,
-otherwise it is truncated. For the $i$th episode that we observed, we
-consider there is an unknown number, $n_{it}$, where $(b, e)$ are
-drawn from the same distribution as those that lead to episode $i$,
-and occur in an (imagined) individual identical to $i$, but were
-truncated. Episodes are also truncated if there is no negative test
-prior to their start, that is, the individual the episode occurred in
-had no tests before $b_i$. The truncated episodes are the ghosts of $i$.
+In this section, I develop a model accounting for double interval censoring and truncation.
+I model only individuals with detected episodes.
+This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}.
+The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
+The modelling approach then corrects for this selection bias, by considering \emph{ghost} infections that occur in identical individuals but were truncated.
+
+I have also considered a model including individuals without any observed episodes (see \cref{E-appendix:total-model} for details).
+These individuals may have truncated episodes or may not have been infected at all.
+However, I found that this model has little difference in results while increasing computational complexity and requiring assumptions on reinfection (discussed in \cref{perf-test:sec:discussion}).
+
+Ghost infections are a mathematical convenience to correct for truncated episodes.
+Consider that we draw many episodes independently, from a distribution of infection times and durations with all other characteristics identical (most notably the testing schedule and, if the model were to be extended, other covariates of the individual in which the episode occurs).
+This probability space is equivalent to any two random variables which can be over any two of infection time, recovery time, and duration.
+Conceptually, we will condition on the total number of episodes drawn (which is unknown) corresponding to the detected episode $i$, $n_i$, then consider the probability of observing exactly one episode and this episode occurring in the interval censored ranges observed (being \emph{admissible}), and then finally marginalise over $n_i$ to form the likelihood contribution for this episode.
+
+Unfortunately, there is no clean interpretation of the number of ghost episodes in terms of real-world quantities; in this sense, it is a pure model parameter.
+In reality, there is only one individual who is identical to the individual in which the episode occurs in all relevant ways.
+Even within the simulation study (see \cref{perf-test:sec:simulation-study}) these are not infections that are simulated, and understanding the ground truth number of ghost infections is not straightforward.
+
+To formalise this, note that all relevant information about episode $i$ can be fully characterised by the (unobserved) pair $(b_i, e_i)$ of start and end dates of the episode, which belong to the state space $T \times T$.
+If the individual in which the episode occurs is tested between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is a ghost episode.
+For the $i$th detected episode, assume that there are $n_{it}$ ghost episodes.
+Further, we discard episodes if there is no negative test prior to their start, and hence also view any such episodes as ghost episodes.
 
 \Textcite{heiseyModelling} provide a framework for formalising this.
 Define three sets which partition the space of possible infection and
