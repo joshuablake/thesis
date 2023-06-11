@@ -23,8 +23,8 @@ plot = ggplot() +
     test_lines(pos_test_dates, TRUE) +
     test_lines(neg_test_dates, FALSE) +
     theme_minimal() +
-    scale_x_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(-10, 60)) +
-    scale_y_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(0, 60)) +
+    scale_x_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(-10, 60), expand = c(0, 0)) +
+    scale_y_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(0, 60), expand = c(0, 0)) +
     labs(
         x = "Infection time",
         y = "Recovery time",
