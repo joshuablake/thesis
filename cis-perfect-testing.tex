@@ -25,7 +25,7 @@ An individual could have multiple infections, and hence I refer to \emph{infecti
 
 I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \cref{E-imperf-test}).
 Episode $i$'s \emph{duration of positivity}, $D_i$ is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
-Note that the relationship between positivity (\ie the result of a PCR test) and infectiousness (\ie an individual's ability to pass on the virus) is complex, \todo{ref for PCR pos vs infectiousness} and beyond the scope of this thesis.
+Note that the relationship between positivity (\ie the result of a PCR test) and infectiousness (\ie an individual's ability to pass on the virus) is complex~\autocites{lascolaViral}{singanayagamDuration}, and beyond the scope of this thesis.
 I define an episode as starting at time $B_i$ and ends at $E_i$, hence $D_i = E_i - B_i + 1$.
 
 An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
@@ -200,12 +200,10 @@ complement of $\Omega^C_i$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
-\todo[inline]{Fix the impossible region to fill out the RHS; label the inadmissible regoin.}
-\caption[Admissible, inadmissible, and untruncated infections]{Admissible, $\alpha_i$, inadmissible, $\beta_i$ and
-untruncated, $\Omega_i^C$ regions for an episode $i$ in an
+\caption[Admissible, inadmissible, and untruncated infections]{The regions (as defined in the main text) for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
-and 28. \label{perf-test:fig:partitionSpace}}
+and 28. Inadmissible region is unshaded. The black (impossible) region is because it does not make sense for recovery to occur prior to infection. \label{perf-test:fig:partitionSpace}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually
