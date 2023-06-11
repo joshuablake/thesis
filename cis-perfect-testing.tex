@@ -160,18 +160,13 @@ Unfortunately, there is no clean interpretation of the number of ghost episodes 
 In reality, there is only one individual who is identical to the individual in which the episode occurs in all relevant ways.
 Even within the simulation study (see \cref{perf-test:sec:simulation-study}) these are not infections that are simulated, and understanding the ground truth number of ghost infections is not straightforward.
 
-To formalise this, note that all relevant information about episode $i$ can be fully characterised by the (unobserved) pair $(b_i, e_i)$ of start and end dates of the episode, which belong to the state space $T \times T$.
+To formalise this, within the framework of \textcite{heiseyModelling}, note that all relevant information about episode $i$ can be fully characterised by the (unobserved) pair $(b_i, e_i)$ of start and end dates of the episode, which belong to the state space $T \times T$.
 If the individual in which the episode occurs is tested between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is a ghost episode.
 For the $i$th detected episode, assume that there are $n_{it}$ ghost episodes.
 Further, we discard episodes if there is no negative test prior to their start, and hence also view any such episodes as ghost episodes.
 
-\Textcite{heiseyModelling} provide a framework for formalising this.
-Define three sets which partition the space of possible infection and
-recovery (\ie: are strict subsets of $T \times T$) given the
-observations associated with episode $i$ (graphically shown in Figure
-\ref{perf-test:fig:partitionSpace}). Each episode, whether observed or not, must
-fall into one of these three classes with a probability that is a
-function of $\theta$ (see section \ref{perf-test:sec:likelihood}).
+To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), based on the observations associated with episode $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
+Each episode, whether observed or not, must fall into one of these three classes with a probability that is a function of $\theta$.
 
 \begin{itemize}
 \item
