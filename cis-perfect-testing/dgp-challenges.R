@@ -23,7 +23,7 @@ plot_testing_schedule = function(x, break_modifier = 0) {
   
   inf_boxes = x %>% 
     filter(type %in% c("infected", "recovered")) %>% 
-    pivot_wider(individual, names_from = type, values_from = time)
+    pivot_wider(id_cols = individual, names_from = type, values_from = time)
   
   x_breaks = c((0:3) * 7, (1:5) * 28) - break_modifier
   
