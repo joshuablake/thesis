@@ -18,13 +18,13 @@ Plausible estimates of the duration distribution are produced, however, they req
 
 \section{The problem} \label{imperf-test:sec:problem}
 
-Applying the method of \cref{perf-test} to CIS data gave implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
-In particular, I estimate a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work (\eg: \autocite{cevikShedding}).
+Applying the method of \cref{E-perf-test} to CIS data gave implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
+In particular, I estimate a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work~\autocite[e.g.:][]{cevikShedding}.
 
 \begin{figure}
   \centering %\includegraphic{}
   \todo[inline]{Figure showing estimates without false negatives}
-  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{perf-test} gives implausibly short estimates. \label{imperf-test:fig:problem-cis-estimates}}
+  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{E-perf-test} gives implausibly short estimates. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
 Comparing the simulated and CIS data suggested that this is due to the high frequency of single positive episodes in the CIS data.
@@ -64,15 +64,15 @@ Denoting the test sensitivity by $\psens$, we replace the deterministic $y_i(t)$
   \end{cases} 
 \end{equation}
 with $y_i(t)$ still only defined for $t \in t_i$.
-
 However, an implausibly low value for $\psens$ is required to reproduce the rate of single positive episodes seen in CIS.
 \todo[inline]{Figure demonstrating this and references to what reasonable test sensitivities are, including the estimate from the ATACCC chapter}
+
 More plausibly, the rate of false negatives varies over the course of an episode.
 False negatives are more likely to occur when the viral load of an individual is low, because there is less virus in their body to be sampled.
 Following the short, initial period of growth, viral load largely declines monotonically with time (see \cref{E-ATACCC}).
-\todo{Reference to ATCCCC chapter, although maybe the specific section with this result would be better}
 This suggests that a model with a declining test sensitivity as a function of time since infection might be more suitable.
 
+\todo[inline]{Next paragraph needs editing for clarity}
 Examination of the CIS data also provides evidence for a declining test sensitivity.
 We can approximately bound the test sensitivity by assuming that all intermittent negatives are false negatives, that the negative following the last positive in an episode could be either a true or false negative, and all other negatives are true negatives.
 The point estimate for the test sensitivity is the true positives / (true positives + false negatives).
@@ -90,7 +90,7 @@ I propose the following model for test sensitivity compatible with \cref{imperf-
     0.5 &t > 50
   \end{cases}
 \end{equation}
-where $t$ is the time in days since infection
+where $t$ is the time in days since infection.
 Simulated data using this test sensitivity is much more similar to the data, while being more plausible than very low probabilities of false negatives.
 \todo{Figure comparing the variable test sensitivity to fixed and CIS data}
 
@@ -98,40 +98,29 @@ Simulated data using this test sensitivity is much more similar to the data, whi
 
 \section{Modelling} \label{imperf-test:sec:modelling}
 
-In this section, we relax the assumption of perfect testing to allow
-some false negatives. We use a fairly simplified model to ensure the
-likelihood is tractable. This requires modifying both $p_{ia}$ to
-allow for the episode possibly being longer than observed, and
-$p_{it}$ to allow for additional episodes being missed.
+In this section, I introduce false negatives into the model of \cref{E-perf-test:sec:model}.
+We use a fairly simplified model to ensure the likelihood is tractable.
+This requires modifying both $p_{ia}$ to allow for the episode possibly being longer than observed, and $p_{it}$ to allow for additional episodes being missed.
 
 The model is only extended to model a constant test sensitivity.
 Further work is required to introduce the more realistic varying test sensitivity (discussed in \cref{imperf-test:sec:discussion}).
 
 \subsection{Modifying \texorpdfstring{$p_{ia}$}{pia}} \label{modifying-p_ia}
 
-The idea when modifying $p_{ia}$ is to allow for the negative test
-following the last positive to be either a true or false negative. If it
-is a true negative, then we have a bound on the length of the episode.
-If it is a false negative, then we consider the episode's length
-right-censored. The likelihood contribution for an episode is then a
-mixture of these two scenarios, with the mixture probability determined
-by the test sensitivity.
+The idea when modifying $p_{ia}$ is to allow for the negative test following the last positive to be either a true or false negative.
+If it is a true negative, then we have a bound on the length of the episode.
+If it is a false negative, then we consider the episode's length right-censored.
+The likelihood contribution for an episode is then a mixture of these two scenarios, with the mixture probability determined by the test sensitivity.
 
-For tractability, we assume that the tests bounding the start of the
-infection ($l_i^{(b)}$ and $r_i^{(b)}$) are true results and hence
-$b_i \in [l_i^{(b)}, r_i^{(b)}]$. Furthermore, we consider the tests
-only between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive
-tests providing a lower bound on the length of the episode). Denote
-these tests by
-$t'_i = \{ t \in t_i : r_i^{(b)} \leq t \leq l_i^{(e)} \}$ and their
-results by $y_i'$. We know that the test results at times in $t_i'$
-are either true positives or false negatives. By definition, the test at
-$r_i^{(e)}$ is a false negative if and only if $e_i > r_i^{(e)}$. We
-proceed by considering the two cases.
+For tractability, we assume that the tests bounding the start of the infection ($l_i^{(b)}$ and $r_i^{(b)}$) are true results and hence $b_i \in [l_i^{(b)}, r_i^{(b)}]$.
+Furthermore, we consider the tests only between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive tests providing a lower bound on the length of the episode).
+Denote these tests by $t'_i = \{ t \in t_i : r_i^{(b)} \leq t \leq l_i^{(e)} \}$ and their results by $y_i'$.
+We know that the test results at times in $t_i'$ are either true positives or false negatives. 
+By definition, the test at $r_i^{(e)}$ is a false negative if and only if $e_i > r_i^{(e)}$.
+We proceed by considering the two cases.
 
-First, if $e_i \leq r_i^{(e)}$. In this case, the test at
-$r_i^{(e)}$ is a true negative, as are all other tests not in
-$t_i'$, and these occur with probability 1.
+First, if $e_i \leq r_i^{(e)}$.
+In this case, the test at $r_i^{(e)}$ is a true negative, as are all other tests not in $t_i'$, and these occur with probability 1.
 \begin{align}
 &p(y_i', e_i \leq r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
 &= p(y_i', l_i^{(e)} \leq e_i \leq r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\ % &\text{as no false positives}
@@ -139,10 +128,8 @@ $t_i'$, and these occur with probability 1.
 &= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) \right)
 \end{align}
 
-Second, if $e_i > r_i^{(e)}$. In this case, the test at
-$r_i^{(e)}$ is a false negative, occurring with probability
-$(1 - p_\text{sens})$, and we have no upper bound on the end of the
-infection.
+Second, if $e_i > r_i^{(e)}$.
+In this case, the test at $r_i^{(e)}$ is a false negative, occurring with probability $(1 - p_\text{sens})$, and we have no upper bound on the end of the infection.
 \begin{align}
 &p(y_i', e_i > r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
 &= p(y_i \mid e_i > r_i^{(e)}, t_i, b_i, p_\text{sens}, \theta) p(e_i > r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\
