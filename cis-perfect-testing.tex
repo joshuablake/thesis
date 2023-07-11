@@ -382,81 +382,41 @@ Informative priors might also be attractive, and allow the incorporation of the 
 The hazard is convenient to use because it is unconstrained except in the interval [0, 1]\todo{ref where been used previously}.
 Survival needs to be monotonic.
 
-\subsection{Independent priors}
-Take the standard assumption of independent priors on each parameter.
-A Beta distribution is then a natural choice for each hazard parameter, $\lambda_t$, as they are probabilities.
+\subsection{Independent priors} \label{perf-test:sec:independent-priors}
+Start with the standard assumption of independent priors on each parameter.
+Each hazard, $\lambda_t$, is a (conditional) probability, and hence a Beta distribution is a natural choice.
 
-An uninformative prior would be $\lambda_t \dist \Beta(\alpha, \alpha)$, with common choices of $\alpha$ being $0.5$, Jeffreys' Prior, or $1$, a flat prior.
-Flat or uninformative priors on the hazard lead to very informative priors on the survival, favouring short survival times (see \cref{perf-test:fig:flat-prior}).
-The sharp falloff can be seen by noting that these priors have expectation 0.5, hence $\E(S(t)) = \E \left( \prod_{i=1}^{t-1} (1-\lambda_t) \right) = 0.5^{t-1}$ which decreases very quickly.
+Uninformative Beta priors, with equal parameters, on the hazard are problematic in this context.
+An uninformative prior would be of the form $\lambda_t \dist \Beta(\alpha, \alpha)$.
+Commonly, $\alpha$ is chosen to be $0.5$ (Jeffreys' Prior) or $1$ (a uniform prior).
+Even though these priors are uninformative or flat on the hazard, they become highly informative on the survival. 
+Specifically, they tend to favour shorter survival times (see \cref{perf-test:fig:flat-prior}).
+An intuitive explanation of this can be drawn from the fact that these types of priors have an expected value of 0.5.
+The expected survival time, $\E \left( \prod_{i=1}^{t-1} (1-\lambda_t) \right)$, is therefore equal to $0.5^{t-1}$, a quantity that declines rapidly.
 This prior expresses extreme scepticism in estimates from previous studies, such as \cref{E-ATACCC} and the meta-analysis of \textcite{cevikShedding}.
-Therefore, I favour a prior which is weakly informative on the survival, or an informative prior used to represent our belief from the \cref{E-ATACCC} analysis.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/flat-prior}
   \caption[Uninformative priors for the hazard]{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
 \end{figure}
 
-Instead, I propose a weakly informative prior Beta(0.1, 1.9), linking to previous literature for a point estimate and showing vague figures.
-
-A Beta(0.1, 1.9) prior has mean 0.05 while not having much information (the informativeness of a Beta distribution is related to $\alpha + \beta$ which here equals 2, the same as the flat prior case); and the central 95\% mass is 0.00--0.47.
-The central estimate reflects previous estimates that the median duration is in the range 15--20 days~\autocite{cevikShedding}, which would translate to hazard of around 0.05.
-The prior predictive distribution on the survival time implied by this prior is very vague (see \cref{perf-test:fig:vague-prior}).
+Instead, I propose a weakly informative prior Beta(0.1, 1.9), which has mean 0.05 and minimal information.
+The amount of information in a Beta distribution is related to the sum of its parameters.
+Here, the sum equals 2, the same as the flat prior case.
+The central 95\% probability mass of Beta(0.1, 1.9) is 0.00--0.47.
+The central estimate, of 0.05, is in line with previous estimates that the median duration is in the range 15--20 days~\autocite{cevikShedding}.
+This prior gives a very vague prior predictive distribution on the survival time (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/vague-prior}
   \caption[Weakly informative priors for the hazard]{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
 \end{figure}
 
-\subsection{Informative priors}
-
-The analysis in \cref{E-ATACCC} can be used to provide prior information for the CIS analysis.
-In particular, the ATACCC study frequently samples individuals early in the infection.
-Therefore, the survival distribution from that analysis should be reliable through this period.
-CIS can then inform the remainder of the distribution where the previous analysis is based on extrapolation.
-
-The model structure assumed in \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard.
-It is important to propagate this correlation as part of the prior uncertainty into the present analysis.
-We do this in two parts: first, approximate the previous posterior estimate of the logit-hazard as a multivariate normal (which can be viewed as an approximation of Markov melding~\autocite{goudieJoining}).
-Then, use a Beta process to add additional uncertainty to this.
-
-There are two reasons to increase the uncertainty relative to the \cref{E-ATACCC} posterior.
-First, we do not have full belief in these estimates due to the extrapolation problem previously discussed.
-Second, the results may not fully generalise between the two studies.
-The samples are tested using different laboratories, with different PCR machines, and hence may not have the same characteristics~\autocite{punchooLaboratory}.
-The study participants, while both targeting a general population cohort, may also differ because ATACCC recruited through NHS Test and Trace while CIS recruited by sampling from a database of addresses (see \cref{E-intro:sec:studies}).
-
-The first step, approximating the \cref{E-ATACCC} posterior hazard as a multivariate normal on the logit scale, is done through the method of moments.
-The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC}).
-
-The discrete Beta process prior generalises the form of prior used in the previous section, allowing the central estimate of the hazard to vary over time~\autocites{ibrahimBayesian}{sunStatisticala}.
-\begin{align}
-  \lambda_t &\sim \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
-  \alpha_t &= c_t h_t + \alpha_0 \\
-  \beta_t &= c_t (1 - h_t) + \beta_0
-\end{align}
-where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point estimate of the hazard at time $t$ from ATACCC.
-An intuition for what this distribution represents can be gained by considering the conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
-If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
-
 
 \subsection{Smoothing priors}
-The final class of priors I consider are ones that aim to favour smoothness in the hazard.
-This is the Bayesian equivalent of a penalised likelihood, used frequently in the non-parametric frequentist setting (\eg: \autocite{bacchettiNonparametric}).
-Biological and epidemiological considerations mean that it would be surprising if the hazard varied significantly day-to-day.
-A smoothing prior encodes this information within the analysis.
 
-I consider two forms of smoothing priors: first-order and second-order random walks on the logit-hazard, $\logit(\lambda_t) = \log(\lambda_t) - \log(1 - \lambda_t)$.
-The logit transformation maps from the $[0, 1]$ interval to the full real line.
-\todo{The logit intro will be in the previous subsection}
-Random walks are a very common form of smoothing prior for discrete time.
-
-A first-order random walk prior encodes that the hazard should be constant with some random changes at each time step.
-\begin{align}
-  \logit\lambda_{t+1} &= \logit\lambda_t + \sigma \epsilon_t &\text{for $t \geq 1$} \\
-  \epsilon_t &\dist N(0, 1) \\
-  \logit \lambda_1 &\dist N(\mu_1, \sigma_1^2)
-\end{align}
-The hyperparameter $\sigma$ controls the standard deviation of the random walk, and the prior on $\lambda_1$ gives the starting point of the random walk.
-Smaller values favour a smoothing process.
+Smoothing priors encode the biological consideration that the hazard should not vary significantly from day-to-day.
+It is the Bayesian equivalent of a penalised likelihood, used frequently in the non-parametric frequentist setting (\eg: \autocite{bacchettiNonparametric}).
+Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
+I use a second-order random walk because it is simple and can produce sensible prior predictive distributions.
 
 A second-order random walk prior encodes that the hazard should be linearly changing with some random changes at each time step.
 \begin{align}
@@ -469,6 +429,40 @@ A second-order random walk prior encodes that the hazard should be linearly chan
   \logit \lambda_1 &\dist N(\mu_1, \sigma_1^2)
 \end{align}
 The hyperparameter $\sigma$ controls the standard deviation of the random walk, and there is an additional prior on $\epsilon_1$ for the initial gradient of the change in the hazard.
+
+\subsection{Model combination priors}
+
+I propose combining the information in CIS with \cref{E-ATACCC}'s analysis by using \cref{E-ATACCC}'s analysis as a prior for this analysis.
+This is desirable because the ATACCC study frequently samples individuals early in the infection.
+Therefore, that analysis's estimate of the survival distribution in the early infection period should be reliable.
+In the later infection period, the ATACCC study has fewer observations and hence the estimates are less reliable; CIS can then inform the posterior in this region.
+
+In the combination methodology, two aspects need to be considered.
+Firstly, the model structure from \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard, which should be propagated into this analysis.
+That is, the prior used in this analysis cannot be independent across the hazards.
+Secondly, the uncertainty in the estimates from \cref{E-ATACCC} should be increased for this analysis.
+The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see \todo{insert location}).
+Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
+I form the prior for the combination in two steps.
+
+I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as a multivariate normal on the logit scale.
+This can be viewed as an approximation of Markov melding~\autocite{goudieJoining}.
+Using a multivariate normal, as opposed to multiple univariate distribution, ensures that the correlation between the hazards is preserved.
+The logit transformation maps from the $[0, 1]$ interval to the full real line.
+To estimate the parameters of the multivariate normal, I use the method of moments.
+The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC}).
+
+Having approximated the estimate as a multivariate normal, I add additional uncertainty using a discrete Beta process.
+The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocites{ibrahimBayesian}{sunStatisticala}.
+It is:
+\begin{align}
+  \lambda_t &\sim \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
+  \alpha_t &= c_t h_t + \alpha_0 \\
+  \beta_t &= c_t (1 - h_t) + \beta_0
+\end{align}
+where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point estimate of the hazard at time $t$ from ATACCC.
+An intuition for what this distribution represents can be gained by considering the conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
+If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
 
 \section{Simulation study} \label{perf-test:sec:simulation-study}
 
