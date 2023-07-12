@@ -432,7 +432,7 @@ The hyperparameter $\sigma$ controls the standard deviation of the random walk, 
 
 \subsection{Model combination priors}
 
-I propose combining the information in CIS with \cref{E-ATACCC}'s analysis by using \cref{E-ATACCC}'s analysis as a prior for this analysis.
+I propose combining the information in CIS with \cref{E-ATACCC}'s analysis by using \cref{E-ATACCC}'s analysis as a prior for the CIS analysis.
 This is desirable because the ATACCC study frequently samples individuals early in the infection.
 Therefore, that analysis's estimate of the survival distribution in the early infection period should be reliable.
 In the later infection period, the ATACCC study has fewer observations and hence the estimates are less reliable; CIS can then inform the posterior in this region.
@@ -452,6 +452,7 @@ The logit transformation maps from the $[0, 1]$ interval to the full real line.
 To estimate the parameters of the multivariate normal, I use the method of moments.
 The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC}).
 
+
 Having approximated the estimate as a multivariate normal, I add additional uncertainty using a discrete Beta process.
 The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocites{ibrahimBayesian}{sunStatisticala}.
 It is:
@@ -469,24 +470,26 @@ If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$,
 \subsection{Setup}
 
 I simulate each individual enrolled in CIS who was tested at least once between ?? and ??.
-All their tests between ?? and ?? are considered, and each individual is assigned an infection time $B_i$ uniformly at random from ??.
-\todo{check dates and periods}
+The individuals' testing schedules are exactly as observed in CIS.
+The infection times and durations of positivity are simulated.
+From this, a set of test results can be generated.
+\todo{check dates}
 
-I take as the ground truth distribution for duration of positivity a combination of the estimates from \cref{E-ATACCC} with an inflated tail to represent what is seen within CIS.
-The tail is modified based on Sarah Walker's (unpublished) work based on CIS data.
-These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
-Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
+To generate the durations, an assumption is required for the distribution of the duration of positivity.
+I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to represent what is seen within CIS.
+The tail is modified based on an unpublished analysis of CIS data by Sarah Walker (described below).
+Sarah uses survival analysis to estimate the duration from CIS data.
+The initiating event is assumed known as the time the episode was detected.
+The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
+A flexible, spline-based form is assumed for the baseline survival function~\autocite{roystonSTPM,roystonFlexible} with covariates introduced via proportional odds.
+By not accounting for either the truncation or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
 
 \begin{figure}
   \todo[inline]{Find figure comparing different duration distributions}
   \caption[Comparison of duration distributions]{Comparison of the duration distributions, see main text for details of how each is derived. \label{perf-test:fig:duration-dist}}
 \end{figure}
 
-Sarah uses survival analysis to estimate the duration from CIS data.
-The initiating event is assumed known as the time the episode was detected.
-The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
-A flexible, spline-based form is assumed for the baseline survival function~\autocite{roystonSTPM,roystonFlexible} with covariates introduced via proportional odds.
-By not accounting for either the truncation or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
+
 
 % \todo[inline]{The following seems important to justify why we can't just use these estimates but is also basically an aside}
 % We know of two biases introduced from this analysis.
@@ -496,7 +499,7 @@ By not accounting for either the truncation or the interval censoring of the ini
 % This means that our dataset has fewer short positive episodes than in the population as a whole, and that the sample used to run the survival analysis is biased towards people with longer positive episodes.
 % This will bias the clearance curves upwards (making the estimates too long).}~\autocite{cisMethodsONS}.
 
-To form the duration distribution used in the simulation, we combine these two estimates.
+To form the duration distribution used in the simulation, we combine the two estimates.
 The first 30 days of the distribution is proportional to the ATACCC estimate, with the rest proportional to this CIS-based estimates.
 % The CIS-based estimates are shifted 3 days in order to make this smooth; this counteracts the above bias of missing the start of the infection (for times above 30 days, the other bias, missing short infections, is negligible). ERR... I'M NOT DOING THIS ANYMORE OH NO!!
 Denote by $f_A(t)$ the distribution function estimated from ATACCC and $f_C(t)$ that from these CIS-based estimates.
@@ -508,14 +511,18 @@ f_S'(t) = \begin{cases}
 \end{cases}
 $$
 Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
+These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
+Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
 
-The first day individual $i$ can be positive is their day of infection, $B_i$, the last day is $E_i = B_i + D_i - 1$ where $D_i$ is the duration of positivity for individual $i$, drawn from $f_S$.
-Any test between $B_i$ and $E_i$ (inclusive) is positive; outside this period, all tests are negative.
+Individual $i$ is first detectable on their day of infection, $B_i$.
+$B_i$ is drawn uniformly between 100 days prior to the first day of testing included and the final day of testing included (inclusive).
+$i$ is detectable up to and including the last day of infection, $E_i = B_i + D_i - 1$, where $D_i$ is the duration of positivity for individual $i$, drawn from $f_S$.
+Therefore, tests between $B_i$ and $E_i$ (inclusive) are positive, and all other tests are negative.
 
-I then filter the episodes to replicate the process which will be used when working with the CIS data.
+I then replicate the process used when working with the CIS data by filtering the episodes.
 First, discard any episodes where there are no positive tests as they are never detected.
 Next, discard any episodes where there are no negative tests prior to the first positive; since there is no lower bound on their infection time, they contain little information, this selection effect was included when constructing $p_{it}$.
-Finally, of those remaining episodes, we select a random subset to match the number of episodes in the simulation to the number of episodes in the modelling cohort.
+Finally, of those remaining episodes, select a random subset to match the number of episodes in the simulation to the number of episodes in the modelling cohort.
 The last step is required because everyone is infected in the simulation which does not happen in reality.
 
 For each preserved infection episode, calculate $(l_i^{(b)}, r_i^{b}, l_i^{(e)}, r_i^{(e)})$ by taking the day after the last negative prior to any positives, the first positive, the last positive, and the day before the negative following the last positive respectively.
