@@ -1,7 +1,7 @@
 \documentclass[thesis.tex]{subfiles}
 
 \begin{document}
-\chapter{Survival analysis with perfect testing} \label{perf-test}
+\chapter{Estimating duration with infrequent testing} \label{perf-test}
 
 The estimation of incidence from prevalence is sensitive to the tail of the duration distribution.
 In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC data, however, this study suffered from a small sample size and only 20 days of follow-up.
@@ -15,21 +15,9 @@ However, application in reality must account for misclassification bias, the sub
 
 \section{Problem description and approach} \label{perf-test:sec:problem}
 
-\todo[inline]{Some of these definitions likely need to be moved elsewhere as they will be needed in other chapters (e.g. ATACCC analysis).}
-Consider the CIS data.
-It consists of a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
-We wish to estimate the distribution of time for which an individual is positive for.
-An individual could have multiple infections, and hence I refer to \emph{infection episodes}.
-
-I define an individual as \emph{detectable} if they would test positive if tested, in the absence of misclassification error (which is dealt with in \cref{E-imperf-test}).
-Episode $i$'s \emph{duration of positivity}, $D_i$ is the number of days that they are detectable for; I use time discretised to days, therefore, the duration is at least 1 day.
-Note that the relationship between positivity (\ie the result of a PCR test) and infectiousness (\ie an individual's ability to pass on the virus) is complex~\autocites{lascolaViral}{singanayagamDuration}, and beyond the scope of this thesis.
-I define an episode as starting at time $B_i$ and ends at $E_i$, hence $D_i = E_i - B_i + 1$.
-
-An episode is \emph{detected} when they test positive at least once, if this occurs; episode $i$ is detected at time $t$ if and only if: $i$ is detectable at $t$, $i$ is tested at $t$, and the test returns positive (a false negative does not occur).
-
-The survival time function, parameterised by $\theta$, is the probability that an episode lasts at least $t$ days: $S_\theta(t) = \prob(D_i \geq t \mid B_i = b, \theta)$, where $D_i$ and $B_i$ are the duration and starting time of episode $i$ respectively.
-I make the standard assumption that $D_i$ and $B_i$ are independent and hence: $S_\theta(t) = \prob(D_i \geq t \mid \theta)$.
+The CIS infrequently tests each individual, with tests occurring either weekly or monthly (see \todo{refer to section with CIS intro}).
+The infrequent testing complicates analysis of the data because the infection episode endpoints (start and end times) are known imprecisely, furthermore, infection episodes can be undetected.
+This chapter develops a method to account for the infrequent testing; this section describes my approach and its background within the relevant statistical literature.
 
 I utilise survival analysis for analysing this data.
 Survival analysis is the area of statistics concerned with estimating the distribution of the times between events.
@@ -38,39 +26,43 @@ In the context of this thesis, the distribution to estimate is that of duration 
 The \emph{initiating event} is when the duration starts, \ie becoming detectable.
 The \emph{terminating event} is when the duration ends, \ie becoming no longer detectable.
 
-The reason for this approach, over modelling biomarkers (as in \cref{E-ATACCC}) is due to two factors.
-First, the large sample size in CIS means that approaches where the number of parameters scales with the number of observed infections (as it does with random effect based approaches) would be computationally challenging; this challenge is compounded by the data being stored in a trusted research environment limiting the computational power and tools available.
-Second, the data is coarse with most episodes having only a single positive test; therefore, the trajectory of the viral load would not be well-identified in an individual.
-Combined, these factors outweighed the downside of survival analysis only considering the binary outcome (\ie positive or negative) or the test rather than the additional information on the viral load.
+This chapter uses survival analysis rather than the biomarker approach in \autoref{E-ATACCC} for computational efficiency and data limitations.
+Computational efficiency is an issue because the number of random effects in the biomarker approach scales with the number of detected infection episodes.
+Therefore, the biomarker approach would be computationally challenging with the large sample size in CIS.
+The computational challenge is compounded by the data being stored in a trusted research environment limiting the computational power and tools available.
+CIS data is limited by the infrequent sampling, meaning that most episodes have only a single positive test.
+With only a single positive test, there is no information on the viral load trajectory, and hence the random effects are unlikely to be well-identified.
+The biomarker approach does use more information per sample, taking into account the viral load as well as the binary test result (\ie whether the result is positive or negative), however, this is unlikely to be sufficient to overcome these problems.
 
-The methods in this chapter deal with modelling two elements of the data-generating process, double interval censoring and truncation.
-False negatives are not dealt with and left to \cref{E-imperf-test}.
-
-Double interval censoring is a special case of censoring, a common and well-studied challenge encountered when dealing with survival data.
-An event is \emph{censored} if the time of the event can only be bounded; it is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
-Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa (see \cref{perf-test:fig:double-interval-censor}).
-Left and right censoring can be viewed as special cases of interval censoring where the lower bound is negative infinity or the upper bound is positive infinity respectively.
-\emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem.
-Doubly censored data is more challenging to handle because the initiating event time and duration must be jointly modelled~\autocite[and references therein]{liSemiparametric}.
-In CIS, we have \emph{double interval censoring} meaning that both the initiating and the terminating events are interval censored; approaches are reviewd by \textcite{sunAnalysis,bogaertsSurvival}.
-\begin{figure}
-  \centering \includegraphics{cis-perfect-testing/double-interval-censor}
-  \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
-\end{figure}
-
-The second element is truncation.
-Truncation occurs because we do not observe some episodes: an episode can occur between tests and hence the episode is never detected (see \cref{perf-test:fig:truncation}).
-We do not know how many infections we do not detect.
-Failure to model truncation will lead to estimating too long durations because the detected episodes are a biased sample with a longer duration.
-To see why they are shorter, consider the undetected infection in the bottom of \cref{perf-test:fig:truncation}.
-This individual was infected at time 33 for 10 days.
-If instead there infection was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
-
-Truncation is a large problem within CIS, especially when individuals move to the more infrequent testing schedule (described in \cref{E-intro:sec:cis}).
-Consider that, based on the estimates in \cref{E-ATACCC}, the median length of an episode is 14 days \todo{check this number} we would not expect many episodes to last the 28 days that can occur between tests.
+The first complication is that infections episodes can be undetected, meaning no there are no positive tests associated with them.
+This happens when an episode starts and ends between tests (see \cref{perf-test:fig:truncation}).
+For these undetected episodes, there is no information on them meaning that we do not even know how many of them occurred.
+Undetected episodes are important to account for because they are systematically shorter than detected episodes.
+To see why this is the case, consider the undetected infection in the bottom of \cref{perf-test:fig:truncation}.
+The infection episode depicted begins at time 33 and has a 10-day duration.
+If the duration was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
+Undetected infections are a large problem in CIS because individuals are tested rarely compared to the duration of an infection episode, particularly when tested only every 28 days.
+However, we do still know the testing schedule of the individual as they are in the CIS cohort.
+Undetected events where we have some data on the events in which these events occur is an unusual situtation.
+Far more common is that there is no data on these events, a situation known as \emph{truncation}.
+A situation that is particularly relevant is \emph{left truncation}, when only events lasting a minimum amount of time are observed.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/truncation}
   \caption[Truncation in CIS data]{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
+\end{figure}
+
+The second complication is that the endpoints of detected infection episodes are known imprecisely.
+An event, such as an endpoint, is known \emph{censored} if the time of the event can only be bounded
+Censored data is present in almost all survival analyses.
+An event is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
+%Left and right censoring can be viewed as special cases of interval censoring where the lower bound is negative infinity or the upper bound is positive infinity respectively.
+Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa (see \cref{perf-test:fig:double-interval-censor}).
+\emph{Double censoring} means that both the originating and terminating event are censored, and is also a well-studied problem.
+Doubly censored data is more challenging to handle because the initiating event time and duration must be jointly modelled~\autocite[and references therein]{liSemiparametric}.
+CIS data is \emph{double interval censoring}, meaning that both the initiating and the terminating events are interval censored; approaches for double interval censoring are reviewed by \textcite{sunAnalysis,bogaertsSurvival}.
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/double-interval-censor}
+  \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
 \end{figure}
 
 Few studies consider the combination of both double censoring (of any type) and truncation, especially within the human biostatistical literature, although the general frameworks developed in the 1970s do include this case \autocites{turnbullEmpirical}{dempsterMaximum}.
@@ -84,6 +76,7 @@ A more common setting for this work is estimating the survival time of bird nest
 In this setting, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring; this is the approach I adopt in \cref{perf-test:sec:model}.
 In bird nesting studies, the visit times are normally global (all nests could be detected on the same days), while in CIS each individual has their own visit schedule; with global visit times the probability of being detected is the same for all participants in the study, simplifying the likelihood.
 
+I perform inference within the Bayesian paradigm.
 I use a Bayesian framework for this analysis for two reasons.
 First, asymptotic results for the variance of frequentist estimators do not apply.
 \todo{Check why asymptotic results don't work}
@@ -93,9 +86,6 @@ These assumptions may be needed to combat the lack of information in the data du
 
 Bayesian methods have previously been applied to nest survival~\autocites{heBayesiana}{heBayesian}{caoModeling} but these augment the data with unobserved times of infection; this would be computationally expensive with the large number of episodes in CIS (>4000 in the time period considered in the main analysis of \cref{E-imperf-test}).
 I develop a Bayesian framework where there is no explicit data augmentation, allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster), as only limited resources are available within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
-
-While this chapter sets up the framework for analysing the CIS data, applying the method to CIS data requires modelling false negatives.
-That is the subject of \cref{E-imperf-test} and hence a full description of the data and processing of it is deferred to that chapter.
 
 \section{Notation and assumptions}
 \todo[inline]{To be rewritten with some or all moved to the thesis introduction. Currently just being left here as a reference.}
