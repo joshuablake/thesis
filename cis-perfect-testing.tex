@@ -1,6 +1,46 @@
 \documentclass[thesis.tex]{subfiles}
 
 \begin{document}
+\section{Definitions}
+\todo[inline]{These will be defined elsewhere in the thesis, but are here so that this draft is understandable}
+\begin{itemize}
+\item
+  Time is discrete: $1, \dots, T$.
+\item
+  We observe $n_a$ episodes of infection, indexed by $i$.
+\item
+  The $i$ in which episode $i$ occurs is tested at times
+  $t_i = \{ t_{i,1}, \dots, t_{i,m_i} \}$.
+\item
+  Each observed episode has an unknown start of infection time $b_i$
+  and end of infection time $e_i$ (the first and last day that the
+  individual would test positive due to this episode respectively).
+  These are realisations of the random variables $B_i$ and $E_i$
+  respectively.
+\item
+  The duration of the infection is the number of days for which an
+  individual tests positive, $D_i = E_i - B_i + 1$.
+\item
+  We assume that, for all episodes $i$, $D_i$ is iid and independent
+  of the time of the infection. Define the survival function
+  $\prob(D_i \geq t \mid B_i = b, \theta) = \prob(D_i \geq t \mid \theta) = S_\theta(t)$,
+  where $\theta$ are the parameters controlling the survival
+  distribution (the discussion in this document is valid regardless of
+  the model specified for $S_\theta$ and hence we consider $\theta$
+  as an arbitrary vector of parameters).
+\item
+  The beginning of episode $i$ is known to occur in the interval
+  $[l_i^{(b)}, r_i^{(b)}]$, and similarly for the end of the infection
+  in $[l_i^{(e)}, r_i^{(e)}]$.
+\item
+  $y_i(t)$ for $t \in t_i$ is a binary indicator giving the test
+  result for individual $i$ at time $t$. Under the perfect testing
+  assumption, $y_i(t) = 1$ if and only if $b_i \leq t \leq e_i$.
+\item
+  Throughout, the convention that lower-case letters are realisations of
+  upper-case random variables is used.
+\end{itemize}
+
 \chapter{Estimating duration with infrequent testing} \label{perf-test}
 
 The estimation of incidence from prevalence is sensitive to the tail of the duration distribution.
@@ -15,11 +55,11 @@ However, application in reality must account for misclassification bias, the sub
 
 \section{Problem description and approach} \label{perf-test:sec:problem}
 
-The CIS infrequently tests each individual, with tests occurring either weekly or monthly (see \todo{refer to section with CIS intro}).
+The CIS infrequently tests each individual, with tests occurring either weekly or monthly (see\todo{refer to section with CIS intro}).
 The infrequent testing complicates analysis of the data because the infection episode endpoints (start and end times) are known imprecisely, furthermore, infection episodes can be undetected.
 This chapter develops a method to account for the infrequent testing; this section describes my approach and its background within the relevant statistical literature.
 
-I utilise survival analysis for analysing this data.
+I use survival analysis for analysing this data.
 Survival analysis is the area of statistics concerned with estimating the distribution of the times between events.
 It is broadly applicable to many domains, such as the time-to-failure for a mechanical system or the effect of a treatment on time spent in hospital.
 In the context of this thesis, the distribution to estimate is that of duration of positivity.
@@ -65,67 +105,33 @@ CIS data is \emph{double interval censoring}, meaning that both the initiating a
   \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
 \end{figure}
 
-Few studies consider the combination of both double censoring (of any type) and truncation, especially within the human biostatistical literature, although the general frameworks developed in the 1970s do include this case \autocites{turnbullEmpirical}{dempsterMaximum}.
-Perhaps the main use of human studies involving both double censoring and truncation are those estimating the incubation period of HIV/AIDS (the incubation period in that context is the time from being infected with HIV to developing AIDS symptoms).
-\Textcite{sunEmpirical,bacchettiNonparametric} discuss this, however, they use a conditional likelihood approach which conditions on both the truncation (a selection effect) and the time of the infection.
-The reason for the latter is unclear, perhaps though the infection time is considered to provide little information on the incubation period~\citePersonalComms{Nick Jewell}; a similar approach is taken by \textcite{shenNonparametric}.
-Within CIS, detected infections are more likely to occur in the period where there is frequent testing, and hence conditioning on the infection time ovestates the probability of the infection being detected.
-Furthermore, the interpretation and justification of a conditional likelihood approach is unclear in a Bayesian framework.
+Few studies consider the combination of both double censoring (of any type) and undetected or truncated events
+This is especially true within the human biostatistical literature.
+This literature though did generate general theoretical frameworks in the 1970s which include double censored and truncated case~\autocites{turnbullEmpirical}{dempsterMaximum}.
+Double censored and truncated data do occur in studies estimating the time from being infected with HIV to being diagnosed with AIDS (the disease that HIV causes) such as \textcite{sunEmpirical,bacchettiNonparametric}.
+These studies (and some others~\autocite{shenNonparametric}) take a conditional likelihood approach, conditioning on both the truncation (a selection effect) and the period where the infection is censored to\todo{clumsy sentence}.
+They condition on the time of infection is because this information was considered to provide little information on the incubation period~\citePersonalComms{Nick Jewell}.
+The period in which the infection is detected in CIS is likely to be in the period where there is frequent testing.
+Therefore, conditioning on this period overstates the probability of the infection being detected.
 
-A more common setting for this work is estimating the survival time of bird nests~\autocite{heiseyABCs}.
-In this setting, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring; this is the approach I adopt in \cref{perf-test:sec:model}.
+Double interval censored and truncated data frequently occur when estimating the survival time of bird nests~\autocite{heiseyABCs}.
+In this context, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring.
 In bird nesting studies, the visit times are normally global (all nests could be detected on the same days), while in CIS each individual has their own visit schedule; with global visit times the probability of being detected is the same for all participants in the study, simplifying the likelihood.
+I use this framework as the basis of the model I derive in \cref{perf-test:sec:model}.
 
-I perform inference within the Bayesian paradigm.
-I use a Bayesian framework for this analysis for two reasons.
+I perform inference within the Bayesian paradigm for two reasons.
 First, asymptotic results for the variance of frequentist estimators do not apply.
 \todo{Check why asymptotic results don't work}
 This complicates the construction of confidence intervals, which may require bootstrapping or other computationally intensive methods.
 Second, a prior naturally allows the inclusion information from previous studies, such as that from \cref{E-ATACCC}, and/or a belief that the hazard changes smoothly (see \cref{perf-test:sec:parameters-priors}).
-These assumptions may be needed to combat the lack of information in the data due to the trunction~\autocite{caoBias}.
+These assumptions may be needed to combat the lack of information in the data due to the undetected episodes~\autocite{caoBias}.
+They can also be viewed as combining the information from the two analyses (see \cref{perf-test:sec:informative-priors}).
 
-Bayesian methods have previously been applied to nest survival~\autocites{heBayesiana}{heBayesian}{caoModeling} but these augment the data with unobserved times of infection; this would be computationally expensive with the large number of episodes in CIS (>4000 in the time period considered in the main analysis of \cref{E-imperf-test}).
-I develop a Bayesian framework where there is no explicit data augmentation, allowing the method to scale to the large number of episodes present in CIS without requiring vast computing resources (such as a high-performance cluster), as only limited resources are available within the secure research service (SRS, a form of trusted research environment) where the CIS data is held.
+Bayesian methods have previously been applied to nest survival~\autocites{heBayesiana}{heBayesian}{caoModeling}.
+These methods augment the data with the unobserved times of infection, creating a parameter per detected infection.
+This would be many parameters for CIS (which has over 4000 in the time period considered in the main analysis of \cref{E-imperf-test}) and therefore computationally expensive.
+I develop a Bayesian framework where there is no explicit data augmentation, allowing the method to scale to the large number of episodes present in CIS.
 
-\section{Notation and assumptions}
-\todo[inline]{To be rewritten with some or all moved to the thesis introduction. Currently just being left here as a reference.}
-\begin{itemize}
-\item
-  Time is discrete: $1, \dots, T$.
-\item
-  We observe $n_a$ episodes of infection, indexed by $i$.
-\item
-  The $i$ in which episode $i$ occurs is tested at times
-  $t_i = \{ t_{i,1}, \dots, t_{i,m_i} \}$.
-\item
-  Each observed episode has an unknown start of infection time $b_i$
-  and end of infection time $e_i$ (the first and last day that the
-  individual would test positive due to this episode respectively).
-  These are realisations of the random variables $B_i$ and $E_i$
-  respectively.
-\item
-  The duration of the infection is the number of days for which an
-  individual tests positive, $D_i = E_i - B_i + 1$.
-\item
-  We assume that, for all episodes $i$, $D_i$ is iid and independent
-  of the time of the infection. Define the survival function
-  $\prob(D_i \geq t \mid B_i = b, \theta) = \prob(D_i \geq t \mid \theta) = S_\theta(t)$,
-  where $\theta$ are the parameters controlling the survival
-  distribution (the discussion in this document is valid regardless of
-  the model specified for $S_\theta$ and hence we consider $\theta$
-  as an arbitrary vector of parameters).
-\item
-  The beginning of episode $i$ is known to occur in the interval
-  $[l_i^{(b)}, r_i^{(b)}]$, and similarly for the end of the infection
-  in $[l_i^{(e)}, r_i^{(e)}]$.
-\item
-  $y_i(t)$ for $t \in t_i$ is a binary indicator giving the test
-  result for individual $i$ at time $t$. Under the perfect testing
-  assumption, $y_i(t) = 1$ if and only if $b_i \leq t \leq e_i$.
-\item
-  Throughout, the convention that lower-case letters are realisations of
-  upper-case random variables is used.
-\end{itemize}
 
 \section{Modelling the duration}\label{perf-test:sec:model}
 
@@ -420,7 +426,7 @@ A second-order random walk prior encodes that the hazard should be linearly chan
 \end{align}
 The hyperparameter $\sigma$ controls the standard deviation of the random walk, and there is an additional prior on $\epsilon_1$ for the initial gradient of the change in the hazard.
 
-\subsection{Model combination priors}
+\subsection{Model combination priors} \label{perf-test:sec:informative-priors}
 
 I propose combining the information in CIS with \cref{E-ATACCC}'s analysis by using \cref{E-ATACCC}'s analysis as a prior for the CIS analysis.
 This is desirable because the ATACCC study frequently samples individuals early in the infection.
