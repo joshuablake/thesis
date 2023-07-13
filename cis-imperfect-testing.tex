@@ -55,15 +55,16 @@ However, up until the emergence of the Omicron variant, reinfections are rare, e
 
 \section{Simulating false negatives} \label{imperf-test:sec:simulate}
 
-The simplest model for false negatives is by introducing a constant \emph{test sensitivity}, a probability of returning a negative test even when detectable.
-Denoting the test sensitivity by $\psens$, we replace the deterministic $y_i(t)$ with a random binary variable such that:
+The simplest model for false negatives is a constant probability of returning a negative test even when detectable.
+The probability of testing positive given being detectable is known as the test sensitivity.
+The impact of a test sensitivity, $\psens$, less than perfect (\ie less than 100\%) is formalised by replacing the deterministic $y_i(t)$ with a random binary variable such that:
 \begin{equation}
-  \prob(y_i(t) = 1) \begin{cases}
+  \prob(Y_i(t) = 1) \begin{cases}
       \psens &b_i \leq t \leq e_i \\
       0 &\text{otherwise}
   \end{cases} 
 \end{equation}
-with $y_i(t)$ still only defined for $t \in t_i$.
+with $Y_i(t)$ still only defined for $t \in t_i$.
 However, an implausibly low value for $\psens$ is required to reproduce the rate of single positive episodes seen in CIS.
 \todo[inline]{Figure demonstrating this and references to what reasonable test sensitivities are, including the estimate from the ATACCC chapter}
 
@@ -98,22 +99,24 @@ Simulated data using this test sensitivity is much more similar to the data, whi
 
 \section{Modelling} \label{imperf-test:sec:modelling}
 
-In this section, I introduce false negatives into the model of \cref{E-perf-test:sec:model}.
-We use a fairly simplified model to ensure the likelihood is tractable.
+In this section, I introduce a simple model of false negatives into the model of \cref{E-perf-test:sec:model}.
+The simple model ensures the likelihood remains tractable.
 This requires modifying both $p_{ia}$ to allow for the episode possibly being longer than observed, and $p_{it}$ to allow for additional episodes being missed.
 
-The model is only extended to model a constant test sensitivity.
+A constant test sensitivity is assumed throughout this section.
 Further work is required to introduce the more realistic varying test sensitivity (discussed in \cref{imperf-test:sec:discussion}).
 
 \subsection{Modifying \texorpdfstring{$p_{ia}$}{pia}} \label{modifying-p_ia}
 
-The idea when modifying $p_{ia}$ is to allow for the negative test following the last positive to be either a true or false negative.
-If it is a true negative, then we have a bound on the length of the episode.
+I modify $p_{ia}$ to allow the negative test following the last positive to be a false negative.
 If it is a false negative, then we consider the episode's length right-censored.
-The likelihood contribution for an episode is then a mixture of these two scenarios, with the mixture probability determined by the test sensitivity.
+However, if it is in fact a true negative, then we are in the same case as before with a bound on the length of the episode.
+A mixture of these scenarios then forms the episode's likelihood contribution, with the mixture probability determined by the test sensitivity.
 
-For tractability, we assume that the tests bounding the start of the infection ($l_i^{(b)}$ and $r_i^{(b)}$) are true results and hence $b_i \in [l_i^{(b)}, r_i^{(b)}]$.
-Furthermore, we consider the tests only between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive tests providing a lower bound on the length of the episode).
+For tractability, assume that the negative test bounding the start of the infection, at $l_i^{(b)}$, is a true negative.
+This assumption is reasonable because the test sensitivity is high early in an infection, therefore $l_i^{(b)}$ is unlikely to be a false negative.
+\todo{Are these bounds correct?}
+We will consider only the tests between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive tests providing a lower bound on the length of the episode).
 Denote these tests by $t'_i = \{ t \in t_i : r_i^{(b)} \leq t \leq l_i^{(e)} \}$ and their results by $y_i'$.
 We know that the test results at times in $t_i'$ are either true positives or false negatives. 
 By definition, the test at $r_i^{(e)}$ is a false negative if and only if $e_i > r_i^{(e)}$.
@@ -149,7 +152,7 @@ Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
 \subsection{Modifying \texorpdfstring{$p_{it}$}{pit}} \label{modifying-p_it}
 
-With false negatives, an episode with can be truncated in the following
+With false negatives, an episode with can be undetected in the following
 ways:
 
 \begin{enumerate}
