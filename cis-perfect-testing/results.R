@@ -6,26 +6,48 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
-tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds"))
+tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
+    filter(
+        .width == 0.95, # Credible intervals are narrow anyway so only show 95%
+        survival_prior %in% c(
+            "ATACCC-new",
+            "RW2-infer-sigma",
+            "vague"
+        ),
+        missed_prior == "vague", # Use the reference prior on the number of missed infections as this doesn't matter
+    ) |>
+    mutate(
+        survival_prior = case_match(
+            survival_prior,
+            "ATACCC-new" ~ "Combination",
+            "RW2-infer-sigma" ~ "Smoothing (RW2)",
+            "vague" ~ "Independent (vague)"
+        ),
+    )
 truth = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
   filter(source == "Combined")
 
 theme_survival_time_series = function() {
     rlang::list2(
         standard_plot_theming(),
-        scale_x_continuous(breaks = 0:100*14, minor_breaks = 0:100*2, limits = c(0, 50))
+        scale_x_continuous(breaks = 0:100*14, minor_breaks = 0:100*2, limits = c(0, 100)),
+        labs(
+            x = "t",
+            fill = "Hazard prior",
+            colour = "Hazard prior"
+        )
     )
 }
 
 surv_plot = tbl_posteriors |>
-    filter(.width == 0.95, survival_prior != "ATACCC-old", missed_prior == "vague") |>
       ggplot() +
       ggdist::geom_lineribbon(
         aes(time, S, ymin = S.lower, ymax = S.upper, fill = survival_prior, colour = survival_prior),
         linewidth = 1, alpha = 0.3
     ) +
     geom_line(aes(time, S), data = truth) +
-    theme_survival_time_series()
+    theme_survival_time_series() +
+    ylab("S(t)")
 ggsave(
     filename = here::here("cis-perfect-testing/survival-results.png"),
     plot = surv_plot,
@@ -36,14 +58,14 @@ ggsave(
 )
 
 hazard_plot = tbl_posteriors |>
-    filter(.width == 0.95, survival_prior != "ATACCC-old", missed_prior == "vague") |>
       ggplot() +
       ggdist::geom_lineribbon(
         aes(time, lambda, ymin = lambda.lower, ymax = lambda.upper, fill = survival_prior, colour = survival_prior),
         linewidth = 1, alpha = 0.3
     ) +
     geom_line(aes(time, lambda), data = truth) +
-    theme_survival_time_series()
+    theme_survival_time_series() +
+    ylab("λ(t)")
 ggsave(
     filename = here::here("cis-perfect-testing/hazard-results.png"),
     plot = hazard_plot,
