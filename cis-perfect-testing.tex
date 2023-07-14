@@ -501,13 +501,6 @@ The final event is assumed interval-censored between the time of the final posit
 A flexible, spline-based form is assumed for the baseline survival function~\autocite{roystonSTPM,roystonFlexible} with covariates introduced via proportional odds.
 By not accounting for either the truncation or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
 
-\begin{figure}
-  \todo[inline]{Find figure comparing different duration distributions}
-  \caption[Comparison of duration distributions]{Comparison of the duration distributions, see main text for details of how each is derived. \label{perf-test:fig:duration-dist}}
-\end{figure}
-
-
-
 % \todo[inline]{The following seems important to justify why we can't just use these estimates but is also basically an aside}
 % We know of two biases introduced from this analysis.
 % \enquote{There is a bias in estimating the clearance distribution because the analysis used to estimate how long a person stays positive only starts from their first positive test.
@@ -530,6 +523,10 @@ $$
 Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
 These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
 Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/input-duration-dists}
+  \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. See main text for details of each analysis. \label{perf-test:fig:duration-dist}}
+\end{figure}
 
 Individual $i$ is first detectable on their day of infection, $B_i$.
 $B_i$ is drawn uniformly between 100 days prior to the first day of testing included and the final day of testing included (inclusive).
