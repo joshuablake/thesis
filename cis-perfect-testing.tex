@@ -123,9 +123,8 @@ In bird nesting studies, the visit times are normally global (all nests could be
 I use this framework as the basis of the model I derive in \cref{perf-test:sec:model}.
 
 I perform inference within the Bayesian paradigm for two reasons.
-First, asymptotic results for the variance of frequentist estimators do not apply.
-\todo{Check why asymptotic results don't work}
-This complicates the construction of confidence intervals, which may require bootstrapping or other computationally intensive methods.
+First, the standard methods for estimating the parameter's variance and covariance are poor.
+Commonly used methods are based on the Fisher information matrix or resampling, but neither have theoretical justification~\autocite[230]{sunAnalysis}.
 Second, a prior naturally allows the inclusion information from previous studies, such as that from \cref{E-ATACCC}, and/or a belief that the hazard changes smoothly (see \cref{perf-test:sec:parameters-priors}).
 These assumptions may be needed to combat the lack of information in the data due to the undetected episodes~\autocite{caoBias}.
 They can also be viewed as combining the information from the two analyses (see \cref{perf-test:sec:informative-priors}).
@@ -370,7 +369,7 @@ Under the prior $N_i \dist \text{NegBinom}(\mu, r)$:
 \section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
 The form of $S_\theta(t)$ is yet to be specified.
-As frequently observed in the literature\todo{refs for parameterisation}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
+As frequently observed in the literature~\autoref[e.g.:][]{heBayesian}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
 This is because the mass function must sum to one and the survival must be monotonically decreasing, while there are no constraints across multiple hazards.
 The only constraint on the hazard is to be in the interval $[0, 1]$, since they are probabilities.
 
@@ -486,11 +485,10 @@ If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$,
 
 \subsection{Setup}
 
-I simulate each individual enrolled in CIS who was tested at least once between ?? and ??.
+I simulate each individual enrolled in CIS who was tested at least once between 10th Oct 2020 and 6th Dec 2020 (inclusive, the same period used for the later analysis using real CIS data).
 The individuals' testing schedules are exactly as observed in CIS.
 The infection times and durations of positivity are simulated.
 From this, a set of test results can be generated.
-\todo{check dates}
 
 To generate the durations, an assumption is required for the distribution of the duration of positivity.
 I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to represent what is seen within CIS.
@@ -600,7 +598,7 @@ I have assumed constant and independent incidence (a priori).
 In this case, a sensitivity analysis (not shown) showed minimal impact on survival estimates.
 Furthermore, I chose a period where the incidence was approximately constant.
 However, this assumption could be important in other contexts, especially if the incidence is changing rapidly.
-The assumption of constant incidence can lead to biased estimates\todo{cite}.
+The assumption of constant incidence can lead to biased estimates~\autocite{degruttolaAnalysis}.
 
 \section{Conclusion} \label{perf-test:sec:conclusion}
 This chapter has shown the feasibility of estimating the survival function from a study with a CIS-like testing schedule.
