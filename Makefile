@@ -1,7 +1,7 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux
 IMPERF_DEPS = cis-imperfect-testing.tex
-PERF_DEPS = cis-perfect-testing.tex appendix-cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/hazard-pairs-results.png
+PERF_DEPS = cis-perfect-testing.tex appendix-cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/hazard-pairs-results.png cis-perfect-testing/ATACCC-approximation.png
 
 thesis.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
@@ -13,6 +13,12 @@ clean:
 	./latexrun --clean
 
 all: thesis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf
+
+#####################################################
+## ATACCC CHAPTER
+
+ATACCC-distributions/%:
+	rsync -aq bsu:~/COVID/ons-incidence/duration_estimation/SARS-CoV-2-viral-shedding-dynamics/for_thesis/ ATACCC-distributions/
 
 #####################################################
 ## IMPERFECT TESTING CHAPTER
@@ -30,6 +36,9 @@ cis-perfect-testing/regions_diag.png: cis-perfect-testing/regions_diag.R
 	Rscript $<
 
 cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png: cis-perfect-testing/dgp-challenges.R
+	Rscript $<
+
+cis-perfect-testing/ATACCC-approximation.png: cis-perfect-testing/ataccc-approximation.R ATACCC-distributions/posterior_samples.rds ATACCC-distributions/logit_hazard_mean.rds ATACCC-distributions/logit_hazard_cov.rds utils.R
 	Rscript $<
 
 cis-perfect-testing/%-prior.png: cis-perfect-testing/priors.R utils.R cisRuns-output/input_curves.rds
