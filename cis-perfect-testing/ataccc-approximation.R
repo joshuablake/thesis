@@ -5,7 +5,7 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
-n_lambdas_to_plot = 30
+n_lambdas_to_plot = 41
 
 output_file = function(..., read_from_RDS = TRUE) {
     filename = here::here("ATACCC-distributions", ...)
@@ -34,7 +34,7 @@ mvnorm_to_dist = function(draw_matrix) {
 logit_normal_mean = output_file("logit_hazard_mean.rds")
 logit_normal_cov = output_file("logit_hazard_cov.rds")
 tbl_logit_normal = mvtnorm::rmvnorm(
-    1e3,
+    20e3,
     mean = logit_normal_mean[1:n_lambdas_to_plot],
     sigma = logit_normal_cov[1:n_lambdas_to_plot,1:n_lambdas_to_plot]
 ) |>
@@ -47,10 +47,48 @@ tbl_priors = bind_rows(
         mutate(version = "Normal approx"),
 )
 
-tbl_priors |>
+p_surv = tbl_priors |>
+    filter(time <= n_lambdas_to_plot - 1) |>
     group_by(time, version) |>
     median_qi(S) |>
     ggplot(aes(time, S, ymin = .lower, ymax = .upper, colour = version,
                 fill = version)) +
     geom_lineribbon(alpha = 0.4) +
-    facet_wrap(~version)
+    standard_plot_theming()
+ggsave(
+    filename = here::here(
+        "cis-perfect-testing/ataccc-approximation-survival.png"
+    ),
+    plot = p_surv,
+    width = 15,
+    height = 9,
+    units = "cm",
+    dpi = 300
+)
+
+p_hazard = tbl_priors |>
+    filter(time <= 11) |>
+    ggplot(aes(lambda, colour = version)) +
+    geom_density() +
+    facet_wrap(~time, scales = "free", ncol = 4) +
+    standard_plot_theming() +
+    labs(
+        x = expression(lambda),
+        y = "Density",
+        colour = ""
+    ) +
+    theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle = 45)
+    )
+
+ggsave(
+    filename = here::here(
+        "cis-perfect-testing/ataccc-approximation-hazard.png"
+    ),
+    plot = p_hazard,
+    width = 15,
+    height = 20,
+    units = "cm",
+    dpi = 300
+)

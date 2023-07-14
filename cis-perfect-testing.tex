@@ -458,8 +458,17 @@ This can be viewed as an approximation of Markov melding~\autocite{goudieJoining
 Using a multivariate normal, as opposed to multiple univariate distribution, ensures that the correlation between the hazards is preserved.
 The logit transformation maps from the $[0, 1]$ interval to the full real line.
 To estimate the parameters of the multivariate normal, I use the method of moments.
-The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC}).
-\todo[inline]{Add figure showing the approximation is good}
+The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazard} and \cref{perf-test:fig:approximate-ATACCC-survival}).
+\begin{figure}
+  \thisfloatpagestyle{empty}
+  \vspace{-2.5cm}
+  \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{cis-perfect-testing/ataccc-approximation-hazard}}
+  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernal density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
+\end{figure}
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}
+  \caption[Approximating the ATACCC posterior survival as a logit-normal]{Comparison of the posterior estimate of the survival from \cref{E-ATACCC} and its approximation with a logit-normal distribution (median and central 95\% interval). The survival is a function of all the hazards up until that point, therefore the correlation between the hazards must be well-approximated to have these agree. \label{perf-test:fig:approximate-ATACCC-survival}}
+\end{figure}
 
 Having approximated the estimate as a multivariate normal, I add additional uncertainty using a discrete Beta process.
 The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocites{ibrahimBayesian}{sunStatisticala}.
@@ -599,7 +608,6 @@ The assumption of constant incidence can lead to biased estimates\todo{cite}.
 \section{Conclusion} \label{perf-test:sec:conclusion}
 This chapter has shown the feasibility of estimating the survival function from a study with a CIS-like testing schedule.
 While the infrequent testing schedule is not ideal, appropriate modelling can recover the true survival function well.
-Next, we will see that this model is inadequate when false negatives are present, such as they are within the CIS data.
 
 \ifSubfilesClassLoaded{
   \appendix
