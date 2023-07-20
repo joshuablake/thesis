@@ -11,7 +11,36 @@ Want to be clear between: incidence number and incidence rate.
 
 Incidence is
 
-Prevalence is
+Prevalence, $P_t$, is the number of people in a given population with an infection at time $t$.
+For SARS-CoV-2, it is hard to define what it means to be infected.
+An infected individual could mean: one that is infectious; one that is symptomatic; or one that, if they were tested, would return a positive PCR test (see \cref{E-SARS-CoV-2} for what each of these mean and their relation).
+In this thesis, prevalence is defined as the number of people in the population who would return a positive PCR test at time $t$.
+
+A \emph{prevalence survey} is a survey that tests a random sample of the population for the presence of an infection.
+Prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
+This thesis aims to infer the incidence rate from prevalence surveys, and therefore the likelihood of the results of the survey given the incidence is the most important quantity.
+At a time $t$ we sample $n_t$ individuals from the population of interest returning $x_t$ positive tests.
+Therefore, our likelihood contribution for each sample is $\p(x_t \mid n_t, \vec{I})$.
+We assume that the samples are independent of each other and $\vec{I}$, conditional on the true population prevalence at that time.
+Therefore, our overall likelihood is $\p(\vec{x} \mid \vec{n}, \vec{I}) = \int \p(\vec{P} \mid \vec{I}) \prod_t \p(x_t \mid n_t, \vec{P}_t) d\vec{P}$.
+
+Typically, the uncertainty in $\vec{P} \mid \vec{I}$ is negligible.
+This can be seen by considering the variance in $x_t$.
+$x_t$ is binomially distributed with parameters $n_t$ and $P_t / N$, where $N$ is the size of the population.
+Therefore:
+\begin{align}
+  \var\left( x_t \mid \vec{I} \right)
+    &= \var\left[\E\left( x_t \mid \vec{I}, \vec{P} \right) \mid \vec{I} \right] + \E\left[\var\left( x_t \mid \vec{I}, \vec{P} \right) \mid \vec{I} \right] \\
+    &= \var\left( n_t \frac{P_t}{N} \mid \vec{I} \right) + \E\left( n_t \frac{P_t}{N} \left(1 - \frac{P_t}{N} \right) \mid \vec{I} \right) \\
+    &= \left( \frac{n}{N} \right)^2 \var\left(P_t \mid \vec{I} \right) + \frac{n_t}{N} \E\left(P_t \mid \vec{I} \right)  - \frac{n_t}{N^2} \E\left(P_t^2 \mid \vec{I} \right)
+\end{align}
+since, in almost all settings, $n_t << N$ and $\E(P_t) \approx \var(P_t)$, the first term is negligible.
+Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
+This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{I}$, generally $\vec{P} = \E( \vec{P} \mid \vec{I})$.
+
+In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
+However, this is often a poor approximation.
+\emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
 
 Throughout this thesis, time will almost always be considered discrete.
 This is formed by grouping any data by the day of the test, and assuming both incidence and prevalence are constant over that day.
@@ -19,7 +48,7 @@ Most epidemiological data is only available at daily granularity or, when more g
 Furthermore, the variation in transmission that occurs due to daily patterns (\eg: sleep) is not of interest but complicates any analysis. 
 
 Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
-The time between being infected and first being detectable is short (see ), and therefore I often assume that $B_i$ is the same as the time of infection.
+The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
 I keep this assumption for the remainder of this chapter.
 
 The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
@@ -52,7 +81,7 @@ Backcalculation makes use of this relationship to estimate incidence from preval
 Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
 This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
 
-Robust, unbiased prevalence estimates already exist (see ), and incidence estimates are the most useful (see ).
+Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the most useful (see\todo{ref intro with importance of incidence}).
 Therefore, a large portion of this thesis concerns itself with estimating the duration of PCR positivity.
 
 Two approaches are commonly used to estimate durations\todo{cite Sweeney}: either modelling an underlying biomarker or modelling the duration directly.
