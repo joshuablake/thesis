@@ -240,7 +240,7 @@ First, we consider the improper prior $p(n_i) \propto 1/n_i$, this prior has sev
 Then, we consider a negative binomial distribution (which includes the geometric and Poisson distributions as a special and limiting case respectively).
 
 The prior $p(n_i) \propto 1/n_i$ means that the model coincides with the frequentist conditional likelihood approach, up to the priors on other parameters~\cites[section 4.2]{dempsterMaximum}{heiseyModelling}[section 8.7.5]{gelmanBayesian}.
-Furthermore, this is the reference prior for this quantity \autocite{heBayesiana}.
+Furthermore, this is the reference prior for this quantity~\autocite{heBayesiana}.
 Under this prior,
 $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \propto \sum_{n_i=1}^\infty p_{it}^{n_i-1} = 1/(1-p_{it})$.
 % (\protect\hyperlink{ref-dempsterMaximum}{Dempster, Laird, and
@@ -253,23 +253,23 @@ $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \propto \sum_{n_i=1}^\infty p_{i
 Now consider $N_i \dist \NegBin(\mu, r)$ using the
 mean/dispersion parameterisation of the negative binomial. Equivalently:
 \begin{align}
-N_i \mid \lambda &\dist \Poi(\lambda) \\
-\lambda &\dist \GamDist(a, b)
+N_i \mid \lambda_i &\dist \Poi(\lambda_i) \\
+\lambda_i &\dist \GamDist(a, b)
 \end{align}
 where $b = r / \mu$ and $a = r$.
 Hence:
 \begin{align}
 \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) 
-&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i \mid \lambda) p(\lambda) d\lambda \\
-&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} \frac{\lambda^{n_i} e^{-\lambda}}{n_i!} p(\lambda) d\lambda \\
-&= \int e^{-\lambda} \sum_{n_i=1}^\infty p_{it}^{n_i- 1} \frac{\lambda^{n_i-1}\lambda }{(n_i-1)!} p(\lambda) d\lambda \\
-&= \int e^{-\lambda} \lambda p(\lambda) \sum_{n_t=0}^\infty p_{it}^{n_t} \frac{\lambda^{n_t} }{n_t!} d\lambda &n_t = n_i - 1 \\
-&= \int e^{-\lambda} \lambda p(\lambda) e^{p_{it}\lambda} d\lambda &\text{Poisson pmf} \\
-&= \int e^{\lambda (p_{it} - 1)} \lambda p(\lambda) d\lambda \\
-&= \int e^{\lambda (p_{it} - 1)} \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \lambda d\lambda \\
+&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i \mid \lambda_i) p(\lambda_i) d\lambda_i \\
+&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} \frac{\lambda_i^{n_i} e^{-\lambda_i}}{n_i!} p(\lambda_i) d\lambda_i \\
+&= \int e^{-\lambda_i} \sum_{n_i=1}^\infty p_{it}^{n_i- 1} \frac{\lambda_i^{n_i-1}\lambda_i }{(n_i-1)!} p(\lambda_i) d\lambda_i \\
+&= \int e^{-\lambda_i} \lambda_i p(\lambda_i) \sum_{n_t=0}^\infty p_{it}^{n_t} \frac{\lambda_i^{n_t} }{n_t!} d\lambda_i &n_t = n_i - 1 \\
+&= \int e^{-\lambda_i} \lambda_i p(\lambda_i) e^{p_{it}\lambda_i} d\lambda_i &\text{Poisson pmf} \\
+&= \int e^{\lambda_i (p_{it} - 1)} \lambda_i p(\lambda_i) d\lambda_i \\
+&= \int e^{\lambda_i (p_{it} - 1)} \frac{b^a}{\Gamma(a)} \lambda_i^{a-1} e^{-b\lambda_i} \lambda_i d\lambda_i \\
 &= \frac{\Gamma(a+1)b^a}{\Gamma(a) (b+1-p_{it})^{a+1}} \\ 
   &\; \times \int \frac{(b+1-p_{it})^{a+1}}{\Gamma(a+1)} \\
-  &\; \lambda^{(a+1)-1} e^{-(b+1-p_{it})\lambda} d\lambda \\
+  &\; \lambda_i^{(a+1)-1} e^{-(b+1-p_{it})\lambda_i} d\lambda_i \\
 &= \frac{\Gamma(a+1)b^a}{\Gamma(a) (b+1-p_{it})^{a+1}} &\text{as gamma pdf} \\
 &\propto (b+1-p_{it})^{-(a+1)} \\
 &= (r/\mu+1-p_{it})^{-(r+1)} \\
@@ -279,14 +279,12 @@ Note that $r=0$ recovers the previous derivation (up to
 proportionality).
 
 The above allows us to sample from the posterior without needing to
-sample the $n_i$s. This is convenient because there are as many
-$n_i$s as episodes observed and hence is computationally costly to
-sample. Furthermore, each $n_i$ is a discrete parameter, and hence
+sample the $n_i$s, which is much more efficient due to the previously-discussed dimensionality issue.
+Furthermore, each $n_i$ is a discrete parameter, and hence
 cannot be sampled with widely-used inference algorithms such as Stan's Hamiltonian Monte Carlo (HMC)\todo{ref}.
 
-Having estimated the posterior of the other parameters, we might want to
-consider the posterior of $n_i$ (normally for diagnostic or model
-debugging purposes), which we can sample from the full conditional.
+The posterior of $n_i$, while inconvenient to sample from and not of epidemiological interest directly, can be useful for diagnostic or model debugging purposes (for example, see\todo{ref where I use this in the next chapter}).
+This posterior can be found by sampling from the full conditional.
 Specifically, for each posterior sample of $\theta$, we sample one
 draw from $n_i \mid \theta, y$ where $y$ represents all the data.
 
