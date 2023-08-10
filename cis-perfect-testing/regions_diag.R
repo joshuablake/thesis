@@ -34,8 +34,9 @@ plot = ggplot() +
     scale_fill_manual(
         values = c(
             "Admissible" = "purple",
-            "Truncated" = "Red",
-            "Impossible" = "black"
+            "Truncated" = "red",
+            "Impossible" = "black",
+            "Inadmissible" = "white"
         )
     ) +
     scale_colour_manual(
@@ -44,19 +45,31 @@ plot = ggplot() +
             "Negative" = "seagreen"
         )
     ) +
+    # Invisible rectangle to force the legend to show the "Inadmissible" colour
+    geom_rect(
+        aes(fill = "Inadmissible"),
+        xmin = -Inf, 
+        xmax = Inf, 
+        ymin = -Inf, 
+        ymax = Inf, 
+        alpha = 0, # invisible
+        key_glyph = "blank"
+    ) +
     geom_rect(
         aes(fill = "Truncated"),
         xmin = -Inf,
         xmax = 0,
         ymin = -Inf,
         ymax = Inf,
-        alpha = shade_alpha
+        alpha = shade_alpha,
+        key_glyph = "blank"
     ) +
     purrr::map2(
         all_test_dates + 1, dplyr::lead(all_test_dates) - 1,
         ~geom_polygon(
             aes(x = c(.x, .x, .y), y = c(.x, .y, .y), fill = "Truncated"),
             alpha = shade_alpha,
+            key_glyph = "blank"
         )
     ) +
     geom_polygon(
@@ -65,7 +78,8 @@ plot = ggplot() +
             x = c(0, 60, Inf),
             y = c(0, 60, 0)
         ),
-        alpha = shade_alpha
+        alpha = shade_alpha,
+        key_glyph = "blank"
     ) +
     geom_rect(
         aes(fill = "Impossible"),
@@ -73,7 +87,8 @@ plot = ggplot() +
         xmax = Inf,
         ymin = -Inf,
         ymax = 0,
-        alpha = shade_alpha
+        alpha = shade_alpha,
+        key_glyph = "blank"
     ) +
     geom_rect(
         aes(fill = "Admissible"),
@@ -86,7 +101,10 @@ plot = ggplot() +
     coord_fixed() +
     guides(
         fill = guide_legend(
-            override.aes = list(alpha = shade_alpha),
+            override.aes = list(
+                linetype = "solid",
+                colour = "black"
+            ),
         )
     ) +
     theme(
