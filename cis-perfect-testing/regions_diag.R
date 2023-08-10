@@ -37,6 +37,12 @@ plot = ggplot() +
             "Truncated" = "red",
             "Impossible" = "black",
             "Inadmissible" = "white"
+        ),
+        labels = c(
+            "Admissible" = "Admissible, α",
+            "Truncated" = bquote("Truncated, Ω"^C),
+            "Impossible" = "Impossible",
+            "Inadmissible" = "Inadmissible, β"
         )
     ) +
     scale_colour_manual(
