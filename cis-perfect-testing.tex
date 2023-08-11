@@ -70,7 +70,7 @@ If the duration was 24 days (or longer), the individual would still have been de
 Undetected infections are a large problem in CIS because the interval between tests is often 28 days (see\todo{ref section on the survey design}), large relative to the duration of an infection episode.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/truncation}
-  \caption[Truncation in CIS data]{Episodes data in CIS is truncated, meaning that an unknown number of infections are never detected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
+  \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
 The second complication is that the beginning and end times of detected infection episodes are known imprecisely.
@@ -154,7 +154,7 @@ I develop a Bayesian framework where there is no explicit data augmentation, all
 
 \subsection{Likelihood}\label{perf-test:sec:likelihood}
 
-In this section, I develop a model accounting for double interval censoring and truncation, modelling only individuals with detected episodes.
+In this section, I develop a model accounting for double interval censoring and undetected episodes, modelling only individuals with detected episodes.
 This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}; in particular, I adopt the framework of \textcite{heiseyModelling}.
 The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
 Previous studies consider the case where nothing was observed regarding individuals without a positive test (left truncation).
@@ -190,26 +190,26 @@ Each episode, whether detected or not, must fall into one of these three classes
   $n_{ia} =1$ of these occurred, each with probability
   $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
 \item
-  Truncated episodes, $\Omega_i^C$, which have an infection and
+  Undetected (or, for consistency with the literature, truncated) episodes, $\Omega_i^C$, which have an infection and
   recovery time such that they would not have tested positive. An
   unknown number, $n_{it}$ of these observed, each with probability
   $p_{it} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
 \item
   Inadmissible episodes, $\beta_i$, which are not consistent with the data observed but would have been
-  observed (not truncated). This is all remaining episodes not in the
+  detected. This is all remaining episodes not in the
   previous sets. $n_{iu} = 0$ of these occurred, where they would have
   occurred with probability
   $p_{iu} = \prob((b, e) \in \beta_i \mid \theta)$.
 \end{itemize}
 
-The untruncated region (where we could have observed an episode) is
+The detected region (where we could have observed an episode) is
 $\Omega_i = \alpha_i \cup \beta_i$ (the notation here is used for
 consistency with \textcite{heiseyModelling}), and is the
 complement of $\Omega^C_i$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
-\caption[Admissible, inadmissible, and untruncated infections]{The regions (as defined in the main text) for an episode $i$ in an
+\caption[Admissible, inadmissible, and undetected infections]{The regions (as defined in the main text) for an episode $i$ in an
 individual whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Inadmissible region is unshaded. The black (impossible) region is because it does not make sense for recovery to occur prior to infection. \label{perf-test:fig:partitionSpace}}
@@ -342,7 +342,7 @@ p_{ia}
 under the assumption of uniform probability of infection time.
 
 Next, we derive $p_{it} = \prob((b, e) \in \Omega^C_i)$, the probability
-that episode $i$ was truncated. A truncated episode means that no test
+that episode $i$ was detected. A detected episode means that no test
 was performed during the episode or there was no negative test prior to
 the episode. Denote by $t_i$ the set of testing times for the
 individual in which episode $i$ was observed, and define the time
@@ -519,7 +519,7 @@ Sarah uses survival analysis to estimate the duration from CIS data.
 The initiating event is assumed known as the time the episode was detected.
 The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
 A flexible, spline-based form is assumed for the baseline survival function~\autocite{roystonSTPM,roystonFlexible} with covariates introduced via proportional odds.
-By not accounting for either the truncation or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
+By not accounting for either the undetected infections or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
 
 % \todo[inline]{The following seems important to justify why we can't just use these estimates but is also basically an aside}
 % We know of two biases introduced from this analysis.
