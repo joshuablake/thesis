@@ -34,13 +34,13 @@ plot = ggplot() +
     scale_fill_manual(
         values = c(
             "Admissible" = "purple",
-            "Truncated" = "red",
+            "Undetected" = "red",
             "Impossible" = "black",
             "Inadmissible" = "white"
         ),
         labels = c(
             "Admissible" = "Admissible, α",
-            "Truncated" = bquote("Truncated, Ω"^C),
+            "Undetected" = bquote("Undetected, Ω"^C),
             "Impossible" = "Impossible",
             "Inadmissible" = "Inadmissible, β"
         )
@@ -62,7 +62,7 @@ plot = ggplot() +
         key_glyph = "blank"
     ) +
     geom_rect(
-        aes(fill = "Truncated"),
+        aes(fill = "Undetected"),
         xmin = -Inf,
         xmax = 0,
         ymin = -Inf,
@@ -73,7 +73,7 @@ plot = ggplot() +
     purrr::map2(
         all_test_dates + 1, dplyr::lead(all_test_dates) - 1,
         ~geom_polygon(
-            aes(x = c(.x, .x, .y), y = c(.x, .y, .y), fill = "Truncated"),
+            aes(x = c(.x, .x, .y), y = c(.x, .y, .y), fill = "Undetected"),
             alpha = shade_alpha,
             key_glyph = "blank"
         )
