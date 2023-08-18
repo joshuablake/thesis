@@ -1,93 +1,178 @@
 \documentclass[thesis.tex]{subfiles}
 
 \begin{document}
-\chapter{Incidence and prevalence} \label{incidence-prevalence}
+\chapter{Statistical background} \label{incidence-prevalence}
+%\todo[inline]{This chapter is pretty short. Not sure if this matters or it needs to merged with another chapter? For example, one background chapter split into epi/biology and stats.}
 
-This chapter provides the required understanding of incidence and prevalence, and the mathematical relationship between these quantities.
-These quantities have long been of interest, and the duration of infection is the quantity that relates them.
-The relationship under constant incidence was reviewed as early as 1980~\autocite{freemanPrevalence}.
+This chapter explains incidence and prevalence, and the relationship between these quantities.
+These quantities have been of interest as long as disease has been studied, and estimating the prevalence from incidence is the fundamental motivation for this thesis.
+Their exact definition can vary throughout the literature, here I follow the definitions of the seminal paper \textcite{freemanPrevalence}.
+As I will explain, the duration of infection is the quantity that relates them.
 
-Want to be clear between: incidence number and incidence rate.
+Timescale underlies all these quantities.
+Throughout this thesis, time will generally\todo{revisit phrasing once finished - do I actually use continuous time anywhere (probably in SEIR model)} be considered discrete in units of days.
+Most epidemiological data is only available at daily granularity or, when more granular data exists, is often unreliable.
+Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection); these variations are not of interest in most contexts.
 
-Incidence is
+\section{Incidence, prevalence, and duration}
 
-Prevalence, $P_t$, is the number of people in a given population with an infection at time $t$.
-For SARS-CoV-2, it is hard to define what it means to be infected.
-An infected individual could mean: one that is infectious; one that is symptomatic; or one that, if they were tested, would return a positive PCR test (see \cref{E-SARS-CoV-2} for what each of these mean and their relation).
-In this thesis, prevalence is defined as the number of people in the population who would return a positive PCR test at time $t$.
+\emph{Incidence} at time $t$, $Z_t$, is the number of people in a given population who become infected at time $t$ (I use $Z_t$ rather than $I_t$ to avoid confusion with the convention that $i$ is an indexing variable).
+Incidence expressed as a proportion of the population, $Z_t/N$ where $N$ is the number of people in the population, is the \emph{incidence rate}.
+As discussed in \cref{E-intro}\todo{might want to point to a specific section}, infection events are not directly observable and must be inferred from other data.
+Despite this issue, it remains the single most important quantity for informing the response to an epidemic or pandemic.
 
-A \emph{prevalence survey} is a survey that tests a random sample of the population for the presence of an infection.
-Prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
-This thesis aims to infer the incidence rate from prevalence surveys, and therefore the likelihood of the results of the survey given the incidence is the most important quantity.
-At a time $t$ we sample $n_t$ individuals from the population of interest returning $x_t$ positive tests.
-Therefore, our likelihood contribution for each sample is $\p(x_t \mid n_t, \vec{I})$.
-We assume that the samples are independent of each other and $\vec{I}$, conditional on the true population prevalence at that time.
-Therefore, our overall likelihood is $\p(\vec{x} \mid \vec{n}, \vec{I}) = \int \p(\vec{P} \mid \vec{I}) \prod_t \p(x_t \mid n_t, \vec{P}_t) d\vec{P}$.
+\emph{Prevalence} of an infectious disease at time $t$, $P_t$, is the number of people in a given population currently infected at time $t$, assumed constant over the short period $t$.
+Each of these individuals is known as a \emph{prevalent} individual.
+The \emph{prevalence proportion} is the same quantity expressed as a proportion of the population.
+For SARS-CoV-2, there are several definitions of infected.
+An infected individual could mean: one that is infectious; one that is symptomatic; or one that, if they were tested, would return a positive PCR test if tested (discussed in\todo{ref appropriate section}).
+In this thesis, prevalence is defined as the number of people in the population who would return a positive PCR test (if everyone was tested) at time $t$.
 
-Typically, the uncertainty in $\vec{P} \mid \vec{I}$ is negligible.
-This can be seen by considering the variance in $x_t$.
-$x_t$ is binomially distributed with parameters $n_t$ and $P_t / N$, where $N$ is the size of the population.
+The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
+The period the individual is prevalent for is the \emph{infection episode}, which I will index with $i$, associated with that infection event.
+Denote the time that the infection episode begins as $B_i$ and the time it ends as $E_i \geq B_i$.
+The individual is prevalent from $B_i$ to $E_i$ inclusive.
+The duration of the infection episode, the number of days for which they are prevalent, is $D_i = E_i - B_i + 1$.
+In this thesis, it is assumed that the $D_i$ for each infection episode is independent and $\prob(D_i = d) = f_d$ for some pmf $f$ over $1, 2, \dots, d_\text{max}$.
+
+From this, we can derive the relationship between incidence and prevalence.
+Denote by $R_{t,t'}$ be the number of infection episodes that begin at time $t$ and end at time $t'$.
+For each infection beginning at $t$, the probability that it ends at $t'$ is $f_d(t' - t + 1)$.
+Since these durations are assumed independent, the number of episodes of each duration is multinomially distributed.
 Therefore:
 \begin{align}
-  \var\left( x_t \mid \vec{I} \right)
-    &= \var\left[\E\left( x_t \mid \vec{I}, \vec{P} \right) \mid \vec{I} \right] + \E\left[\var\left( x_t \mid \vec{I}, \vec{P} \right) \mid \vec{I} \right] \\
-    &= \var\left( n_t \frac{P_t}{N} \mid \vec{I} \right) + \E\left( n_t \frac{P_t}{N} \left(1 - \frac{P_t}{N} \right) \mid \vec{I} \right) \\
-    &= \left( \frac{n}{N} \right)^2 \var\left(P_t \mid \vec{I} \right) + \frac{n_t}{N} \E\left(P_t \mid \vec{I} \right)  - \frac{n_t}{N^2} \E\left(P_t^2 \mid \vec{I} \right)
+\begin{bmatrix}
+  R_{t,t} \\ R_{t,t+1} \\ \vdots \\ R_{t,t+d_\text{max}-1}
+\end{bmatrix} \mid Z_t
+\sim \MN \left(
+  Z_t, 
+  \begin{bmatrix}
+    f_d(1) \\ f_d(2) \\ \vdots \\ f_d(d_\text{max})
+  \end{bmatrix}
+\right).
 \end{align}
-since, in almost all settings, $n_t << N$ and $\E(P_t) \approx \var(P_t)$, the first term is negligible.
+Now, denote by $P_{t,t'}$ the number of episodes beginning at time $t$ that are prevalent at time $t'$ (where $t' \geq t$).
+This is $Z_t$ minus those that have recovered:
+\begin{align}
+    P_{t,t'} = \begin{cases}
+      0 &t' < t\\
+      Z_t - \sum_{i=0}^{t'-t-1} R_{t,t+i} &t \leq t' < t + d_\text{max}\\
+      0 &t' > t + d_\text{max}.
+  \end{cases}
+\end{align}
+Finally, the prevalence at $t$ can be expressed as $P_t = \sum_{t'=-\infty}^t P_{t',t}$.
+
+In general, all these random variables will be dependent for an infectious disease.
+This is because the probability of being infected at time $t$ depends on the number of infectious individuals at time $t$, which itself depends on the number of individuals infected before time $t$.
+However, if we condition on the vector $\vec{Z} = (Z_1, Z_2, \dots)^T$, then we will induce some independence.
+In particular, because the duration of individuals is independent, $R_{t_1,t_2}$ and $R_{t_1',t_2'}$ will be independent if $t_1 \neq t_1'$; importantly, this holds even if $t_2 = t_2'$.
+
+A quantity that will be important is $\E(P_t \mid \vec{Z})$, which can be derived from its constituent parts.
+First, the properties of a multinomial distribution give the marginal distribution:
+\begin{align}
+  \sum_{i=t}^{t'-1} R_{t,i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, \sum_{i=1}^{t-t'} f_d(i)). \\
+\intertext{Therefore:}
+\E(P_{t-t'} \mid \vec{Z})
+  &= \E(Z_t - \sum_{i=t}^{t'-1} R_{t,i} \mid \vec{Z}) \\
+  &= Z_t (1 - \sum_{i=1}^{t-t'} f_d(i)).
+\intertext{Finally:}
+\E(P_t \mid \vec{Z})
+&= \E(\sum_{t'=-\infty}^t P_{t-t'} \mid \vec{Z}) \\
+&= \sum_{t'=-\infty}^t Z_t (1 - \sum_{i=1}^{t-t'} f_d(i)).
+\end{align}
+The quantity $1 - \sum_{i=1}^{t-t'} f_d(i)$ is the probability that an infection episode's duration is at least $t - t' + 1$, which is the survival function of $D$, denoted $S(t - t' + 1)$.
+This equation, normally expressed in terms of the survival function, forms the basis of discrete-time \emph{backcalculation}.
+
+% The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
+% The most important assumption from a statistical perspective is the whether the probability of testing positive on a given day is independent conditional on the infection time.
+
+% \todo[inline]{Is the discussion of this model just a distraction?}
+% Assuming that the probability of testing positive depends only on the infection time implies no individual variation.
+% This model is formalised as $Pr(Z_i(t) = 1 \mid B_i, Z_i(1), Z_i(2) \dots) = Pr(Z_i(t) \mid B_i) = p_{t-B_i}$, that is the probability of individual $i$ testing positive $t$ days after infection depends only on the infection start time and no other quantities.
+% A slight relaxation of this model is introducing covariates, allowing some variation based on an individual's characteristics.
+
+% The model with the most dependence between times, while remaining realistic, is a multi-state model.
+% Therefore, if an individual has tested negative before the present time $t$ but after $B_i$ then they will test negative at time $t$.
+% The complexity of the transitions between positive and negative can be very complex.
+% I consider a slight extension to allow for the possibility of false negatives, meaning a negative test between $B_i$ and $E_i$, and that this probability may change.
+% This leads to the following model.
+% \begin{align}
+%   \prob(Z_i(t) = 1 \mid B_i, \leq E_i) &= \begin{cases}
+%     \psens(t - B_i) &B_i \leq t \leq E_i\\
+%     0 &\text{otherwise}
+%   \end{cases}\\
+%   \prob(E_i = t \mid B_i) = f_i(B_i)
+% \end{align}
+% Conditional on both $B_i$ and $E_i$, then $Z_i(t)$ and $Z_i(t')$ are independent for $t \neq t'$.
+% However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
+% For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
+
+\section{Prevalence data}
+
+A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
+Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
+This thesis aims to infer the incidence rate from prevalence surveys.
+I use Bayesian inference, therefore the data contributes through the likelihood.
+
+The likelihood contribution from the survey at a time $t$ is based on a sample of $n_t$ individuals from the population of interest returning $x_t$ positive tests.
+For now, I assume that the sample is chosen uniformly at random from the population of interest.
+Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
+The population prevalence is a latent quantity.
+The likelihood is then $\p(\vec{x} \mid \vec{n}, \vec{Z}) = \int \p(\vec{P} \mid \vec{Z}) \prod_t \p(x_t \mid n_t, \vec{P}_t) d\vec{P}$, where $\vec{x} = (x_1, x_2, \dots)^T$ and similarly for $\vec{n}$.
+
+In settings I consider, the uncertainty arising from the distribution $\vec{P} \mid \vec{Z}$ is negligible.
+This can be seen by considering the variance in the likelihood.
+$x_t$ is binomially distributed with parameters $n_t$ and $P_t / N$, where $N$ is the size of the population.
+Therefore, by the law of total variance:
+\begin{align}
+  \var\left( x_t \mid \vec{n}, \vec{Z} \right)
+    &= \var\left[\E\left( x_t \mid \vec{n}, \vec{Z}, \vec{P} \right) \mid \vec{n}, \vec{Z} \right] + \E\left[\var\left( x_t \mid \vec{n}, \vec{I}, \vec{P} \right) \mid \vec{n}, \vec{Z} \right] \\
+    &= \var\left( n_t \frac{P_t}{N} \mid \vec{n}, \vec{Z} \right) + \E\left( n_t \frac{P_t}{N} \left(1 - \frac{P_t}{N} \right) \mid \vec{n}, \vec{Z} \right) \\
+    &= \left( \frac{n}{N} \right)^2 \var\left(P_t \mid \vec{n}, \vec{Z} \right) + \frac{n_t}{N} \E\left(P_t \mid \vec{n}, \vec{Z} \right)  - \frac{n_t}{N^2} \E\left(P_t^2 \mid \vec{n}, \vec{Z} \right).
+\end{align}
+For large populations and reasonable sample sizes, $n_t << N$ and $\E(P_t) \approx \var(P_t)$, the first term is negligible.
 Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
-This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{I}$, generally $\vec{P} = \E( \vec{P} \mid \vec{I})$.
+This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, generally $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
+
+\section{Backcalculation}
+
+\emph{Backcalculation} is a procedure that combines the elements of the previous two sections to estimate incidence based on a measurement of prevalence
 
 In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
 However, this is often a poor approximation.
 \emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
 
-Throughout this thesis, time will almost always be considered discrete.
-This is formed by grouping any data by the day of the test, and assuming both incidence and prevalence are constant over that day.
-Most epidemiological data is only available at daily granularity or, when more granular data exists, is often unreliable.
-Furthermore, the variation in transmission that occurs due to daily patterns (\eg: sleep) is not of interest but complicates any analysis. 
-
 Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
 The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
 I keep this assumption for the remainder of this chapter.
 
-The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
-The most important assumption from a statistical perspective is the whether the probability of testing positive on a given day is independent conditional on the infection time.
-
-\todo[inline]{Is the discussion of this model just a distraction?}
-Assuming that the probability of testing positive depends only on the infection time implies no individual variation.
-This model is formalised as $Pr(Z_i(t) = 1 \mid B_i, Z_i(1), Z_i(2) \dots) = Pr(Z_i(t) \mid B_i) = p_{t-B_i}$, that is the probability of individual $i$ testing positive $t$ days after infection depends only on the infection start time and no other quantities.
-A slight relaxation of this model is introducing covariates, allowing some variation based on an individual's characteristics.
-
-The model with the most dependence between times, while remaining realistic, is a multi-state model.
-A multi-state model assumes that an individual always tests positive between the start of their infection, $B_i$, and the end of their infection, $E_i$.
-Therefore, if an individual has tested negative before the present time $t$ but after $B_i$ then they will test negative at time $t$.
-The complexity of the transitions between positive and negative can be very complex.
-I consider a slight extension to allow for the possibility of false negatives, meaning a negative test between $B_i$ and $E_i$, and that this probability may change.
-This leads to the following model.
-\begin{align}
-  \prob(Z_i(t) = 1 \mid B_i, \leq E_i) &= \begin{cases}
-    \psens(t - B_i) &B_i \leq t \leq E_i\\
-    0 &\text{otherwise}
-  \end{cases}\\
-  \prob(E_i = t \mid B_i) = f_i(B_i)
-\end{align}
-Conditional on both $B_i$ and $E_i$, then $Z_i(t)$ and $Z_i(t')$ are independent for $t \neq t'$.
-However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
-For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
 Backcalculation makes use of this relationship to estimate incidence from prevalence, assuming that the duration is known.
 
 Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
 This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
 
+\section{Estimating the duration}
+\todo[inline]{Could be conclusion this section?}
+
 Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the most useful (see\todo{ref intro with importance of incidence}).
 Therefore, a large portion of this thesis concerns itself with estimating the duration of PCR positivity.
+
+The distribution of durations can be expressed in several equivalent ways.
+Let $D_i$ be the random variable for the duration of episode $i$, then the distribution of interest is that of $D_i$.
+I will assume that each $D_i$ is an independent and identically distributed realisation of a random variable $D$; extending the methodology to account for covariates is left to further work.
+For an infection in discrete time, the duration is a non-negative integer, \ie $D \in \{1, 2, \dots\}$.
+The first way of expressing the distribution is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=0}^d f_{D}(i)$.
+The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
+The \emph{hazard} at time $t$ is the probability of recovering at time $t$ conditional on having survived to time $t$: $\lambda(t) = \prob(D = t \mid D \geq t) = f_{D}(d) / S(d)$.
+Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(t) = \prod_{i=1}^{t-1} (1 - \lambda(i))$.
 
 Two approaches are commonly used to estimate durations\todo{cite Sweeney}: either modelling an underlying biomarker or modelling the duration directly.
 For SARS-CoV-2, both approaches would be based on the results of PCR testing.
 Modelling a biomarker would mean modelling the viral load, measured as a Ct value.
-Modelling the duration would consider only the binary result at each test (positive or negative); in this thesis a survival analysis framework is adopted but other related approaches, such as a multi-state model, could also be considered.
+Modelling the duration would consider only the binary result at each test (positive or negative); in this thesis a \emph{survival analysis} framework is adopted.
+Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
+Other related approaches, such as a multi-state model, could also be considered (multi-state models can be viewed as a generalisation of survival analysis~\autocite{jacksonMSM}).
 Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
 Modelling a biomarker uses more information per observation, but requires stronger assumptions.
 
