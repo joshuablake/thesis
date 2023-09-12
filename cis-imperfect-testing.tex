@@ -186,6 +186,11 @@ Hence, the replacement for $1 - p_{it}$ is:
 
 \section{Simulation study results} \label{imperf-test:sec:sim-study-results}
 
+\begin{itemize}
+  \item When sensitivity is too bad (0.6), cannot recover the true distribution. The assumptions in the model, that the first test is a true positive and no missed infections prior, cannot hold.
+  \item Assuming too low a test sensitivity (bottom left triangle) means that number of missed infections will be overestimated and the duration distribution will be overestimated (\ie episodes are too long on average).
+\end{itemize}
+
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
 \subsection{Data}
@@ -216,6 +221,13 @@ Might include hyperparameters etc or assumptions made?
 \subsection{Results}
 
 \section{Discussion} \label{imperf-test:sec:discussion}
+
+\begin{itemize}
+  \item Survival prior matters for quantitative details but not qualitative shape. 
+  \item Number of missed infections prior is more important.
+  \item Unclear why this is the case, probably model misspecification meaning that fewer missed infections than expected.
+  \item Two possible misspecifications: test sensitivity (not constant) and constant incidence.
+\end{itemize}
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
 
