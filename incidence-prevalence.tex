@@ -51,16 +51,21 @@ Therefore:
   \end{bmatrix}
 \right).
 \end{align}
-Now, denote by $P_{t,t'}$ the number of episodes beginning at time $t$ that are prevalent at time $t'$ (where $t' \geq t$).
+Now, denote by $P_{t_z,t_p}$ the number of episodes beginning at time $t_z$ that are prevalent at time $t_p$ (where $t' \geq t$).
 This is $Z_t$ minus those that have recovered:
 \begin{align}
-    P_{t,t'} = \begin{cases}
-      0 &t' < t\\
-      Z_t - \sum_{i=0}^{t'-t-1} R_{t,t+i} &t \leq t' < t + d_\text{max}\\
-      0 &t' > t + d_\text{max}.
-  \end{cases}
+    P_{t_z,t_p} = \begin{cases}
+      0 &t_p < t_z\\
+      Z_t - \sum_{i=0}^{t_p-t_z-1} R_{t_z,t_z+i} &t_z \leq t_p < t_z + d_\text{max}\\
+      0 &t_p \geq t_z + d_\text{max}.
+  \end{cases} \label{incprev:eq:Ptt-to-R}
 \end{align}
-Finally, the prevalence at $t$ can be expressed as $P_t = \sum_{t'=-\infty}^t P_{t',t}$.
+Finally, the prevalence at $t$ can be expressed as the total number of people prevalent at time $t$, regardeless of when they were infected:
+\begin{align}
+  P_t
+  &= \sum_{t_z=\infty}^\infty P_{t_z,t} \\
+  &= \sum_{i=0}^{d_\text{max}-1} P_{t-i,t} \label{incprev:eq:Pt-to-Ptt}.
+\end{align}
 
 In general, all these random variables will be dependent for an infectious disease.
 This is because the probability of being infected at time $t$ depends on the number of infectious individuals at time $t$, which itself depends on the number of individuals infected before time $t$.
@@ -70,18 +75,25 @@ In particular, because the duration of individuals is independent, $R_{t_1,t_2}$
 A quantity that will be important is $\E(P_t \mid \vec{Z})$, which can be derived from its constituent parts.
 First, the properties of a multinomial distribution give the marginal distribution:
 \begin{align}
-  \sum_{i=t}^{t'-1} R_{t,i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, \sum_{i=1}^{t-t'} f_d(i)). \\
-\intertext{Therefore:}
-\E(P_{t-t'} \mid \vec{Z})
-  &= \E(Z_t - \sum_{i=t}^{t'-1} R_{t,i} \mid \vec{Z}) \\
-  &= Z_t (1 - \sum_{i=1}^{t-t'} f_d(i)).
-\intertext{Finally:}
-\E(P_t \mid \vec{Z})
-&= \E(\sum_{t'=-\infty}^t P_{t-t'} \mid \vec{Z}) \\
-&= \sum_{t'=-\infty}^t Z_t (1 - \sum_{i=1}^{t-t'} f_d(i)).
+  \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, F_d(t'+1)).
 \end{align}
-The quantity $1 - \sum_{i=1}^{t-t'} f_d(i)$ is the probability that an infection episode's duration is at least $t - t' + 1$, which is the survival function of $D$, denoted $S(t - t' + 1)$.
-This equation, normally expressed in terms of the survival function, forms the basis of discrete-time \emph{backcalculation}.
+where $F_d(t) = \sum_{i=1}^t f_d(t) = \prob(D \leq t)$ is the CDF of $D$.
+Therefore:
+\begin{align}
+  \E(\sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z}) = Z_t F_d(t'+1) \label{incprev:eq:EsumRt}
+\end{align}
+
+Now consider $P_t$:
+\begin{align}
+\E(P_t \mid \vec{Z})
+  &= \E\left(\sum_{i=1}^{d_\text{max}-1} P_{t-i,t} \mid \vec{Z} \right) &\text{by \cref{incprev:eq:Pt-to-Ptt}} \\
+  &= \E\left(\sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} R_{t-i,t-i+j} \right) \mid \vec{Z} \right) &\text{by \cref{incprev:eq:Ptt-to-R}}\\
+  &= \sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} \E( R_{t-i,t-i+j} \mid \vec{Z}) \right) \\
+  &= \sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - Z_{t-i} F(i) \right) &\text{by \cref{incprev:eq:EsumRt}}\\
+  &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} (1 - F(i)) \\
+  &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} S(i+1)
+\end{align}
+where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$ (see \cref{inprev:sec:duration}).
 
 % The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
 % The most important assumption from a statistical perspective is the whether the probability of testing positive on a given day is independent conditional on the infection time.
@@ -107,22 +119,27 @@ This equation, normally expressed in terms of the survival function, forms the b
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
+\todo[inline]{Need some conclusion text for this section}
+
 \section{Prevalence data}
 
-A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
-Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
-This thesis aims to infer the incidence rate from prevalence surveys.
-I use Bayesian inference, therefore the data contributes through the likelihood.
+% A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
+% Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
+% This thesis aims to infer the incidence rate from prevalence surveys.
+% I use Bayesian inference, therefore the data contributes through the likelihood.
 
-The likelihood contribution from the survey at a time $t$ is based on a sample of $n_t$ individuals from the population of interest returning $x_t$ positive tests.
-For now, I assume that the sample is chosen uniformly at random from the population of interest.
-Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
-The population prevalence is a latent quantity.
-The likelihood is then $\p(\vec{x} \mid \vec{n}, \vec{Z}) = \int \p(\vec{P} \mid \vec{Z}) \prod_t \p(x_t \mid n_t, \vec{P}_t) d\vec{P}$, where $\vec{x} = (x_1, x_2, \dots)^T$ and similarly for $\vec{n}$.
+Prevalence surveys, as described in\todo{insert ref}, sample individuals at random from the population of interest and test if they are prevalence.
+Therefore, we view the number of positive tests on day $t$ as a random variable $X_t$ based on a sample of $n_t$ individuals.
+The $X_t$s are conditionally independent, given the population prevalences at each time, $\vec{P}_t$. 
+%For now, I assume that the sample is chosen uniformly at random from the population of interest.
+%Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
+%The population prevalence is a latent quantity.
+From these assumptions, $X_t \mid \vec{P} \sim \Bin(n_t, P_t / N)$.
+I base inference on the likelihood, $p(\vec{x} \mid \vec{Z}) = \int p(\vec{x} \mid \vec{P}) p(\vec{P} \mid \vec{Z}) d\vec{P} = \int \prod_t p(x_t \mid P_t) p(\vec{P} \mid \vec{Z}) d\vec{P}$, where $\vec{x} = (x_1, x_2, \dots)^T$.
 
-In settings I consider, the uncertainty arising from the distribution $\vec{P} \mid \vec{Z}$ is negligible.
+For most prevalence surveys, the uncertainty arising from the distribution $\vec{P} \mid \vec{Z}$ is negligible.
 This can be seen by considering the variance in the likelihood.
-$x_t$ is binomially distributed with parameters $n_t$ and $P_t / N$, where $N$ is the size of the population.
+Assume $x_t \sim \Bin(n_t, P_t / N)$, where $N$ is the size of the population.
 Therefore, by the law of total variance:
 \begin{align}
   \var\left( x_t \mid \vec{n}, \vec{Z} \right)
@@ -132,7 +149,7 @@ Therefore, by the law of total variance:
 \end{align}
 For large populations and reasonable sample sizes, $n_t << N$ and $\E(P_t) \approx \var(P_t)$, the first term is negligible.
 Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
-This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, generally $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
+This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
 
 \section{Backcalculation}
 
@@ -152,8 +169,9 @@ Backcalculation makes use of this relationship to estimate incidence from preval
 Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
 This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
 
-\section{Estimating the duration}
-\todo[inline]{Could be conclusion this section?}
+\todo[inline]{Explain backcalculation in HIV/AIDS context, and how it relates to what is above.}
+
+\section{Estimating the duration} \label{inprev:sec:duration}
 
 Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the most useful (see\todo{ref intro with importance of incidence}).
 Therefore, a large portion of this thesis concerns itself with estimating the duration of PCR positivity.
@@ -175,5 +193,7 @@ Survival analysis is the area of statistics concerned with estimating the distri
 Other related approaches, such as a multi-state model, could also be considered (multi-state models can be viewed as a generalisation of survival analysis~\autocite{jacksonMSM}).
 Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
 Modelling a biomarker uses more information per observation, but requires stronger assumptions.
+
+\todo[inline]{Comment on previous estimates of duration for SARS-CoV-2, but not sure where exactly this goes...}
 
 \end{document}
