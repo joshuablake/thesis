@@ -90,7 +90,7 @@ This filtering could bias the results of the study but will be considered in the
 
 In the remainder of this and the following chapter, I use survival analysis rather than the biomarker approach taken in \cref{E-ATACCC} for computational efficiency and data limitations arising from the study design.
 In the biomarker approach, computational efficiency is an issue because the number of random effects scales with the number of detected infection episodes.
-There are a large number of detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
+There are many detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
 Therefore, the biomarker approach would be computationally challenging with the large sample size in CIS.
 The computational challenge is compounded by the data being stored in a TRE with the associated limited access to computational power and software.
 The study design of CIS, with the infrequent sampling in the CIS study design, means that most detected episodes have only a single positive test.
@@ -130,7 +130,7 @@ They justify conditioning on the time of the initiating event by arguing that th
 However, this is not the case here.
 In CIS, infection episodes are more likely to be detected when an individual is in the weekly testing phase.
 This phase is not representative of the overall study: infections are more likely to be detected during this phase.
-Therefore, estimating the probability of being detected conditional on being infected in this period (which would be implictly done in this previous method)  will overestimate the probability of being detected.
+Therefore, estimating the probability of being detected conditional on being infected in this period (which would be implicitly done in this previous method)  will overestimate the probability of being detected.
 
 Censored and truncated data frequently occur when estimating the survival time of bird nests, with the censoring taking a variety of forms~\autocite{heiseyABCs}.
 In this context, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring.
@@ -154,58 +154,122 @@ I develop a Bayesian framework where there is no explicit data augmentation, all
 
 \subsection{Likelihood}\label{perf-test:sec:likelihood}
 
-In this section, I develop a model accounting for double interval censoring and undetected episodes, modelling only individuals with detected episodes.
-This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}; in particular, I adopt the framework of \textcite{heiseyModelling}.
+In this section, I develop a model accounting for double interval censoring and undetected episodes.
+This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
+This framework is itself based long-standing methodology~\autocites{dempsterMaximum}{turnbullEmpirical}.
 The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
-Previous studies consider the case where nothing was observed regarding individuals without a positive test (left truncation).
-I do not make use of this additional information here because it makes little difference but increases the computational requirements and strength of assumptions regarding reinfections/immunity required (see \cref{E-appendix:total-model} for details).
-The modelling approach then corrects for this selection bias, by considering \emph{ghost} infections that occur in identical individuals but were undetected.
 
-Ghost infections are a mathematical convenience to correct for the undetected episodes which arise through the following thought experiment.
-For each detected episode $i$, let $n_i-1$ be the number of undetected episodes, such that $n_i$ is the total number of episodes.
-Further, assume that each of these $n_i$ infections episodes were drawn independently from $i$'s distribution of episode beginning and end times and all other characteristics of these infection episodes are identical; most notably, the testing schedule and, if the model were to be extended, other covariates of the individual in which the episode occurs.
-If we had detected all $n_i$ episodes, then our sample of detected episodes would be unbiased; however, we did not, and the detected episode is systematically longer than the other $n_i-1$ episodes (as explained in \cref{perf-test:sec:problem}).
+\todo[inline]{Add an overview to the approach taken}
 
-In the following method, I consider $n_i$ and the duration of the missing episodes as missing data.
-With the full dataset of $n_i$ infection episodes, the problem reduces to double interval censored survival analysis, which has a known likelihood.
-Therefore, I will consider the posterior augmented with all the $n_i$s and then integrate over the $n_i$s to form the desired posterior.
+For our purposes, an infection episode $i$ is fully characterised by the day it begins, $b_i$, the day it ends, $e_i$, and the testing schedule of the individual in which it occurs, $\sched_i$.
+Denote by $\tilde{y}_i$ the triplet $(b_i, e_i, \sched_i)$.
+Even when an episode is detected, $b_i$ and $e_i$ are unobserved due to the interval censoring.
 
-\todo[inline]{Maybe move the following paragraph elsewhere}
-It is important to note that there is not a correspondence between the number of ghost episodes and the number of infection episodes that were missed within the true cohort.
-Within the true cohort, the episodes in which the undetected episodes occurred are different to those in which detected episodes occurred.
-In particular, the individuals in which undetected episodes occurred would (on average) have longer spacing between their tests.
+The observations of detected episode $i$'s are fully characterised by the time of the negative prior to the episode, $t_{i,1}$, the time of the negative following the episode, $t_{i,2}$, and the test schedule of the individual in which it occurs, $\sched_i$.
+$t_{i,1}$ and $t_{i,2}$ are deterministic functions of $\tilde{y}_i$.
+Specifically, $t_{i,1} = \tbefore_{\sched_i}(b_i)$ and $t_{i,2} = \tbefore_{\sched_i}(e_i)$.
+Let $y_i = (t_{i,1}, t_{i,2}, \sched_i)$.
+The possible values of $y_i$ require that $t_{i,1}$ and $t_{i,2}$ both appear in the test schedule $\sched_i$, and that there is a positive test between them.
+Formally, this set of possible values is $\mathbb{D} = \{ (t_{i,1}, t_{i,2}, \sched_i) : t_{i,1} \in \sched_i \wedge t_{i,2} \in \sched_i \wedge \tafter_{\sched_i}(t_{i,1}) < t_{i,2} \}$.
 
-The framework of \textcite{heiseyModelling} formalises this thought experiment.
-Start by noting that all relevant information about episode $i$ can be fully characterised by the (unobserved) pair $(b_i, e_i)$ of start and end dates of the episode, which belong to the state space $T \times T$.
-If the individual in which the episode occurs is tested between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is a ghost episode.
-For the $i$th detected episode, assume that there are $n_{it}$ ghost episodes.
+For any $\vec{d} \in \mathbb{D}$, define $\mathbb{A}_{\vec{d}}$ as the set of triplets $(b, e, \sched_i)$ such that, if an infection episode began at $b$, and ended at $e$, in an individual with test schedule $\sched$, then we would observe $\vec{d}$.
+Denote by $n_{\vec{d}}$ the number of detected episodes with observations $\vec{d}$.
 
-To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), based on the observations associated with episode $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
-Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of $\theta$.
+Undetected (or excluded) episodes have a start time before the individual's first test, an end time after their last test, or began and ended between tests.
+Formally, define undetected episodes as $\mathbb{U} = \{ (b_i, e_i, \sched_i) : b_i \leq \min(\sched_i) \vee e_i \geq \max(\sched_i) \vee e_i < \tafter_{\sched_i}(b_i) \}$.
+Denote by $n_u$ the unknown number of undetected episodes which I will treat as missing data.
 
-\begin{itemize}
-\item
-  Admissible episodes, $\alpha_i$, which have an infection and
-  recovery time consistent with the data observed. That is, $b_i \in [l_i^{(b)}, r_i^{(b)}]$, and $e_i \in [l_i^{(e)}, r_i^{(e)}]$.
-  $n_{ia} =1$ of these occurred, each with probability
-  $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
-\item
-  Undetected (or, for consistency with the literature, truncated) episodes, $\Omega_i^C$, which have an infection and
-  recovery time such that they would not have tested positive. An
-  unknown number, $n_{it}$ of these observed, each with probability
-  $p_{it} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
-\item
-  Inadmissible episodes, $\beta_i$, which are not consistent with the data observed but would have been
-  detected. This is all remaining episodes not in the
-  previous sets. $n_{iu} = 0$ of these occurred, where they would have
-  occurred with probability
-  $p_{iu} = \prob((b, e) \in \beta_i \mid \theta)$.
-\end{itemize}
+The set of all possible infection episodes is $\Omega = \mathbb{D} \cup \mathbb{U}$.
+For any possible infection episode, $\tilde{y}_i \in \Omega$:
+\begin{align}
+  \prob(\tilde{y}_i = (b, e, \sched))
+  &= \prob(E_i = e \mid B_i = b) \prob(B_i = b) \prob(\sched_i = \sched) \\
+  &= \prob(D_i = e - b + 1) \prob(B_i = b) \prob(\sched_i = \sched) \label{perf-test:eq:tildeyi-prob}
+\end{align}
+since the testing schedule is determined by the study design.
+The distribution of $D_i$ is the quantity of interest and parameterised by $\theta$ (see \cref{perf-test:sec:parameters-priors}); the distribution of $B_i$ is uniform over the possible infection times; and I assume the probability of any testing schedule is proportional to the number of people in the cohort with that schedule.
+Furthermore, I assume that this probability is independent for each infection episode.
+Therefore, the counts of each possible infection episode triplet conditional on the total number of infection episodes is multinomially distributed.
 
-The detected region (where we could have observed an episode) is
-$\Omega_i = \alpha_i \cup \beta_i$ (the notation here is used for
-consistency with \textcite{heiseyModelling}), and is the
-complement of $\Omega^C_i$.
+Due to the censoring and missed infections, the observations of episodes are incomplete.
+The observations are equivalent to counts of the number of episodes in each set $\mathbb{A}_{\vec{d}}$, $n_{\vec{d}}$.
+Additionally, I will impute the total number of episodes (including undetected episodes) $n_u$.
+Let $n = n_u + \sum_{\vec{d} \in \mathbb{D}} n_{\vec{d}}$.
+For any infection episode, consider the probability of it being in each set $\mathbb{A}_{\vec{d}}$ or $\mathbb{U}$.
+\begin{align}
+  p_{\vec{d}} 
+  &= \prob(\tilde{y}_i \in \mathbb{A}_{\vec{d}}) \\
+  &= \sum_{(b, e, \sched) \in \mathbb{A}_{\vec{d}}} \prob(\tilde{y}_i = (b, e, \sched)) \\
+  p_U
+  &= \prob(\tilde{y}_i \in \mathbb{U}) \\
+  &= \sum_{(b, e, \sched) \in \mathbb{U}} \prob(\tilde{y}_i = (b, e, \sched))
+\end{align}
+
+Each infection episode is independent of the others, condtional on the model parameters.
+Which set each episode is in is a categorical random variable.
+Therefore, the vector of all counts, $\vec{n}$ (including the unknown $n_u$), is distributed multinomially, conditional on its total, $n$.
+Furthermore, $n_d = n - \sum_{\vec{d} \in \mathbb{D}} n_{\vec{d}}$.
+
+Denote by $\mathbb{A}_{t_1,t_2,\sched}$ the set of all pairs $(b, e)$ such that, if an infection episode began at $b$, and ended at $e$, in an individual with test schedule $\sched$, then the negative immediately before the start of the episode occurs at time $t_1$ and the negative immediately following the episode occurs at time $t_2$ (see \cref{perf-test:fig:partitionSpace}).
+Define the function $\tbefore_\sched(t)$ and $\tafter_\sched(t)$ as the time of the next test before and after time $t$ (excluding $t$) for an individual with test schedule $\sched$ respectively.
+Since $b \leq e$, for any biologically-possible infection episode, $t_1 \leq t_2$.
+If $\tafter_\sched(t_1) = t_2$ then the infection would be undetected because there are no positive tests.
+Otherwise,$\tafter_\sched(t_1) < t_2$ and, for any $(b, e) \in \mathbb{A}_{t_1,t_2,\sched}$, our observations bounding the beginning of the episode are the negative at $t_1$ and the positive at $\tafter_\sched(t_1)$.
+Similarly, our observations bounding the end of the episode are the positive at $t_2$ and the negative at $\tafter_\sched(t_2)$.
+Therefore, we know from our observations $t_1 < b \leq \tafter_\sched(t_1)$ and $\tbefore_\sched(t_2) \leq e < t_2$.
+
+I assume that infection episode $i$ occurs, independent of all other infection episodes, in an individual with test schedule $\sched_i$ with probability proportional to the number of such individuals in the cohort, $n_{\sched_i}$.
+This assumption is equivalent to assuming that all individuals are equally likely to be infected and there is no immunity.
+The latter assumption is unrealistic, however, since the cohort is much larger than the number of infection episodes, reinfections occur with negligible probability, and this assumption is a good approximation.
+Further, assume that $b_i$ is drawn iid from a uniform distribution over possible infection times.
+The time of $e_i$, conditional on $b_i$ is determined by the distribution function.
+% Should already have this bit written out somewhere.
+
+From this, the probability that $\tilde{y}_i$ is in the set $\mathbb{A}_{t_1,t_2,\sched}$ is determined only by $\theta$.
+Conditional on the total number of infection episodes, $\ntot$, the count of episodes in each set is multinomial.
+Define by $y$ as the vector of counts for each observed set, and by $\tilde{y}$ the count of undetected episodes, \ie the sum of the counts of sets with $t_1 = t_2$.
+Then, $\tilde{y} = \ntot - \sum_j \vec{y}_j$.
+
+For any individual $i$, there is a probability space $B_i \times E_i$ of possible infection episode start and end times.
+\todo{Check this notation}
+A subset of this space is detectable $\mathbb{D}_i \subset B_i \times E_i$.
+The space $\mathbb{D}_i$ can be partitioned by the first and last positive that would be observed for that episode.
+Label this partition $\mathbb{A}_{i,1}, \dots \mathbb{A}_{i,A_i}$.
+For each partition, there are $n_{i,a}$ episodes in it, and each episode has a probability $p_{i,a}$ of being in that partition.
+In addition, there are $y_{i,0}$ episodes that are undetected, and each has a probability $p_{i,0}$ of being undetected.
+$y_{i,0}$ is unknown and considered as missing data, with the remaining $y_{i,1}, \dots, y_{i,A_i}$ being observed.
+Let $\vec{y_i} = (y_{i,1}, \dots, y_{i,A_i})$ be the vector of observed counts and $\vec{y} = (\vec{n_1}, \dots, \vec{y_{n}})$ be the vector of all observed counts, which is equivalent to our data.
+Similarly for $\vec{p_i}$ and $\vec{p}$.
+The counts can be augmented by the unobserved $y_{i,0}$ to give $\yaug_i = (y_{i,0}, \dots, y_{i,A_i})$.
+I model $\vec{y_i}$ conditional on $n_i = \sum_j y_{i,j}$ and $\vec{p}$, then integrate over $\vec{p}$ and express $\vec{p}$ as a deterministic function of the model parameters $\vec{\theta}$ to obtain the posterior.
+
+The augmented counts $\yaug_i$ are, conditional on their sum, distributed multinomially.
+We must have that $y_{i,0} = n_i - \sum_{j=1}^{A_i} y_{i,j}$, to fulfil the support of the multinomial.
+Since there is at most one infection in each area $\mathbb{A}_{i,j}$ for $j \neq 0$, we have:
+\begin{align}
+p(\vec{y_i} \mid n_i, \vec{p_i})
+  &= p(y_{i,0}, \vec{y_i} \mid n_i, \vec{p_i}) \\
+  &= \frac{n_i!}{(n_i - \sum_{j=1}^{A_i} y_{i,j})!} \prod_j p_{i,j}^{y_{i,j}}.
+\end{align}
+
+Now assume that each individual in the cohort is equally likely to be infection.
+Define $n = \sum_i n_i$.
+I model the partition that each infection occurs in as $\yaug \mid n \dist \MN(n, \vec{p})$.
+Since we do not observe any of the $y_{i,0}$, their counts can be combined.
+Let $n_o = \sum_{i,j\geq1} y_{i,j}$ be the total number of observed infection and $n_u = \sum_{i} y_{i,0}$ be the total number of undetected infections.
+The probability of an infection being undetected is $p_u = \frac{1}{n} \sum_i p_{i,0}$.
+Hence, $p(\vec{y} \mid n, \vec{p}) = \frac{n!}{n_u!} p_u^{n_u} \prod_{i} \prod_{j=1}^{A_i} p_{i,j}^{y_{i,j}}$.
+
+The posterior of interest is $p(\theta \mid \vec{y})$.
+Recalling that $\vec{p}$ is a deterministic function of $\theta$ and integrating over $n$, we have:
+\begin{align}
+  p(\theta \mid \vec{y})
+    &\propto p(\theta) p(\vec{y} \mid \theta) \\
+    &= p(\theta) \sum_{n=n_o}^\infty p(\vec{y} \mid n, \theta) p(n) \\
+    &= p(\theta) \sum_{n=n_o}^\infty \frac{n!}{(n - n_o)!} p_u^{n_u} \prod_{i} \prod_{j=1}^{A_i} p_{i,j}^{y_{i,j}} p(n) \\
+    &= p(\theta) \prod_{i} \prod_{j=1}^{A_i} p_{i,j}^{y_{i,j}} \sum_{n=n_o}^\infty \frac{n!}{(n - n_o)!} p_u^{n_u} p(n).
+\end{align}
+Next, I will show that this sum has a closed form under a negative binomial prior for $p(n)$, and derive expressions for $p_{i,j}$ in terms of the survival function parameterised by $\theta$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
@@ -478,7 +542,7 @@ The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazar
   \thisfloatpagestyle{empty}
   \vspace{-2.5cm}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{cis-perfect-testing/ataccc-approximation-hazard}}
-  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernal density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
+  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernel density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
 \end{figure}
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}

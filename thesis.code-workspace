@@ -6,7 +6,10 @@
 	],
 	"settings": {
 		"latex-workshop.latex.recipes": [
-
+			  {
+				"name": "make",
+				"tools": ["make"]
+			},
 			  {
 				"name": "latexrun",
 				"tools": ["latexrun"]
@@ -74,10 +77,18 @@
 		],
 		"latex-workshop.latex.tools": [
 			{
+				"name": "make",
+				"command": "make",
+				"args": ["%DOCFILE%.pdf", "--directory=%WORKSPACE_FOLDER%"]
+			},
+			{
 				"name": "latexrun",
 				"command": "./latexrun",
 				"args": ["%DOC%", "--bibtex-cmd=biber"]
 			},
+		],
+		"cSpell.words": [
+			"ATACCC"
 		]
 	}
 }
