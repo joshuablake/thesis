@@ -165,18 +165,18 @@ For our purposes, an infection episode $i$ is fully characterised by the day it 
 Denote by $\tilde{y}_i$ the triplet $(b_i, e_i, \sched_i)$.
 Even when an episode is detected, $b_i$ and $e_i$ are unobserved due to the interval censoring.
 
-The observations of detected episode $i$'s are fully characterised by the time of the negative prior to the episode, $t_{i,1}$, the time of the negative following the episode, $t_{i,2}$, and the test schedule of the individual in which it occurs, $\sched_i$.
+The observations of detected episode $i$'s are fully characterised by the time of the negative prior to the episode, $t_{i,1}$, the time of the final positive in the episode, $t_{i,2}$, and the test schedule of the individual in which it occurs, $\sched_i$.
 $t_{i,1}$ and $t_{i,2}$ are deterministic functions of $\tilde{y}_i$.
-Specifically, $t_{i,1} = \tbefore_{\sched_i}(b_i)$ and $t_{i,2} = \tbefore_{\sched_i}(e_i)$.
+Specifically, $t_{i,1} = \tbefore_{\sched_i}(b_i)$ and $t_{i,2} = \tbefore_{\sched_i}(e_i+1)$ where $\tbefore_{\sched}(t) = \max \{ t' \in \sched \ssep t' < t \}$ is the test immediately before time $t$.
 Let $y_i = (t_{i,1}, t_{i,2}, \sched_i)$.
 The possible values of $y_i$ require that $t_{i,1}$ and $t_{i,2}$ both appear in the test schedule $\sched_i$, and that there is a positive test between them.
-Formally, this set of possible values is $\mathbb{D} = \{ (t_{i,1}, t_{i,2}, \sched_i) : t_{i,1} \in \sched_i \wedge t_{i,2} \in \sched_i \wedge \tafter_{\sched_i}(t_{i,1}) < t_{i,2} \}$.
+Formally, this set of possible values is $\mathbb{D} = \{ (t_{i,1}, t_{i,2}, \sched_i) : t_{i,1} \in \sched_i \wedge t_{i,2} \in \sched_i \wedge \tafter_{\sched_i}(t_{i,1}) < t_{i,2} \}$, where $\tafter_{\sched}(t) = \min\{ t' \in \sched \ssep t' > t \}$ is the next test at or after time $t$.
 
 For any $\vec{d} \in \mathbb{D}$, define $\mathbb{A}_{\vec{d}}$ as the set of triplets $(b, e, \sched_i)$ such that, if an infection episode began at $b$, and ended at $e$, in an individual with test schedule $\sched$, then we would observe $\vec{d}$.
 Denote by $n_{\vec{d}}$ the number of detected episodes with observations $\vec{d}$.
 
 Undetected (or excluded) episodes have a start time before the individual's first test, an end time after their last test, or began and ended between tests.
-Formally, define undetected episodes as $\mathbb{U} = \{ (b_i, e_i, \sched_i) : b_i \leq \min(\sched_i) \vee e_i \geq \max(\sched_i) \vee e_i < \tafter_{\sched_i}(b_i) \}$.
+Formally, define undetected episodes as $\mathbb{U} = \{ (b_i, e_i, \sched_i) : b_i \leq e_i \left( b_i \leq \min(\sched_i) \vee e_i \geq \max(\sched_i) \vee e_i < \tafter_{\sched_i}(b_i) \right) \}$.
 Denote by $n_u$ the unknown number of undetected episodes which I will treat as missing data.
 
 The set of all possible infection episodes is $\Omega = \mathbb{D} \cup \mathbb{U}$.
@@ -198,11 +198,11 @@ Let $n = n_u + \sum_{\vec{d} \in \mathbb{D}} n_{\vec{d}}$.
 For any infection episode, consider the probability of it being in each set $\mathbb{A}_{\vec{d}}$ or $\mathbb{U}$.
 \begin{align}
   p_{\vec{d}} 
-  &= \prob(\tilde{y}_i \in \mathbb{A}_{\vec{d}}) \\
-  &= \sum_{(b, e, \sched) \in \mathbb{A}_{\vec{d}}} \prob(\tilde{y}_i = (b, e, \sched)) \\
+  &= \prob(\tilde{y}_i \in \mathbb{A}_{\vec{d}} \mid \theta) \\
+  &= \sum_{(b, e, \sched) \in \mathbb{A}_{\vec{d}}} \prob(\tilde{y}_i = (b, e, \sched) \mid \theta) \\
   p_U
-  &= \prob(\tilde{y}_i \in \mathbb{U}) \\
-  &= \sum_{(b, e, \sched) \in \mathbb{U}} \prob(\tilde{y}_i = (b, e, \sched))
+  &= \prob(\tilde{y}_i \in \mathbb{U} \mid \theta) \\
+  &= \sum_{(b, e, \sched) \in \mathbb{U}} \prob(\tilde{y}_i = (b, e, \sched) \mid \theta)
 \end{align}
 
 Each infection episode is independent of the others, condtional on the model parameters.
