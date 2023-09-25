@@ -112,7 +112,8 @@ This information could be incorporated into the analysis, although doing so incr
 In standard left truncation, nothing is known about the missed events.
 As the information is not being incorporated here, standard left truncation methods remain applicable, and they can be modified to incorporate the additional information if desired.
 
-When the time of the initiating and/or terminating events are not known exactly, the survival analysis literature refers to the event(s) as \emph{censored}.
+The time of the initiating and/or terminating events are not known exactly.
+This is known as \emph{censord} in the survival analysis literature.
 Censored events are present in almost all survival analyses.
 An event is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
 %Left and right censoring can be viewed as special cases of interval censoring where the lower bound is negative infinity or the upper bound is positive infinity respectively.
@@ -154,58 +155,50 @@ I develop a Bayesian framework where there is no explicit data augmentation, all
 
 \subsection{Likelihood}\label{perf-test:sec:likelihood}
 
-In this section, I develop a model accounting for double interval censoring and undetected episodes, modelling only individuals with detected episodes.
-This approach is based on long-standing methodology~\autocites{heiseyModelling}{dempsterMaximum}{turnbullEmpirical}; in particular, I adopt the framework of \textcite{heiseyModelling}.
-The conceptual approach here is to form a cohort of individuals for which we observe at least one positive test, and then consider a study which had only enrolled these individuals.
-Previous studies consider the case where nothing was observed regarding individuals without a positive test (left truncation).
-I do not make use of this additional information here because it makes little difference but increases the computational requirements and strength of assumptions regarding reinfections/immunity required (see \cref{E-appendix:total-model} for details).
-The modelling approach then corrects for this selection bias, by considering \emph{ghost} infections that occur in identical individuals but were undetected.
+In this section, I develop a model accounting for double interval censoring and undetected episodes.
+This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
+This framework is itself based long-standing methodology~\autocites{dempsterMaximum}{turnbullEmpirical}.
+I will augment the data set with the full number of episodes, including those that are undetected.
+The augmented dataset is standard double interval censored data, with a well-known likelihood.
+I show that integrating over the number of missed epsidoes is analytically tractable.
+Therefore, inference is tractable and implementable within modern, high-performance Bayesian software such as Stan.
 
-Ghost infections are a mathematical convenience to correct for the undetected episodes which arise through the following thought experiment.
-For each detected episode $i$, let $n_i-1$ be the number of undetected episodes, such that $n_i$ is the total number of episodes.
-Further, assume that each of these $n_i$ infections episodes were drawn independently from $i$'s distribution of episode beginning and end times and all other characteristics of these infection episodes are identical; most notably, the testing schedule and, if the model were to be extended, other covariates of the individual in which the episode occurs.
-If we had detected all $n_i$ episodes, then our sample of detected episodes would be unbiased; however, we did not, and the detected episode is systematically longer than the other $n_i-1$ episodes (as explained in \cref{perf-test:sec:problem}).
+Let the total number of infection episodes in the cohort be $\ntot = \ndet + \nnodet$ where $\ndet$ is the number of detected infections and $\nnodet$ is the number of undetected infections.
+There are $\Ncis$ individuals in the cohort.
+Over the short period of time considered, no individual has more than one detected episode. 
+Without loss of generality, let the individuals with a detected episode be indexed by $i = 1, \dots, \ndet$ and the individuals without a detected episode be indexed by $i = \ndet + 1, \dots, \Ncis$.
+Let $j = 1, \dots \ntot$ index infection episodes, ordered such that for $j \leq \ndet$ the $j$th infection episode occurs in the $i$th individual.
 
-In the following method, I consider $n_i$ and the duration of the missing episodes as missing data.
-With the full dataset of $n_i$ infection episodes, the problem reduces to double interval censored survival analysis, which has a known likelihood.
-Therefore, I will consider the posterior augmented with all the $n_i$s and then integrate over the $n_i$s to form the desired posterior.
+All the relevant information about episode $j$ can be fully characterised by the (unobserved) triplet $(b_j, e_j, \sched_j)$ where $b_j$ and $e_j$ are the times the episode being and end respectively and $\sched_j$ is the schedule of tests for the individual in which the episode occurs. 
+If $\sched_j$ contains at least one test between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is undetected.
+The triplet belongs to a state space where $b_j$ and $e_j$ span possible infection and recovery times, and $\sched_j$ is one of the observed test schedules (assuming other test schedules occur with probability zero).
 
-\todo[inline]{Maybe move the following paragraph elsewhere}
-It is important to note that there is not a correspondence between the number of ghost episodes and the number of infection episodes that were missed within the true cohort.
-Within the true cohort, the episodes in which the undetected episodes occurred are different to those in which detected episodes occurred.
-In particular, the individuals in which undetected episodes occurred would (on average) have longer spacing between their tests.
-
-The framework of \textcite{heiseyModelling} formalises this thought experiment.
-Start by noting that all relevant information about episode $i$ can be fully characterised by the (unobserved) pair $(b_i, e_i)$ of start and end dates of the episode, which belong to the state space $T \times T$.
-If the individual in which the episode occurs is tested between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is a ghost episode.
-For the $i$th detected episode, assume that there are $n_{it}$ ghost episodes.
-
-To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), based on the observations associated with episode $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
+To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for individual $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
 Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of $\theta$.
 
 \begin{itemize}
 \item
-  Admissible episodes, $\alpha_i$, which have an infection and
-  recovery time consistent with the data observed. That is, $b_i \in [l_i^{(b)}, r_i^{(b)}]$, and $e_i \in [l_i^{(e)}, r_i^{(e)}]$.
-  $n_{ia} =1$ of these occurred, each with probability
-  $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
+  Admissible episodes, $\alpha_i$, which have an infection and recovery time consistent with the data observed.
+  This space is empty if individual $i$ had no detected episode (\ie: $i > \ndet$).
+  Otherwise, $b_i \in [l_i^{(b)}, r_i^{(b)}]$, and $e_i \in [l_i^{(e)}, r_i^{(e)}]$.
+  If $i \leq \ndet$ then $n_{ia} =1$ of these occurred in individual $i$, otherwise $n_{ia} = 0$.
+  Conditional on the episode occurring in individual $i$, it is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
 \item
-  Undetected (or, for consistency with the literature, truncated) episodes, $\Omega_i^C$, which have an infection and
-  recovery time such that they would not have tested positive. An
-  unknown number, $n_{it}$ of these observed, each with probability
-  $p_{it} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
+  Undetected episodes, $\Omega_i^C$, which have an infection and recovery time such that they would not have tested positive.
+  An unknown number, $n_{iu}$ of these observed in individual $i$.
+  Conditional on the episode occurring in individual $i$, it is undetected with probability $p_{iu} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
 \item
   Inadmissible episodes, $\beta_i$, which are not consistent with the data observed but would have been
-  detected. This is all remaining episodes not in the
-  previous sets. $n_{iu} = 0$ of these occurred, where they would have
-  occurred with probability
-  $p_{iu} = \prob((b, e) \in \beta_i \mid \theta)$.
+  detected.
+  This is all remaining episodes not in the previous sets.
+  For an individual with no detected episodes, $\beta_i$ is the area of possible infections that would have been detected.
+  $n_{i\bar{a}} = 0$ of these occurred in any individual $i$.
+  Conditional on the episode occurring in individual $i$, it is inadmissible with probability $p_{i\bar{a}} = \prob((b, e) \in \beta_i \mid \theta)$.
 \end{itemize}
 
-The detected region (where we could have observed an episode) is
-$\Omega_i = \alpha_i \cup \beta_i$ (the notation here is used for
-consistency with \textcite{heiseyModelling}), and is the
-complement of $\Omega^C_i$.
+The detected region, $\Omega_i = \alpha_i \cup \beta_i$, for individual $i$ is the region where we could have observed an episode. 
+The notation is for consistency with \textcite{heiseyModelling}.
+$\Omega_i$ is the complement of $\Omega^C_i$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
@@ -215,116 +208,98 @@ negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Inadmissible region is unshaded. The black (impossible) region is because it does not make sense for recovery to occur prior to infection. \label{perf-test:fig:partitionSpace}}
 \end{figure}
 
-These three classes span all possible episodes and are mutually
-exclusive, and hence the total number of episodes,
-$n_i = n_{ia} + n_{iu} + n_{it}$, and
-$p_{ia} + p_{iu} + p_{it} = 1$.
+These three classes span all possible episodes and are mutually exclusive.
+Hence, $\ntot = \ndet + \nnodet = \sum_{i=1}^{\ndet} n_{ia} + \sum_{i=1}^{\Ncis} n_{iu}$.
+For all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
 
-Episode $i$ and its ghosts independently belong to one of these
-classes. Therefore, conditional on $n_i$, the number of episodes in
-each class (that is, the counts $n_{ia}, n_{iu}, n_{it}$) are
-distributed multinomially. Hence:
+
+Any episode $j$ independently belongs to one of these classes.
+I assume the individual in which each episode occurs is iid uniform across the cohort.
+Therefore, conditional on $\ntot$, the number of episodes in each class (that is, the counts $n_{ia}, n_{iu}, n_{i\bar{a}}$) are distributed multinomially.
+The conditional probabilities given above are multiplied by $1/\Ncis$ to give the unconditional probability that an episode belongs to each class in a specific individual.
+However, the undetected classes cannot be distinguished by any observable data.
+Therefore, only their total is relevant to the data's likelihood.
+The overall probability of an episode being unobserved is $\pnodet = \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} p_{iu}$.
+Furthermore, the inadmissible classes are guaranteed to have zero episodes and hence do not contribute to the multinomial probability.
+Therefore, I combine the undetected classes into a single class and ignore the inadmissible classes.
+Let $\na = (n_{1a}, \dots, n_{\Ncis a})^T$ be the vector of counts of episodes in the admissible classes.
+The counts $\na$ and $\nnodet$ are distributed multinomially with probabilities $\pcis = (p_{1a}, \dots, p_{\Ncis a}, \pnodet)^T$.
+This is equivalent to the full likelihood with all the counts and marginalising over the different undetected classes.
+The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{\Ncis} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
+Hence:
 \begin{align}
-&p(n_{ia} = 1, n_{iu} = 0, n_{it} = n_i - 1 \mid n_i, \theta) \\
-&= \frac{n_i!}{n_{ia}! n_{iu}! (n_i- n_{ia} - n_{it})!} p_{ia}^{n_{ia}} p_{ua}^{n_{ia}} p_{it}^{n_i- n_{ia} - n_{it}} \\
-&= \frac{n_i!}{(n_i-1)!} p_{ia} p_{it}^{n_i- 1} &\text{as $n_{ia} = 1$ and $n_{iu} = 0$}\\
-&= n_i p_{ia} p_{it}^{n_i- 1}
+&p(\na \mid \ntot, \theta) \\
+&= p(\na, \nnodet = \ntot - \na \mid \ntot, \theta) \\
+&= \frac{\ntot!}{\prod_{i=1}^{\Ncis} n_{ia}! \nnodet!}  \left(\frac{1}{\Ncis}\pnodet\right)^{\nnodet}\prod_{i=1}^{\Ncis} \left(\frac{1}{\Ncis}p_{ia}\right)^{n_{ia}} \\
+&\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} \label{perf-test:eq:augmented-likelihood}.
 \end{align}
 
-The posterior we are interested in is
-$p(\theta \mid n_{1a} = 1, n_{1u} = 0, \dots, n_{n_a,a} = 1, n_{n_a,u} = 0)$,
-where $\theta$ are the parameters governing the survival distribution
-and hence allow derivation of the $p$s.
+In forming the probability $\p_{ia}$, the data is used.
+This is not quite correct\todo{better word} because forming a likelihood should not depend on the data.
+However, an alternative where each combination of infection and recovery times is considered its own class is possible.
+Then, the counts for all the classes that previously contained undetected episodes would be zero.
+The resulting likelihood would be the same.
+Therefore, I present this version as it is clearer.
+
+The posterior we are interested in is $p(\theta \mid \na)$ where $\theta$ are the parameters governing the survival distribution.
+The probabilities $\pcis$ are functions of the parameters $\theta$.
 \begin{align}
-&p(\theta \mid n_{ia} = 1, n_{iu} = 0, \dots, n_{n_a,a} = 1, n_{n_a,u} = 0) \\
-&\propto p(\theta) \prod_{i=1}^{n_a} p(n_{ia} = 1, n_{iu} = 0 \mid \theta) \\
-&= p(\theta) \prod_{i=1}^{n_a} \sum_{n_i=1}^\infty p(n_{ia} = 1, n_{iu} = 0, n_{it} = n_i - 1 \mid \theta, n_i) p(n_i \mid \theta) \\
-&= p(\theta) \prod_{i=1}^{n_a} \sum_{n_i=1}^\infty n_i p_{ia} p_{it}^{n_i- 1} p(n_i) \\
-&= p(\theta) \prod_{i=1}^{n_a} p_{ia} \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i).\label{eqn:sum}
+&p(\theta \mid \na) \\
+&\propto p(\theta) p(\na \mid \theta) \\
+&= p(\theta) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) p(\na \mid \theta, \ntot) \\
+&\propto p(\theta) \sum_{\ntot=\ndet}^\infty \left( p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=\ndet}^{\ndet} p_{ia} \right) \\
+&= p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) \left( p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:full-posterior}.
 \end{align}
 
+In the remainder of the section, expressions for each $p_{ia}$, $p_{it}$, and analytical solutions for the sum in \cref{perf-test:eq:full-posterior} are derived in terms of the observed data, under different priors.
 
-In the remainder of the section, expressions for $p_{ia}$,
-$p_{it}$, and analytical solutions for the sum in \cref{eqn:sum} are derived in terms of the observed data, 
-under different priors.
-
-I derive an analytical solution to $\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i)$ under two different assumptions for $p(n_i)$.
-First, we consider the improper prior $p(n_i) \propto 1/n_i$, this prior has several attractive properties.
-Then, we consider a negative binomial distribution (which includes the geometric and Poisson distributions as a special and limiting case respectively).
-
-The reference prior for $n_i$ is $p(n_i) \propto 1/n_i$~\autocite{heBayesiana}.
-Under this prior,
-$\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \propto \sum_{n_i=1}^\infty p_{it}^{n_i-1} = 1/(1-p_{it})$.
-This likelihood is equal to the conditional likelihood used in the frequentist approaches previously mentioned.
-It has been used elsewhere for Bayesian inference~\autocite{zhouUnified}, but the justification within a Bayesian paradigm has not been made explicitly.
-%The prior $p(n_i) \propto 1/n_i$ means that the model coincides with the frequentist conditional likelihood approach, up to the priors on other parameters~\cites[section 4.2]{dempsterMaximum}{heiseyModelling}[section 8.7.5]{gelmanBayesian}.
-% (\protect\hyperlink{ref-dempsterMaximum}{Dempster, Laird, and
-% Rubin} (\protect\hyperlink{ref-dempsterMaximum}{1977}) section 4.2;
-% \protect\hyperlink{ref-heiseyModelling}{Heisey and Nordheim}
-% (\protect\hyperlink{ref-heiseyModelling}{1995});
-% \protect\hyperlink{ref-gelmanBayesian}{Gelman et al.}
-% (\protect\hyperlink{ref-gelmanBayesian}{2013}) section 8.7.5)
-
-Now consider $N_i \dist \NegBin(\mu, r)$ using the
-mean/dispersion parameterisation of the negative binomial. Equivalently:
+I derive an analytical solution to $p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under a negative binomial prior for $\ntot$.
+This prior is $\NegBin(\mu, r)$ using the mean/dispersion parameterisation of the negative binomial.
+Equivalently:
 \begin{align}
-N_i \mid \lambda_i &\dist \Poi(\lambda_i) \\
-\lambda_i &\dist \GamDist(a, b)
+\ntot \mid \lambda &\dist \Poi(\lambda) \\
+\lambda &\dist \GamDist(a, b)
 \end{align}
 where $b = r / \mu$ and $a = r$.
 Hence:
 \begin{align}
-\sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) 
-&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i \mid \lambda_i) p(\lambda_i) d\lambda_i \\
-&= \int \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} \frac{\lambda_i^{n_i} e^{-\lambda_i}}{n_i!} p(\lambda_i) d\lambda_i \\
-&= \int e^{-\lambda_i} \sum_{n_i=1}^\infty p_{it}^{n_i- 1} \frac{\lambda_i^{n_i-1}\lambda_i }{(n_i-1)!} p(\lambda_i) d\lambda_i \\
-&= \int e^{-\lambda_i} \lambda_i p(\lambda_i) \sum_{n_t=0}^\infty p_{it}^{n_t} \frac{\lambda_i^{n_t} }{n_t!} d\lambda_i &n_t = n_i - 1 \\
-&= \int e^{-\lambda_i} \lambda_i p(\lambda_i) e^{p_{it}\lambda_i} d\lambda_i &\text{Poisson pmf} \\
-&= \int e^{\lambda_i (p_{it} - 1)} \lambda_i p(\lambda_i) d\lambda_i \\
-&= \int e^{\lambda_i (p_{it} - 1)} \frac{b^a}{\Gamma(a)} \lambda_i^{a-1} e^{-b\lambda_i} \lambda_i d\lambda_i \\
-&= \frac{\Gamma(a+1)b^a}{\Gamma(a) (b+1-p_{it})^{a+1}} \\ 
-  &\; \times \int \frac{(b+1-p_{it})^{a+1}}{\Gamma(a+1)} \\
-  &\; \lambda_i^{(a+1)-1} e^{-(b+1-p_{it})\lambda_i} d\lambda_i \\
-&= \frac{\Gamma(a+1)b^a}{\Gamma(a) (b+1-p_{it})^{a+1}} &\text{as gamma pdf} \\
-&\propto (b+1-p_{it})^{-(a+1)} \\
-&= (r/\mu+1-p_{it})^{-(r+1)} \\
-&\propto (r+\mu (1-p_{it}))^{-(r+1)}
+&\sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} p(\ntot) \\
+&= \int \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} p(\ntot \mid \lambda) p(\lambda) d\lambda &\text{$\lambda$ explicit}\\
+&= \int \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} \frac{\lambda^{\ntot} e^{-\lambda}}{\ntot!} p(\lambda) d\lambda &\text{Poisson pmf}\\
+%&= \int \sum_{\ntot=\ndet}^\infty \frac{1}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} \lambda^{\ntot-\ndet} \lambda^{\ndet} e^{-\lambda} p(\lambda) d\lambda \\
+&= \int \lambda^{\ndet} e^{-\lambda} p(\lambda) \sum_{\nnodet=0}^\infty \frac{(\pnodet \lambda)^{\nnodet}}{\nnodet!} d\lambda &\nnodet = \ntot-\ndet\\
+&= \int \lambda^{\ndet} e^{-\lambda} e^{\lambda \pnodet} p(\lambda) d\lambda \\
+&= \int \lambda^{\ndet} e^{-\lambda(1 - \pnodet)} \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \lambda d\lambda &\text{Gamma pdf}\\
+&= \int \frac{b^a}{\Gamma(a)} \lambda^{a+\ndet-1} e^{-(b+1-\pnodet)\lambda} \lambda d\lambda \\
+&= \frac{b^a}{\Gamma(a)} \frac{\Gamma(a+\ndet)}{(b+1-\pnodet)^{a+\ndet}} &\text{Gamma pdf}\\
+&\propto (b+1-\pnodet)^{-(a+\ndet)} \\
+&= (r/\mu + 1 - \pnodet)^{-(r+\ndet)} &\text{sub in $\mu$ and $r$}\\
+&\propto(r + \mu (1- \pnodet))^{-(r+\ndet)}.
 \end{align}
-Note that $r=0$ recovers the previous derivation (up to
-proportionality).
 
-The above allows us to sample from the posterior without needing to
-sample the $n_i$s, which is much more efficient due to the previously-discussed dimensionality issue.
-Furthermore, each $n_i$ is a discrete parameter, and hence
-cannot be sampled with widely-used inference algorithms such as Stan's Hamiltonian Monte Carlo (HMC)\todo{ref}.
-
-The posterior of $n_i$, while inconvenient to sample from and not of epidemiological interest directly, can be useful for diagnostic or model debugging purposes (for example, see\todo{ref where I use this in the next chapter}).
-This posterior can be found by sampling from the full conditional.
-Specifically, for each posterior sample of $\theta$, we sample one
-draw from $n_i \mid \theta, y$ where $y$ represents all the data.
-
-Due to the conditional independence of the $n_i$s, we find that:
+Substituting this into \cref{perf-test:eq:full-posterior} gives the following expression for the posterior.
 \begin{align}
-&p(n_i \mid \theta, n_{ia} = 1, n_{iu} = 0) \\
-&\propto p(n_{ia} = 1, n_{iu} = 0, n_{it} = n_i - 1 \mid n_i, p_{iu}, p_{ia}, p_{it}) p(n_i) \\
-&\propto n_i p_{it}^{n_i- 1} p(n_i)
-\end{align}
-With the prior, $p(n_i) \propto 1/n_i$ then this is a geometric
-distribution with parameter $1 - p_{it}$. With a negative binomial
-prior, we have:
-\begin{align}
-n_i p_{it}^{n_i- 1} p(n_i)
-&\propto n_i p_{it}^{n_i- 1} \frac{\Gamma(r + n_i)}{n_i!} \left( \frac{\mu}{r+\mu} \right)^{n_i} \\
-&\propto \frac{\Gamma((r + 1) + (n_i - 1))}{(n_i-1)!} \left( \frac{\mu p_{it}}{r+\mu} \right)^{n_i-1}
-\end{align}
-Therefore, by comparing this expression to the pmf of a negative binomial, we find that $n_i - 1$ is distributed negative binomial with size parameter $r+1$ and
-probability parameter $\frac{r + \mu (1 - p_{it})}{r+\mu}$. The mean
-of this distribution is
-\begin{align}
-\frac{(r+1)\mu p_{it}}{r+\mu(1-p_{it})}
+&p(\theta \mid \na) \\
+&\propto p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) (r + \mu (1- \pnodet))^{-(r+\ndet)} \label{perf-test:eq:full-posterior-simplified}.
 \end{align}
 
-Next, I derive $p_{ia}$ and $p_{it}$.
+$\ntot$ is generally a nuisance parameter, however, its posterior distribution can be useful for diagnostic purposes (\eg: see X\todo{ref where I use this in the next chapter}).
+Given a sample from the posterior of $\theta$, it can be reconstructed by using its full conditional.
+One sample from the full conditional is drawn for each sample from the posterior of $\theta$.
+This gives the joint posterior of $\ntot$ and $\theta$, from which the marginal distribution can be obtained.
+The full conditional is given by:
+\begin{align}
+p(n_\text{tot} \mid \ncis, \theta)
+&\propto p(\ntot) p(\ncis \mid \theta, \ntot) \\
+&\propto p(\ntot) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} &\text{by \cref{perf-test:eq:augmented-likelihood}} \\
+&\propto \frac{\Gamma(r + \ntot)}{\ntot!} \left( \frac{\mu}{r + \mu} \right)^{\ntot} \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot} \\
+&= \frac{\Gamma(r + \ntot)}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot}  \\
+&= \frac{\Gamma((r + \ndet) + (\ntot- \ndet))}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot-\ndet}.
+\end{align}
+Comparing this expression to the pmf of a negative binomial, we find that $\ntot - \ndet$ is distributed negative binomial with size parameter $r+\ndet$ and probability parameter $(r + \mu(1 - \pnodet))/(r + \mu)$.
+The mean of this distribution is $(r+\ndet)\mu \pnodet/r+\mu(1-\pnodet)$.
+
+Next, I derive $p_{ia}$ and $p_{iu}$.
 
 By definition, we have
 \begin{align}
@@ -364,23 +339,6 @@ t^N_{it} &= \min \{ t' \in t_i : t' \geq t \} - t.
 &= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(t_{ib}^N + 1)
 \end{align}
 
-\subsection{Full posterior}\label{perf-test:sec:full-posterior}
-
-Under the prior $p(n_i) \propto 1/n_i$:
-\begin{align}
-&p(\theta \mid n_{ia} = 1, n_{iu} = 0, \dots, n_{n_a,a} = 1, n_{n_a,u} = 0) \\
-&\propto p(\theta) \prod_{i=1}^{n_a} p_{ia} \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \\
-&= p(\theta) \prod_{i=1}^{n_a} \frac{p_{ia}}{1-p_{it}} \\
-&\propto p(\theta) \prod_{i=1}^{n_a} \frac{\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(r_i^{(e)} - b - 1) - S_\theta(l_i^{(e)} - b - 1) \right)}{\sum_{b=\min(t_i)}^T S_\theta(t_{ib}^N + 1)} \\
-\end{align}
-
-Under the prior $N_i \dist \text{NegBinom}(\mu, r)$:
-\begin{align}
-&p(\theta \mid n_{ia} = 1, n_{iu} = 0, \dots, n_{n_a,a} = 1, n_{n_a,u} = 0) \\
-&\propto p(\theta) \prod_{i=1}^{n_a} p_{ia} \sum_{n_i=1}^\infty n_i p_{it}^{n_i- 1} p(n_i) \\
-&= p(\theta) \prod_{i=1}^{n_a} \frac{p_{ia}}{(r+\mu (1-p_{it}))^{(r+1)}} \\
-&= p(\theta) \prod_{i=1}^{n_a} \frac{\sum_{b=l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(r_i^{(e)} - b - 1) - S_\theta(l_i^{(e)} - b - 1) \right)}{\left( r+\mu/T \left( \sum_{b=\min(t_i)}^T S_\theta(t_{ib}^N + 1) \right) \right)^{(r+1)}} \\
-\end{align}
 
 \section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
