@@ -1,5 +1,5 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
-SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux
+SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex appendix-cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
@@ -11,7 +11,9 @@ latex.out/thesis.aux:
 	$(LATEX_CMD) thesis.tex
 
 clean:
-	./latexrun --clean
+	./latexrun --clean-all
+
+.PHONY: FORCE
 
 all: thesis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf incidence-prevalence.pdf
 
