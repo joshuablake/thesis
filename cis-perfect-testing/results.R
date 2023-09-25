@@ -5,7 +5,19 @@ library(purrr)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
-
+readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
+    filter(
+        .width == 0.95, # Credible intervals are narrow anyway so only show 95%
+        survival_prior %in% c(
+            "ATACCC-new",
+            "RW2-infer-sigma",
+            "vague"
+        ),
+        # Use the reference prior on the number of missed infections as this doesn't matter
+        missed_prior == "vague", 
+        missing_model == "total"
+    ) |>
+    distinct(survival_prior)
 tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
     filter(
         .width == 0.95, # Credible intervals are narrow anyway so only show 95%
@@ -14,7 +26,9 @@ tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
             "RW2-infer-sigma",
             "vague"
         ),
-        missed_prior == "vague", # Use the reference prior on the number of missed infections as this doesn't matter
+        # Use the reference prior on the number of missed infections as this doesn't matter
+        missed_prior == "vague", 
+        missing_model == "total"
     ) |>
     mutate(
         survival_prior = case_match(
@@ -30,12 +44,14 @@ truth = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
 theme_survival_time_series = function() {
     rlang::list2(
         standard_plot_theming(),
-        scale_x_continuous(breaks = 0:100*14, minor_breaks = 0:100*2, limits = c(0, 100)),
+        scale_x_continuous(breaks = 0:100*14, minor_breaks = 0:100*2),
         labs(
             x = "t",
             fill = "Hazard prior",
             colour = "Hazard prior"
-        )
+        ),
+        theme(legend.position = "bottom"),
+        coord_cartesian(xlim = c(0, 100))
     )
 }
 
