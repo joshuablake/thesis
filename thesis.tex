@@ -52,9 +52,10 @@
 \DeclareMathOperator{\NegBin}{NegBin}
 \DeclareMathOperator{\GamDist}{Gamma}
 \DeclareMathOperator{\MN}{Multinomial}
-\def\matr{\bm}
-\def\set{\mathcal}
+\newcommand\matr{\bm}
+\newcommand\set{\mathcal}
 \renewcommand{\vec}{\bm}
+\newcommand{\ssep}{:}
 
 % Thesis-specific maths commands
 \newcommand{\psens}{p_\text{sens}}
@@ -64,7 +65,7 @@
 \newcommand{\pnodet}{p_\text{u}}
 \newcommand{\Ncis}{N_\text{CIS}}
 \newcommand{\ncis}{\vec{n_\text{CIS}}}
-\newcommand{\na}{\vec{n_\text{CIS}}}
+\newcommand{\na}{\vec{n_\text{a}}}
 \newcommand{\pcis}{\vec{p_\text{CIS}}}
 \newcommand{\sched}{\mathbb{T}}
 
@@ -85,8 +86,18 @@
 %% You can redefine the submission notice [optional]:
 % \submissionnotice{A badass thesis submitted on time for the Degree of PhD}
 
-
+% Only number labelled equations
+% \forlistloop workaround due to incompatability with biblatex
+% See: https://tex.stackexchange.com/questions/220268/biblatex-and-autonum-dont-work-together
+\usepackage{etoolbox} % get the good meaning of \forlistloop
+\let\etoolboxforlistloop\forlistloop % save the good meaning of \forlistloop
+\usepackage{autonum}
+\let\forlistloop\etoolboxforlistloop % restore the good meaning of \forlistloop
+\makeatletter
+\let\blx@noerroretextools\empty
+\makeatother
 \usepackage[backend=biber,style=authoryear,uniquename=false]{biblatex}
+\addbibresource{references.bib}
 
 \usepackage{subfiles} % Best loaded last in the preamble
 \addbibresource{references.bib}
@@ -210,8 +221,6 @@ However, the results here do not use this for consistency.
 \printbibliography
 
 \appendix
-
-\subfile{appendix-cis-perfect-testing}
 
 \chapter{CIS episode definitions} \label{episode-def}
 

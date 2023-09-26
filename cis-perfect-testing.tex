@@ -158,15 +158,14 @@ I develop a Bayesian framework where there is no explicit data augmentation, all
 In this section, I develop a model accounting for double interval censoring and undetected episodes.
 This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
 This framework is itself based long-standing methodology~\autocites{dempsterMaximum}{turnbullEmpirical}.
-I will augment the data set with the full number of episodes, including those that are undetected.
+I augment the data set with the full number of episodes, including those that are undetected.
 The augmented dataset is standard double interval censored data, with a well-known likelihood.
-I show that integrating over the number of missed epsidoes is analytically tractable.
-Therefore, inference is tractable and implementable within modern, high-performance Bayesian software such as Stan.
 
+Integrating over the number of missed episodes is analytically tractable making inference tractable within modern, high-performance Bayesian software such as Stan.
 Let the total number of infection episodes in the cohort be $\ntot = \ndet + \nnodet$ where $\ndet$ is the number of detected infections and $\nnodet$ is the number of undetected infections.
 There are $\Ncis$ individuals in the cohort.
-Over the short period of time considered, no individual has more than one detected episode. 
 Without loss of generality, let the individuals with a detected episode be indexed by $i = 1, \dots, \ndet$ and the individuals without a detected episode be indexed by $i = \ndet + 1, \dots, \Ncis$.
+Over the short period of time considered, no individual has more than one detected episode. 
 Let $j = 1, \dots \ntot$ index infection episodes, ordered such that for $j \leq \ndet$ the $j$th infection episode occurs in the $i$th individual.
 
 All the relevant information about episode $j$ can be fully characterised by the (unobserved) triplet $(b_j, e_j, \sched_j)$ where $b_j$ and $e_j$ are the times the episode being and end respectively and $\sched_j$ is the schedule of tests for the individual in which the episode occurs. 
@@ -174,7 +173,7 @@ If $\sched_j$ contains at least one test between $b_i$ and $e_i$ (inclusive), th
 The triplet belongs to a state space where $b_j$ and $e_j$ span possible infection and recovery times, and $\sched_j$ is one of the observed test schedules (assuming other test schedules occur with probability zero).
 
 To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for individual $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
-Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of $\theta$.
+Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of the model parameters, $\theta$.
 
 \begin{itemize}
 \item
@@ -183,6 +182,7 @@ Each episode, whether detected or not, must fall into one of these three classes
   Otherwise, $b_i \in [l_i^{(b)}, r_i^{(b)}]$, and $e_i \in [l_i^{(e)}, r_i^{(e)}]$.
   If $i \leq \ndet$ then $n_{ia} =1$ of these occurred in individual $i$, otherwise $n_{ia} = 0$.
   Conditional on the episode occurring in individual $i$, it is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
+  \label{perf-test:def:admissible}
 \item
   Undetected episodes, $\Omega_i^C$, which have an infection and recovery time such that they would not have tested positive.
   An unknown number, $n_{iu}$ of these observed in individual $i$.
@@ -209,33 +209,39 @@ and 28. Inadmissible region is unshaded. The black (impossible) region is becaus
 \end{figure}
 
 These three classes span all possible episodes and are mutually exclusive.
-Hence, $\ntot = \ndet + \nnodet = \sum_{i=1}^{\ndet} n_{ia} + \sum_{i=1}^{\Ncis} n_{iu}$.
-For all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
-
+Therefore, these definitions are consistent with the previous definition of $\ntot$.
+That is, $\ntot = \ndet + \nnodet + n_{i\bar{a}} = \sum_{i=1}^{\ndet} n_{ia} + \sum_{i=1}^{\Ncis} n_{iu} + 0$.
+Furthermore, for all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
 
 Any episode $j$ independently belongs to one of these classes.
 I assume the individual in which each episode occurs is iid uniform across the cohort.
 Therefore, conditional on $\ntot$, the number of episodes in each class (that is, the counts $n_{ia}, n_{iu}, n_{i\bar{a}}$) are distributed multinomially.
-The conditional probabilities given above are multiplied by $1/\Ncis$ to give the unconditional probability that an episode belongs to each class in a specific individual.
-However, the undetected classes cannot be distinguished by any observable data.
-Therefore, only their total is relevant to the data's likelihood.
+The above probabilities ($p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$) are conditional on the episode occurring in individual $i$.
+These probabilities are multiplied by $1/\Ncis$ to give the probability that an episode belongs to each class, without conditioning on a specific individual.
+
+The undetected classes for each individual cannot be distinguished by any observable data.
+Each class's count needs to be marginalised over to calculate the likelihood.
+Because the counts have a joint multinomial distribution, this is equivalent to only considering the sum of the counts.
 The overall probability of an episode being unobserved is $\pnodet = \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} p_{iu}$.
-Furthermore, the inadmissible classes are guaranteed to have zero episodes and hence do not contribute to the multinomial probability.
+Furthermore, the inadmissible classes are guaranteed to have zero episodes.
+Counts of zero do not contribute to a multinomial pmf (they multiply by 1).
 Therefore, I combine the undetected classes into a single class and ignore the inadmissible classes.
+
 Let $\na = (n_{1a}, \dots, n_{\Ncis a})^T$ be the vector of counts of episodes in the admissible classes.
-The counts $\na$ and $\nnodet$ are distributed multinomially with probabilities $\pcis = (p_{1a}, \dots, p_{\Ncis a}, \pnodet)^T$.
-This is equivalent to the full likelihood with all the counts and marginalising over the different undetected classes.
+The counts $\na$ and $\nnodet$ are jointly distributed multinomially.
 The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{\Ncis} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
 Hence:
 \begin{align}
 &p(\na \mid \ntot, \theta) \\
-&= p(\na, \nnodet = \ntot - \na \mid \ntot, \theta) \\
-&= \frac{\ntot!}{\prod_{i=1}^{\Ncis} n_{ia}! \nnodet!}  \left(\frac{1}{\Ncis}\pnodet\right)^{\nnodet}\prod_{i=1}^{\Ncis} \left(\frac{1}{\Ncis}p_{ia}\right)^{n_{ia}} \\
-&\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} \label{perf-test:eq:augmented-likelihood}.
+&= p(\nnodet, \na\mid \ntot, \theta) \\
+&= \frac{\ntot!}{\nnodet! \prod_{i=1}^{\Ncis} n_{ia}!}  \left(\frac{1}{\Ncis}\pnodet\right)^{\nnodet}\prod_{i=1}^{\Ncis} \left(\frac{1}{\Ncis}p_{ia}\right)^{n_{ia}} \\
+&\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} \label{perf-test:eq:augmented-likelihood}
 \end{align}
+the final line follows because $\nnodet = \ntot - \ndet$, $n_{ia} = 1$ for $i \leq \ndet$, and $n_{ia} = 0$ for $i > \ndet$.
 
-In forming the probability $\p_{ia}$, the data is used.
-This is not quite correct\todo{better word} because forming a likelihood should not depend on the data.
+\todo{better phrasing needed for this paragraph, mauybe try email to Shaun?}
+In forming the probability $p_{ia}$, the data is used.
+This is not quite correct because forming a likelihood should not depend on the data.
 However, an alternative where each combination of infection and recovery times is considered its own class is possible.
 Then, the counts for all the classes that previously contained undetected episodes would be zero.
 The resulting likelihood would be the same.
@@ -251,9 +257,9 @@ The probabilities $\pcis$ are functions of the parameters $\theta$.
 &= p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) \left( p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:full-posterior}.
 \end{align}
 
-In the remainder of the section, expressions for each $p_{ia}$, $p_{it}$, and analytical solutions for the sum in \cref{perf-test:eq:full-posterior} are derived in terms of the observed data, under different priors.
+In the remainder of the section, expressions for each $p_{ia}$, $p_{iu}$, and analytical solutions for the sum in \cref{perf-test:eq:full-posterior} are derived in terms of the observed data, under different priors.
 
-I derive an analytical solution to $p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under a negative binomial prior for $\ntot$.
+I derive an analytical solution to $p(\ntot \mid \theta) = \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under a negative binomial prior for $\ntot$.
 This prior is $\NegBin(\mu, r)$ using the mean/dispersion parameterisation of the negative binomial.
 Equivalently:
 \begin{align}
@@ -265,10 +271,10 @@ Hence:
 \begin{align}
 &\sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} p(\ntot) \\
 &= \int \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} p(\ntot \mid \lambda) p(\lambda) d\lambda &\text{$\lambda$ explicit}\\
-&= \int \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} \frac{\lambda^{\ntot} e^{-\lambda}}{\ntot!} p(\lambda) d\lambda &\text{Poisson pmf}\\
+&= \int \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} \frac{\lambda^{\ntot} e^{-\lambda}}{\ntot!} p(\lambda) d\lambda &\ntot \dist \Poi\\
 %&= \int \sum_{\ntot=\ndet}^\infty \frac{1}{(\ntot-\ndet)!} \pnodet^{\ntot-\ndet} \lambda^{\ntot-\ndet} \lambda^{\ndet} e^{-\lambda} p(\lambda) d\lambda \\
 &= \int \lambda^{\ndet} e^{-\lambda} p(\lambda) \sum_{\nnodet=0}^\infty \frac{(\pnodet \lambda)^{\nnodet}}{\nnodet!} d\lambda &\nnodet = \ntot-\ndet\\
-&= \int \lambda^{\ndet} e^{-\lambda} e^{\lambda \pnodet} p(\lambda) d\lambda \\
+&= \int \lambda^{\ndet} e^{-\lambda} p(\lambda) e^{\lambda \pnodet} d\lambda &\text{Maclaurin series of $e$} \\
 &= \int \lambda^{\ndet} e^{-\lambda(1 - \pnodet)} \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \lambda d\lambda &\text{Gamma pdf}\\
 &= \int \frac{b^a}{\Gamma(a)} \lambda^{a+\ndet-1} e^{-(b+1-\pnodet)\lambda} \lambda d\lambda \\
 &= \frac{b^a}{\Gamma(a)} \frac{\Gamma(a+\ndet)}{(b+1-\pnodet)^{a+\ndet}} &\text{Gamma pdf}\\
@@ -279,19 +285,19 @@ Hence:
 
 Substituting this into \cref{perf-test:eq:full-posterior} gives the following expression for the posterior.
 \begin{align}
-&p(\theta \mid \na) \\
+p(\theta \mid \na)
 &\propto p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) (r + \mu (1- \pnodet))^{-(r+\ndet)} \label{perf-test:eq:full-posterior-simplified}.
 \end{align}
 
 $\ntot$ is generally a nuisance parameter, however, its posterior distribution can be useful for diagnostic purposes (\eg: see X\todo{ref where I use this in the next chapter}).
-Given a sample from the posterior of $\theta$, it can be reconstructed by using its full conditional.
-One sample from the full conditional is drawn for each sample from the posterior of $\theta$.
-This gives the joint posterior of $\ntot$ and $\theta$, from which the marginal distribution can be obtained.
-The full conditional is given by:
+I reconstruct the posterior using a posterior sample of $\theta$.
+For each posterior sample of $\theta$, I sample from the full conditional of $\ntot$.
+This gives the joint posterior of $\ntot$ and $\theta$.
+The full conditional of $\ntot$ is given by:
 \begin{align}
 p(n_\text{tot} \mid \ncis, \theta)
-&\propto p(\ntot) p(\ncis \mid \theta, \ntot) \\
-&\propto p(\ntot) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} &\text{by \cref{perf-test:eq:augmented-likelihood}} \\
+&\propto p(\ntot \mid \theta) p(\ncis \mid \theta, \ntot) \\
+&\propto p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} &\text{by \cref{perf-test:eq:augmented-likelihood}} \\
 &\propto \frac{\Gamma(r + \ntot)}{\ntot!} \left( \frac{\mu}{r + \mu} \right)^{\ntot} \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot} \\
 &= \frac{\Gamma(r + \ntot)}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot}  \\
 &= \frac{\Gamma((r + \ndet) + (\ntot- \ndet))}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot-\ndet}.
@@ -301,7 +307,7 @@ The mean of this distribution is $(r+\ndet)\mu \pnodet/r+\mu(1-\pnodet)$.
 
 Next, I derive $p_{ia}$ and $p_{iu}$.
 
-By definition, we have
+By definition (see~\cpageref{perf-test:def:admissible}), we have
 \begin{align}
 p_{ia} &= \prob((b, e) \in \alpha_i) \\
 \alpha_i &= \{ (b, e) : l_i^{(b)} \leq b \leq r_i^{(b)} \wedge l_i^{(e)} \leq e \leq r_i^{(e)}\}.
@@ -310,33 +316,36 @@ p_{ia}
 &= \prob \left( l_i^{(b)} \leq B_i \leq r_i^{(b)}, l_i^{(e)} \leq E_i \leq r_i^{(e)} \right) \\
 &= \prob \left( l_i^{(e)} \leq E_i \leq r_i^{(e)} \mid l_i^{(b)} \leq B_i \leq r_i^{(b)} \right) \prob \left( l_i^{(b)} \leq B_i \leq r_i^{(b)} \right) \\
 &=\sum_{b = l_i^{(l)}}^{r_i^{(b)}} \prob \left( l_i^{(e)} \leq E_i \leq r_i^{(e)} \mid B_i = b \right) \prob \left(B_i = b \right) \\
-&=\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \prob \left( l_i^{(e)} - b + 1 \leq D_i \leq r_i^{(e)} - b + 1 \right) \prob \left(B_i = b \right) \\
-&=\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 2) \right) \prob \left(B_i = b \right) \\
-&\propto \sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 2) \right)
+&=\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \prob \left( l_i^{(e)} - b + 1 \leq D_i \leq r_i^{(e)} - b + 1 \right) \prob \left(B_i = b \right) &\text{by def of $D_i$} \\
+&=\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 1) \right) \prob \left(B_i = b \right) &\text{by def of $S_\theta$} \\
+&\propto \sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 1) \right)
 \end{align}
+\todo[inline]{Fill in references}
 under the assumption of uniform probability of infection time.
 
-Next, we derive $p_{it} = \prob((b, e) \in \Omega^C_i)$, the probability
-that episode $i$ was detected. A detected episode means that no test
-was performed during the episode or there was no negative test prior to
-the episode. Denote by $t_i$ the set of testing times for the
-individual in which episode $i$ was observed, and define the time
-until the next test on the individual after time $t'$ as:
+Next, I derive $p_{iu} = \prob((B_i, E_i) \in \Omega^C_i)$, the probability that episode $i$ was undetected.
+An episode is undetected if and only if no tests are performed during the episode or if there was no negative test prior to the episode.
+Equivalently, that the first test at or after $b$ is after $e$, or that there is no negative test prior to $b$.
+To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
 \begin{align}
-t^N_{it} &= \min \{ t' \in t_i : t' \geq t \} - t.
-\intertext{Then:}
-\Omega^C_i
-&= \{ (b, e) : \nexists t \in t_i. b \leq t \leq e \vee b \leq \min(t_i) \} \\
-&= \{ (b, e) : e - b < t^N_{ib} \vee b \leq \min(t_i) \}.
-\intertext{Hence:}
-1 - p_{it}
-&= 1 - \prob(E_i - B_i < t_{iB_i}^N \vee B_i \leq \min(t_i)) \\
-&= 1 - \prob(E_i - B_i < t_{iB_i}^N \wedge B_i > \min(t_i)) - \prob(B_i \leq \min(t_i)) \\
-&= 1 - \sum_{b=\min(t_i) + 1}^T \prob(E_i - b + 1 < t_{ib}^N \mid B_i = b) \prob(B_i = b) \\
-  &\; - \sum_{t=1}^{\min(t_i)} \prob(B_i = b)\\
-&= 1 - \frac{1}{T} \sum_{b=\min(t_i)+1}^T (1 - S_\theta(t_{ib}^N + 1)) - \frac{\min(t_i)}{T} \\
-&= 1 - \frac{T-\min(t_i)}{T} + \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(t_{ib}^N + 1)) - \frac{\min(t_i)}{T} \\
-&= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(t_{ib}^N + 1)
+\tau_{\sched_i}(t) &= \min \{ t' \in \sched_i : t' \geq t \} - t.
+\end{align}
+Then $\Omega^C_i$ can be written as:
+\begin{align}
+\Omega_i^C = \{ (b, e) \ssep \tau_{\sched_i}(b) + b > e \vee b \leq \min(\sched_i) \}.
+\end{align}
+Only $1 - p_u = 1 - \frac{1}{N} \sum_i^{\Ncis} p_{iu} = \frac{1}{N} \sum_i^{\Ncis} (1 - p_{iu})$ is required (see \cref{perft-test:eq:full-posterior-simplified}).
+Therefore, I derive $1 - p_{iu}$:
+\begin{align}
+1 - p_{iu}
+&= 1 - \prob((B_i, E_i) \in \Omega^C_i) \\
+&= 1 - \prob( \tau_{\sched_i}(B_i) + B_i > E_i \vee B_i \leq \min(\sched_i) ) \\
+&= 1 - \prob( \tau_{\sched_i}(B_i) > D_i , B_i > \min(\sched_i) )  - \prob( B_i \leq \min(\sched_i) ) \\
+&= 1 - \sum_{b={\min\sched_i} + 1}^T \prob( \tau_{\sched_i}(b) > D_i) \prob(B_i = b) - \sum_{t=1}^{\min\sched_i} \prob(B_i = b)\\
+&= 1 - \frac{1}{T} \sum_{b=\min(t_i)+1}^T (1 - S_\theta(\tau_{\sched_i}(b + 1))) - \frac{1}{T} \min\sched_i \\
+&= \frac{1}{T} \left(T - \sum_{b=\min\sched_i+1}^T (1 - S_\theta(\tau_{\sched_i}(b + 1))) - \min\sched_i \right) \\
+&= \frac{1}{T} \left(T - (T - \min\sched_i) + \sum_{b=\min\sched_i+1}^T S_\theta(\tau_{\sched_i}(b + 1)) - \min\sched_i \right) \\
+&= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(\tau_{\sched_i}(b + 1)).
 \end{align}
 
 
@@ -572,8 +581,6 @@ This chapter has shown the feasibility of estimating the survival function from 
 While the infrequent testing schedule is not ideal, appropriate modelling can recover the true survival function well.
 
 \ifSubfilesClassLoaded{
-  \appendix
-  \subfile{appendix-cis-perfect-testing}
   \listoftodos
 }{}
 \end{document}
