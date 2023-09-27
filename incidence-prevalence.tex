@@ -14,7 +14,7 @@ Throughout this thesis, time will generally\todo{revisit phrasing once finished 
 Most epidemiological data is only available at daily granularity or, when more granular data exists, is often unreliable.
 Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection); these variations are not of interest in most contexts.
 
-\section{Incidence, prevalence, and duration}
+\section{Definitions}
 
 \emph{Incidence} at time $t$, $Z_t$, is the number of people in a given population who become infected at time $t$ (I use $Z_t$ rather than $I_t$ to avoid confusion with the convention that $i$ is an indexing variable).
 Incidence expressed as a proportion of the population, $Z_t/N$ where $N$ is the number of people in the population, is the \emph{incidence rate}.
@@ -27,6 +27,37 @@ The \emph{prevalence proportion} is the same quantity expressed as a proportion 
 For SARS-CoV-2, there are several definitions of infected.
 An infected individual could mean: one that is infectious; one that is symptomatic; or one that, if they were tested, would return a positive PCR test if tested (discussed in\todo{ref appropriate section}).
 In this thesis, prevalence is defined as the number of people in the population who would return a positive PCR test (if everyone was tested) at time $t$.
+
+\section{Backcalculation}
+
+\emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
+It was first developed in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome)~\autocite{brookmeyerMethod}.
+HIV is a virus transmitted sexually or through blood, and causes the disease AIDS.
+AIDS has killed around 40 million people; at its peak, around 2 million people died from AIDS each year\todo{cite WHO}.
+In this context, backcalculation estimates the incidence of HIV infection from data on the number of AIDS diagnoses and the distribution of the time between infection and AIDS diagnosis~\autocite{brookmeyerBackcalculation}{brookmeyerMeasuring}.
+\todo{explain how AIDS diagnosis is "prevalence" data (is it?)}
+
+Two processes are involved in backcalculation: the \emph{prevalence process} and the \emph{observation process}.
+The prevalence process describes the relationship between incidence and prevalence.
+The observation process describes the relationship between prevalence and the observed data.
+
+In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
+However, this is often a poor approximation.
+\emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
+
+Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
+The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
+I keep this assumption for the remainder of this chapter.
+
+
+Backcalculation makes use of this relationship to estimate incidence from prevalence, assuming that the duration is known.
+
+Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
+This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
+
+\todo[inline]{Explain backcalculation in HIV/AIDS context, and how it relates to what is above.}
+
+\section{Prevalence process}
 
 The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
 The period the individual is prevalent for is the \emph{infection episode}, which I will index with $i$, associated with that infection event.
@@ -121,7 +152,7 @@ where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $
 
 \todo[inline]{Need some conclusion text for this section}
 
-\section{Prevalence data}
+\section{Observation process}
 
 % A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
 % Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
@@ -151,25 +182,6 @@ For large populations and reasonable sample sizes, $n_t << N$ and $\E(P_t) \appr
 Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
 This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
 
-\section{Backcalculation}
-
-\emph{Backcalculation} is a procedure that combines the elements of the previous two sections to estimate incidence based on a measurement of prevalence
-
-In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
-However, this is often a poor approximation.
-\emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
-
-Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
-The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
-I keep this assumption for the remainder of this chapter.
-
-
-Backcalculation makes use of this relationship to estimate incidence from prevalence, assuming that the duration is known.
-
-Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
-This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
-
-\todo[inline]{Explain backcalculation in HIV/AIDS context, and how it relates to what is above.}
 
 \section{Estimating the duration} \label{inprev:sec:duration}
 
