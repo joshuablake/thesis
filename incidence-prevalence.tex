@@ -32,15 +32,51 @@ In this thesis, prevalence is defined as the number of people in the population 
 
 \emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
 It was first developed in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome)~\autocite{brookmeyerMethod}.
-HIV is a virus transmitted sexually or through blood, and causes the disease AIDS.
-AIDS has killed around 40 million people; at its peak, around 2 million people died from AIDS each year~\autocite{unaids2023}.
-In this context, backcalculation estimates the incidence of HIV infection from data on the number of AIDS diagnoses and the distribution of the time between infection and AIDS diagnosis~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
+HIV is transmitted sexually or through blood.
+It causes the disease AIDS.
+AIDS has killed around 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
+In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the distribution of the time between infection and AIDS diagnosis~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
 \todo{explain how AIDS diagnosis is "prevalence" data (is it?)}
 
 Three processes are involved in backcalculation: the \emph{infection process}, the \emph{prevalence process} and the \emph{observation process}.
-The infection process describes how individuals become infected.
+The infection process determines incidence.
 The prevalence process describes the relationship between incidence and prevalence.
 The observation process describes the relationship between prevalence and the observed data.
+
+The infection process is a point process, where each infection is an event.
+The simplest plausible model is a time-inhomogenous Poisson process.
+That is, a Poisson process where the intensity varies over time.
+The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
+The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic.
+
+Two features of a Poisson process can be violated for epidemics.
+Epidemics commonly exhibit overdispersion and have feedback loops.
+Overdispersion means that the variance in the number of infections in a time interval is higher than its mean.
+In a Poisson process, counts in a time interval have a Poisson distribution.
+Therefore, the mean and variance are equal.
+Feedback loops mean that the stochastically low or high numbers of infections, possibly due to overdispersion, affect the future number of infections.
+In a Poisson process, the intensity (mean number of events per unit time) is not influenced by the realisation of the process.
+Both of these features violate the assumptions of a Poisson process.
+
+A common cause of overdispersion is super-spreading events.
+\todo{ref}
+A super-spreading event is an event where many more people than expected are infected.
+Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion.
+\todo{insert a SARS-CoV-2 superspreading example}
+Overdispersion could be incorporated by modelling the counts in a given time interval as a negative binomial, rather than Poisson, distribution.
+The mean of these distributions would be equal, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
+These distributions are related in that the negative binomial tends to Poisson as $k\to\infty$.
+Generally, $k<1$ indicates significant levels of overdispersion.
+Estimates for SARS-CoV-2 indicate $k \approx 0.1$, and can be increased by interventions such as lockdowns.
+However, the negative binomial distribution loses much of the mathematical convenience of a Poisson distribution.
+For a negative binomial process, the count's standard deviation scales on the order of the mean.
+Conversely, for a Poisson process, the standard deviation is on the order of the square root of the mean.
+A particular implication of this is that the coefficient of variation (the standard deviation divideed by the mean) tends to zero for a Poisson process, but tends to a constant for a negative binomial process.
+
+The independence assumption is violated because if the number of infections is stochastically high, this feeds back to the process intensity at future times.
+This can be seen simply in the event of a super-spreading event.
+If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
+These additional infections will propagate the epidemic further, increasing the intensity at future times.
 
 In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
 However, this is often a poor approximation.
