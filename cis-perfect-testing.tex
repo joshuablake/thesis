@@ -49,9 +49,9 @@ Therefore, the estimation of the tail of the duration distribution is driven by 
 This chapter develops methods to estimate the distribution using CIS data, which has less frequent sampling but a large sample size and long follow-up.
 
 I take a Bayesian survival analysis approach to model the coarse sampling of the CIS (see \cref{perf-test:sec:problem}).
-Flat priors can be unintentionally very informative, and hence (weakly) informative priors should be used.
+Flat priors can be unintentionally very informative, and hence uninformative priors should be used.
 Of particular interest is a strongly informative prior to combine the information in the CIS with the results of \cref{E-ATACCC} (see \cref{perf-test:sec:parameters-priors}).
-Through a simulation study, I show that these methods perform well, and in this context are not sensitive to model or whether the prior is weakly or strongly informative (see \cref{perf-test:sec:simulation-study}).
+Through a simulation study, I show that these methods perform well, and in this context are not sensitive to model or whether the prior is vague or strongly informative (see \cref{perf-test:sec:simulation-study}).
 However, application in reality must account for false negatives, the subject of \cref{E-imperf-test}.
 
 \section{Problem description} \label{perf-test:sec:problem}
@@ -69,7 +69,7 @@ The infection episode depicted begins at time 33 and has a 10-day duration.
 If the duration was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
 Undetected infections are a large problem in CIS because the interval between tests is often 28 days (see\todo{ref section on the survey design}), large relative to the duration of an infection episode.
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/truncation}
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-perfect-testing/truncation}}
   \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
@@ -108,7 +108,6 @@ Undetected events where we have information on missed events is unusual within t
 Far more common is that there is no data on these events, a situation known as \emph{truncation}.
 A situation that is particularly relevant is \emph{left truncation}, when only events lasting a minimum amount of time are observed.
 A subtlety that makes the CIS different from standard left truncation is that information on individuals in which undetected infections occurred is available because they were enrolled in the study.
-This information could be incorporated into the analysis, although doing so increases the computational burden and requires strong assumptions regarding reinfections without noticeably affecting the results (see \cref{appendix:total-model}).
 In standard left truncation, nothing is known about the missed events.
 As the information is not being incorporated here, standard left truncation methods remain applicable, and they can be modified to incorporate the additional information if desired.
 
@@ -334,7 +333,7 @@ Then $\Omega^C_i$ can be written as:
 \begin{align}
 \Omega_i^C = \{ (b, e) \ssep \tau_{\sched_i}(b) + b > e \vee b \leq \min(\sched_i) \}.
 \end{align}
-Only $1 - p_u = 1 - \frac{1}{N} \sum_i^{\Ncis} p_{iu} = \frac{1}{N} \sum_i^{\Ncis} (1 - p_{iu})$ is required (see \cref{perft-test:eq:full-posterior-simplified}).
+Only $1 - p_u = 1 - \frac{1}{N} \sum_i^{\Ncis} p_{iu} = \frac{1}{N} \sum_i^{\Ncis} (1 - p_{iu})$ is required (see \cref{perf-test:eq:full-posterior-simplified}).
 Therefore, I derive $1 - p_{iu}$:
 \begin{align}
 1 - p_{iu}
@@ -385,7 +384,7 @@ This prior expresses extreme scepticism in estimates from previous studies, such
   \caption[Uninformative priors for the hazard]{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
 \end{figure}
 
-Instead, I propose a weakly informative prior Beta(0.1, 1.9), which has mean 0.05 and minimal information.
+Instead, I propose a weakly informative (or vague) prior Beta(0.1, 1.9), which has mean 0.05 and minimal information.
 The amount of information in a Beta distribution is related to the sum of its parameters.
 Here, the sum equals 2, the same as the flat prior case.
 The central 95\% probability mass of Beta(0.1, 1.9) is 0.00--0.47.
@@ -393,7 +392,7 @@ The central estimate, of 0.05, is in line with previous estimates that the media
 This prior gives a very vague prior predictive distribution on the survival time (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/vague-prior}
-  \caption[Weakly informative priors for the hazard]{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
+  \caption[Vague prior for the hazard]{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
 \end{figure}
 
 
@@ -457,12 +456,14 @@ The discrete Beta process prior generalises the form of prior used in \cref{perf
 It is:
 \begin{align}
   \lambda_t &\sim \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
-  \alpha_t &= c_t h_t + \alpha_0 \\
-  \beta_t &= c_t (1 - h_t) + \beta_0
+  \alpha_t &= k_t h_t + \alpha_0 \\
+  \beta_t &= k_t (1 - h_t) + \beta_0
 \end{align}
 where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point estimate of the hazard at time $t$ from ATACCC.
 An intuition for what this distribution represents can be gained by considering the conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
 If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
+
+\todo{Add plot of $k_t$}
 
 \section{Simulation study} \label{perf-test:sec:simulation-study}
 
@@ -530,21 +531,31 @@ Code utilising these frameworks to perform the analysis described in this chapte
 
 \subsection{Results}
 
-All analyses converged, with all parameters Rhat < 1.01, effective sample size of 1000, and no divergent transitions.
+Repeating the simulation showed negligible variation in the results (not shown).
+This is caused by the large sample size (4800 detected infections).
+Therefore, only results from a single simulation are shown and dicussed.
 
-Repeating simulations showed very little variation in the results, due to the large sample size in CIS; therefore, only results from a single simulation are shown.
+All analyses converged.
+Rhat were below 1.01, all parameters had an effective sample size of 1000, and there were no divergent transitions.
 
-The true value of the survival function is very well recovered with little difference between priors (see \cref{perf-test:fig:survival-results}).
+The true value of the survival function was generally well recovered (see \cref{perf-test:fig:survival-results}).
+This was especially true for the first 30 days of the distribution.
 
-The independent prior has the fewest assumptions and least prior information.
-Therefore, it leads to posterior estimates that are most uncertain.
+The second-order random walk prior performed worst.
+It showed oversmoothing, especially in the later parts of the distribution.
+It smooths towards a linearly changing hazard; here, linearly decreasing (see \cref{perf-test:fig:hazard-results}).
+This means that the survival function decreases slower than an exponential distribution in the tail.
 
-The second-order random walk is the only prior that smooths the hazard throughout the entire infection.
-This leads to a near-constant hazard, and hence exponential-like survival, in areas where there is little information (long infections).
+The informative and vague independent priors performed similarly.
+The informative prior had tighter credible intervals, as expected.
+This prior was centered on the correct value for the initial part of the distribution.
+Therefore, the narrow credible intervals are unsurprising.
+For hazards after day X\todo{check and insert}, the informative and vague priors are the same.
+Therefore, the posterior distributions are almost identical.
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/survival-results}
-  \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. \label{perf-test:fig:survival-results}}
+  \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. y-axis has either natural (left) or log (right) scale. Only showing first 100 days of the distribution. \label{perf-test:fig:survival-results}}
 \end{figure}
 
 \begin{figure}
@@ -554,20 +565,23 @@ This leads to a near-constant hazard, and hence exponential-like survival, in ar
 
 \section{Discussion} \label{perf-test:sec:discussion}
 
-This chapter shows that the model I propose can recover the true survival function well, is not sensitive to the prior used for the survival distribution, nor requires information on the number of infections that were undetected.
+This chapter shows that the model I propose can recover the true survival function well.
 However, the problem becomes substantially harder if false negatives are present, as we shall see in the next chapter.
 Unfortunately, false negatives do occur in the CIS data.
+
+Reasonable choices of the prior for the hazard are vague (although not flat) or informative.
+A smoothing prior performed poorly, although that may be influenced by the choice of hyperparameters.
+Reducing the amount of smoothing or type of smoothing may help.
+More flexible smoothers, such as a Gaussian Process for additional flexibility and smoothing and different time-scales~\autocite{saulGaussian}.
 
 Various extensions could be worth exploring.
 Most importantly, covariates (\eg age, immunity from vaccination and/or previous infection, or variant) could be included.
 Immunity in particular affects the duration substantially, although age and variant may also make a contribution~\autocites{hakkiOnset}{russellWithinhost}.
-Covariates can be included with a variety of model, the simplest being a proportional hazards model.
-
-The form of priors used for the survival function could also be extended.
-In particular, the form of smoothing chosen here is very simple and could be replaced with a more flexible model, such as a Gaussian Process for additional flexibility and smoothing and different time-scales~\autocite{saulGaussian}.
+Covariates can be included with a variety of models, the simplest being a proportional hazards model.
+A major challenge here is that the calculation of $p_t$ is greatly complicated, because it is no longer linear in the survival function.
 
 The prior would likely be more important if the number of detected infections was smaller.
-Therefore, exploring its impact would be important for designing future surveys.
+Therefore, exploring its impact could be important for future surveys.
 A particular application would be estimation in the early stages of an epidemic of a novel pathogen.
 Here, little would be known about the pathogen, but gathering information with robust estimates of uncertainty is important to inform the response.
 
@@ -576,6 +590,19 @@ In this case, a sensitivity analysis (not shown) showed minimal impact on surviv
 Furthermore, I chose a period where the incidence was approximately constant.
 However, this assumption could be important in other contexts, especially if the incidence is changing rapidly.
 The assumption of constant incidence can lead to biased estimates~\autocite{degruttolaAnalysis}.
+
+I have developed a flexible simulation and inference framework for this type of analysis.
+This framework could be used to simulate alternate study designs.
+The design of CIS was created on a very short timescale in March 2020, in response to the pandemic's rapid spread.
+Therefore, it is likely that there are more efficient designs.
+These could be more cost-effective.
+Improved cost-effectiveness could allow more rapid response to potential pandemics because the threshold for policy-makers to approve the study would be lower.
+A long-term, preparatory effort to develop a more efficient design in preparation of a future pandemic would be worthwhile.
+
+Other useful preparatory work would be developing reasonable priors.
+These could be based on seasonal viruses that are of the same family as those likely to cause future pandemics.
+For example, seasonal influenzas and coronaviruses.
+These would allow analyses such as those performed in these chapters to be performed more rapidly in a future pandemic scenario.
 
 \section{Conclusion} \label{perf-test:sec:conclusion}
 This chapter has shown the feasibility of estimating the survival function from a study with a CIS-like testing schedule.

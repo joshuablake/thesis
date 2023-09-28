@@ -1,23 +1,11 @@
-library(dplyr)
+suppressMessages(library(dplyr))
 library(ggplot2)
 library(patchwork)
 library(purrr)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
-readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
-    filter(
-        .width == 0.95, # Credible intervals are narrow anyway so only show 95%
-        survival_prior %in% c(
-            "ATACCC-new",
-            "RW2-infer-sigma",
-            "vague"
-        ),
-        # Use the reference prior on the number of missed infections as this doesn't matter
-        missed_prior == "vague", 
-        missing_model == "total"
-    ) |>
-    distinct(survival_prior)
+
 tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
     filter(
         .width == 0.95, # Credible intervals are narrow anyway so only show 95%
@@ -55,7 +43,7 @@ theme_survival_time_series = function() {
     )
 }
 
-surv_plot = tbl_posteriors |>
+surv_nat_plot = tbl_posteriors |>
       ggplot() +
       ggdist::geom_lineribbon(
         aes(time, S, ymin = S.lower, ymax = S.upper, fill = survival_prior, colour = survival_prior),
@@ -64,6 +52,20 @@ surv_plot = tbl_posteriors |>
     geom_line(aes(time, S), data = truth) +
     theme_survival_time_series() +
     ylab("S(t)")
+
+surv_log_plot = surv_nat_plot +
+    scale_y_log10(
+        minor_breaks = map(
+            -1:-3,
+            ~seq(from = 10^.x, to = 10^(.x+1), by = 10^.x)
+        ) |>
+        unlist()
+    ) +
+    coord_cartesian(c(0, 100), c(0.001, 1))
+
+surv_plot = surv_nat_plot + surv_log_plot + plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
+
 ggsave(
     filename = here::here("cis-perfect-testing/survival-results.png"),
     plot = surv_plot,
