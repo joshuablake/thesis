@@ -44,36 +44,44 @@
 \chapter{Estimating duration with infrequent testing} \label{perf-test}
 
 The estimation of incidence from prevalence is sensitive to the tail of the duration distribution.
-In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset, however, this study suffered from a small sample size and only 20 days of follow-up.
-Therefore, the estimation of the tail of the duration distribution is driven by model assumptions.
-This chapter develops methods to estimate the distribution using CIS data, which has less frequent sampling but a large sample size and long follow-up.
+In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset.
+However, this study suffered from a small sample size and only 20 days of follow-up.
+Therefore, model assumptions determined the size of the tail estimated.
+In this chapter, I develop a method to estimate the distribution using CIS data. 
+CIS sampling is less frequent, but with a large sample size and long follow-up.
 
 I take a Bayesian survival analysis approach to model the coarse sampling of the CIS (see \cref{perf-test:sec:problem}).
-Flat priors can be unintentionally very informative, and hence uninformative priors should be used.
+Flat priors are unintentionally very informative.
+Hence, at least weakly informative priors should be used.
 Of particular interest is a strongly informative prior to combine the information in the CIS with the results of \cref{E-ATACCC} (see \cref{perf-test:sec:parameters-priors}).
-Through a simulation study, I show that these methods perform well, and in this context are not sensitive to model or whether the prior is vague or strongly informative (see \cref{perf-test:sec:simulation-study}).
-However, application in reality must account for false negatives, the subject of \cref{E-imperf-test}.
+I conduct a simulation study to demonstrate this method's performance.
+It succesfully recovers the truth when using reasonable priors (see \cref{perf-test:sec:simulation-study}).
+In reality, the method must account for false negatives, discussed in \cref{E-imperf-test}.
 
 \section{Problem description} \label{perf-test:sec:problem}
 
-The CIS infrequently tests each individual, with tests occurring either weekly or monthly (see\todo{refer to section with CIS intro}).
-The infrequent testing complicates analysis of the data in two ways: infection episodes can go undetected and the infection episode endpoints (start and end times) are known imprecisely.
-This section explains these issues fully, and the remainder of the chapter develops a method to model them.
+The CIS tests each individual infrequently, either weekly or monthly (see\todo{refer to section with CIS intro}).
+The infrequent testing complicates analysis of the data in two ways.
+First, infection episodes can go undetected.
+Second, the infection episode start and end times are known imprecisely.
+This section explains these issues.
+The rest of the chapter develops a method to model them.
 
-The first complication in the analysis is that infection episodes can be undetected, meaning no there are no positive tests associated with them.
-This happens when an episode starts and ends between tests (see \cref{perf-test:fig:truncation}).
-For these undetected episodes, there is no information on them episode, meaning that we do not even know how many of them occurred.
-It is important to account for undetected episodes because they are systematically of shorter duration than detected episodes.
+The first complication in the analysis is that infection episodes can be undetected.
+This means there are no positive tests associated with them.
+Undetected episodes occur when an episode starts and ends between tests (see \cref{perf-test:fig:truncation}).
+For undetected episodes, there is no information on them episode; even the number that occurred is unknown.
+Undetected episodes are important because they are shorter than detected episodes.
 To see why this is the case, consider the undetected infection in the bottom of \cref{perf-test:fig:truncation}.
 The infection episode depicted begins at time 33 and has a 10-day duration.
-If the duration was 24 days (or longer), the individual would still have been detectable at their next test, and therefore would have been detected.
-Undetected infections are a large problem in CIS because the interval between tests is often 28 days (see\todo{ref section on the survey design}), large relative to the duration of an infection episode.
+If the duration was 24 days or more, the individual would still be detectable at their next test and detected then.
+CIS has many undetected infections. This is because frequency of testing (up to 28 days, see\todo{ref section on the survey design}) is longer than most infections (median around 15 days).
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-perfect-testing/truncation}}
   \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
-The second complication is that the beginning and end times of detected infection episodes are known imprecisely.
+The second complication is that the exact beginning and end times of detected infection episodes are unknown.
 The imprecision in the beginning of the infection episode arises because the only observation that an episode has started is that an individual was negative at one test, on day $l_i^{(b)}-1$ (the minus one is because the first day that the infection could have begun is the day after the negative test), and positive at the next test, on day $r_i^{(b)}$.
 Similarly, the end of the infection episode is bounded by the final positive test on day $l_i^{(e)}$ and the following negative test on day $r_i^{(e)}+1$ (the plus one is because the last day that the infection could have ended is the day before the negative test).
 \Cref{perf-test:fig:double-interval-censor} shows this issue graphically.
@@ -82,77 +90,89 @@ Similarly, the end of the infection episode is bounded by the final positive tes
   \caption[Double-interval censoring in CIS data]{Episodes data in CIS is double interval censored, meaning that both the start and end of the episode are only known up to an interval. Demonstrated here by a participant who is recorded negative at time 7 to positive at time 14, bounding the start of the episode; similarly, changing from positive at time 28 to negative at time 56 bounds the end of the episode. \label{perf-test:fig:double-interval-censor}}
 \end{figure}
 
-I will base my analysis on the 4,800\todo{check number} of episodes that were first detected between 10th Oct 2020 and 6th Dec 2020 inclusive and have negatives bounding the start and end time of the episode.
-That is, the individual in which the infection episode occurred tested negative at least once in the survey prior to the start of their infection episode, and they tested negative at least once after their infection episode ended.
-Without a negative before the episode there is little information on the episode's length because it's start time could have occurred arbitrarily long ago.
-The only episodes without a negative following the end of the episode are those in individuals lost to follow-up before their episode ended, which is extremely rare.
-This filtering could bias the results of the study but will be considered in the same way as undetected episodes to avoid this.
+I base my analysis on the 4,800\todo{check number} episodes that were first detected between 10th Oct 2020 and 6th Dec 2020 inclusive with negatives bounding the start and end time of the episode.
+That is, the individual tested negative before and after the episode.
+Without a negative before the episode there is no lower bound on the episode's start time.
+It could be arbitrarily long and there is little information on its length.
+A negative test follows each episode unless the individual was lost to follow-up before their episode ended.
+This is rare.
+Episodes removed in this step are incorporated in the adjustment for undetected episodes.
 
-In the remainder of this and the following chapter, I use survival analysis rather than the biomarker approach taken in \cref{E-ATACCC} for computational efficiency and data limitations arising from the study design.
-In the biomarker approach, computational efficiency is an issue because the number of random effects scales with the number of detected infection episodes.
-There are a large number of detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
-Therefore, the biomarker approach would be computationally challenging with the large sample size in CIS.
-The computational challenge is compounded by the data being stored in a TRE with the associated limited access to computational power and software.
-The study design of CIS, with the infrequent sampling in the CIS study design, means that most detected episodes have only a single positive test.
-Hence, there is no information on the viral load trajectory required to identify the random effects in the model used in \cref{E-ATACCC} or similar approaches.
-While the biomarker approach does use more information per sample by taking into account the viral load as well as the binary test result (\ie whether the result is positive or negative), however, the available information is unlikely to be sufficient to overcome these problems.
+In the rest of this and the following chapter, I use survival analysis rather than the biomarker approach taken in \cref{E-ATACCC}.
+This choice is motivated by computational efficiency and limitations of the CIS's study design.
+The biomarker approach is computational challenging because the number of random effects scales with the number of detected infection episodes.
+There are many detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
+Therefore, the biomarker approach would be computationally challenging.
+The computational challenge is compounded by the data being stored in a TRE, which has limited computational power and software.
+The issue with random effects is made worse by the CIS's study design.
+Infrequent testing means that most detected episodes have only a single positive test.
+Hence, there is no information on the viral load trajectory and the random effects are unidentifiable.
 
 \section{Survival analysis}
 
 In survival analysis, the event at the start of the time of interest is the \emph{initiating event}, and the event at the end of the time of interest is the \emph{terminating event}.
-It is broadly applicable to many domains, such as the time-to-failure for a mechanical system or the effect of a treatment on time spent in hospital.
-In the context of this thesis, the distribution to estimate is the duration of positivity.
-Therefore, the initiating event is when the duration starts; and the terminating event is when the duration ends.
+It is used in many areas, including how long a machine lasts before breaking down or how long a patient spends in hospital after a treatment.
+Here, I am estimating the distribution of the duration of positivity.
+The initiating event is the episode's start; the terminating event is the episode's end.
 
-Undetected events where we have information on missed events is unusual within the survival analysis literature.
-Far more common is that there is no data on these events, a situation known as \emph{truncation}.
+Undetected events where there is no information on these events is known as \emph{truncation}.
 A situation that is particularly relevant is \emph{left truncation}, when only events lasting a minimum amount of time are observed.
-A subtlety that makes the CIS different from standard left truncation is that information on individuals in which undetected infections occurred is available because they were enrolled in the study.
+There is a subtlety that makes the CIS different from standard left truncation.
+In CIS, individuals in which undetected infections occurred are enrolled in the study.
+Therefore, some data has been collected about them.
 In standard left truncation, nothing is known about the missed events.
-As the information is not being incorporated here, standard left truncation methods remain applicable, and they can be modified to incorporate the additional information if desired.
+I incorporate the additional information into the analysis.
+I refer to these events as ``undetected'' to emphasise this difference.
 
 The time of the initiating and/or terminating events are not known exactly.
-This is known as \emph{censord} in the survival analysis literature.
+This is known as \emph{censored} in the survival analysis literature.
 Censored events are present in almost all survival analyses.
-An event is \emph{left censored} if it is known to occur before a certain time, \emph{right censored} if it is known to occur after a certain time, and \emph{interval censored} if it is known to occur within an interval.
+An event is \emph{left censored} if it is known to occur before a certain time.
+An event is \emph{right censored} if it is known to occur after a certain time.
+An event is \emph{interval censored} if it is known to occur within an interval.
 %Left and right censoring can be viewed as special cases of interval censoring where the lower bound is negative infinity or the upper bound is positive infinity respectively.
-Interval censoring arises in CIS because we only observe the change from being not detectable (\ie: negative) at one test, to detectable (\ie: positive) at the following test and vice versa (see \cref{perf-test:fig:double-interval-censor}).
-If both the initiating and terminating events are censored, then the event is \emph{doubly censored}.
-Doubly censored data is more challenging to handle because the initiating event time and duration must be jointly modelled~\autocite[and references therein]{liSemiparametric}.
+As explained in \cref{perf-test:sec:problem}, the initiating and terminating events are only bounded, and hence interval censored.
+The data is \emph{doubly censored} because both the initiating and terminating events are censored.
+To handle doubly censored data, the times need to be jointly modelled~\autocite[and references therein]{liSemiparametric}.
 In CIS data both the initiating and the terminating events are interval censored.
-Therefore, the CIS data is \emph{double interval censored}; approaches for double interval censoring are reviewed by \textcite{sunAnalysis,bogaertsSurvival}.
+Therefore, the CIS data is \emph{double interval censored}.
+\Textcite{sunAnalysis,bogaertsSurvival} review methods for double interval censored data.
 
-Few studies consider the combination of both double interval censoring and undetected or truncated events
+Few studies look at the combination of both double interval censoring and undetected (or truncated) events
 This is especially true within the human biostatistical literature.
-While this literature does contain theoretical frameworks which include the double censored and truncated case~\autocites{turnbullEmpirical}{dempsterMaximum}, they have been applied when the terminating event was either uncensored or right censored~\autocite{sunEmpirical,bacchettiNonparametric}.
-The approach of these studies \autocite[and elsewhere, e.g.:][]{shenNonparametric} was to take a conditional likelihood approach, conditioning on both the truncation (a selection effect) and the period in which the initiating event is known to occur.
-They justify conditioning on the time of the initiating event by arguing that this information provides little information on the distribution being estimated~\citePersonalComms{Nick Jewell}.
-However, this is not the case here.
+The literature does include theoretical frameworks which include the double censored and truncated case~\autocites{turnbullEmpirical}{dempsterMaximum}.
+The frameworks have only been applied when the terminating event was either uncensored or right censored~\autocite{sunEmpirical,bacchettiNonparametric}.
+These studies \autocite[and elsewhere, e.g.:][]{shenNonparametric} take a conditional likelihood approach.
+They condition on the truncation (a selection effect) and the period where the initiating event occurs.
+They condition on the initiating event time because it provides negligible information on the distribution of interest~\citePersonalComms{Nick Jewell}.
+This is not the case for the CIS.
 In CIS, infection episodes are more likely to be detected when an individual is in the weekly testing phase.
-This phase is not representative of the overall study: infections are more likely to be detected during this phase.
-Therefore, estimating the probability of being detected conditional on being infected in this period (which would be implictly done in this previous method)  will overestimate the probability of being detected.
+CIS is more likely to detect infection episodes during the weekly testing phase.
+Therefore, the probability of an infection episode being detected conditional on being infected is higher than the overall probability of being detected.\todo{this is a bit unclear, try and rephrase?}
 
-Censored and truncated data frequently occur when estimating the survival time of bird nests, with the censoring taking a variety of forms~\autocite{heiseyABCs}.
-In this context, \textcite{heiseyModelling} develop a general framework allowing for arbitrary censoring patterns and double interval censoring.
-In their application, the visit times are global (all nests could be detected on the same days), while in CIS each individual has their own visit schedule; with global visit times the probability of being detected is the same for all participants in the study, simplifying the likelihood.
-I use this framework as the basis of the model I derive in \cref{perf-test:sec:model}.
+Censored and truncated data are normal for estimation of the survival time of bird and insect nests~\autocite{heiseyABCs}.
+\textcite{heiseyModelling} developed a framework for handling this situation.
+The framework is general, allowing for arbitrary censoring patterns and double interval censoring.
+They apply it to a situation the visit times are global (all nests could be detected on the same days), simplifying the likelihood.
+I adapt this framework for CIS, when each individual has their own visit schedule (see section \cref{perf-test:sec:model}).
 
-Inference will be performed within the Bayesian paradigm for two reasons.
-First, the standard frequentist methods for estimating the parameter's variance and covariance are poorly developed in this area.
-Commonly used methods are based on the Fisher information matrix or resampling, but neither have theoretical justification~\autocite[230]{sunAnalysis}\todo{Try and understand why this is the case}.
-Second, a prior naturally allows the inclusion information from previous studies, such as that from \cref{E-ATACCC}, and/or a belief that the hazard changes smoothly in a way that can be encoded in a prior (these options are explored in \cref{perf-test:sec:parameters-priors}).
-These prior structures may be needed to combat the lack of information in the data due to the undetected episodes~\autocite{caoBias}.
-They can also be viewed as combining the information from the two analyses (see \cref{perf-test:sec:informative-priors}).
+I use Bayesian inference for two reasons.
+First, frequentist methods for estimating the parameter's variance and covariance are poorly developed.
+Commonly used methods are based on the Fisher information matrix or resampling.
+Neither have theoretical justification~\autocite[230]{sunAnalysis}\todo{Try and understand why this is the case}.
+Second, a prior can include information from previous studies, such as from \cref{E-ATACCC}.
+Alternatively, the prior can favour a smoothly changing hazard.
+I explore priors in section 1.4.
+These prior structures overcome issues caused by the undetected episodes ~\autocite{caoBias}.
 
-Bayesian methods have previously been applied to nest survival settings~\autocites{heBayesiana}{heBayesian}{caoModeling}, augmenting the data with the unobserved times of infection.
+Bayesian methods been used for nest survival before~\autocites{heBayesiana}{heBayesian}{caoModeling}, augmenting the data with the unobserved times of infection.
 The augmentation creates a parameter per detected infection.
-Therefore, data augmentation applied to the 4000 detected episodes in the main analysis of \cref{E-imperf-test} greatly increases the dimensionality of the problem, making it computationally infeasible.
-I develop a Bayesian framework where there is no explicit data augmentation, allowing the method to scale to the large number of episodes present in CIS.
+This increases the dimensionality of the problem greatly, making it computationally infeasible here.
+I develop a novel Bayesian framework without explicit data augmentation.
+This method scales to the large number of episodes present in CIS.
 
 
 \section{Modelling the duration}\label{perf-test:sec:model}
-
-\subsection{Likelihood}\label{perf-test:sec:likelihood}
 
 In this section, I develop a model accounting for double interval censoring and undetected episodes.
 This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
@@ -160,18 +180,22 @@ This framework is itself based long-standing methodology~\autocites{dempsterMaxi
 I augment the data set with the full number of episodes, including those that are undetected.
 The augmented dataset is standard double interval censored data, with a well-known likelihood.
 
-Integrating over the number of missed episodes is analytically tractable making inference tractable within modern, high-performance Bayesian software such as Stan.
+Integrating over the number of missed episodes is analytically tractable.
+This makes inference tractable within modern, high-performance Bayesian software such as Stan.
 Let the total number of infection episodes in the cohort be $\ntot = \ndet + \nnodet$ where $\ndet$ is the number of detected infections and $\nnodet$ is the number of undetected infections.
-There are $\Ncis$ individuals in the cohort.
+Let $\Ncis$ be the number of individuals in the cohort.
 Without loss of generality, let the individuals with a detected episode be indexed by $i = 1, \dots, \ndet$ and the individuals without a detected episode be indexed by $i = \ndet + 1, \dots, \Ncis$.
 Over the short period of time considered, no individual has more than one detected episode. 
 Let $j = 1, \dots \ntot$ index infection episodes, ordered such that for $j \leq \ndet$ the $j$th infection episode occurs in the $i$th individual.
 
-All the relevant information about episode $j$ can be fully characterised by the (unobserved) triplet $(b_j, e_j, \sched_j)$ where $b_j$ and $e_j$ are the times the episode being and end respectively and $\sched_j$ is the schedule of tests for the individual in which the episode occurs. 
-If $\sched_j$ contains at least one test between $b_i$ and $e_i$ (inclusive), then the episode is detected, otherwise it is undetected.
-The triplet belongs to a state space where $b_j$ and $e_j$ span possible infection and recovery times, and $\sched_j$ is one of the observed test schedules (assuming other test schedules occur with probability zero).
+All the relevant information about episode $j$ can be fully characterised by the (unobserved) triplet $(b_j, e_j, \sched_j)$ where $b_j$ and $e_j$ are the times the episode being and end respectively and $\sched_j$ is the set of test times for the individual in which the episode occurs. 
+If $\sched_j$ contains at least one time between $b_i$ and $e_i$ (inclusive), one time prior to $b_i$, and one time after $e_i$, then the episode is detected, otherwise it is undetected.
+The triplet belongs to a state space.
+$b_j$ and $e_j$ span possible infection and recovery times.
+$\sched_j$ is one of the observed test schedules, with any other test schedule assumed to occur with probability zero.
 
-To relate this to the data, define three sets which partition the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for individual $i$ (graphically shown in Figure \ref{perf-test:fig:partitionSpace}).
+To relate the state space to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for any individual based on their test times.
+Figure \ref{perf-test:fig:partitionSpace} shows this graphically.
 Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of the model parameters, $\theta$.
 
 \begin{itemize}
@@ -214,7 +238,7 @@ Furthermore, for all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
 
 Any episode $j$ independently belongs to one of these classes.
 I assume the individual in which each episode occurs is iid uniform across the cohort.
-Therefore, conditional on $\ntot$, the number of episodes in each class (that is, the counts $n_{ia}, n_{iu}, n_{i\bar{a}}$) are distributed multinomially.
+Therefore, conditional on $\ntot$, the number of episodes in each class, $(n_{ia}, n_{iu}, n_{i\bar{a}})^T$, are distributed multinomially.
 The above probabilities ($p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$) are conditional on the episode occurring in individual $i$.
 These probabilities are multiplied by $1/\Ncis$ to give the probability that an episode belongs to each class, without conditioning on a specific individual.
 
@@ -238,7 +262,7 @@ Hence:
 \end{align}
 the final line follows because $\nnodet = \ntot - \ndet$, $n_{ia} = 1$ for $i \leq \ndet$, and $n_{ia} = 0$ for $i > \ndet$.
 
-\todo{better phrasing needed for this paragraph, mauybe try email to Shaun?}
+\todo{Not sure if the followin paragraph is understandable}
 In forming the probability $p_{ia}$, the data is used.
 This is not quite correct because forming a likelihood should not depend on the data.
 However, an alternative where each combination of infection and recovery times is considered its own class is possible.
@@ -246,8 +270,8 @@ Then, the counts for all the classes that previously contained undetected episod
 The resulting likelihood would be the same.
 Therefore, I present this version as it is clearer.
 
-The posterior we are interested in is $p(\theta \mid \na)$ where $\theta$ are the parameters governing the survival distribution.
-The probabilities $\pcis$ are functions of the parameters $\theta$.
+The posterior we are interested in is $p(\theta \mid \na)$.
+The posterior density can be written as follows.
 \begin{align}
 &p(\theta \mid \na) \\
 &\propto p(\theta) p(\na \mid \theta) \\
@@ -255,11 +279,9 @@ The probabilities $\pcis$ are functions of the parameters $\theta$.
 &\propto p(\theta) \sum_{\ntot=\ndet}^\infty \left( p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=\ndet}^{\ndet} p_{ia} \right) \\
 &= p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) \left( p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:full-posterior}.
 \end{align}
+The rest of this section derives expressions for each $p_{ia}$, $p_{u}$ and the sum.
 
-In the remainder of the section, expressions for each $p_{ia}$, $p_{iu}$, and analytical solutions for the sum in \cref{perf-test:eq:full-posterior} are derived in terms of the observed data, under different priors.
-
-I derive an analytical solution to $p(\ntot \mid \theta) = \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under a negative binomial prior for $\ntot$.
-This prior is $\NegBin(\mu, r)$ using the mean/dispersion parameterisation of the negative binomial.
+Now I derive an analytical solution to $p(\ntot \mid \theta) = \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NegBin(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
 Equivalently:
 \begin{align}
 \ntot \mid \lambda &\dist \Poi(\lambda) \\
@@ -282,16 +304,15 @@ Hence:
 &\propto(r + \mu (1- \pnodet))^{-(r+\ndet)}.
 \end{align}
 
-Substituting this into \cref{perf-test:eq:full-posterior} gives the following expression for the posterior.
+Substituting this into \cref{perf-test:eq:full-posterior} gives:
 \begin{align}
 p(\theta \mid \na)
 &\propto p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) (r + \mu (1- \pnodet))^{-(r+\ndet)} \label{perf-test:eq:full-posterior-simplified}.
 \end{align}
 
-$\ntot$ is generally a nuisance parameter, however, its posterior distribution can be useful for diagnostic purposes (\eg: see X\todo{ref where I use this in the next chapter}).
-I reconstruct the posterior using a posterior sample of $\theta$.
-For each posterior sample of $\theta$, I sample from the full conditional of $\ntot$.
-This gives the joint posterior of $\ntot$ and $\theta$.
+$\ntot$ is generally a nuisance parameter, however, its posterior distribution can be useful for diagnostic purposes (as in X\todo{ref where I use this in the next chapter}).
+Its posterior can be reconstructed using a posterior sample of $\theta$.
+For each posterior sample of $\theta$, sample from the full conditional of $\ntot$ to give the joint posterior of $\ntot$ and $\theta$.
 The full conditional of $\ntot$ is given by:
 \begin{align}
 p(n_\text{tot} \mid \ncis, \theta)
@@ -301,16 +322,15 @@ p(n_\text{tot} \mid \ncis, \theta)
 &= \frac{\Gamma(r + \ntot)}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot}  \\
 &= \frac{\Gamma((r + \ndet) + (\ntot- \ndet))}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot-\ndet}.
 \end{align}
-Comparing this expression to the pmf of a negative binomial, we find that $\ntot - \ndet$ is distributed negative binomial with size parameter $r+\ndet$ and probability parameter $(r + \mu(1 - \pnodet))/(r + \mu)$.
-The mean of this distribution is $(r+\ndet)\mu \pnodet/r+\mu(1-\pnodet)$.
+Comparing this expression to the pmf of a negative binomial, we find that $\nnodet = \ntot - \ndet$ is distributed negative binomial with size parameter $r+\ndet$ and probability parameter $(r + \mu(1 - \pnodet))/(r + \mu)$.
+%The mean of this distribution is $(r+\ndet)\mu \pnodet/(r+\mu(1-\pnodet))$.
 
-Next, I derive $p_{ia}$ and $p_{iu}$.
-
-By definition (see~\cpageref{perf-test:def:admissible}), we have
+Next, I derive $p_{ia}$.
+By definition (see~\cpageref{perf-test:def:admissible}), we have:
 \begin{align}
-p_{ia} &= \prob((b, e) \in \alpha_i) \\
+p_{ia} &= \prob((b, e) \in \alpha_i \mid \theta) \\
 \alpha_i &= \{ (b, e) : l_i^{(b)} \leq b \leq r_i^{(b)} \wedge l_i^{(e)} \leq e \leq r_i^{(e)}\}.
-\intertext{Hence:}
+\intertext{Suppressing the conditioning on $\theta$, this gives:}
 p_{ia}
 &= \prob \left( l_i^{(b)} \leq B_i \leq r_i^{(b)}, l_i^{(e)} \leq E_i \leq r_i^{(e)} \right) \\
 &= \prob \left( l_i^{(e)} \leq E_i \leq r_i^{(e)} \mid l_i^{(b)} \leq B_i \leq r_i^{(b)} \right) \prob \left( l_i^{(b)} \leq B_i \leq r_i^{(b)} \right) \\
@@ -319,10 +339,9 @@ p_{ia}
 &=\sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 1) \right) \prob \left(B_i = b \right) &\text{by def of $S_\theta$} \\
 &\propto \sum_{b = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b + 1) - S_\theta(r_i^{(e)} - b + 1) \right)
 \end{align}
-\todo[inline]{Fill in references}
 under the assumption of uniform probability of infection time.
 
-Next, I derive $p_{iu} = \prob((B_i, E_i) \in \Omega^C_i)$, the probability that episode $i$ was undetected.
+Next, I derive $p_{iu} = \prob((B_i, E_i) \in \Omega^C_i \mid \theta)$, the probability that episode $i$ was undetected.
 An episode is undetected if and only if no tests are performed during the episode or if there was no negative test prior to the episode.
 Equivalently, that the first test at or after $b$ is after $e$, or that there is no negative test prior to $b$.
 To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
@@ -334,7 +353,7 @@ Then $\Omega^C_i$ can be written as:
 \Omega_i^C = \{ (b, e) \ssep \tau_{\sched_i}(b) + b > e \vee b \leq \min(\sched_i) \}.
 \end{align}
 Only $1 - p_u = 1 - \frac{1}{N} \sum_i^{\Ncis} p_{iu} = \frac{1}{N} \sum_i^{\Ncis} (1 - p_{iu})$ is required (see \cref{perf-test:eq:full-posterior-simplified}).
-Therefore, I derive $1 - p_{iu}$:
+Therefore, I derive $1 - p_{iu}$, again suppressing the conditioning on $\theta$:
 \begin{align}
 1 - p_{iu}
 &= 1 - \prob((B_i, E_i) \in \Omega^C_i) \\
@@ -352,20 +371,15 @@ Therefore, I derive $1 - p_{iu}$:
 
 The form of $S_\theta(t)$ is yet to be specified.
 As frequently observed in the literature~\autocite[e.g.:][]{heBayesian}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
-This is because the mass function must sum to one and the survival must be monotonically decreasing, while there are no constraints across multiple hazards.
+The mass function must sum to one.
+The survival must be monotonically decreasing
+But, there are no constraints across multiple hazards.
+This would complicate the inference process in a way that cannot be removed through a simple transformation.
 The only constraint on the hazard is to be in the interval $[0, 1]$, since they are probabilities.
-
-In this section, I consider the various parameterisation of the survival function that are available.
-This has implications for the choice of prior it is not possible to be vague on all sensible parameterisations.
-Informative priors might also be attractive, and allow the incorporation of the estimates from \cref{E-ATACCC}.
-
-The hazard is convenient to use because it is unconstrained except in the interval [0, 1].
 The [0, 1] interval is easily be mapped to the unconstrained reals using a logit transformation (where $\logit(x) = \log(x/(1-x))$).
-Conversely, the survival function, $S_\theta(t)$, needs to be monotonically decreasing.
-Therefore, there is a constraint on $S_\theta(t)$ which depends on $S_\theta(t-1)$.
-This complicates the inference process and cannot be removed through a simple transformation.
 
-The rest of this section considers appropriate priors for the hazard in this context.
+Priors cannot be vague on both the hazard and the survival, the implications of which I consider in what follows.
+Informative priors are also attractive to allow the incorporation of the estimates from \cref{E-ATACCC}.
 
 \subsection{Independent priors} \label{perf-test:sec:independent-priors}
 Take the standard assumption of independent priors on each parameter.
@@ -399,12 +413,12 @@ This prior gives a very vague prior predictive distribution on the survival time
 \subsection{Smoothing priors}
 
 Smoothing priors encode the biological consideration that the hazard should not vary significantly from day-to-day.
-It is the Bayesian equivalent of a penalised likelihood, used frequently in the non-parametric frequentist setting (\eg: \autocite{bacchettiNonparametric}).
+It is the Bayesian equivalent of a penalised likelihood, used frequently in the non-parametric frequentist setting~\autocite[e.g.:][]{bacchettiNonparametric}.
 Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
-I use a second-order random walk because it is simple and can produce sensible prior predictive distributions.
+I use a second-order random walk because it is simple and produces plausible prior predictive distributions.
 
 A second-order random walk prior encodes that the hazard should be linearly changing with some random changes at each time step.
-Specifically, the difference between $\lambda_t$ to $\lambda_{t+1}$ is the difference between $\lambda_{t-1}$ and $\lambda_t$ plus some Gaussian-distributed noise.
+Specifically, the difference on the logit scale between $\lambda_t$ to $\lambda_{t+1}$ is the difference between $\lambda_{t-1}$ and $\lambda_t$ plus some Gaussian-distributed noise.
 Formally:
 \begin{align}
   \logit\lambda_{t+1}
@@ -418,20 +432,22 @@ Formally:
 \end{align}
 The hyperparmeters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC}.
+\todo[inline]{Add RW2 prior predictive}
 
 \subsection{Model combination priors} \label{perf-test:sec:informative-priors}
 
-I propose combining the information from the CIS data with \cref{E-ATACCC}'s analysis by using \cref{E-ATACCC}'s analysis as a prior for the CIS analysis.
-This is desirable because the ATACCC study frequently samples individuals early in the infection.
-Therefore, that analysis's estimate of the survival distribution in the early infection period should be reliable.
-In the later infection period, the ATACCC study has fewer observations and hence the estimates are less reliable; CIS can then inform the posterior in this region.
+The information from \cref{E-ATACCC} can be incorporated through the prior.
+This is desirable because the ATACCC study frequently sampled individuals early in the infection.
+Therefore, \cref{E-ATACCC}'s estimate of the survival distribution in the early infection period should be reliable.
+In the later infection period, the ATACCC study has fewer observations and hence the estimates are less reliable.
+CIS can inform the posterior in this region.
 
-In the combination methodology, two aspects need to be considered.
+When constructing the prior, two aspects need consideration.
 Firstly, the model structure from \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard, which should be propagated into this analysis.
 That is, the prior used in this analysis cannot be independent across the hazards.
 Secondly, the uncertainty in the estimates from \cref{E-ATACCC} should be increased for this analysis.
 The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see \todo{reference discussion on extrapolation in ATACCC chapter}).
-Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
+%Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
 I form the prior for the combination in two steps.
 
 I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as a multivariate normal on the logit scale.
@@ -460,7 +476,7 @@ It is:
   \beta_t &= k_t (1 - h_t) + \beta_0
 \end{align}
 where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point estimate of the hazard at time $t$ from ATACCC.
-An intuition for what this distribution represents can be gained by considering the conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
+An intuition for what this distribution represents can be gained from a conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
 If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
 
 \todo{Add plot of $k_t$}
@@ -482,7 +498,7 @@ I simulate a dataset of detected episodes that has the same characteristics as t
 
 To generate the durations, an assumption is required for the distribution of the duration of positivity.
 I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to represent what is seen within CIS.
-The tail is modified based on an unpublished analysis of CIS data by Sarah Walker (described below).
+The tail is modified based on an unpublished analysis of CIS data by Sarah Walker.
 Sarah uses survival analysis to estimate the duration from CIS data.
 The initiating event is assumed known as the time the episode was detected.
 The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
@@ -521,9 +537,10 @@ Individual $i$'s duration of positivity, $D_i$, is then an independent draw from
 Simulation was performed in R~4.2.0~\autocite{R4-2-0} using tidyverse~2.0.0~\autocite{tidyverse} and targets~1.1.3~\autocite{targetsPackage}.
 
 Inference was implemented in Stan via RStan~2.21.8~\autocite{rstan2-21-8} using default settings.
-Convergence was assessed using Rhat and ESS as described in \cref{E-ATACCC:sec:convergence}, and all runs checked for divergent transitions.
+Convergence was assessed using Rhat and ESS as described in \cref{E-ATACCC:sec:convergence}\todo{add ref to place explaining diagnostics}, and all runs checked for divergent transitions.
 
-The prior on the total number of infections was TBD\todo{fill in once decided on total vs individual model}.
+The prior on the total number of infections was centered on the true value with a dispersion parameter of 1.
+This meant that the prior was very diffuse.
 
 A framework for performing CIS-like simulations is available at \url{https://github.com/joshuablake/cisSimulation}.
 A framework for fitting the class of models described here and in \cref{E-imperf-test} is available at \url{https://github.com/joshuablake/cisDurationModel}.
@@ -586,10 +603,10 @@ A particular application would be estimation in the early stages of an epidemic 
 Here, little would be known about the pathogen, but gathering information with robust estimates of uncertainty is important to inform the response.
 
 I have assumed constant and independent incidence (a priori).
-In this case, a sensitivity analysis (not shown) showed minimal impact on survival estimates.
-Furthermore, I chose a period where the incidence was approximately constant.
-However, this assumption could be important in other contexts, especially if the incidence is changing rapidly.
-The assumption of constant incidence can lead to biased estimates~\autocite{degruttolaAnalysis}.
+Prevalence in the CIS data was approximately constant over the period of interest (see \cref{E-intro:fig:prevalence}).
+A sensitivity analysis, where an epidemic in exponential growth or decline was simulated (not shown), showed minimal impact on survival estimates.
+An incorrect assumption of constant incidence can lead to biased estimates~\autocite{degruttolaAnalysis}.
+Therefore, the assumption could be important in other contexts, especially if the incidence is changing rapidly.
 
 I have developed a flexible simulation and inference framework for this type of analysis.
 This framework could be used to simulate alternate study designs.
