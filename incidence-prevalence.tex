@@ -31,20 +31,33 @@ In this thesis, prevalence is defined as the number of people in the population 
 \section{Backcalculation}
 
 \emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
-It was first developed in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome)~\autocite{brookmeyerMethod}.
-HIV is transmitted sexually or through blood.
-It causes the disease AIDS.
-AIDS has killed around 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
+\Textcite{brookmeyerMethod} developed it in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome).
+HIV is transmitted sexually or through blood and causes the disease AIDS.
+It has killed 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
 In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the distribution of the time between infection and AIDS diagnosis~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
-\todo{explain how AIDS diagnosis is "prevalence" data (is it?)}
+AIDS is incurable, therefore, AIDS prevalence is equivalent to cumulative incidence.
 
 Three processes are involved in backcalculation: the \emph{infection process}, the \emph{prevalence process} and the \emph{observation process}.
 The infection process determines incidence.
 The prevalence process describes the relationship between incidence and prevalence.
 The observation process describes the relationship between prevalence and the observed data.
 
+The original formulations of backcalculation neglected the observation process.
+AIDS is almost always diagnosed and recorded in developed countries.
+That is, the observations of AIDS diagnoses are the same as the true incidence of AIDS.
+An exception is that reporting delay may be important~\autocite{paganoHIV}.
+Reporting delay is not relevant to the studies in this thesis, and I ignore it in this and further discussion.
+Therefore, two processes need to be considered: infection and prevalence.
+
+For SARS-CoV-2, measurements of prevalence are noisy because they are based on population sampling.
+The sampling is described as the observation process.
+The observation process noise dominates the noise of the prevalence process (see \cref{incidence-prevalence:sec:observation-process}).
+Therefore, the latter is negligible and again two processes need to be considered: infection and observation.
+
+\section{Infection process}
+
 The infection process is a point process, where each infection is an event.
-The simplest plausible model is a time-inhomogenous Poisson process.
+A simple and commonly-used model is the time-inhomogenous Poisson process~\autocites{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
 That is, a Poisson process where the intensity varies over time.
 The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
 The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic.
@@ -57,17 +70,16 @@ Therefore, the mean and variance are equal.
 Feedback loops mean that the stochastically low or high numbers of infections, possibly due to overdispersion, affect the future number of infections.
 In a Poisson process, the intensity (mean number of events per unit time) is not influenced by the realisation of the process.
 Both of these features violate the assumptions of a Poisson process.
+Despite these issues, satisfactory inference on the incidence can still be produced, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
 
-A common cause of overdispersion is super-spreading events.
-\todo{ref}
+A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
 A super-spreading event is an event where many more people than expected are infected.
-Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion.
-\todo{insert a SARS-CoV-2 superspreading example}
+Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autocites{endoEstimating}{adamClustering}{mccloskeySARS}.
 Overdispersion could be incorporated by modelling the counts in a given time interval as a negative binomial, rather than Poisson, distribution.
 The mean of these distributions would be equal, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
 These distributions are related in that the negative binomial tends to Poisson as $k\to\infty$.
 Generally, $k<1$ indicates significant levels of overdispersion.
-Estimates for SARS-CoV-2 indicate $k \approx 0.1$, and can be increased by interventions such as lockdowns.
+Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, and can be increased by interventions such as lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
 However, the negative binomial distribution loses much of the mathematical convenience of a Poisson distribution.
 For a negative binomial process, the count's standard deviation scales on the order of the mean.
 Conversely, for a Poisson process, the standard deviation is on the order of the square root of the mean.
@@ -78,21 +90,24 @@ This can be seen simply in the event of a super-spreading event.
 If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
 These additional infections will propagate the epidemic further, increasing the intensity at future times.
 
-In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
-However, this is often a poor approximation.
-\emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
+An alternative to a Poisson process is \emph{mechanistic models}.
+Mechanistic models explicitly describe the population and transmission between individuals.
+They vary greatly in their details and realism~\autocite{murilloMultiscale}.
+Mechanistic models are discussed further in \cref{E-SEIR}.
 
-Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
-The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
-I keep this assumption for the remainder of this chapter.
+% In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
+% However, this is often a poor approximation.
+% \emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
+
+% Define the first day of an infection episode in individual $i$ as $B_i$, and assume that the probability of $i$ being infected multiple times within the period of interest is negligible.
+% The time between being infected and first being detectable is short (see\todo{ref relevant part}), and therefore I often assume that $B_i$ is the same as the time of infection.
+% I keep this assumption for the remainder of this chapter.
 
 
-Backcalculation makes use of this relationship to estimate incidence from prevalence, assuming that the duration is known.
+% Backcalculation makes use of this relationship to estimate incidence from prevalence, assuming that the duration is known.
 
-Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
-This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
-
-\todo[inline]{Explain backcalculation in HIV/AIDS context, and how it relates to what is above.}
+% Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
+% This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
 
 \section{Prevalence process}
 
@@ -106,7 +121,7 @@ In this thesis, it is assumed that the $D_i$ for each infection episode is indep
 From this, we can derive the relationship between incidence and prevalence.
 Denote by $R_{t,t'}$ be the number of infection episodes that begin at time $t$ and end at time $t'$.
 For each infection beginning at $t$, the probability that it ends at $t'$ is $f_d(t' - t + 1)$.
-Since these durations are assumed independent, the number of episodes of each duration is multinomially distributed.
+Since these durations are assumed independent, the number of episodes of each duration is multinomially distributed~\autocite{paganoHIV}.
 Therefore:
 \begin{align}
 \begin{bmatrix}
@@ -140,8 +155,10 @@ This is because the probability of being infected at time $t$ depends on the num
 However, if we condition on the vector $\vec{Z} = (Z_1, Z_2, \dots)^T$, then we will induce some independence.
 In particular, because the duration of individuals is independent, $R_{t_1,t_2}$ and $R_{t_1',t_2'}$ will be independent if $t_1 \neq t_1'$; importantly, this holds even if $t_2 = t_2'$.
 
-A quantity that will be important is $\E(P_t \mid \vec{Z})$, which can be derived from its constituent parts.
-First, the properties of a multinomial distribution give the marginal distribution:
+Only $\E(P_t \mid \vec{Z})$ will be relevant (see \cref{incidence-prevalence:sec:observation-process}), which can be derived from its constituent parts.
+Start by considering the recoveries.
+The sum of recoveries of infections that occurred on the same day $t$ is the sum of multinomial cell probabilities, and hence binomially distributed~\autocite{alamAnalysis}.
+Specifically:
 \begin{align}
   \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, F_d(t'+1)).
 \end{align}
@@ -150,7 +167,6 @@ Therefore:
 \begin{align}
   \E(\sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z}) = Z_t F_d(t'+1) \label{incprev:eq:EsumRt}
 \end{align}
-
 Now consider $P_t$:
 \begin{align}
 \E(P_t \mid \vec{Z})
@@ -161,7 +177,7 @@ Now consider $P_t$:
   &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} (1 - F(i)) \\
   &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} S(i+1)
 \end{align}
-where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$ (see \cref{inprev:sec:duration}).
+where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$ (see \cref{incidence-prevalence:sec:duration}).
 
 % The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
 % The most important assumption from a statistical perspective is the whether the probability of testing positive on a given day is independent conditional on the infection time.
@@ -187,9 +203,10 @@ where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
-\todo[inline]{Need some conclusion text for this section}
+The equation derived here is a discrete convolution equation, specifically a Volterra equation of the first kind~\autocite{brookmeyerBackcalculation}.
+Clearly, knowledge of the survival function, $S$, will be important; I discuss this further in \cref{incidence-prevalence:sec:duration}.
 
-\section{Observation process}
+\section{Observation process} \label{incidence-prevalence:sec:observation-process}
 
 % A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
 % Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
@@ -197,7 +214,7 @@ where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $
 % I use Bayesian inference, therefore the data contributes through the likelihood.
 
 Prevalence surveys, as described in\todo{insert ref}, sample individuals at random from the population of interest and test if they are prevalence.
-Therefore, we view the number of positive tests on day $t$ as a random variable $X_t$ based on a sample of $n_t$ individuals.
+Therefore, I model the number of positive tests on day $t$ as a random variable $X_t$ based on a sample of $n_t$ individuals.
 The $X_t$s are conditionally independent, given the population prevalences at each time, $\vec{P}_t$. 
 %For now, I assume that the sample is chosen uniformly at random from the population of interest.
 %Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
@@ -220,7 +237,9 @@ Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
 This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
 
 
-\section{Estimating the duration} \label{inprev:sec:duration}
+\section{Estimating duration} \label{incidence-prevalence:sec:duration}
+
+\todo[inline]{This section fills a bit out of place, could maybe be a more general conclusion? Although these ideas and notation should probably stay...}
 
 Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the most useful (see\todo{ref intro with importance of incidence}).
 Therefore, a large portion of this thesis concerns itself with estimating the duration of PCR positivity.
@@ -232,17 +251,15 @@ For an infection in discrete time, the duration is a non-negative integer, \ie $
 The first way of expressing the distribution is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=0}^d f_{D}(i)$.
 The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
 The \emph{hazard} at time $t$ is the probability of recovering at time $t$ conditional on having survived to time $t$: $\lambda(t) = \prob(D = t \mid D \geq t) = f_{D}(d) / S(d)$.
-Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(t) = \prod_{i=1}^{t-1} (1 - \lambda(i))$.
+Throughout this thesis, the survival function will bne the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(t) = \prod_{i=1}^{t-1} (1 - \lambda(i))$.
 
-Two approaches are commonly used to estimate durations\todo{cite Sweeney}: either modelling an underlying biomarker or modelling the duration directly.
+Two approaches are commonly used to estimate durations: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
 For SARS-CoV-2, both approaches would be based on the results of PCR testing.
-Modelling a biomarker would mean modelling the viral load, measured as a Ct value.
-Modelling the duration would consider only the binary result at each test (positive or negative); in this thesis a \emph{survival analysis} framework is adopted.
-Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
-Other related approaches, such as a multi-state model, could also be considered (multi-state models can be viewed as a generalisation of survival analysis~\autocite{jacksonMSM}).
+Modelling a biomarker would mean modelling the viral load, measured as a Ct value (see \cref{E-ATACCC}).
+Modelling the duration would consider only the binary result at each test (positive or negative); in this thesis a \emph{survival analysis} framework is adopted (see \cref{E-perf-test,E-imperf-test}).
+% Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
+Other related approaches, such as a multi-state model~\autocite{jacksonMSM}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
 Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
 Modelling a biomarker uses more information per observation, but requires stronger assumptions.
-
-\todo[inline]{Comment on previous estimates of duration for SARS-CoV-2, but not sure where exactly this goes...}
 
 \end{document}
