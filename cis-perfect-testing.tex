@@ -415,9 +415,9 @@ This prior gives a very vague prior predictive distribution on the survival time
 Smoothing priors encode the biological consideration that the hazard should not vary significantly from day-to-day.
 It is the Bayesian equivalent of a penalised likelihood, used frequently in the non-parametric frequentist setting~\autocite[e.g.:][]{bacchettiNonparametric}.
 Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
-I use a second-order random walk because it is simple and produces plausible prior predictive distributions.
+I use a second-order random walk (RW2) because it is simple and produces plausible prior predictive distributions.
 
-A second-order random walk prior encodes that the hazard should be linearly changing with some random changes at each time step.
+RW2 prior encodes that the hazard should be linearly changing with some random changes at each time step.
 Specifically, the difference on the logit scale between $\lambda_t$ to $\lambda_{t+1}$ is the difference between $\lambda_{t-1}$ and $\lambda_t$ plus some Gaussian-distributed noise.
 Formally:
 \begin{align}
@@ -431,8 +431,11 @@ Formally:
   \sigma &\dist \Exponential(1/\mu_\sigma).
 \end{align}
 The hyperparmeters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
-I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC}.
-\todo[inline]{Add RW2 prior predictive}
+I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/rw2-prior}
+  \caption[RW2 prior for the hazard]{The of prior predictive distribution (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} are shown for comparison. \label{perf-test:fig:rw2-prior}}
+\end{figure}
 
 \subsection{Model combination priors} \label{perf-test:sec:informative-priors}
 
