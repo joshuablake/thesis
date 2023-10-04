@@ -215,3 +215,23 @@ ggsave(
   units = "cm",
   dpi = 300
 )
+
+expit = function(x) 1 / (1 + exp(-x))
+k_t = 1000 * expit(-0.4 * ((1:40) - 20))
+p_kt = ggplot() +
+  geom_line(aes(x = 0:39, y = k_t)) +
+  scale_x_continuous(breaks = seq(0, 100) * 14, minor_breaks = seq(0, 100) * 2) +
+  standard_plot_theming() +
+  labs(
+    x = "t",
+    y = expression(k[t])
+  )
+ggsave(
+  filename = "cis-perfect-testing/kt-prior.png",
+  plot = p_kt,
+  width = 15,
+  height = 9,
+  units = "cm",
+  dpi = 300
+)
+

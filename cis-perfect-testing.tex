@@ -482,7 +482,20 @@ where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point
 An intuition for what this distribution represents can be gained from a conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
 If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
 
-\todo{Add plot of $k_t$}
+$k_t$ reflects the subjective belief that the estimates from \cref{E-ATACCC} are very reliable in the early infection period but unreliable by day 30.
+The equation for $k_t$ is below and shown in \cref{perf-test:fig:kt}.
+\begin{align}
+k_t = \begin{cases}
+  \expit(-0.4 * (t - 20)) &\text{for $t \leq 39$} \\
+  0 &t > 39
+\end{cases}
+\end{align}
+where $\expit(x) = 1 / (1 + \exp(-x))$.
+
+\begin{figure}
+  \centering \includegraphics{cis-perfect-testing/kt-prior}
+  \caption{Function used for $k_t$. \label{perf-test:fig:kt}}
+\end{figure}
 
 \section{Simulation study} \label{perf-test:sec:simulation-study}
 
@@ -570,8 +583,9 @@ The informative and vague independent priors performed similarly.
 The informative prior had tighter credible intervals, as expected.
 This prior was centered on the correct value for the initial part of the distribution.
 Therefore, the narrow credible intervals are unsurprising.
-For hazards after day X\todo{check and insert}, the informative and vague priors are the same.
+For hazards after day 40, the informative and vague priors are the same.
 Therefore, the posterior distributions are almost identical.
+There remains a difference because the hazard estimates are partially dependent on earlier estimates.
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/survival-results}
