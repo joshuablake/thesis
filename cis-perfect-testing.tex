@@ -46,9 +46,8 @@
 The estimation of incidence from prevalence is sensitive to the tail of the duration distribution.
 In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset.
 However, this study suffered from a small sample size and only 20 days of follow-up.
-Therefore, model assumptions determined the size of the tail estimated.
-In this chapter, I develop a method to estimate the distribution using CIS data. 
-CIS sampling is less frequent, but with a large sample size and long follow-up.
+Therefore, model assumptions determined the size of the estimated tail estimated.
+In this chapter, I develop a method to estimate the duration distribution using CIS data. CIS sampling is less frequent, but with a large sample size and long follow-up.
 
 I take a Bayesian survival analysis approach to model the coarse sampling of the CIS (see \cref{perf-test:sec:problem}).
 Flat priors are unintentionally very informative.
@@ -60,12 +59,11 @@ In reality, the method must account for false negatives, discussed in \cref{E-im
 
 \section{Problem description} \label{perf-test:sec:problem}
 
-The CIS tests each individual infrequently, either weekly or monthly (see\todo{refer to section with CIS intro}).
+In the CIS each individualis tested  infrequently, either weekly or monthly (see\todo{refer to section with CIS intro}).
 The infrequent testing complicates analysis of the data in two ways.
 First, infection episodes can go undetected.
 Second, the infection episode start and end times are known imprecisely.
-This section explains these issues.
-The rest of the chapter develops a method to model them.
+This section explains these issues. The rest of the chapter develops a method to tackle  them.
 
 The first complication in the analysis is that infection episodes can be undetected.
 This means there are no positive tests associated with them.
@@ -74,7 +72,7 @@ For undetected episodes, there is no information on them episode; even the numbe
 Undetected episodes are important because they are shorter than detected episodes.
 To see why this is the case, consider the undetected infection in the bottom of \cref{perf-test:fig:truncation}.
 The infection episode depicted begins at time 33 and has a 10-day duration.
-If the duration was 24 days or more, the individual would still be detectable at their next test and detected then.
+If the duration had been 24 days or more, the individual would still be detectable at their next test and detected then.
 CIS has many undetected infections. This is because frequency of testing (up to 28 days, see\todo{ref section on the survey design}) is longer than most infections (median around 15 days).
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-perfect-testing/truncation}}
