@@ -1,11 +1,10 @@
 \documentclass[thesis.tex]{subfiles}
 
 \begin{document}
-\chapter{Statistical background} \label{incidence-prevalence}
+\chapter{Statistical background} \label{inc-prev}
 %\todo[inline]{This chapter is pretty short. Not sure if this matters or it needs to merged with another chapter? For example, one background chapter split into epi/biology and stats.}
 
 This chapter explains incidence and prevalence, and the relationship between these quantities.
-These quantities have been of interest as long as disease has been studied, and estimating the prevalence from incidence is the fundamental motivation for this thesis.
 Their exact definition can vary throughout the literature, here I follow the definitions of the seminal paper \textcite{freemanPrevalence}.
 As I will explain, the duration of infection is the quantity that relates them.
 
@@ -16,17 +15,17 @@ Furthermore, within-day patterns produce variations in transmission (\eg due to 
 
 \section{Definitions}
 
-\emph{Incidence} at time $t$, $Z_t$, is the number of people in a given population who become infected at time $t$ (I use $Z_t$ rather than $I_t$ to avoid confusion with the convention that $i$ is an indexing variable).
-Incidence expressed as a proportion of the population, $Z_t/N$ where $N$ is the number of people in the population, is the \emph{incidence rate}.
-As discussed in \cref{E-intro}\todo{might want to point to a specific section}, infection events are not directly observable and must be inferred from other data.
+\emph{Incidence} at time $t$, $Z_t$, is the number of people in a given population who become infected at time $t$.
+Incidence expressed as a proportion of the population, $Z_t/\Npop$ where $\Npop$ is the number of people in the population, is the \emph{incidence rate}.
+As discussed in \cref{E-intro}\todo{might want to point to a specific section}, the timing of infection events is not directly observable and must be inferred from other data.
 Despite this issue, it remains the single most important quantity for informing the response to an epidemic or pandemic.
 
-\emph{Prevalence} of an infectious disease at time $t$, $P_t$, is the number of people in a given population currently infected at time $t$, assumed constant over the short period $t$.
+\emph{Prevalence} of an infectious disease at time $t$, $P_t$, is the number of people in a given population currently infected at time $t$.
 Each of these individuals is known as a \emph{prevalent} individual.
+As I use discrete time, I assume that an individual's prevalent status cannot change over the period represented by $t$, normally one day.
+Therefore, prevalence is constant throughout $t$.
 The \emph{prevalence proportion} is the same quantity expressed as a proportion of the population.
-For SARS-CoV-2, there are several definitions of infected.
-An infected individual could mean: one that is infectious; one that is symptomatic; or one that, if they were tested, would return a positive PCR test if tested (discussed in\todo{ref appropriate section}).
-In this thesis, prevalence is defined as the number of people in the population who would return a positive PCR test (if everyone was tested) at time $t$.
+In this thesis, a prevalent individual is one that would return a positive PCR test if tested at time $t$, not other possible definitions of ``currently infected'' discussed in\todo{ref section}.
 
 \section{Backcalculation}
 
@@ -34,7 +33,8 @@ In this thesis, prevalence is defined as the number of people in the population 
 \Textcite{brookmeyerMethod} developed it in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome).
 HIV is transmitted sexually or through blood and causes the disease AIDS.
 It has killed 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
-In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the distribution of the time between infection and AIDS diagnosis~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
+In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the incubation distribution (the time between infection and AIDS diagnosis)~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
+\todo{maybe move some of this to intro}
 AIDS is incurable, therefore, AIDS prevalence is equivalent to cumulative incidence.
 
 Three processes are involved in backcalculation: the \emph{infection process}, the \emph{prevalence process} and the \emph{observation process}.
@@ -45,20 +45,20 @@ The observation process describes the relationship between prevalence and the ob
 The original formulations of backcalculation neglected the observation process.
 AIDS is almost always diagnosed and recorded in developed countries.
 That is, the observations of AIDS diagnoses are the same as the true incidence of AIDS.
-An exception is that reporting delay may be important~\autocite{paganoHIV}.
+An exception is that the reporting delay may be important~\autocite{paganoHIV}.
 Reporting delay is not relevant to the studies in this thesis, and I ignore it in this and further discussion.
-Therefore, two processes need to be considered: infection and prevalence.
+Therefore, two processes needed to be considered in the context of HIV/AIDS: infection and prevalence.
 
 For SARS-CoV-2, measurements of prevalence are noisy because they are based on population sampling.
 The sampling is described as the observation process.
-The observation process noise dominates the noise of the prevalence process (see \cref{incidence-prevalence:sec:observation-process}).
+The observation process noise is much larger than the noise of the prevalence process (see \cref{inc-prev:sec:observation-process}).
 Therefore, the latter is negligible and again two processes need to be considered: infection and observation.
 
 \section{Infection process}
 
 The infection process is a point process, where each infection is an event.
 A simple and commonly-used model is the time-inhomogenous Poisson process~\autocites{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
-That is, a Poisson process where the intensity varies over time.
+That is, a Poisson process where the intensity varies over time, and possibly with other covariates.
 The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
 The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic.
 
@@ -73,19 +73,22 @@ Both of these features violate the assumptions of a Poisson process.
 Despite these issues, satisfactory inference on the incidence can still be produced, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
 
 A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
-A super-spreading event is an event where many more people than expected are infected.
+A super-spreading event is an event where many more people than average are infected.
 Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autocites{endoEstimating}{adamClustering}{mccloskeySARS}.
+An infamous example of a SARS-CoV-2 super-spreading event was the Skagit County choir practice in March 2020~\autocite{hamnerHigh}.
+One infected individual is thought to have infected at least 32 further individuals during a single choir practice.
+For comparison, the average individual infected around three others in the early stages of the pandemic~\autocite{pellisChallenges}. 
 Overdispersion could be incorporated by modelling the counts in a given time interval as a negative binomial, rather than Poisson, distribution.
-The mean of these distributions would be equal, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
-These distributions are related in that the negative binomial tends to Poisson as $k\to\infty$.
-Generally, $k<1$ indicates significant levels of overdispersion.
-Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, and can be increased by interventions such as lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
-However, the negative binomial distribution loses much of the mathematical convenience of a Poisson distribution.
+The mean of these distributions is equal, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
+The negative binomial tends to Poisson as $k\to\infty$.
+Generally, $k<1$ is considered as significant levels of overdispersion.
+Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, increased by some interventions including lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
 For a negative binomial process, the count's standard deviation scales on the order of the mean.
 Conversely, for a Poisson process, the standard deviation is on the order of the square root of the mean.
 A particular implication of this is that the coefficient of variation (the standard deviation divideed by the mean) tends to zero for a Poisson process, but tends to a constant for a negative binomial process.
+The disadvantage of the negative binomial distribution is that it loses much of the mathematical convenience of a Poisson distribution.
 
-The independence assumption is violated because if the number of infections is stochastically high, this feeds back to the process intensity at future times.
+The independence assumption of a Poisson or negative binomial process is violated because if the number of infections is stochastically high (or low), this feeds back to the process intensity at future times.
 This can be seen simply in the event of a super-spreading event.
 If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
 These additional infections will propagate the epidemic further, increasing the intensity at future times.
@@ -95,7 +98,7 @@ Mechanistic models explicitly describe the population and transmission between i
 They vary greatly in their details and realism~\autocite{murilloMultiscale}.
 Mechanistic models are discussed further in \cref{E-SEIR}.
 
-% In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/N$.
+% In \emph{deterministic backcalculation}, the observed prevalence, $x_t/n_t$, is assumed to be equal to $P_t/\Npop$.
 % However, this is often a poor approximation.
 % \emph{Statistical backcalculation} retains the sampling distribution of $x_t$ (or an approximation of it, such as a Poisson).
 
@@ -112,15 +115,17 @@ Mechanistic models are discussed further in \cref{E-SEIR}.
 \section{Prevalence process}
 
 The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
-The period the individual is prevalent for is the \emph{infection episode}, which I will index with $i$, associated with that infection event.
+The period the individual is prevalent for is the \emph{infection episode}.
+I index infection episodes with $i$.
 Denote the time that the infection episode begins as $B_i$ and the time it ends as $E_i \geq B_i$.
 The individual is prevalent from $B_i$ to $E_i$ inclusive.
 The duration of the infection episode, the number of days for which they are prevalent, is $D_i = E_i - B_i + 1$.
-In this thesis, it is assumed that the $D_i$ for each infection episode is independent and $\prob(D_i = d) = f_d$ for some pmf $f$ over $1, 2, \dots, d_\text{max}$.
+In this thesis, it is assumed that the $D_i$ for each infection episode is an independent draw from a discrete distribution such that $\prob(D_i = d) = f_d(d)$ for $d = 1, \dots, d_\text{max}$ and $\prob(D_i = d) = 0$ otherwise.
+Denote by $F_D$ the cdf of $D_i$, that is $F_D(d) = \prob(D_i \leq d)$.
 
 From this, we can derive the relationship between incidence and prevalence.
 Denote by $R_{t,t'}$ be the number of infection episodes that begin at time $t$ and end at time $t'$.
-For each infection beginning at $t$, the probability that it ends at $t'$ is $f_d(t' - t + 1)$.
+For each infection beginning at $t$, the probability that it ends at $t'$ is $\prob(E_i = t' \mid B_i = t) = \prob(D_i = t' - t + 1 \mid B_i = t) = f_d(t' - t + 1)$.
 Since these durations are assumed independent, the number of episodes of each duration is multinomially distributed~\autocite{paganoHIV}.
 Therefore:
 \begin{align}
@@ -134,50 +139,68 @@ Therefore:
   \end{bmatrix}
 \right).
 \end{align}
-Now, denote by $P_{t_z,t_p}$ the number of episodes beginning at time $t_z$ that are prevalent at time $t_p$ (where $t' \geq t$).
-This is $Z_t$ minus those that have recovered:
+Now, denote by $P_{t_z,t_p}$ the number of episodes beginning at time $t_z$ that are prevalent at time $t_p$.
+This is $Z_t$ minus those that recover before $t_p$ (\ie at or up to $t_p - 1$).
+Hence:
 \begin{align}
     P_{t_z,t_p} = \begin{cases}
       0 &t_p < t_z\\
-      Z_t - \sum_{i=0}^{t_p-t_z-1} R_{t_z,t_z+i} &t_z \leq t_p < t_z + d_\text{max}\\
+      Z_{t_z} - \sum_{i=0}^{t_p-t_z-1} R_{t_z,t_z+i} &t_z \leq t_p < t_z + d_\text{max}\\
       0 &t_p \geq t_z + d_\text{max}.
-  \end{cases} \label{incprev:eq:Ptt-to-R}
+  \end{cases} \label{inc-prev:eq:Ptt-to-R}
 \end{align}
-Finally, the prevalence at $t$ can be expressed as the total number of people prevalent at time $t$, regardeless of when they were infected:
+Finally, the prevalence at $t$ can be expressed as the total number of people prevalent at time $t$, regardless of when they were infected.
+The limits of the sum are limited by the zeroes in \cref{inc-prev:eq:Ptt-to-R}.
 \begin{align}
   P_t
-  &= \sum_{t_z=\infty}^\infty P_{t_z,t} \\
-  &= \sum_{i=0}^{d_\text{max}-1} P_{t-i,t} \label{incprev:eq:Pt-to-Ptt}.
+  &= \sum_{t_z=-\infty}^\infty P_{t_z,t} \\
+  &= \sum_{i=0}^{\dmax-1} P_{t-i,t} \label{inc-prev:eq:Pt-to-Ptt} \\
+  &= \sum_{i=0}^{\dmax-1} \left(Z_{t_z} - \sum_{j=0}^{i-1} R_{t-i,t-i+j} \right) &\text{by \cref{inc-prev:eq:Ptt-to-R}}\label{inc-prev:eq:Pt-to-Rtt}.
 \end{align}
 
-In general, all these random variables will be dependent for an infectious disease.
-This is because the probability of being infected at time $t$ depends on the number of infectious individuals at time $t$, which itself depends on the number of individuals infected before time $t$.
-However, if we condition on the vector $\vec{Z} = (Z_1, Z_2, \dots)^T$, then we will induce some independence.
-In particular, because the duration of individuals is independent, $R_{t_1,t_2}$ and $R_{t_1',t_2'}$ will be independent if $t_1 \neq t_1'$; importantly, this holds even if $t_2 = t_2'$.
+The infection process means that these random variables are dependent.
+However, if we condition on the vector of incidence, $\vec{Z} = (Z_1, Z_2, \dots)^T$, then we will induce some independence.
+This is essentially isolating only the prevalence process.
+In particular, because the duration of individuals is independent, $R_{t_z,t_p}$ and $R_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$; importantly, this holds even if $t_p = t_p'$.
+Therefore, $P_{t_z,t_p}$ and $P_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$.
 
-Only $\E(P_t \mid \vec{Z})$ will be relevant (see \cref{incidence-prevalence:sec:observation-process}), which can be derived from its constituent parts.
+Only $\E(P_t \mid \vec{Z})$ and bounds on $\V(P_t \mid \vec{Z})$ will be relevant (see \cref{inc-prev:sec:observation-process}).
+These can be derived from their constituent parts.
+
 Start by considering the recoveries.
 The sum of recoveries of infections that occurred on the same day $t$ is the sum of multinomial cell probabilities, and hence binomially distributed~\autocite{alamAnalysis}.
 Specifically:
 \begin{align}
-  \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, F_d(t'+1)).
+  \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} &\sim \text{Binomial}(Z_t, F_d(t'+1)). \label{inc-prev:eq:binomialRt}
 \end{align}
 where $F_d(t) = \sum_{i=1}^t f_d(t) = \prob(D \leq t)$ is the CDF of $D$.
 Therefore:
 \begin{align}
-  \E(\sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z}) = Z_t F_d(t'+1) \label{incprev:eq:EsumRt}
+  \E \left( \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} \right) &= Z_t F_d(t'+1) \label{inc-prev:eq:EsumRt} \\
+  \V \left( \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} \right) &= Z_t F_d(t'+1) (1 - F_d(t'+1)) \label{inc-prev:eq:VsumRt}
 \end{align}
-Now consider $P_t$:
+
+The first moment follows.
 \begin{align}
 \E(P_t \mid \vec{Z})
-  &= \E\left(\sum_{i=1}^{d_\text{max}-1} P_{t-i,t} \mid \vec{Z} \right) &\text{by \cref{incprev:eq:Pt-to-Ptt}} \\
-  &= \E\left(\sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} R_{t-i,t-i+j} \right) \mid \vec{Z} \right) &\text{by \cref{incprev:eq:Ptt-to-R}}\\
-  &= \sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} \E( R_{t-i,t-i+j} \mid \vec{Z}) \right) \\
-  &= \sum_{i=1}^{d_\text{max}-1} \left( Z_{t-i} - Z_{t-i} F(i) \right) &\text{by \cref{incprev:eq:EsumRt}}\\
-  &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} (1 - F(i)) \\
-  &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} S(i+1)
+  &= \E\left(\sum_{i=0}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} R_{t-i,t-i+j} \right) \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:Pt-to-Rtt}}\\
+  &= \sum_{i=0}^{d_\text{max}-1} \left( Z_{t-i} - \sum_{j=0}^{i-1} \E( R_{t-i,t-i+j} \mid \vec{Z}) \right) \\
+  &= \sum_{i=0}^{d_\text{max}-1} \left( Z_{t-i} - Z_{t-i} F_d(i) \right) &\text{by \cref{inc-prev:eq:EsumRt}}\\
+  &= \sum_{i=0}^{d_\text{max}-1} Z_{t-i} (1 - F_d(i)) \\
+  &= \sum_{i=0}^{d_\text{max}-1} Z_{t-i} S(i+1)
 \end{align}
-where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$ (see \cref{incidence-prevalence:sec:duration}).
+where $S(i+1) = 1-F_d(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$ (see \cref{inc-prev:sec:duration}).
+
+The second moment is simplified by the independence.
+\begin{align}
+\V(P_t \mid \vec{Z})
+  &= \V\left(\sum_{i=1}^{d_\text{max}-1} P_{t-i,t} \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:Pt-to-Ptt}} \\
+  &= \sum_{i=1}^{d_\text{max}-1} \V\left(P_{t-i,t} \mid \vec{Z} \right) &\text{by the conditionl independence} \\
+  &= \sum_{i=1}^{d_\text{max}-1} \V\left(\sum_{j=0}^{i-1} R_{t-i,t-i+j} \mid \vec{Z} \right) &\text{by~\cref{inc-prev:eq:Ptt-to-R}}\\
+  &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} F_d(i) (1 - F_d(i)) &\text{by~\cref{inc-prev:eq:VsumRt}} \\
+  &\leq \sum_{i=1}^{d_\text{max}-1} Z_{t-i} (1 - F_d(i)) &\text{as $F_d \leq 1$}\\
+  &= \E(P_t \mid \vec{Z}). \label{inc-prev:eq:boundVPt}
+\end{align}
 
 % The probability of being positive can be modelled in different ways depending on what assumptions are most reasonable.
 % The most important assumption from a statistical perspective is the whether the probability of testing positive on a given day is independent conditional on the infection time.
@@ -203,10 +226,11 @@ where $S(i+1) = 1-F(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
-The equation derived here is a discrete convolution equation, specifically a Volterra equation of the first kind~\autocite{brookmeyerBackcalculation}.
-Clearly, knowledge of the survival function, $S$, will be important; I discuss this further in \cref{incidence-prevalence:sec:duration}.
+The expectation derived here is a discrete convolution equation, specifically a discrete version of the Volterra equation of the first kind~\autocite{brookmeyerBackcalculation}.
+The variance is upper bounded by this expectation, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
+Clearly, knowledge of the survival function, $S$, will be important; I discuss this further in \cref{inc-prev:sec:duration}.
 
-\section{Observation process} \label{incidence-prevalence:sec:observation-process}
+\section{Observation process} \label{inc-prev:sec:observation-process}
 
 % A \emph{prevalence survey} is a survey that tests a sample of the population for the presence of an infection.
 % Series of prevalence surveys are the form of measuring prevalence that this thesis is concerned with.
@@ -215,39 +239,77 @@ Clearly, knowledge of the survival function, $S$, will be important; I discuss t
 
 Prevalence surveys, as described in\todo{insert ref}, sample individuals at random from the population of interest and test if they are prevalence.
 Therefore, I model the number of positive tests on day $t$ as a random variable $X_t$ based on a sample of $n_t$ individuals.
+That is, $X_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$.
+The conditioning on $n_t$ and $\Npop$ is implicit in what follows.
+
 The $X_t$s are conditionally independent, given the population prevalences at each time, $\vec{P}_t$. 
 %For now, I assume that the sample is chosen uniformly at random from the population of interest.
 %Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
 %The population prevalence is a latent quantity.
-From these assumptions, $X_t \mid \vec{P} \sim \Bin(n_t, P_t / N)$.
-I base inference on the likelihood, $p(\vec{x} \mid \vec{Z}) = \int p(\vec{x} \mid \vec{P}) p(\vec{P} \mid \vec{Z}) d\vec{P} = \int \prod_t p(x_t \mid P_t) p(\vec{P} \mid \vec{Z}) d\vec{P}$, where $\vec{x} = (x_1, x_2, \dots)^T$.
+I base inference on the likelihood, $p(\vec{x} \mid \vec{Z})$.% = \int p(\vec{x} \mid \vec{P}) p(\vec{P} \mid \vec{Z}) d\vec{P} = \int \prod_t p(x_t \mid P_t) p(\vec{P} \mid \vec{Z}) d\vec{P}$, where $\vec{x} = (x_1, x_2, \dots)^T$.
 
-For most prevalence surveys, the uncertainty arising from the distribution $\vec{P} \mid \vec{Z}$ is negligible.
-This can be seen by considering the variance in the likelihood.
-Assume $x_t \sim \Bin(n_t, P_t / N)$, where $N$ is the size of the population.
-Therefore, by the law of total variance:
+This section argues that $p(\vec{x} \mid \vec{Z}) \approx \prob(\vec{X} = \vec{x} \mid \vec{P} = \E(\vec{P} \mid \vec{Z}))$.
+As the $x_t$s are independent conditional on $\vec{P}$, it follows that $p(\vec{x} \mid \vec{Z}) \approx \prod_t \prob(X_t = x_t \mid P_t = \E(P_t \mid \vec{Z}))$.
+This relationship will make inference for $\vec{Z}$ much simpler because the latent vector $\vec{P}$ and the dependence of the $x_t$s can be ignored.
+
+The basis of the argument is that the first two moments of these distributions have negligible difference.
+The first moment follows directly from the tower property of expectations.
+The majority of the argument is to show that the variance-covariance matrix $\V(\vec{X} \mid \vec{Z}) \approx \V(\vec{X} \mid \vec{P} = \E(P \mid Z))$.
+There are two steps to this argument.
+I start with the diagonal elements, the variances.
+I show that $\V(X_t \mid \vec{Z}) \approx \V(X_t \mid \vec{P} = \E(\vec{P} = \vec{Z}))$.
+The conditional independence of the $x_t$s implies that the conditional covariances are 0.
+Therefore, I show that the correlation between $X_t$ and $X_{t'}$ conditional only on $\vec{Z}$ is negligible.
+
+Starting with the variances, by the law of total variance:
 \begin{align}
-  \var\left( x_t \mid \vec{n}, \vec{Z} \right)
-    &= \var\left[\E\left( x_t \mid \vec{n}, \vec{Z}, \vec{P} \right) \mid \vec{n}, \vec{Z} \right] + \E\left[\var\left( x_t \mid \vec{n}, \vec{I}, \vec{P} \right) \mid \vec{n}, \vec{Z} \right] \\
-    &= \var\left( n_t \frac{P_t}{N} \mid \vec{n}, \vec{Z} \right) + \E\left( n_t \frac{P_t}{N} \left(1 - \frac{P_t}{N} \right) \mid \vec{n}, \vec{Z} \right) \\
-    &= \left( \frac{n}{N} \right)^2 \var\left(P_t \mid \vec{n}, \vec{Z} \right) + \frac{n_t}{N} \E\left(P_t \mid \vec{n}, \vec{Z} \right)  - \frac{n_t}{N^2} \E\left(P_t^2 \mid \vec{n}, \vec{Z} \right).
+  &\var\left( X_t \mid \vec{Z} \right) \\
+    &= \var\left[\E\left( X_t \mid \vec{Z}, \vec{P} \right) \mid \vec{Z} \right] + \E\left[\var\left( X_t \mid \vec{Z}, \vec{P} \right) \mid \vec{Z} \right] \\
+    &= \var\left( n_t \frac{P_t}{\Npop} \mid \vec{Z} \right) + \E\left( n_t \frac{P_t}{\Npop} \left(1 - \frac{P_t}{\Npop} \right) \mid \vec{Z} \right) \\
+    &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t^2 \mid \vec{Z} \right) \\
+    &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \left(\E\left(P_t \mid \vec{Z} \right) ^ 2 + \V(P_t \mid \vec{X})\right) \\
+    &= \frac{n_t(n_t - 1)}{\Npop^2} \var\left(P_t \mid \vec{Z} \right) + n_t \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop}\left(1 - \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop} \right) \\
+    &= \frac{n_t(n_t - 1)}{\Npop^2} \var\left(P_t \mid \vec{Z} \right) + \V(X_t \mid P_t = \E(P_t \mid \vec{Z})).
 \end{align}
-For large populations and reasonable sample sizes, $n_t << N$ and $\E(P_t) \approx \var(P_t)$, the first term is negligible.
-Hence, assuming that $\var(\vec{P}) = \matr{0}$ is a reasonable approximation.
-This is equivalent to assuming that $\vec{P}$ is a deterministic function of $\vec{Z}$, $\vec{P} = \E( \vec{P} \mid \vec{Z})$.
+The first term of this expression is negligible in the contexts I consider.
+These contexts have $n_t << \Npop$.
+$\Npop$ is the population of England (around 56 million) while $n_t$ is the daily sample size (10s of thousands).
+Further $\V(P_t \mid \vec{Z}) \leq \E(P_t \mid \vec{Z})$ (\cref{inc-prev:eq:boundVPt}).
+Therefore, $\var\left( X_t \mid \vec{Z} \right) \approx \V(X_t \mid P_t = \E(P_t \mid \vec{Z}))$.
+
+A similar argument will show that the correlation between $x_t$ and $x_{t'}$ ($t \neq t'$) is negligible.
+The basic structure of this argument is as the previous one.
+The result follows because the observation noise dominates, and this is uncorrelated.
+In the following, all are implicitly conditioned on $\vec{Z}$.
+However, for clarity this is omitted from the notation.
+\begin{align}
+  &\lvert \cor(X_t, X_{t'}) \rvert \\
+  &= \frac{\lvert\cov(X_t, X_{t'})\rvert}{\sqrt{\var(X_t) \var(X_{t'})}} &\text{by definition}\\
+  &= \frac{\lvert \E(\cov(X_t, X_{t'} \mid \vec{P})) + \cov(\E(X_t \mid \vec{P}), \E(X_{t'} \mid \vec{P})) \rvert}{\sqrt{\var(X_t) \var(X_{t'})}} &\text{by law of total covariance} \\
+  &= \frac{\lvert 0 + \cov(n_t P_t / \Npop, n_{t'} P_{t'} / \Npop) \rvert}{\sqrt{\var(X_t) \var(X_{t'})}} \\
+  &= \frac{n_t n_{t'} \lvert \cov(P_t, P_{t'}) \rvert}{\Npop^2 \sqrt{\var(X_t) \var(X_{t'})}}  \\
+  &<< \frac{n_t n_{t'} \lvert \cov(P_t, P_{t'}) \rvert}{\Npop^2 \sqrt{\var(P_t) \var(P_{t'})}} &\text{as $\V(X_t) >> \V(P_t)$} \\
+  &= \frac{n_t n_{t'}}{\Npop^2} \lvert \cor(P_t, P_{t'}) \rvert \\
+  &\leq \frac{n_t n_{t'}}{\Npop^2}.
+\end{align}
+$n_t n_{t'} / \Npop^2$ is very small, for the same reason that $n_t / \Npop$ is small.
+The argument above shows that $\lvert \cor(X_t, X_{t'}) \rvert$ is much smaller than this.
+Therefore, neglecting the correlation between $X_t$ and $X_{t'}$ is a good approximation.
+
+This section showed that, when using a prevalence survey such as CIS, the likelihood $p(\vec{x} \mid \vec{Z})$ is very well approximated by $\prob(\vec{X} = \vec{x} \mid \vec{P} = \E(\vec{P} \mid \vec{Z}))$.
 
 
-\section{Estimating duration} \label{incidence-prevalence:sec:duration}
+\section{Estimating duration} \label{inc-prev:sec:duration}
 
-\todo[inline]{This section fills a bit out of place, could maybe be a more general conclusion? Although these ideas and notation should probably stay...}
-
-Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the most useful (see\todo{ref intro with importance of incidence}).
+Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the objective of this thesis.
+The quantity that relates these is the distribution of the duration of PCR positivity.
+However, no estimates of this quantity in the general population exist.
 Therefore, a large portion of this thesis concerns itself with estimating the duration of PCR positivity.
 
 The distribution of durations can be expressed in several equivalent ways.
-Let $D_i$ be the random variable for the duration of episode $i$, then the distribution of interest is that of $D_i$.
-I will assume that each $D_i$ is an independent and identically distributed realisation of a random variable $D$; extending the methodology to account for covariates is left to further work.
-For an infection in discrete time, the duration is a non-negative integer, \ie $D \in \{1, 2, \dots\}$.
+As before, $D_i$ is the duration of episode $i$.
+I model each $D_i$ as a discrete independent and identically distributed random variable; extending the methodology to account for covariates is left to further work.
+The duration is a positive integer, \ie $D \in \{1, 2, \dots\}$.
 The first way of expressing the distribution is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=0}^d f_{D}(i)$.
 The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
 The \emph{hazard} at time $t$ is the probability of recovering at time $t$ conditional on having survived to time $t$: $\lambda(t) = \prob(D = t \mid D \geq t) = f_{D}(d) / S(d)$.
@@ -261,5 +323,7 @@ Modelling the duration would consider only the binary result at each test (posit
 Other related approaches, such as a multi-state model~\autocite{jacksonMSM}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
 Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
 Modelling a biomarker uses more information per observation, but requires stronger assumptions.
+
+\todo[inline]{Maybe add a conclusion?}
 
 \end{document}
