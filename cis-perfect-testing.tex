@@ -277,12 +277,15 @@ The posterior density can be written as follows.
 &\propto p(\theta) p(\na \mid \theta) \\
 &= p(\theta) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) p(\na \mid \theta, \ntot) \\
 &\propto p(\theta) \sum_{\ntot=\ndet}^\infty \left( p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=\ndet}^{\ndet} p_{ia} \right) \\
-&= p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) \left( p(\ntot \mid \theta) \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:full-posterior}.
+&= p(\theta) \left( \prod_{i=\ndet}^{\ndet} p_{ia} \right) \left( \sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:full-posterior}.
 \end{align}
 The rest of this section derives expressions for each $p_{ia}$, $p_{u}$ and the sum.
 
-Now I derive an analytical solution to $p(\ntot \mid \theta) = \sum_{\ntot=\ndet}^\infty \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NegBin(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
-Equivalently:
+Now I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NegBin(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
+I assume that $\theta$, which are only the parameters of the survival distribution, is a priori independent of $\ntot$, the number of infections that occurred in the cohort.
+Therefore, $p(\ntot \mid \theta) = p(\ntot)$.
+Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite.
+Using the composite simplifies the derivation.
 \begin{align}
 \ntot \mid \lambda &\dist \Poi(\lambda) \\
 \lambda &\dist \GamDist(a, b)
