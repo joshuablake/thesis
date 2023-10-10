@@ -3,36 +3,374 @@
 \begin{document}
 \chapter{Mechanistic modelling of incidence and transmission} \label{SEIR}
 
-\section{The S(E)IR model}
+Mechanistic models are...
 
-The deterministic SIR model
+This chapter focuses on mechanistic models based on ordinary differential equations (ODEs).
+They are useful because...
 
-Multi-stage infectious state
+Describing other mechanistic models is beyond the scope of this thesis.
+Models vary greatly in complexity and form, depending on the disease and the question of interest.
+I recommend \Textcite{kretzschmarMathematical} for an introduction to the breadth of the field or \Textcite{keelingModeling} for a book-length treatment.
 
-Exposed individuals (the “E” state)
+Notation in this chapter differs from the rest of the thesis.
+I adopt the conventions and notation standard in the infectious disease modelling field.
+In particular, upper-case letters denote populations, and lower-case letters denote proportions.
+Whether a variable is random or not is explictly stated if not clear from the context.
 
-Age-stratification
+Sections X\todo{which?} give the background on ODE-based mechanistic models.
+Section X\todo{which?} describes the model that I use for the CIS data, and section X the inference procedure.
+I verify the model and inference procedure in a simulation study in section X.
+I apply the model to the autumn 2020 CIS data in section X.
+Finally, section X discusses the results, and possible extensions, including those needed to extend to the 2021 period which includes vaccination.
 
-    Contact matrices
+\section{ODE-based compartmental transmission models} \label{SEIR:sec:transmission}
 
-    POLYMOD
+This section first introduces a simple ODE-based model.
+ODE-based models are \emph{deterministic}.
+Deterministic models have the property that once the parameters are set, there is no randomness in the transmission model.
+The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
+There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
 
-Google data and Edwin’s method
+ODE models are mathematically described by a system of ODEs.
+The derivative is taken with respect to time, $t$.
+Therefore, in an ODE model, time is necessarily continuous.
+However, time is discretised when solving (see \cref{SEIR:sec:inference-implementation})
 
-Time-varying force of infection (the beta random walk)
+The number of individuals is also continuous.
+This is a reasonable approximation when the population is large.
+
+The other type of model is \emph{stochastic}.
+Stochastic models have randomness in the transmission model, and often use discrete time.
+For example, the number of individuals infected on day $t+1$, conditional on the model state on day $t$ might be a Poisson distribution.
+When the number of infected individuals is large, then deterministic models are a good approximation to stochastic models.
+Deterministic models are also known as \emph{mean-field} models because they can be derived from stochastic models by taking the mean of the distribution of the number of infected individuals.
+Further discussion of stochastic models is beyond the scope of this thesis.
+
+The class of models considered here is \emph{compartmental} models.
+A compartmental model divides all members of the population into compartments, each representing a disease state.
+Compartmental models are the most common type of mechanistic infectious disease model.
+Compartmental models can be deterministic or stochastic.
+
+\subsection{The SIR model}
+
+The simplest compartmental model is the \emph{susceptible-infected-recovered} (SIR) model.
+The name refers to the three compartments in the model.
+Individuals in the susceptible compartment can be infected.
+Individuals in the infected compartment can infect others, and eventually recover.
+Individuals in the recovered compartment are immune to the disease, and cannot be infected again.
+
+The SIR model is described by the following system of ODEs:
+\begin{align}
+\frac{ds}{dt} &= -\beta si \\
+\frac{di}{dt} &= \beta si - \gamma i \\
+\frac{dr}{dt} &= \gamma i
+\end{align}
+$s$, $i$ and $r$ are the proportions of the population in the susceptible, infected and recovered compartments respectively.
+These are the state of the system.
+The state is a function of time, $t$, although this is not shown explicitly.
+Two parameters are present in this model: $\beta$ and $\gamma$.
+$\beta$ is the transmission rate, or the number of individuals an infected individual infects per day.
+$\gamma$ is the recovery rate, or the proportion of infected individuals that recover per day; hence, $1/\gamma$ is the mean infectious period.
+These parameters are assumed to be constant over time (this assumption is relaxed in \cref{SEIR:sec:time-varying-foi}).
+
+The term $\beta si$ is the instantaneous number of individuals infected.
+That is, the number of individuals moving from the susceptible state to the infected state.
+This term can be arrived at by considering a single infected individual.
+Assume this individual makes contact with other individuals in the population at a constant rate.
+Further, assume that the population is \emph{well-mixed}, that is that the individual is equally likely to come into contact with any other individual.
+Therefore, the probability that the individual comes each of these contacts is a susceptible individual is $s$.
+Finally, assume that there is a constant probability of transmission upon contact between an infected and susceptible individual.
+The two constant terms here (number of contacts and probability of transmission) are absorbed into the transmission rate, $\beta$.
+Therefore, the instantaneous number of infections per infected individual is $\beta s$.
+The overall proportion of the population instantaneously infected is $\beta si$.
+
+The term $\gamma i$, the instantaneous number of individuals recovering, follows directly from the definitions of $\gamma$ and $i$.
+
+A few properties of the SIR model are worth noting.
+First, the population is closed.
+That is, the total population size is constant, and no infections are imported from outside the population.
+Births and deaths of individuals are also excluded.
+Second, there is no analytical solution to the system of ODEs.
+Numerical methods are required to solve the system.
+Third, in addition to the parameters, the state of the system at some time (normally the initial state) is required to solve the system.
 
 
-\section{Observation models}
+\subsection{Non-exponential waiting times}
 
-\section{Full model}
+The basic SIR model implies that the distribution of the time spent in the infected compartment is exponential.
+This is an unrealistic assumption and leads to underestimating the reproduction number~\autocites{lloydRealistic}{wearingAppropriate}.
+A standard extension to the SIR model is to allow the infectious period to follow a gamma distribution.
+This is done by adding multiple infected compartments.
+The system can now be written as follows
+\begin{align}
+\frac{ds}{dt} &= -\beta si \\
+\frac{di_1}{dt} &= \beta si - n\gamma i_1 \\
+\frac{di_2}{dt} &= n\gamma i_1 - n \gamma i_2 \\
+&\vdots \nonumber \\
+\frac{di_n}{dt} &= n\gamma i_{n-1} - n \gamma i_n \\
+\frac{dr}{dt} &= n\gamma i_n
+\end{align}
+where $n$ is the number of infected compartments.
+The infectious period is now distributed $\GamDist(n, n\gamma)$.
+A gamma distribution with the first paramter equal to 1 is an exponential distribution, connecting this model to the basic SIR model.
+$1/\gamma$ remains the mean infectious period because $n\gamma$ is used as the rate of transition between the compartment.
 
-\section{Inference}
+Using a two parameter distribution allows the first two moments of the infectious period to be specified.
+This is normally sufficient to give realistic dynamics within a mean-field model.
 
-\section{Simulation study}
+\subsection{The SEIR model}
 
-\section{Application to CIS data}
+The SIR model assumes that individuals are immediately infectious upon infection.
+This is unrealistic, as there is a period between infection and infectiousness, known as the \emph{latent period}.
+Ignoring the latent period will again overestimate the reproduction number~\autocite{wearingAppropriate}.
 
-\section{Discussion}
+The SIR model can be extended to include a latent period by adding a latent compartment.
+This is also known as an \emph{exposed} compartment.
+Therefore, we now form the susceptible-exposed-infected-recovered (SEIR) model.
+
+Similar to the exponential infectious period, the latent period can be modelled as a gamma distribution by adding multiple latent compartments.
+\begin{align}
+\frac{ds}{dt} &= -\beta si \\
+\frac{de_1}{dt} &= \beta si - m\sigma e_1 \\
+\frac{de_2}{dt} &= m\sigma e_1 - m \sigma e_2 \\
+&\vdots \nonumber \\
+\frac{de_m}{dt} &= m\sigma e_{m-1} - m \sigma e_m \\
+\frac{di_1}{dt} &= m\sigma e_m - n\gamma i_1 \\
+\frac{di_2}{dt} &= n\gamma i_1 - n \gamma i_2 \\
+&\vdots \nonumber \\
+\frac{di_n}{dt} &= n\gamma i_{n-1} - n \gamma i_n \\
+\frac{dr}{dt} &= n\gamma i_n
+\end{align}
+where $m$ is the number of latent compartments and $1/\sigma$ is the mean latent period.
+The latent period is now distributed $\GamDist(m, m\sigma)$.
+The infectious period is still distributed $\GamDist(n, n\gamma)$.
+
+
+\subsection{Structured populations}
+
+\todo[inline]{Introduction about the importance of age and mixing patterns, maybe show a contact matrix}
+
+To allow for age, the population is divided into age groups.
+The state of each comparment is now a vector.
+The proportion of the population that is susceptible is $\vec{s}$ where $s_i$ is the proportion of the $i$th age group that is susceptible.
+Similarly for the other compartments.
+
+The modelling approach here can be used to stratify the population by any charcteristic.
+For example, using deprivation or ethnicity.
+In this case, $i$ simply represents the $i$th strata.
+
+The assumption of a well-mixed population is relaxed by using a contact matrix.
+Now, only conditional on age are all individuals identical.
+
+To incorporate the strata into the model, first I introduce some notation.
+denote the set of strata, normally age groups, as $\set{A}$. $N_i$ notates the population in stratum $i$ and hence $s_i N_i$ is the number of susceptible people in stratum $i$.
+The other compartments are notated similarly.
+
+We want to derive a matrix $\matr{B}$ which we can use to calculate the instantaneous number of new infections.
+We do this by considering a susceptible individual $a$ in stratum $i$.
+I use the notation $\rate(X)$ to mean the rate at which the event $X$ occur.
+\begin{align}
+    &\rate(\text{Individual $a$ infected}) \\
+    &\approx \sum_{j \in \set{A}} \rate(\text{Individual $a$ is infected by an individual in stratum $j$}) \\
+    &\approx \sum_{j \in \set{A}} \rate(\text{Contacts $a$ has with individuals in stratum $j$}) \\ &\, \times \prob(\text{$a$ infected} \mid \text{contact between $a$ and individual from stratum $j$})\\
+    &= \sum_{j \in \set{A}} M_{ij} \beta_{ij} i_j
+\end{align}
+where $M_{ij}$ is the instantaneous number of contacts an individual in strata $i$ has with individuals in stratum $j$ (assumed homogeneous mixing within strata); and $\beta_{ij}$ is the probability of transmission from an infectious individual in stratum $j$ to a susceptible individual in stratum $i$ given a contact between these individuals.
+Note that, unlike previously, here we have explicitly separated out the number of contacts $M_{ij}$ from the probability of transmission $\beta_{ij}$.
+The first two approximations are from mass-action dynamics which are valid as long as the transmission probability is small, meaning that we can ignore that the events are not mutually exclusive.
+Therefore, the expected rate of new infections in strata $i$ is $s_i N_i \sum_{j \in \set{A}} M_{ij} \beta_{ij} i_j$, which is equivalent to:
+\begin{align}
+    \frac{d\vec{s}}{dt} = -\vec{s} \circ ((\matr{\beta} \circ \matr{M}) \vec{i})
+    \label{eq:matrix:theory}
+\end{align}
+where $\circ$ is the element-wise product (\ie: $(\matr{A} \circ \matr{B})_{ij} = A_{ij} B_{ij}$).
+
+Clearly $M_{ij}$ and $\beta_{ij}$ are not individually identifiable.
+Normally, $M_{ij}$ is assumed to be known.
+$\beta_{ij}$ is then estimated, although often with some simplifying assumptions.
+These could be that the probability of transmission is independent of age, and therefore all $\beta_{ij}$ are equal.
+Alternatively, that each stratum has a relative probability of being infected independent of who is infecting them, and therefore $\beta_{ij} = \beta \beta_j$.
+
+Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
+We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
+
+I assume that all individuals have the same \emph{infectiousness} but that there is a difference in \emph{susceptibility}.
+Infectiousness is how likely an individual is to infect others.
+Susceptibility is how likely an individual is to be infected.
+Therefore, $\beta_{ij} = \beta \beta_i$ where $\beta_i$ is the relative susceptibility of stratum $i$.
+I assume that the only difference is that children and adults have differing susceptibility.
+For identifiability, I set $\beta_i$ to 1 for adults and $\beta_i = \beta_c$ for children.
+
+\subsection{Geographic structure}
+
+The well-mixed population assumption is more plausible for smaller scales.
+Additionally, due to non-response bias, CIS is not geographically representative.
+Therefore, I stratify the population by region.
+
+I assume that each region is a well-mixed population and closed.
+A more complex model would allow for interaction between regions.
+However, for a large epidemic, non-interacting populations is a good approximation and can even provide better fits~\autocite{birrellRealtimea}.
+
+This is implemented by running the model separately and independently for each region.
+England is split into nine regions (previously known as Government Offices for the Regions): South East, London, North West, East of England, West Midlands, South West, Yorkshire and The Humber, East Midlands, and North East.
+
+Each element of the vector $\vec{s}$ refers to the proportion of that region's population of the relevant age group.
+The other vectors are interpreted similarly.
+
+\subsection{Time-varying behaviour} \label{SEIR:sec:time-varying-foi}
+
+During the pandemic, behaviour clearly changed over time.
+This was in response to government policy, also individual's perceived risk, and a variety of other factors.
+I introduce these changes by allowing both the contact matrix $\matr{M}$ and $\beta_{ij}$ to depend on time.
+
+How between-age-group contacts occur have previously been inferred from a combination of contact surveys, time use data, and mobility data~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}.
+I use the outputs from this analysis as $\matr{M}$.
+To summarise, baseline rates and contexts of contacts between age groups are taken from the contact survey POLYMOD~\autocite{mossongSocial}.
+How these contacts relate to time use is taken from the UK Time Use Survey.
+How time use changed over the pandemic is taken from the Google mobility data, which measured the locations of Android users over the period of interest.
+
+Some behavioural changes (\eg mask wearing) are not captured by the contact survey.
+To allow for these changes, $\beta$ is allowed to vary over time.
+In particular, $\beta$ follows a random walk in log space on the weekly timescale:
+\begin{align}
+    \beta(t) &= \beta_{w(t)} \\
+    \beta_1 &= 1 \\
+    \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
+    \epsilon_w &\sim N(0, 1)
+\end{align}
+where $w(t)$ is the week number of time $t$, with week 1 being the first week modelled.
+
+\section{Observation model} \label{SEIR:sec:observation}
+
+A variety of different approaches can be taken to link a transmission model to observations.
+Here, I extend the system of ODEs to include comparments representing PCR positive individuals.
+Whenever an individual is infected, a copy of them is placed in the pre-positive compartment, $p_0$.
+These individuals then transition into a set of compartment with their transition rates chosen to match the duration of positivity estimates in \cref{E-imperf-test}, $p_1, \dots, p_l$.
+The modelled proportion of individuals that are PCR positive in the can then be linked to the data using a Beta-Binomial likelihood.
+
+I use the method of \textcite{osogamiClosed} to determine $l$ and the transition rates between the compartments.
+The class of distributions which can be represented as a series of compartments are known as \emph{phase-type} distributions.
+
+\Textcite{osogamiClosed} define a subset of phase-type distributions which they refer to as Erlang-Coxian (EC) distributions (see following e).
+A $l$-phase EC distribution is a convoluation of a $(l-2)$-phase gamma distribution and two-phase acyclic, arbitrary phase-type distribution (with some additional constraints).
+The arrival times at the absorbing state (after the final state) is the duration.
+Therefore, the absorbing state is the PCR negative state, which does not need to be tracked.
+
+\Textcite{osogamiClosed} prove that EC distributions have the following properties:
+* Any distribution that can be well-matched (defined as having the same first three moments) by an acyclic
+phase-type distribution can be well-matched for some $P$
+which is a EC distribution.
+* The number of phases used by $P$ is at most one more than the optimal number.
+* The parameters of $P$ are available in closed form, and the expression for these is derived.
+
+A total of five parameters are required to specify a $l$-phase EC distribution.
+\begin{itemize}
+    \item $l$, the number of phases.
+    \item $\kappa_Y$, the rate parameter of the Erlang distribution.
+    \item $\kappa_{X1}$, the rate parameter of the first state after the Erlang distribution.
+    \item $\kappa_{X2}$, the rate parameter of the second state after the Erlang distribution.
+    \item $p_x$, the probability of moving from the first state after the Erlang distribution to the second (as opposed to directly to the absorbing state).
+\end{itemize}
+\begin{figure}
+\begin{tikzpicture}[
+    node distance = 2.5cm,
+    on grid,
+    auto,
+    ->,>=stealth',
+    every state/.style={draw,rectangle,very thick},
+    ]
+
+    \node[state] (1) {1};
+    \node[state, right of=1] (2) {2};
+    \node[state, right of=2, draw=none] (dots) {$\dots$};
+    \node[state, right of=dots] (lm2) {$l-2$};
+    \node[state, right of=lm2] (lm1) {$l-1$};
+    \node[state, right of=lm1] (l) {$l$};
+    \node[state, right of=l, align=center] (absorbing) {absorbing\\state};
+
+    \path (1) edge node {$\kappa_Y$} (2)
+          (2) edge node {$\kappa_Y$} (dots)
+          (dots) edge node {$\kappa_Y$} (lm2)
+          (lm2) edge node {$\kappa_Y$} (lm1)
+          (lm1) edge node {$p_x \kappa_{X1}$} (l)
+                edge [out=-45,in=-135] node[below] {$(1 - p_x) \kappa_{X1}$} (absorbing)
+          (l) edge node {$\kappa_{X2}$} (absorbing);
+\end{tikzpicture}
+\caption{A $l$ phase EC distribution.}
+\end{figure}
+
+
+\section{Full model} \label{SEIR:sec:full-model}
+
+\begin{figure}
+\begin{tikzpicture}[
+    node distance = 2cm
+    on grid,
+    auto,
+    ->,>=stealth',
+    every state/.style={draw,rectangle,very thick},
+    ]
+
+    \node[state] (S) {$s$};
+    \node[state, right of=S] (E1) {$e_1$};
+    \node[state, right of=E1] (E2) {$e_2$};
+    \node[state, right of=E2] (I1) {$i_1$};
+    \node[state, right of=I1] (I2) {$i_2$};
+    \node[state, right of=I2] (R) {$r$};
+
+    \path (S) edge node {$\beta$} (E1)
+          (E1) edge node {$\sigma$} (E2)
+          (E2) edge node {$\sigma$} (I1)
+          (I1) edge node {$\gamma$} (I2)
+          (I2) edge node {$\gamma$} (R);
+
+    \node[state, below=3cm of E1] (P0) {P0};
+    \node[state, right of=P0] (P1) {P1};
+    \node[state, right of=P1] (P2) {P2};
+    \node[state, right of=P2] (P3) {P3};
+    \node[state, right of=P3, draw=none] (Pdots) {...};
+
+    \path (P0) edge (P1)
+          (P1) edge (P2)
+          (P2) edge (P3);
+    
+    \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
+\end{tikzpicture}
+  \caption{SEIR model}
+\end{figure}
+
+The model I use for the CIS data is shown in figure X.
+
+The transmission model is a SEIR moel with two latent and two infectious states.
+It is based on \textcite{birrellRealtime}.
+
+The observation model contains one infected pre-positive state, and X infected positive state.
+
+I link the positive states to the data with a Beta-Binomial likelihood.
+
+
+\section{Inference and implementation} \label{SEIR:sec:inference-implementation}
+
+\subsection{MCMC}
+
+I use an adaptive random-walk Metropolis-Hastings algorithm.
+The algorithm is based on \textcite[algorithm 4]{andrieuTutorial}.
+Its implementation is adapted from \textcite{ghoshApproximate}.
+
+\subsection{Parameterisation}
+
+Following \textcite{birrellBayesian}, I parameterise the model in terms of the initial growth rate.
+
+
+\subsection{Priors}
+
+\subsection{Approximation of duration distribution}
+
+\section{Simulation study} \label{SEIR:sec:sim-study}
+
+\section{Application to CIS data} \label{SEIR:sec:application}
+
+\section{Discussion} \label{SEIR:sec:discussion}
 
 \section{Conclusion}
 
