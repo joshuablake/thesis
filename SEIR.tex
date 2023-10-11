@@ -236,7 +236,7 @@ In particular, $\beta$ follows a random walk in log space on the weekly timescal
     \beta(t) &= \beta_{w(t)} \\
     \beta_1 &= 1 \\
     \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
-    \epsilon_w &\sim N(0, 1)
+    \epsilon_w &\sim \N(0, 1)
 \end{align}
 where $w(t)$ is the week number of time $t$, with week 1 being the first week modelled.
 
@@ -257,11 +257,11 @@ The arrival times at the absorbing state (after the final state) is the duration
 Therefore, the absorbing state is the PCR negative state, which does not need to be tracked.
 
 \Textcite{osogamiClosed} prove that EC distributions have the following properties:
-* Any distribution that can be well-matched (defined as having the same first three moments) by an acyclic
-phase-type distribution can be well-matched for some $P$
-which is a EC distribution.
-* The number of phases used by $P$ is at most one more than the optimal number.
-* The parameters of $P$ are available in closed form, and the expression for these is derived.
+\begin{itemize}
+    \item Any distribution that can be well-matched (defined as having the same first three moments) by an acyclic phase-type distribution can be well-matched for some $P$ which is an EC distribution.
+    \item The number of phases used by $P$ is at most one more than the optimal number.
+    \item The parameters of $P$ are available in closed form, and the expression for these is derived.
+\end{itemize}
 
 A total of five parameters are required to specify a $l$-phase EC distribution.
 \begin{itemize}
@@ -300,11 +300,32 @@ A total of five parameters are required to specify a $l$-phase EC distribution.
 \end{figure}
 
 
+I use the mapfit package~\autocite{mapfit} to compute $P$ for the posterior mean of the distribution estimated in \cref{E-imperf-test}.
+The parameter estimates are in \cref{SEIR:table:ec-params}.
+\begin{table}
+    \centering
+    \begin{tabular}{c c c c c}
+        $l$ & $\kappa_Y$ & $\kappa_{X1}$ & $\kappa_{X2}$ & $p_x$ \\
+        3 & 0.0820 & 0.126 & 0.0223 & 0.00973  \\
+    \end{tabular}
+    \caption{Parameter estimates for $P$, the EC distribution fit to the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
+    \label{SEIR:table:ec-params}
+\end{table}
+% end table of ec params
+
+To link the model with prevalence measurements, I use a beta-binomial likelihood.
+If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests on days $t$, then the likelihood is:
+\begin{align}
+    \prod_{i,t} \BB (y_{it} \mid n_{it}, \sum_{k=1}^l p_{ki}(t), \rho)
+\end{align}
+using the mean-dispersion parametrisation of the beta-binomial distribution.
+$\rho$ is a nuisance parameter controlling the dispersion of the beta-binomial distribution.
+
 \section{Full model} \label{SEIR:sec:full-model}
 
 \begin{figure}
 \begin{tikzpicture}[
-    node distance = 2cm
+    node distance = 2.5cm,
     on grid,
     auto,
     ->,>=stealth',
@@ -312,31 +333,34 @@ A total of five parameters are required to specify a $l$-phase EC distribution.
     ]
 
     \node[state] (S) {$s$};
-    \node[state, right of=S] (E1) {$e_1$};
-    \node[state, right of=E1] (E2) {$e_2$};
-    \node[state, right of=E2] (I1) {$i_1$};
-    \node[state, right of=I1] (I2) {$i_2$};
-    \node[state, right of=I2] (R) {$r$};
+    \node[state, right=of S] (E1) {$e_1$};
+    \node[state, right=of E1] (E2) {$e_2$};
+    \node[state, right=of E2] (I1) {$i_1$};
+    \node[state, right=of I1] (I2) {$i_2$};
+    \node[state, right=of I2] (R) {$r$};
 
-    \path (S) edge node {$\beta$} (E1)
+    \path (S) edge node {$\sum_j \beta_{ij} i_j$} (E1)
           (E1) edge node {$\sigma$} (E2)
           (E2) edge node {$\sigma$} (I1)
           (I1) edge node {$\gamma$} (I2)
           (I2) edge node {$\gamma$} (R);
 
-    \node[state, below=3cm of E1] (P0) {P0};
-    \node[state, right of=P0] (P1) {P1};
-    \node[state, right of=P1] (P2) {P2};
-    \node[state, right of=P2] (P3) {P3};
-    \node[state, right of=P3, draw=none] (Pdots) {...};
+    \node[state, below=3cm of E1] (P0) {$p_0$};
+    \node[state, right=of P0] (P1) {$p_1$};
+    \node[state, right=of P1] (P2) {$p_2$};
+    \node[state, right=of P2] (P3) {$p_3$};
+    \node[state, right=of P3, draw=none] (P4) {};
 
-    \path (P0) edge (P1)
-          (P1) edge (P2)
-          (P2) edge (P3);
+    \path  (S) edge node {$\sum_j \beta_{ij} i_j$} (P0)
+          (P0) edge node {$\kappa_0$} (P1)
+          (P1) edge node {$\kappa_Y$} (P2)
+          (P2) edge node {$p_x \kappa_{X1}$} (P3)
+               edge [out=-45,in=-135] node[below] {$(1 - p_x) \kappa_{X1}$} (P4)
+          (P3) edge node {$\kappa_{X2}$} (P4);
     
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
 \end{tikzpicture}
-  \caption{SEIR model}
+  \caption[SEIR model]{SEIR model used for the analysis in this chapter. The shaded box represents PCR-positive individuals. Shown for a single strata $i$.}
 \end{figure}
 
 The model I use for the CIS data is shown in figure X.
