@@ -15,6 +15,8 @@
 \usepackage{textcomp} % provide symbols
 \usepackage{todonotes}
 \usepackage{xr}
+\usepackage{pdflscape}
+\usepackage{afterpage}
 % \usepackage{microtype}
 
 % Diagrams
@@ -54,9 +56,11 @@
 \DeclareMathOperator{\Poi}{Poisson}
 \DeclareMathOperator{\Beta}{Beta}
 \DeclareMathOperator{\Exponential}{Exponential}
-\DeclareMathOperator{\NegBin}{NegBin}
+\DeclareMathOperator{\NB}{NegBin}
+\DeclareMathOperator{\BB}{BetaBin}
 \DeclareMathOperator{\GamDist}{Gamma}
 \DeclareMathOperator{\MN}{Multinomial}
+\DeclareMathOperator{\N}{N}
 \DeclareMathOperator{\expit}{expit}
 \newcommand\matr{\bm}
 \newcommand\set{\mathcal}
@@ -231,6 +235,8 @@ However, the results here do not use this for consistency.
 \printbibliography
 
 \appendix
+
+\subfile{distributions}
 
 \chapter{CIS episode definitions} \label{episode-def}
 

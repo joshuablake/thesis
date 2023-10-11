@@ -1,0 +1,26 @@
+\documentclass[thesis.tex]{subfiles}
+
+\begin{document}
+\begin{landscape}
+\chapter{Tables of distributions}
+\section{Continuous distributions}
+\begin{tabular}{llp{3.5cm}lll}
+Name & Notation & Parameters & Mean & Variance & pdf\\
+Normal & $\N(\mu, \sigma^2)$ & $\mu$ (mean)\newline $\sigma^2$ (variance) & $\mu$ & $\sigma^2$ & $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ \\
+Lognormal & $\text{LN}(\mu, \sigma^2)$ & $\mu$ (mean of the logarithm)\newline $\sigma^2$ (variance of the logarithm) & $e^{\mu + \frac{\sigma^2}{2}}$ & $(e^{\sigma^2} - 1)e^{2\mu + \sigma^2}$ & $\frac{1}{x\sigma\sqrt{2\pi}}e^{-\frac{(\ln(x)-\mu)^2}{2\sigma^2}}$ \\
+Gamma & $\GamDist(k, \theta)$ & $k$ (shape)\newline $\theta$ (scale) & $k\theta$ & $k\theta^2$ & $\frac{1}{\Gamma(k)\theta^k}x^{k-1}e^{-\frac{x}{\theta}}$ \\
+Beta & $\Beta(\alpha, \beta)$ & $\alpha$ (shape)\newline $\beta$ (shape) & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$ \\
+Exponential & $\Exponential(\lambda)$ & $\lambda$ (rate) & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ & $\lambda e^{-\lambda x}$ \\
+\end{tabular}
+
+\section{Discrete distributions}
+\begin{tabular}{llp{3.5cm}lll}
+Name & Notation & Parameters & Mean & Variance & pmf \\
+Binomial & $\Bin(n, p)$ & $n$ (number of trials)\newline $p$ (probability of success) & $np$ & $np(1-p)$ & ${n \choose x}p^x(1-p)^{n-x}$ \\
+Poisson & $\Poi(\lambda)$ & $\lambda$ (average rate) & $\lambda$ & $\lambda$ & $\frac{e^{-\lambda}\lambda^x}{x!}$ \\
+Negative Binomial & $\NB(r, p)$ & $r$ (number of failures until stopping)\newline $p$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & ${x + r - 1 \choose x} p^x (1-p)^r$ \\
+Beta-Binomial (centered) & $\BB(n, p, \rho)$ & $n$ (number of trials)\newline $p$ (success probability)\newline $\rho$ (overdispersion) & $np$ & $np(1-p)[1+(n-1)\rho]$ & ${n \choose x} \frac{B(x+\alpha, n-x+\beta)}{}$ \\
+Multinomial & $\MN(n, \vec{p})$ & $n$ (number of trials)\newline $\vec{p}$ (probabilities) & $n \vec{p}$ & See below & $\frac{n!}{x_1!x_2!\ldots x_k!}p_1^{x_1}p_2^{x_2}\ldots p_k^{x_k}$ \\
+\end{tabular}
+\end{landscape}
+\end{document}
