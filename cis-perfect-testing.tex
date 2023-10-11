@@ -387,7 +387,7 @@ Take the standard assumption of independent priors on each parameter.
 Each hazard, $\lambda_t$, is a (conditional) probability, and hence a Beta distribution is a natural choice.
 
 Uninformative Beta priors on the hazard are problematic in this context.
-An uninformative prior would be of the form $\lambda_t \dist \Beta(\alpha, \alpha)$.
+An uninformative prior would be of the form $\lambda_t \dist \BetaDist(\alpha, \alpha)$.
 Commonly, $\alpha$ is chosen to be $0.5$ (Jeffreys' Prior) or $1$ (a uniform prior).
 Even though these priors are uninformative on the hazard, they become highly informative on the survival. 
 Specifically, they tend to favour shorter survival times (see \cref{perf-test:fig:flat-prior}).
