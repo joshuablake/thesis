@@ -279,7 +279,7 @@ The posterior density can be written as follows.
 \end{align}
 The rest of this section derives expressions for each $p_{ia}$, $p_{u}$ and the sum.
 
-Now I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NegBin(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
+Now I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NB(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
 I assume that $\theta$, which are only the parameters of the survival distribution, is a priori independent of $\ntot$, the number of infections that occurred in the cohort.
 Therefore, $p(\ntot \mid \theta) = p(\ntot)$.
 Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite.
@@ -425,10 +425,10 @@ Formally:
   \logit\lambda_{t+1}
   &= \logit\lambda_t + (\logit\lambda_t - \logit\lambda_{t-1}) + \sigma \epsilon_t &\text{for $t \geq 2$} \\
   &= 2\logit\lambda_t - \logit\lambda_{t-1} + \sigma \epsilon_t \\
-  \epsilon_t &\dist N(0, 1) &\text{for $t \geq 2$}  \\
+  \epsilon_t &\dist \N(0, 1) &\text{for $t \geq 2$}  \\
   \logit\lambda_2 &= \logit\lambda_1 + \epsilon_1 \\\
-  \epsilon_1 &\dist N(\mu_{\epsilon_1}, \sigma_{\epsilon_1}^2) \\
-  \logit \lambda_1 &\dist N(\mu_{\lambda_1}, \sigma_{\lambda_1}^2) \\
+  \epsilon_1 &\dist \N(\mu_{\epsilon_1}, \sigma_{\epsilon_1}^2) \\
+  \logit \lambda_1 &\dist \N(\mu_{\lambda_1}, \sigma_{\lambda_1}^2) \\
   \sigma &\dist \Exponential(1/\mu_\sigma).
 \end{align}
 The hyperparmeters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
