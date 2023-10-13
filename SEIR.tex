@@ -8,20 +8,19 @@ Mechanistic models are...
 This chapter focuses on mechanistic models based on ordinary differential equations (ODEs).
 They are useful because...
 
-Describing other mechanistic models is beyond the scope of this thesis.
-Models vary greatly in complexity and form, depending on the disease and the question of interest.
-I recommend \Textcite{kretzschmarMathematical} for an introduction to the breadth of the field or \Textcite{keelingModeling} for a book-length treatment.
-
 Notation in this chapter differs from the rest of the thesis.
 I adopt the conventions and notation standard in the infectious disease modelling field.
 In particular, upper-case letters denote populations, and lower-case letters denote proportions.
 Whether a variable is random or not is explictly stated if not clear from the context.
 
-Sections X\todo{which?} give the background on ODE-based mechanistic models.
-Section X\todo{which?} describes the model that I use for the CIS data, and section X the inference procedure.
-I verify the model and inference procedure in a simulation study in section X.
-I apply the model to the autumn 2020 CIS data in section X.
-Finally, section X discusses the results, and possible extensions, including those needed to extend to the 2021 period which includes vaccination.
+\Cref{SEIR:sec:transmission} gives the background on ODE-based mechanistic models.
+The literature on mechanistic models is vast, going back to at least \textcite{kermackContribution}.
+Here, I explain only the background necessary to understand the model used in this chapter.
+For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
+\Cref{SEIR:sec:observation} describes the novel observation model that I use for the CIS data.
+The model's implementation and fitting is explained in \cref{SEIR:sec:inference-implementation}.
+I verify the inference procedure in a simulation study in \cref{SEIR:sec:sim-study} before applying it to the autumn 2020 CIS data in \cref{SEIR:sec:application}.
+Finally, \cref{SEIR:sec:discussion} discusses the results, and possible extensions, including those needed to extend to the period including vaccination.
 
 \section{ODE-based compartmental transmission models} \label{SEIR:sec:transmission}
 
@@ -95,7 +94,7 @@ Numerical methods are required to solve the system.
 Third, in addition to the parameters, the state of the system at some time (normally the initial state) is required to solve the system.
 
 
-\subsection{Non-exponential waiting times}
+\subsection{Non-exponential waiting times} \label{SEIR:sec:non-exponential}
 
 The basic SIR model implies that the distribution of the time spent in the infected compartment is exponential.
 This is an unrealistic assumption and leads to underestimating the reproduction number~\autocites{lloydRealistic}{wearingAppropriate}.
@@ -146,7 +145,7 @@ The latent period is now distributed $\GamDist(m, m\sigma)$.
 The infectious period is still distributed $\GamDist(n, n\gamma)$.
 
 
-\subsection{Structured populations}
+\subsection{Structured populations} \label{SEIR:sec:structured-populations}
 
 \todo[inline]{Introduction about the importance of age and mixing patterns, maybe show a contact matrix}
 
@@ -194,14 +193,14 @@ Alternatively, that each stratum has a relative probability of being infected in
 Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
-I assume that all individuals have the same \emph{infectiousness} but that there is a difference in \emph{susceptibility}.
+Based on prior work\todo{cite}, I assume that all individuals have the same \emph{infectiousness} but that there is a difference in \emph{susceptibility}.
 Infectiousness is how likely an individual is to infect others.
 Susceptibility is how likely an individual is to be infected.
-Therefore, $\beta_{ij} = \beta \beta_i$ where $\beta_i$ is the relative susceptibility of stratum $i$.
+Therefore, $\beta_{ij} = \beta_i$ where $\beta_i$ is the relative susceptibility of stratum $i$.
 I assume that the only difference is that children and adults have differing susceptibility.
 For identifiability, I set $\beta_i$ to 1 for adults and $\beta_i = \beta_c$ for children.
 
-\subsection{Geographic structure}
+\subsection{Geographic structure} \label{SEIR:sec:geography}
 
 The well-mixed population assumption is more plausible for smaller scales.
 Additionally, due to non-response bias, CIS is not geographically representative.
@@ -221,7 +220,7 @@ The other vectors are interpreted similarly.
 
 During the pandemic, behaviour clearly changed over time.
 This was in response to government policy, also individual's perceived risk, and a variety of other factors.
-I introduce these changes by allowing both the contact matrix $\matr{M}$ and $\beta_{ij}$ to depend on time.
+I follow \textcite{birrellRealtime}, using a combination of Google moblity data and a time-varying transmission intensity to include these changes.
 
 How between-age-group contacts occur have previously been inferred from a combination of contact surveys, time use data, and mobility data~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}.
 I use the outputs from this analysis as $\matr{M}$.
@@ -234,11 +233,12 @@ To allow for these changes, $\beta$ is allowed to vary over time.
 In particular, $\beta$ follows a random walk in log space on the weekly timescale:
 \begin{align}
     \beta(t) &= \beta_{w(t)} \\
-    \beta_1 &= 1 \\
     \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
     \epsilon_w &\sim \N(0, 1)
 \end{align}
 where $w(t)$ is the week number of time $t$, with week 1 being the first week modelled.
+Two parameters are unspecified here: the initial random of the random walk, $\beta_1$, and the standard deviation of the random walk, $\sigma_\epsilon$.
+See \cref{perf-test:sec:parameters-priors} for the implementation and parameterisation of these.
 
 \section{Observation model} \label{SEIR:sec:observation}
 
@@ -318,8 +318,9 @@ If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out o
 \begin{align}
     \prod_{i,t} \BB (y_{it} \mid n_{it}, \sum_{k=1}^l p_{ki}(t), \rho)
 \end{align}
-using the mean-dispersion parametrisation of the beta-binomial distribution.
-$\rho$ is a nuisance parameter controlling the dispersion of the beta-binomial distribution.
+using the mean-dispersion parametrisation of the beta-binomial distribution (see \cref{E-distributions}).
+$\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
+At $\rho=0$, the beta-binomial coincides with the binomial distribution.
 
 \section{Full model} \label{SEIR:sec:full-model}
 
@@ -361,16 +362,36 @@ $\rho$ is a nuisance parameter controlling the dispersion of the beta-binomial d
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
 \end{tikzpicture}
   \caption[SEIR model]{SEIR model used for the analysis in this chapter. The shaded box represents PCR-positive individuals. Shown for a single strata $i$.}
+  \label{SEIR:fig:full-model}
 \end{figure}
 
-The model I use for the CIS data is shown in figure X.
+The full model combines each of the elements discussed in the previous sections.
+The transmission model follows \textcite{birrellRealtime}.
+It is a SEIR model with two latent and two infectious states (see \cref{SEIR:sec:non-exponential}), producing a gamma distribution.
+The population is stratified by age, using contact matrices to  (see \cref{SEIR:sec:structured-populations}).
+The force-of-infection and contact matrices changes over time as described in \cref{SEIR:sec:time-varying-foi}.
+The population in the model is that of one region of England.
+To form whole of England estimates, each region is modelled independently with the results then combined (see \cref{SEIR:sec:geography}).
 
-The transmission model is a SEIR moel with two latent and two infectious states.
-It is based on \textcite{birrellRealtime}.
+The observation model is novel, to relate the transmission to CIS data.
+It uses a phase-type model to represent the duration distribution of PCR positivity as explained in \cref{SEIR:sec:observation}.
 
-The observation model contains one infected pre-positive state, and X infected positive state.
-
-I link the positive states to the data with a Beta-Binomial likelihood.
+A diagram of the model is shown in figure \cref{SEIR:fig:full-model}.
+The system of differential equations is below.
+\begin{align}
+    \label{SEIR:eq:fullODEs}
+    \frac{d\vec{s}}{dt} &= -\vec{\Delta} \\
+    \frac{d\vec{e_1}}{dt} &= \vec{\Delta} - 2\sigma \vec{e_1} \\
+    \frac{d\vec{e_2}}{dt} &= 2\sigma \vec{e_1} - 2\sigma \vec{e_2} \\
+    \frac{d\vec{i_1}}{dt} &= 2\sigma \vec{e_2} - 2\gamma \vec{i_1} \\
+    \frac{d\vec{i_2}}{dt} &= 2\gamma \vec{i_1} - 2\gamma \vec{i_2} \\
+    \frac{d\vec{r}}{dt} &= 2\gamma \vec{i_2} \\
+    \frac{d\vec{p_0}}{dt} &= \vec{\Delta} - \kappa_0 \vec{p_0} \\
+    \frac{d\vec{p_1}}{dt} &= \kappa_0 \vec{p_0} - \kappa_Y \vec{p_1} \\
+    \frac{d\vec{p_2}}{dt} &= \kappa_Y \vec{p_1} - \kappa_{X1} \vec{p_2} \\
+    \frac{d\vec{p_3}}{dt} &= p_x \kappa_{X1} \vec{p_2} - \kappa_{X2} \vec{p_3}
+\end{align}
+where $\vec{\Delta} = \vec{s} \circ (\matr{\beta} \circ \matr{M}) (\vec{i_1} + \vec{i_2})$ is the vector of instantaneous incidence.
 
 
 \section{Inference and implementation} \label{SEIR:sec:inference-implementation}
@@ -378,17 +399,103 @@ I link the positive states to the data with a Beta-Binomial likelihood.
 \subsection{MCMC}
 
 I use an adaptive random-walk Metropolis-Hastings algorithm.
-The algorithm is based on \textcite[algorithm 4]{andrieuTutorial}.
-Its implementation is adapted from \textcite{ghoshApproximate}.
+The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
+The adaption algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, as implemented in \textcite{ghoshApproximate}.
+Proposals are accepted or rejected using the standard Metropolis-Hastings (MH) acceptance probability.
+See \cref{SEIR:MCMC-algorithm} for full details.
+\begin{algorithm}
+ set $\vec{X_0}$ to an initial value of the parameter vector \;
+ $\vec{\mu_0} = \vec{X_0}$ \;
+ $\matr{\Sigma_0} = \text{diag}(\vec{\mu_0})$ \;
+ $\lambda_0 = 1$ \;
+ \For{$i = 1, \dots, M$}{
+  sample $\vec{Y_}i \sim \N(\vec{\mu_{i-1}}, \lambda_{i-1}\matr{\Sigma_{i-1}})$\;
+  set $\vec{X_i}$ to $\vec{Y_i}$ or $\vec{X_{i-1}}$ using a MH acceptance step\;
+  update the proportion of proposals accepted so far, $\alpha$ \;
+  \eIf(\tcc{No adaptation for 200 iterations}){$i \leq 200$}{
+    $\lambda_i = \lambda_{i-1}$ \;
+    $\vec{\mu_i} = \vec{\mu_{i-1}}$ \;
+    $\matr{\Sigma_i} = \matr{\Sigma_{i-1}}$ \;
+   }{
+    $\gamma_i = (i - 200)^{-0.6}$ \;
+    $\log \lambda_i = \log \lambda_{i-1} + \gamma_i(\alpha - 0.234)$ \;
+    $\vec{\mu_i} = (1 - \gamma_i) \vec{\mu_{i-1}} + \gamma_i \vec{X_i}$ \;
+    $\matr{\Sigma_i} = (1 - \gamma_i) \matr{\Sigma_{i-1}} + \gamma_i (\vec{X_i} - \vec{\mu_i})(\vec{X_i} - \vec{\mu_i})^T$ \;
+  }
+ }
+ \caption{Algorithm for adaptive random-walk Metropolis-Hastings. $\vec{\mu_i}$ and $\matr{\Sigma_i}$ are the mean and covariance of the proposal distribution at iteration $i$. They adapt to the shape and location of the posterior. $\text{diag}(\vec{\mu_0})$ is the diagonal matrix with diagonal entries equal to $\vec{\mu_0}$. $\lambda_i$ is the scale parameter of the proposal distribution at iteration $i$. $\gamma_i$ is the learning rate, which determines how much adaptation occurs. $\gamma_i \to 0$ as $i \to \infty$ so the rate of adaptation is \emph{vanishing}. Vanishing adaptation is required for the algorithm to converge to the target distribution~\autocite[section 3]{andrieuTutorial}.}
+ \label{SEIR:MCMC-algorithm}
+\end{algorithm}
 
 \subsection{Parameterisation}
 
-Following \textcite{birrellBayesian}, I parameterise the model in terms of the initial growth rate.
+Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
+Rather than directly inferring $\beta_1$, I infer the initial growth rate of the epidemic.
+I use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infected and the initial proportion that are susceptible only.
+Both of these rely on an assumption that the epidemic is in the steady-state exponential growth phase at time 0.
 
+For an age-structured model, as the one here, the initial phase of the epidemic, when most individuals are susceptible, is approximately exponential.
+In fact, all the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same initial exponential growth rate, $\psi$.
+The basic reproduction number, $\R$ of the epidemic is related to this growth rate as follows~\autocites{birrellRealtimea}{wearingAppropriate}:
+\begin{align}
+    \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
+\end{align}
+
+$\R$ can be linked to $\beta_1$ because $\R$ is also equal to the dominant eigenvalue of the next-generation matrix, $\matr{G} = \matr\beta \circ \matr{M}$~\autocites{diekmannDefinition}{birrellRealtimea}.
+Therefore, the following procedure finds $\beta_1$ such that the growth rate $\psi$ is achieved.
+First calculate $\R$ from the model parameters using \cref{SEIR:eq:rtoR}.
+Denote this $\hat{R}$.
+Then calculate $R^* = D(\matr{G})$ when $\beta_1=1$, where $D(\cdot)$ gives the dominant eigenvalue.
+Note that multiplying a matrix by a scalar multiplies its eigenvalues by that same scalar.
+Finally, set $\beta_1 = \hat{R} / R^*$.
+
+To form a parsimonious parameterisation of the initial state, first focus on the initial number of infected individuals.
+In steady-state exponential growth, the relative proportion of each strata that is infected is proportional to the dominant eigenvector of $\matr{G}$, $\vec{d}$.
+I assume this is the case at time 0.
+Let the proportion of the population in the $i$ states at time 0 in the strata with the highest proportion infected, $i^+$, be a model parameter.
+Then, $\vec{i_0} = \vec{i_1} + \vec{i_2} = \frac{i^+}{\max \vec{d}} \vec{d}$.
+I introduce an additional vector of parameters, $\vec{\pi}$, where $\pi_i$ is the proportion of strata $i$ without immunity at time 0.
+That is, at time 0, $\vec{r} = 1 - \vec{\pi}$.
+
+The system of ODEs and the result that all the comparments are growing at the same rate give the following for the initial state of the compartments:
+\begin{align}
+    \vec{i_1} &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1} \\
+    \vec{i_2} &= \vec{i_0} - \vec{i_1} \\
+    \vec{e_2} &= \vec{i_1} \frac{\psi + 2\gamma}{2\sigma} \\
+    \vec{e_1} &= \vec{e_2} \frac{\psi + 2\sigma}{2\sigma} \\
+    \vec{s} &= \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2} \\
+    \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \kappa_0} \\
+    \vec{p_1} &= \vec{p_0} \frac{\kappa_0}{\psi + \kappa_Y} \\
+    \vec{p_2} &= \vec{p_1} \frac{\kappa_Y}{\psi + \kappa_{X1}} \\
+    \vec{p_3} &= \vec{p_2} \frac{p_x \kappa_{X1}}{\psi + \kappa_{X2}}.
+\end{align}
 
 \subsection{Priors}
+The priors for most parameters are shown in \cref{SEIR:table:priors}.
+The parameters governing the duration of positivity ($\kappa$s) were explained previous (see \cref{SEIR:table:ec-params}).
 
-\subsection{Approximation of duration distribution}
+\begin{landscape}
+\begin{table}
+\begin{tabular}{l c l l}
+    Parameter description & Symbol & Distribution & Comment \\
+    \hline \\
+    Mean latent period & $1/\sigma$ & 3.5 days (fixed) & From a paper \\
+    Mean infectious period & $1/\gamma$ & 3.5 days (fixed) & From a paper \\
+    Initial proportion without immunity & $\pi$ & See \cref{SEIR:table:immunity} & \\
+    Initial proportion infected & $i^+$ & $\BetaDist(0.5, 1000)$ & Weakly informative \\
+    Relative susceptibility of children & $\beta_c$ & $\LN(-4.325, 0.1174)$ &  \\
+    Initial growth rate & $\psi$ & $\N(0.048, 0.0035)$ & Weakly informative, centered on growth rate of deaths \\
+    Standard deviation of random walk & $\sigma$ & $\Exponential(80)$ & Weakly informative, NCP \\
+    Overdispersion of observations & $\rho$ & $\Exponential(2 \times 10^5)$ & Weakly informative
+
+\end{tabular}
+\todo[inline]{Find citation for children, check growth rate, check what NCP is}
+\caption[SEIR model priors]{Priors for each parameter. For details of the distributions and their parameterisations see \cref{E-distributions}.}
+\label{SEIR:table:priors}
+\end{table}
+\end{landscape}
+
+\subsection{Solving the systems of ODEs}
 
 \section{Simulation study} \label{SEIR:sec:sim-study}
 
