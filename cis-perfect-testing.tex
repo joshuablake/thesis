@@ -45,7 +45,7 @@
 
 When estimating incidence from prevalence, the mean duration, not its median, is the most important feature of the duration distribution~\autocite{freemanPrevalence}.
 Duration distributions tend to be right-skewed.
-Therefore, estiamtes of the mean are sensitive to the tail of the duration distribution.
+Therefore, estimates of the mean are sensitive to the tail of the duration distribution.
 In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset.
 However, this study suffered from a small sample size and only 20 days of follow-up.
 Therefore, model assumptions drive the size of the estimated tails.
@@ -77,7 +77,7 @@ To see why this is the case, consider the undetected infection in the bottom of 
 The infection episode depicted begins at time 33 and has a 10-day duration.
 If the duration had been 24 days or more, the individual would still be detectable at their next test and detected then.
 CIS has many undetected infections.
-This is because interval between tests in the same individual (up to 28 days, see\todo{ref section on the survey design}) is longer than most infections (median around 15 days, see\todo{ref ATACCC chapter}).
+This is because the interval between tests in the same individual (up to 28 days, see\todo{ref section on the survey design}) is longer than most infections (median around 15 days, see\todo{ref ATACCC chapter}).
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-perfect-testing/truncation}}
   \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
@@ -439,7 +439,7 @@ Formally:
   \logit \lambda_1 &\dist \N(\mu_{\lambda_1}, \sigma_{\lambda_1}^2) \\
   \sigma &\dist \Exponential(1/\mu_\sigma).
 \end{align}
-The hyperparmeters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
+The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/rw2-prior}
@@ -458,7 +458,7 @@ When constructing the prior, two aspects need consideration.
 Firstly, the model structure from \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard, which should be propagated into this analysis.
 That is, the prior used in this analysis cannot be independent across the hazards.
 Secondly, the uncertainty in the estimates from \cref{E-ATACCC} should be increased for this analysis.
-The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see \todo{reference discussion on extrapolation in ATACCC chapter}).
+The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see\todo{reference discussion on extrapolation in ATACCC chapter}).
 %Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
 I form the prior for the combination in two steps.
 
@@ -472,7 +472,7 @@ The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazar
   \thisfloatpagestyle{empty}
   \vspace{-2.5cm}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{cis-perfect-testing/ataccc-approximation-hazard}}
-  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernal density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
+  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernel density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
 \end{figure}
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}
@@ -564,7 +564,7 @@ Simulation was performed in R~4.2.0~\autocite{R4-2-0} using tidyverse~2.0.0~\aut
 Inference was implemented in Stan via RStan~2.21.8~\autocite{rstan2-21-8} using default settings.
 Convergence was assessed using Rhat and ESS as described in \cref{E-ATACCC:sec:convergence}\todo{add ref to place explaining diagnostics}, and all runs checked for divergent transitions.
 
-The prior on the total number of infections was centered on the true value with a dispersion parameter of 1.
+The prior on the total number of infections was centred on the true value with a dispersion parameter of 1.
 This meant that the prior was very diffuse.
 
 A framework for performing CIS-like simulations is available at \url{https://github.com/joshuablake/cisSimulation}.
@@ -575,7 +575,7 @@ Code utilising these frameworks to perform the analysis described in this chapte
 
 Repeating the simulation showed negligible variation in the results (not shown).
 This is caused by the large sample size (4800 detected infections).
-Therefore, only results from a single simulation are shown and dicussed.
+Therefore, only results from a single simulation are shown and discussed.
 
 All analyses converged.
 Rhat were below 1.01, all parameters had an effective sample size of 1000, and there were no divergent transitions.
@@ -590,7 +590,7 @@ This means that the survival function decreases slower than an exponential distr
 
 The informative and vague independent priors performed similarly.
 The informative prior had tighter credible intervals, as expected.
-This prior was centered on the correct value for the initial part of the distribution.
+This prior was centred on the correct value for the initial part of the distribution.
 Therefore, the narrow credible intervals are unsurprising.
 For hazards after day 40, the informative and vague priors are the same.
 Therefore, the posterior distributions are almost identical.

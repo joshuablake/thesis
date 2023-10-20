@@ -10,3 +10,11 @@ TODO
 CrI
 backcalculation
 Backcalculation
+Maclaurin
+logit-normal
+tidyverse
+tidyverse
+RStan
+Rhat
+oversmoothing
+oversmoothing

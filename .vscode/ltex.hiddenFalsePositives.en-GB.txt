@@ -12,3 +12,5 @@
 {"rule":"DID_FOUND_AMBIGUOUS","sentence":"^\\QWe can approximately bound the test sensitivity by assuming that all intermittent negatives are false negatives, that the negative following the last positive in an episode could be either a true or false negative, and all other negatives are true negatives.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QModifying \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.pia.\\E$"}
 {"rule":"MISSING_COMMA_AFTER_INTRODUCTORY_PHRASE","sentence":"^\\QIn settings I consider, the uncertainty arising from the distribution \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is negligible.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QSuppressing the conditioning on \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, this gives: \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q by def of \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q by def of \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q under the assumption of uniform probability of infection time.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qy-axis has either natural (left) or log (right) scale.\\E$"}
