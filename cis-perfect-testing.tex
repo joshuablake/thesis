@@ -2,24 +2,8 @@
 
 \begin{document}
 \section{Definitions}
-\todo[inline]{These will be defined elsewhere in the thesis, but are here so that this draft is understandable}
+\todo[inline]{These will be defined in the introductory chapters, but are here so that this draft is understandable}
 \begin{itemize}
-\item
-  Time is discrete: $1, \dots, T$.
-\item
-  We observe $n_a$ episodes of infection, indexed by $i$.
-\item
-  The $i$ in which episode $i$ occurs is tested at times
-  $t_i = \{ t_{i,1}, \dots, t_{i,m_i} \}$.
-\item
-  Each observed episode has an unknown start of infection time $b_i$
-  and end of infection time $e_i$ (the first and last day that the
-  individual would test positive due to this episode respectively).
-  These are realisations of the random variables $B_i$ and $E_i$
-  respectively.
-\item
-  The duration of the infection is the number of days for which an
-  individual tests positive, $D_i = E_i - B_i + 1$.
 \item
   We assume that, for all episodes $i$, $D_i$ is iid and independent
   of the time of the infection. Define the survival function
@@ -32,13 +16,6 @@
   The beginning of episode $i$ is known to occur in the interval
   $[l_i^{(b)}, r_i^{(b)}]$, and similarly for the end of the infection
   in $[l_i^{(e)}, r_i^{(e)}]$.
-\item
-  $y_i(t)$ for $t \in t_i$ is a binary indicator giving the test
-  result for individual $i$ at time $t$. Under the perfect testing
-  assumption, $y_i(t) = 1$ if and only if $b_i \leq t \leq e_i$.
-\item
-  Throughout, the convention that lower-case letters are realisations of
-  upper-case random variables is used.
 \end{itemize}
 
 \chapter{Estimating duration with infrequent testing} \label{perf-test}
@@ -153,7 +130,6 @@ They condition on the truncation (a selection effect) and the period where the i
 They condition on the initiating event time because it provides negligible information on the distribution of interest~\citePersonalComms{Nick Jewell}.
 This is not the case for the CIS.
 In CIS, infection episodes are more likely to be detected when an individual is in the weekly testing phase.
-CIS is more likely to detect infection episodes during the weekly testing phase.
 Therefore, the probability of an infection episode being detected conditional on being infected is higher than the overall probability of being detected.\todo{this is a bit unclear, try and rephrase?}
 
 Censored and truncated data are normal for estimation of the survival time of bird and insect nests~\autocite{heiseyABCs}.
@@ -184,89 +160,91 @@ In this section, I develop a model accounting for double interval censoring and 
 This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
 This framework is itself based long-standing methodology~\autocites{dempsterMaximum}{turnbullEmpirical}.
 I augment the data set with the full number of episodes, including those that are undetected.
-The augmented dataset is standard double interval censored data, with a well-known likelihood.
 
 Integrating over the number of missed episodes is analytically tractable.
 This makes inference tractable within modern, high-performance Bayesian software such as Stan.
 Let the total number of infection episodes in the cohort be $\ntot = \ndet + \nnodet$ where $\ndet$ is the number of detected infections and $\nnodet$ is the number of undetected infections.
-Let $\Ncis$ be the number of individuals in the cohort.
-Without loss of generality, let the individuals with a detected episode be indexed by $i = 1, \dots, \ndet$ and the individuals without a detected episode be indexed by $i = \ndet + 1, \dots, \Ncis$.
-Over the short period of time considered, no individual has more than one detected episode. 
-Let $j = 1, \dots \ntot$ index infection episodes, ordered such that for $j \leq \ndet$ the $j$th infection episode occurs in the $i$th individual.
+Let $\Ncis$ be the number of individuals in the cohort and $n_\sched$ be the number of test schedules.
+%Without loss of generality, let the individuals with a detected episode be indexed by $i = 1, \dots, \ndet$ and the individuals without a detected episode be indexed by $i = \ndet + 1, \dots, \Ncis$.
+Let $i = 1, \dots \ntot$ index infection episodes.
 
-All the relevant information about episode $j$ can be fully characterised by the (unobserved) triplet $(b_j, e_j, \sched_j)$ where $b_j$ and $e_j$ are the times the episode being and end respectively and $\sched_j$ is the set of test times for the individual in which the episode occurs. 
-If $\sched_j$ contains at least one time between $b_i$ and $e_i$ (inclusive), one time prior to $b_i$, and one time after $e_i$, then the episode is detected, otherwise it is undetected.
-The triplet belongs to a state space.
-$b_j$ and $e_j$ span possible infection and recovery times.
-$\sched_j$ is one of the observed test schedules, with any other test schedule assumed to occur with probability zero.
+All the relevant information about episode $i$ can be fully characterised by the (unobserved) triplet $(b_i, e_i, \sched_i)$ where $b_i$ and $e_i$ are the times the episode being and end respectively and $\sched_i$ is the set of test times for the individual in which the episode occurs.
+The episode's duration, the number of days the individual in which the episode occurred, was positive for is $d_i = e_i - b_i + 1$.
+This triplet is assumed iid.
+If $\sched_i$ contains at least one time between $b_i$ and $e_i$ (inclusive), one time prior to $b_i$, and one time after $e_i$, then the episode is detected, otherwise it is undetected.
+$b_i$ and $e_i$ span possible infection and recovery times.
+$\sched_i$ is one of the observed test schedules, with any other test schedule assumed to occur with probability zero.
+Over the short period of time considered, each unique test schedule has zero or one detected episodes.
+Let $\set{D}$ be the set of test schedules with a detected infection in the cohort.
 
-To relate the state space to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for any individual based on their test times.
+To relate the state space to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for each test schedule.
 Figure \ref{perf-test:fig:partitionSpace} shows this graphically.
 Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of the model parameters, $\theta$.
 
 \begin{itemize}
 \item
   Admissible episodes, $\alpha_i$, which have an infection and recovery time consistent with the data observed.
-  This space is empty if individual $i$ had no detected episode (\ie: $i > \ndet$).
-  Otherwise, $b_i \in [l_i^{(b)}, r_i^{(b)}]$, and $e_i \in [l_i^{(e)}, r_i^{(e)}]$.
-  If $i \leq \ndet$ then $n_{ia} =1$ of these occurred in individual $i$, otherwise $n_{ia} = 0$.
-  Conditional on the episode occurring in individual $i$, it is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
+  This space is empty for $i \notin \set{D}$.
+  Otherwise, define $l_i^{(b)}$ and $r_i^{(b)}$ as the first and last days $b_i$ could have occurred.
+  $l_i^{(b)}$ is the day after the last negative test prior to the first positive test in the episode.
+  $r_i^{(b)}$ is the day of the first positive test.
+  Similarly, define $l_i^{(e)}$ and $r_i^{(e)}$ as the first and last days $e_i$ could have occurred.
+  If $i \in \set{D}$ then $n_{ia} =1$ admissible episodes occurred in individuals with test schedule $\sched{i}$, otherwise $n_{ia} = 0$.
+  Conditional on the episode occurring in individuals with test schedule $\sched_i$, it is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
   \label{perf-test:def:admissible}
 \item
   Undetected episodes, $\Omega_i^C$, which have an infection and recovery time such that they would not have tested positive.
-  An unknown number, $n_{iu}$ of these observed in individual $i$.
-  Conditional on the episode occurring in individual $i$, it is undetected with probability $p_{iu} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
+  An unknown number, $n_{iu}$ of these observed in individuals with test schedule $\sched_i$.
+  Conditional on the episode occurring in individuals with test schedule $\sched_i$, it is undetected with probability $p_{iu} = \prob((b, e) \in \Omega^C_i \mid \theta)$.
 \item
   Inadmissible episodes, $\beta_i$, which are not consistent with the data observed but would have been
   detected.
   This is all remaining episodes not in the previous sets.
-  For an individual with no detected episodes, $\beta_i$ is the area of possible infections that would have been detected.
-  $n_{i\bar{a}} = 0$ of these occurred in any individual $i$.
-  Conditional on the episode occurring in individual $i$, it is inadmissible with probability $p_{i\bar{a}} = \prob((b, e) \in \beta_i \mid \theta)$.
+  $n_{i\bar{a}} = 0$ of these occurred in any individuals with test schedule $\sched_i$.
+  Conditional on the episode occurring in these individuals, it is inadmissible with probability $p_{i\bar{a}} = \prob((b, e) \in \beta_i \mid \theta)$.
 \end{itemize}
 
-The detected region, $\Omega_i = \alpha_i \cup \beta_i$, for individual $i$ is the region where we could have observed an episode. 
+The detected region, $\Omega_i = \alpha_i \cup \beta_i$, for test schedule $\sched_i$ is the region where we could have observed episodes. 
 The notation is for consistency with \textcite{heiseyModelling}.
 $\Omega_i$ is the complement of $\Omega^C_i$.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
-\caption[Admissible, inadmissible, and undetected infections]{The regions (as defined in the main text) for an episode $i$ in an
-individual whose first test was at time 0 and negative, with subsequent
+\caption[Admissible, inadmissible, and undetected infections]{The regions (as defined in the main text) for an individual with test schedule $\sched_i$ whose first test was at time 0 and negative, with subsequent
 negative tests at times 7, 14, and 56, and positive tests at times 21
 and 28. Inadmissible region is unshaded. The black (impossible) region is because it does not make sense for recovery to occur prior to infection. \label{perf-test:fig:partitionSpace}}
 \end{figure}
 
 These three classes span all possible episodes and are mutually exclusive.
 Therefore, these definitions are consistent with the previous definition of $\ntot$.
-That is, $\ntot = \ndet + \nnodet + n_{i\bar{a}} = \sum_{i=1}^{\ndet} n_{ia} + \sum_{i=1}^{\Ncis} n_{iu} + 0$.
+That is, $\ntot = \ndet + \nnodet + n_{i\bar{a}} = \sum_{i=1}^{\ndet} n_{ia} + \sum_{i=1}^{\ntot} n_{iu} + 0$.
 Furthermore, for all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
 
-Any episode $j$ independently belongs to one of these classes.
+Any episode $i$ independently belongs to one of these classes.
 I assume the individual in which each episode occurs is iid uniform across the cohort.
 Therefore, conditional on $\ntot$, the number of episodes in each class, $(n_{ia}, n_{iu}, n_{i\bar{a}})^T$, are distributed multinomially.
-The above probabilities ($p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$) are conditional on the episode occurring in individual $i$.
-These probabilities are multiplied by $1/\Ncis$ to give the probability that an episode belongs to each class, without conditioning on a specific individual.
+The above probabilities ($p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$) are conditional on the episode occurring with test schedule $\sched_i$.
+These probabilities are multiplied by $\eta_i/\Ncis$, where $\eta_i$ is the number of individuals with test schedule $\sched_i$, to give the probability that an episode belongs to each class, without conditioning on a specific individual.
 
 The undetected classes for each individual cannot be distinguished by any observable data.
 Each class's count needs to be marginalised over to calculate the likelihood.
 Because the counts have a joint multinomial distribution, this is equivalent to only considering the sum of the counts.
-The overall probability of an episode being unobserved is $\pnodet = \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} p_{iu}$.
+The overall probability of an episode being unobserved is $\pnodet = \frac{1}{\Ncis} \sum_{i=1}^{n_\sched} \eta_i p_{iu}$.
 Furthermore, the inadmissible classes are guaranteed to have zero episodes.
 Counts of zero do not contribute to a multinomial pmf (they multiply by 1).
 Therefore, I combine the undetected classes into a single class and ignore the inadmissible classes.
 
-Let $\na = (n_{1a}, \dots, n_{\Ncis a})^T$ be the vector of counts of episodes in the admissible classes.
+Let $\na = (n_{1a}, \dots, n_{n_\sched a})^T$ be the vector of counts of episodes in the admissible classes.
 The counts $\na$ and $\nnodet$ are jointly distributed multinomially.
-The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{\Ncis} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
+The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{n_\sched} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
 Hence:
 \begin{align}
 &p(\na \mid \ntot, \theta) \\
 &= p(\nnodet, \na\mid \ntot, \theta) \\
-&= \frac{\ntot!}{\nnodet! \prod_{i=1}^{\Ncis} n_{ia}!}  \left(\frac{1}{\Ncis}\pnodet\right)^{\nnodet}\prod_{i=1}^{\Ncis} \left(\frac{1}{\Ncis}p_{ia}\right)^{n_{ia}} \\
-&\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i=1}^{\ndet} p_{ia} \label{perf-test:eq:augmented-likelihood}
+&= \frac{\ntot!}{\nnodet! \prod_{i=1}^{n_\sched} n_{ia}!}  \pnodet^{\nnodet}\prod_{i=1}^{n_\sched} \left(\frac{1}{n_\sched}p_{ia}\right)^{n_{ia}} \\
+&\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i \in \set{D}} p_{ia} \label{perf-test:eq:augmented-likelihood}
 \end{align}
-the final line follows because $\nnodet = \ntot - \ndet$, $n_{ia} = 1$ for $i \leq \ndet$, and $n_{ia} = 0$ for $i > \ndet$.
+the final line follows because $\nnodet = \ntot - \ndet$, $n_{ia} = 1$ for $i \in \set{D}$, and $n_{ia} = 0$ otherwise.
 
 \todo{Not sure if the followin paragraph is understandable}
 In forming the probability $p_{ia}$, the data is used.
@@ -287,7 +265,7 @@ The posterior density can be written as follows.
 \end{align}
 The rest of this section derives expressions for each $p_{ia}$, $p_{u}$ and the sum.
 
-Now I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NB(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial).
+Now I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NB(\mu, r)$ (using the mean/dispersion parameterisation of the negative binomial, see \cref{E-distributions}).
 I assume that $\theta$, which are only the parameters of the survival distribution, is a priori independent of $\ntot$, the number of infections that occurred in the cohort.
 Therefore, $p(\ntot \mid \theta) = p(\ntot)$.
 Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite.
