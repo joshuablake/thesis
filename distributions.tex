@@ -16,11 +16,12 @@ Exponential & $\Exponential(\lambda)$ & $\lambda$ (rate) & $\frac{1}{\lambda}$ &
 \section{Discrete distributions}
 \begin{tabular}{llp{3.5cm}lll}
 Name & Notation & Parameters & Mean & Variance & pmf \\
-Binomial & $\Bin(n, p)$ & $n$ (number of trials, integer)\newline $0 \leq p \leq 1$ (probability of success) & $np$ & $np(1-p)$ & ${n \choose x}p^x(1-p)^{n-x}$ \\
+Binomial & $\Bin(n, p)$ & $n \in \nats$ (number of trials, integer)\newline $0 \leq p \leq 1$ (probability of success) & $np$ & $np(1-p)$ & ${n \choose x}p^x(1-p)^{n-x}$ \\
 Poisson & $\Poi(\lambda)$ & $\lambda > 0$ (average rate) & $\lambda$ & $\lambda$ & $\frac{e^{-\lambda}\lambda^x}{x!}$ \\
-Negative Binomial & $\NB(r, p)$ & $r$ (number of failures until stopping)\newline $p$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & ${x + r - 1 \choose x} p^x (1-p)^r$ \\
-Beta-Binomial (centered) & $\BB(n, p, \rho)$ & $n$ (number of trials, integer)\newline $0 \leq p \leq 1$ (success probability)\newline $\rho > 0$ (overdispersion) & $np$ & $np(1-p)(1+n\rho)(1+\rho)^{-1}$ & ${n \choose x} \frac{B(x+p/\rho, n-x+(1-p)/\rho)}{B(p/\rho, (1-p)/\rho)}$ \\
-Multinomial & $\MN(n, \vec{p})$ & $n$ (number of trials, integer)\newline $0 < \vec{p}$ (probabilities, $\sum_i p_i = 1$) & $n \vec{p}$ & See below & $\frac{n!}{x_1!x_2!\ldots x_k!}p_1^{x_1}p_2^{x_2}\ldots p_k^{x_k}$ \\
+Negative Binomial (standard) & $\NB(r, p)$ & $r > 0$ (number of failures until stopping)\newline $0 < p < 1$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} p^x (1-p)^r$ \\
+Negative Binomial (centred) & $\NB(\mu, r)$ & $\mu > 0$ (mean) \newline r (dispersion) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} \left( \frac{r}{r+\mu} \right)^\mu \left( \frac{\mu}{r+\mu} \right)^k$ \\
+Beta-Binomial (centred) & $\BB(n, p, \rho)$ & $n \in \nats$ (number of trials, integer)\newline $0 \leq p \leq 1$ (success probability)\newline $\rho > 0$ (overdispersion) & $np$ & $np(1-p)(1+n\rho)(1+\rho)^{-1}$ & ${n \choose x} \frac{B(x+p/\rho, n-x+(1-p)/\rho)}{B(p/\rho, (1-p)/\rho)}$ \\
+Multinomial & $\MN(n, \vec{p})$ & $n \in \nats$ (number of trials, integer)\newline $\vec{p} > 0$ (vector of $k$ probabilities, $\sum_{i=1}^k p_i = 1$) & $n \vec{p}$ & See below & $\frac{n!}{x_1!x_2!\ldots x_k!}p_1^{x_1}p_2^{x_2}\ldots p_k^{x_k}$ \\
 \end{tabular}
 $B(x,y)$ is the beta function, defined in terms of the Gamma function $\Gamma(x)$ as $B(x,y) = \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}$.
 For $X \dist \MN(n, \vec{p})$, $\V(X_i) = np_i(1-p_i)$ and $\cov(X_i, X_j) = -np_ip_j$ for $i \neq j$.
