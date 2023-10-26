@@ -1,12 +1,13 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
+ATACCC_DEPS = ATACCC.tex
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
 SEIR_DEPS = SEIR.tex
 DISTRIBUTIONS_DEPS = distributions.tex
 
-thesis.pdf: $(SHARED_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) $(INC_PREV_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
+thesis.pdf: $(SHARED_DEPS) $(ATACCC_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) $(INC_PREV_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
 latex.out/thesis.aux:
@@ -27,6 +28,9 @@ incidence-prevalence.pdf: $(INC_PREV_DEPS) $(SHARED_DEPS)
 
 #####################################################
 ## ATACCC CHAPTER
+
+ATACCC.pdf: $(ATACCC_DEPS) $(SHARED_DEPS)
+	$(LATEX_CMD)
 
 ATACCC-distributions/%:
 	rsync -aq bsu:~/COVID/ons-incidence/duration_estimation/SARS-CoV-2-viral-shedding-dynamics/for_thesis/ ATACCC-distributions/

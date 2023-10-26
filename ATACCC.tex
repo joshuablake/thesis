@@ -1,0 +1,186 @@
+\documentclass[thesis.tex]{subfiles}
+
+\begin{document}
+\ifSubfilesClassLoaded{
+  \setcounter{chapter}{4}
+}
+
+\chapter{Estimating duration using biomarkers} \label{ATACCC}
+
+\section{Background}
+
+Two major approaches have been taken to model SARS-CoV-2 viral load trajectories.
+There are either using ordinary differential equations (ODEs) with a biological interpretation or using mathematical functions that are flexible enough to capture the dynamics.
+
+ODE-based approaches have parameters represent biological properties of the virus and host, such as the immune response (eg:~\autocites{ejimaEstimation,keViro,kimQuantitative,goncalvesTiming,perelsonMechanistic}).
+Such models are rarely analytically-tractable and the system's evolution is computed using numeric methods.
+The second approach is to approximate the dynamics using simple functions.
+Most common is a piecewise model, where the logarithm of viral load increases linearly, peaks instantaneously, and then decreases linearly~\autocites{clearyUsing,kisslerSARSCoV2,larremoreTest}; although more flexible functions have also been suggested~\autocites{quiltyQuarantine}.
+In these models, parameters are clearly related to the data, such as the time from first detection to peak viral load, and the viral load at the peak.
+In both approaches, random effects are used to represent variation between hosts within the population, capturing the non-independence of longitudinal data from the same host.
+Here, we focus on the latter class of models, adopting a piecewise-linear approach.
+
+Piecewise linear, random effect models have a long history of use for longitudinal data in biostatistics~\autocites{slateStatistical}.
+Often, as here, they are used to model the temporal evolution of biomarkers, including:
+CD4 counts following HIV infection~\autocites{langeHierarchical,lynchPredicting}, parasite density in
+blood samples following malaria treatment~\autocites{fogartyBayesian}, and measurements
+of cognitive decline due to Alzheimer's disease~\autocites{bealisleBayesian}.
+Various extensions to the model exist including the incorporation of multiple biomarkers~\autocites{inoueModeling,giardinaGetting}, time-to-event data [REF], and relaxing the piecewise linear assumption to a semi-parameteric form~\autocites{zegerSemiparametric}.
+
+Viral loads are infrequently measured exactly.
+The most common form of data obtained is cycle threshold (Ct) values from real-time quantitative  reverse-transcriptase polymerase chain reaction (PCR) tests.
+The Ct value is proportional to the negative log of the viral load which is convenient when modelling log viral load as a piecewise linear function, since Ct values themselves are piecewise linear under this assumption.
+When a host's viral load is too low (below the limit of detection of the PCR test), no Ct value is available and hence viral load can be considered censored at the limit of detection.
+The relationship between Ct and viral load is noisy and can vary based on many factors including quality of swab obtained, primers used (even between batches), and the PCR system set-up~\autocites{dahdouhCt,hanRTPCR}.
+
+\section{Original analysis}
+
+
+\subsection{Model of viral load}
+
+For an individual $i$, their trajectory is determined by two points and one slope parameter.
+The points are the time at which the individual has a 50\% chance of testing positive, $t_{i,0}$, and the time at which their viral load
+peaks, $t_{i,\text{peak}}$ after $t_{i,0}$; the slope parameter, $\beta_i$ determines the rate their Ct increases (viral load decreases) following the peak.
+The Ct value for an individual at time $t_{i,0}$ is the known limit of detection, $C_\text{lod}$,
+Their Ct value at the peak is $C_{i,\text{peak}}$ and inferred.
+The slope parameter, $\beta_i$, determines how quickly an individual's Ct value increases following the peak viral load.
+We denote the vector of the parameters defined here as $\vec\theta_i = \begin{bmatrix} t_{i,0} & t_{i,\text{peak}} & C_{i,\text{peak}} &  \beta_i \end{bmatrix}^T$.
+
+This parameterisation leads to the following Ct value trajectory for individual $i$:
+$$
+\hat{C}_i(t, \vec\theta_i) = \begin{cases}
+  C_{\text{lod}} + (C_{i,\text{peak}} - C_{\text{lod}}) \frac{t - t_{i,0}}{t_{i,\text{peak}}}
+    &t \leq t_{i,\text{peak}} + t_{i,0} \\
+  C_{i,\text{peak}} + \beta_i (t - t_{i,\text{peak}} - t_{i,0})
+    &t > t_{i,\text{peak}} + t_{i,0}.
+\end{cases}
+$$
+
+Day 0 for an individual is the day they were enrolled in the study and first swabbed.
+
+\subsection{Observation model and likelihood}
+
+Observed Ct values are assumed to be drawn from a Normal distribution with mean $\hat{C}_i(t)$ and standard deviation $\sigma_\text{obs}$.
+censored at the limit of detection.
+Additionally, we introduce a probability of a false negative $\eta$, to account for negative test results seen near the peak viral load.
+Denoting an observed Ct value for individual $i$ at time $t$ as $y_{i,t}$ with
+$y_{i,t} = \infty$ for a negative test, this gives the following likelihood.
+$$
+\pi(y_{i,t} \mid \vec\theta_i, \sigma_\text{obs}, \eta) = \begin{cases}
+  (1 - \eta) f_N(y_{i,t} \mid \hat{C}_i(t, \vec\theta_i), \sigma_\text{obs}^2) &y_{i,t} < \infty \\
+  \eta + (1 - \eta) (1 - F_N(C_\text{lod} \mid \hat{C}_i(t, \vec\theta_i), \sigma_\text{obs}^2)) & y_{i,t} = \infty
+\end{cases}
+$$
+where $\sigma_\text{obs}$ is a model parameter determining the variability in
+test results, and $f_N(y \mid \mu, \sigma^2)$ and $F_N(y \mid \mu, \sigma^2)$ are the pdf
+and cdf (respectively) of a Normal distribution with mean $\mu$ and variance $\sigma^2$.
+
+We assume that all observations (both of the same and different individuals) are independent conditional on the model parameters.
+The parameter $\vec\theta_i$ introduces dependence between observations of the same individuals.
+\autoref{ATACCC:sec:hierarchy} explains the hierarchical structure which borrows information between individuals.
+
+\subsection{Hierarchical structure}\label{ATACCC:sec:hierarchy}
+
+\begin{figure}
+\begin{tikzpicture}[
+    node distance = 3cm and 3cm,
+    on grid,
+    auto,
+    ->,>=stealth',
+    every state/.style={draw,circle,minimum size=1.5cm},
+    ]
+
+% Define the nodes
+\node[state] (mu-tpeak) {$\mu_{\log t_\text{peak}}$};
+\node[state, right=of mu-tpeak] (sigma-logtpeak) {$\sigma_{\log t_\text{peak}}$};
+\node[state, below right=of mu-tpeak] (ti-peak) {$t_{i,\text{peak}}$};
+\node[state, right=of sigma-logtpeak] (mu-Cpeak) {$\mu_{C_\text{peak}}$};
+\node[state, right=of mu-Cpeak] (sigma-Cpeak) {$\sigma_{C_\text{peak}}$};
+\node[state, below right=of mu-Cpeak] (Ci-peak) {$C_{i,\text{peak}}$};
+\node[state, right=of sigma-Cpeak] (mu-log-Bi) {$\mu_{\log \beta_i}$};
+\node[state, right=of mu-log-Bi] (sigma-log-Bi) {$\sigma_{\log \beta_i}$};
+\node[state, below right=of mu-log-Bi] (Bi) {$\beta_i$};
+\node[state, left=of ti-peak] (ti0) {$t_{i,0}$};
+\node[draw, inner sep=0.3cm, fit=(ti0) (Bi), fill=blue!10,opacity=0.2] {$\theta_i$};
+\node[state, below left=of Ci-peak] (Ci-t) {$\hat{C}_i(t)$};
+\node[state, right=of Ci-t] (sigma-obs) {$\sigma_\text{obs}$};
+\node[state, right=of sigma-obs] (eta-i) {$\eta_i$};
+\node[rectangle, draw, left=of Ci-t,minimum size=1.5cm] (Clod) {$C_\text{lod}$};
+\node[state, double, below=of sigma-obs] (Yi-t) {$y_{i,t}$};
+
+% Draw the edges
+\draw[->] (mu-tpeak) -- (ti-peak);
+\draw[->] (sigma-logtpeak) -- (ti-peak);
+\draw[->] (mu-Cpeak) -- (Ci-peak);
+\draw[->] (sigma-Cpeak) -- (Ci-peak);
+\draw[->] (mu-log-Bi) -- (Bi);
+\draw[->] (sigma-log-Bi) -- (Bi);
+\draw[->,dotted] (ti0) -- (Ci-t);
+\draw[->,dotted] (ti-peak) -- (Ci-t);
+\draw[->,dotted] (Ci-peak) -- (Ci-t);
+\draw[->,dotted] (Bi) -- (Ci-t);
+%\draw[->] (theta-i) -- (Ci-t);
+\draw[->] (Ci-t) -- (Yi-t);
+\draw[->] (eta-i) -- (Yi-t);
+\draw[->,dotted] (Clod) -- (Ci-t);
+\draw[->] (Clod) -- (Yi-t);
+\draw[->] (sigma-obs) -- (Yi-t);
+
+\end{tikzpicture}
+\caption{Hierarchical structure}
+\end{figure}
+
+\subsection{Inference}
+
+Inference was performed by Hamiltonian Monte Carlo (HMC) implemented in Stan 2.26.1~[REF].
+To aid with mixing, the hierarchical parameters were implemented using the non-centred parameterisation~[REF].
+In addition, $t_{i,0}$ was reparameterised in terms of the absolute time of peak.
+Convergence was assessed by checking R-hat < 1.1, and visual inspection of traceplots, and effective sample size.
+
+\subsection{Priors}
+
+Weakly informative priors were used on all parameters except $\mu_{\log t_\text{peak}}$ and $\sigma_{\log t_\text{peak}}$.
+The latter were chosen to reflect the prior belief that viral load peaks shortly before symptom onset, which occurs a median of 5.1 days after infection~\autocite{mcaloonIncubation}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llrrr}
+  \hline
+    Parameter & Distribution & 0.05 & 0.5 & 0.95 \\ 
+  \hline
+    $\eta$ & $\text{Beta}(0.95, 9)$ & $0$ & $0.07$ & $0.28$ \\ 
+    $\sigma_\text{obs}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\ 
+    $t_{0,i}$ & $N(0, 5^2)$ & $-8.22$ & $0$ & $8.22$ \\ 
+    $\mu_{\log t_\text{peak}}$ & $N(\log(3), \log(2.5)^2)$ & $\log (0.66)$ & $\log (3)$ & $\log (13.54)$ \\ 
+    $\sigma_{\log t_\text{peak}}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\ 
+    $\mu_{C_\text{peak}}$ & $N(17, 5^2)$ & $8.78$ & $17$ & $25.22$ \\ 
+    $\sigma_{C_\text{peak}}$ & $\text{Half-Cauchy}(0, 4)$ & $0.31$ & $4$ & $50.82$ \\ 
+    $\mu_{\log\beta}$ & $N(\log(3.5), \log(1.4)^2)$ & $\log (2.01)$ & $\log (3.5)$ & $\log (6.09)$ \\ 
+    $\sigma_{\log\beta}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\
+   \hline
+\end{tabular}
+\caption{Priors used, columns 3 to 5 gives quantiles of the distributions specified. See main text for description of the parameters.}
+\label{tab:paper:priors}
+\end{table}
+
+\section{Comparison to \texorpdfstring{\textcite{hakkiOnset}}{Hakki \etal (2022)}}
+
+\section{Final analysis}
+
+\section{Producing duration from parameter estimates}
+
+The ATACCC analysis produces a posterior distribution for some population-level parameters, $\phi$.
+Taking a posterior sample for this, $\phi^{(i)}$, we can then draw the parameters which determine the viral
+load trajectory for a random individual $j$, $\theta_j$, from which that individual's duration $d_j^{(i)}$ can be calculated.
+By drawing $\theta_1, \theta_2, \dots, \theta_n$ from the distribution $p(\theta_j \mid\phi^{(i)})$, the density of the duration distribution, $f_A(t)$, can be
+calculated for the posterior sample $i$ as:
+$$
+f^{(i)}_A(t) = \frac{1}{n}\sum_{j=1}^n \mathbb{I} \left( t-0.5 < d_j^{(i)} < t+0.5 \right)
+$$
+Given $f_A(t)$, the cumulative density and hazard functions can be calculated.
+Repeating this for $N$ posterior samples of $\phi$ gives the posterior distribution.
+I have used $N = 1000$ and $n = 100,000$, 
+Since implementing this solution, I have found that Monte Carlo integration to calculate durations given $\theta_i$ is more accurate by avoiding discretisation errors.
+However, the results here do not use this for consistency.
+
+\end{document}
