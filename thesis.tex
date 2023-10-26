@@ -112,7 +112,7 @@
 \makeatletter
 \let\blx@noerroretextools\empty
 \makeatother
-\usepackage[backend=biber,style=authoryear,uniquename=false]{biblatex}
+\usepackage[backend=biber,style=authoryear,uniquename=false,sortcites=true]{biblatex}
 \addbibresource{references.bib}
 
 \usepackage{subfiles} % Best loaded last in the preamble
@@ -142,6 +142,12 @@
 \section{The COVID-19 pandemic and ongoing burden}
 
 \section{SARS-CoV-2 and COVID-19}
+
+Viral loads are infrequently measured exactly.
+The most common form of data obtained is cycle threshold (Ct) values from real-time quantitative  reverse-transcriptase polymerase chain reaction (PCR) tests.
+The Ct value is proportional to the negative log of the viral load which is convenient when modelling log viral load as a piecewise linear function, since Ct values themselves are piecewise linear under this assumption.
+When a host's viral load is too low (below the limit of detection of the PCR test), no Ct value is available and hence viral load can be considered censored at the limit of detection.
+The relationship between Ct and viral load is noisy and can vary based on many factors including quality of swab obtained, primers used (even between batches), and the PCR system set-up~\autocites{dahdouhCt,hanRTPCR}.
 
 \section{Thesis outline}
 
@@ -197,31 +203,7 @@ See figure \@ref(fig:test-schedules) for further detail.
 Consider the CIS data.
 It consists of a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
 
-\chapter{Duration from biomarkers} \label{ATACCC}
-
-\section{Background}
-
-\section{Original analysis}
-
-\section{Comparison to \texorpdfstring{\textcite{hakkiOnset}}{Hakki \etal (2022)}}
-
-\section{Final analysis}
-
-\section{Producing duration from parameter estimates}
-
-The ATACCC analysis produces a posterior distribution for some population-level parameters, $\phi$.
-Taking a posterior sample for this, $\phi^{(i)}$, we can then draw the parameters which determine the viral
-load trajectory for a random individual $j$, $\theta_j$, from which that individual's duration $d_j^{(i)}$ can be calculated.
-By drawing $\theta_1, \theta_2, \dots, \theta_n$ from the distribution $p(\theta_j \mid\phi^{(i)})$, the density of the duration distribution, $f_A(t)$, can be
-calculated for the posterior sample $i$ as:
-$$
-f^{(i)}_A(t) = \frac{1}{n}\sum_{j=1}^n \mathbb{I} \left( t-0.5 < d_j^{(i)} < t+0.5 \right)
-$$
-Given $f_A(t)$, the cumulative density and hazard functions can be calculated.
-Repeating this for $N$ posterior samples of $\phi$ gives the posterior distribution.
-I have used $N = 1000$ and $n = 100,000$, 
-Since implementing this solution, I have found that Monte Carlo integration to calculate durations given $\theta_i$ is more accurate by avoiding discretisation errors.
-However, the results here do not use this for consistency.
+\subfile{ATACCC}
 
 \subfile{cis-perfect-testing}
 
