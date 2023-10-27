@@ -7,6 +7,16 @@
 
 \chapter{Estimating duration using biomarkers} \label{ATACCC}
 
+Overall summary of chapter.
+Need to include: how the different sections and analyses interact.
+
+\Cref{ATACCC:sec:background} explains how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature.
+I explain an analysis, \textcite{hakkiOnset}, applying this to the ATACCC data in \cref{ATACCC:sec:hakki}.
+However, this analysis did not converge fully.
+I modify their observation model in section \cref{ATACCC:sec:observation-modification} to improve the convergence.
+This modification is based on an earlier analysis I did with a slightly different model and a preliminary version of the dataset, which is described in \cref{ATACCC:sec:original-analysis}.
+The model and parameter estimates of the biomarker need to be converted to a duration of PCR positivity to be used in backcalculation, which I do in \cref{ATACCC:sec:duration}.
+
 \section{Background}
 
 Two major approaches have been taken to model SARS-CoV-2 viral load trajectories.
@@ -30,23 +40,25 @@ Various extensions to the model exist including the incorporation of multiple bi
 
 \section{Original analysis}
 
+This section introduces the piecewise linear model I initially used to model viral loads.
+It consists of two steps:...
+
 
 \subsection{Model of viral load}
 
 For an individual $i$, their trajectory is determined by two points and one slope parameter.
-The points are the time at which the individual has a 50\% chance of testing positive, $t_{i,0}$, and the time at which their viral load
-peaks, $t_{i,\text{peak}}$ after $t_{i,0}$; the slope parameter, $\beta_i$ determines the rate their Ct increases (viral load decreases) following the peak.
-The Ct value for an individual at time $t_{i,0}$ is the known limit of detection, $C_\text{lod}$,
-Their Ct value at the peak is $C_{i,\text{peak}}$ and inferred.
-The slope parameter, $\beta_i$, determines how quickly an individual's Ct value increases following the peak viral load.
-We denote the vector of the parameters defined here as $\vec\theta_i = \begin{bmatrix} t_{i,0} & t_{i,\text{peak}} & C_{i,\text{peak}} &  \beta_i \end{bmatrix}^T$.
+The points are the time at which the individual has a 50\% chance of testing positive, $t_{i,0}$, and the time at which their viral load peaks relative to their first swab, $t_{i,\text{peak}}$ after $t_{i,0}$; the slope parameter, $\beta_i$ determines the rate their viral load decreases following the peak.
+The viral load value for an individual at time $t_{i,0}$ is the known limit of detection, $v_\text{lod}$,
+Their viral load value value at the peak is $v_{i,\text{peak}}$ and inferred.
+The slope parameter, $\beta_i$, determines how quickly an individual's viral load decreases following the peak viral load.
+We denote the vector of the parameters defined here as $\vec\theta_i = \begin{bmatrix} t_{i,0} & t_{i,\text{peak}} & v_{i,\text{peak}} &  \beta_i \end{bmatrix}^T$.
 
-This parameterisation leads to the following Ct value trajectory for individual $i$:
+This parameterisation leads to the following value for individual $i$'s log viral load:
 $$
-\hat{C}_i(t, \vec\theta_i) = \begin{cases}
-  C_{\text{lod}} + (C_{i,\text{peak}} - C_{\text{lod}}) \frac{t - t_{i,0}}{t_{i,\text{peak}}}
+\hat{v}_i(t, \vec\theta_i) = \begin{cases}
+  v_{\text{lod}} + (v_{i,\text{peak}} - v_{\text{lod}}) \frac{t - t_{i,0}}{t_{i,\text{peak}}}
     &t \leq t_{i,\text{peak}} + t_{i,0} \\
-  C_{i,\text{peak}} + \beta_i (t - t_{i,\text{peak}} - t_{i,0})
+  v_{i,\text{peak}} - \beta_i (t - t_{i,\text{peak}} - t_{i,0})
     &t > t_{i,\text{peak}} + t_{i,0}.
 \end{cases}
 $$
@@ -55,15 +67,14 @@ Day 0 for an individual is the day they were enrolled in the study and first swa
 
 \subsection{Observation model and likelihood}
 
-Observed Ct values are assumed to be drawn from a Normal distribution with mean $\hat{C}_i(t)$ and standard deviation $\sigma_\text{obs}$.
-censored at the limit of detection.
+Observed log viral load values are assumed to be drawn from a Normal distribution with mean $\hat{v}_i(t)$ and standard deviation $\sigma_\text{obs}$, censored at the limit of detection.
 Additionally, we introduce a probability of a false negative $\eta$, to account for negative test results seen near the peak viral load.
-Denoting an observed Ct value for individual $i$ at time $t$ as $y_{i,t}$ with
+Denoting an observed log viral load value for individual $i$ at time $t$ as $y_{i,t}$ with
 $y_{i,t} = \infty$ for a negative test, this gives the following likelihood.
 $$
 \pi(y_{i,t} \mid \vec\theta_i, \sigma_\text{obs}, \eta) = \begin{cases}
-  (1 - \eta) f_N(y_{i,t} \mid \hat{C}_i(t, \vec\theta_i), \sigma_\text{obs}^2) &y_{i,t} < \infty \\
-  \eta + (1 - \eta) (1 - F_N(C_\text{lod} \mid \hat{C}_i(t, \vec\theta_i), \sigma_\text{obs}^2)) & y_{i,t} = \infty
+  (1 - \eta) f_N(y_{i,t} \mid \hat{v}_i(t, \vec\theta_i), \sigma_\text{obs}^2) &y_{i,t} < \infty \\
+  \eta + (1 - \eta) F_N(v_\text{lod} \mid \hat{v}_i(t, \vec\theta_i), \sigma_\text{obs}^2) & y_{i,t} = \infty
 \end{cases}
 $$
 where $\sigma_\text{obs}$ is a model parameter determining the variability in
@@ -89,40 +100,40 @@ The parameter $\vec\theta_i$ introduces dependence between observations of the s
 \node[state] (mu-tpeak) {$\mu_{\log t_\text{peak}}$};
 \node[state, right=of mu-tpeak] (sigma-logtpeak) {$\sigma_{\log t_\text{peak}}$};
 \node[state, below right=of mu-tpeak] (ti-peak) {$t_{i,\text{peak}}$};
-\node[state, right=of sigma-logtpeak] (mu-Cpeak) {$\mu_{C_\text{peak}}$};
-\node[state, right=of mu-Cpeak] (sigma-Cpeak) {$\sigma_{C_\text{peak}}$};
-\node[state, below right=of mu-Cpeak] (Ci-peak) {$C_{i,\text{peak}}$};
-\node[state, right=of sigma-Cpeak] (mu-log-Bi) {$\mu_{\log \beta_i}$};
+\node[state, right=of sigma-logtpeak] (mu-vpeak) {$\mu_{v_\text{peak}}$};
+\node[state, right=of mu-vpeak] (sigma-vpeak) {$\sigma_{v_\text{peak}}$};
+\node[state, below right=of mu-vpeak] (vi-peak) {$v_{i,\text{peak}}$};
+\node[state, right=of sigma-vpeak] (mu-log-Bi) {$\mu_{\log \beta_i}$};
 \node[state, right=of mu-log-Bi] (sigma-log-Bi) {$\sigma_{\log \beta_i}$};
 \node[state, below right=of mu-log-Bi] (Bi) {$\beta_i$};
 \node[state, left=of ti-peak] (ti0) {$t_{i,0}$};
 \node[draw, inner sep=0.3cm, fit=(ti0) (Bi), fill=blue!10,opacity=0.2] {$\theta_i$};
-\node[state, below left=of Ci-peak] (Ci-t) {$\hat{C}_i(t)$};
-\node[state, right=of Ci-t] (sigma-obs) {$\sigma_\text{obs}$};
+\node[state, below left=of vi-peak] (vi-t) {$\hat{v}_i(t)$};
+\node[state, right=of vi-t] (sigma-obs) {$\sigma_\text{obs}$};
 \node[state, right=of sigma-obs] (eta-i) {$\eta_i$};
-\node[rectangle, draw, left=of Ci-t,minimum size=1.5cm] (Clod) {$C_\text{lod}$};
+\node[rectangle, draw, left=of vi-t,minimum size=1.5cm] (vlod) {$v_\text{lod}$};
 \node[state, double, below=of sigma-obs] (Yi-t) {$y_{i,t}$};
 
 % Draw the edges
 \draw[->] (mu-tpeak) -- (ti-peak);
 \draw[->] (sigma-logtpeak) -- (ti-peak);
-\draw[->] (mu-Cpeak) -- (Ci-peak);
-\draw[->] (sigma-Cpeak) -- (Ci-peak);
+\draw[->] (mu-vpeak) -- (vi-peak);
+\draw[->] (sigma-vpeak) -- (vi-peak);
 \draw[->] (mu-log-Bi) -- (Bi);
 \draw[->] (sigma-log-Bi) -- (Bi);
-\draw[->,dotted] (ti0) -- (Ci-t);
-\draw[->,dotted] (ti-peak) -- (Ci-t);
-\draw[->,dotted] (Ci-peak) -- (Ci-t);
-\draw[->,dotted] (Bi) -- (Ci-t);
-%\draw[->] (theta-i) -- (Ci-t);
-\draw[->] (Ci-t) -- (Yi-t);
+\draw[->,dotted] (ti0) -- (vi-t);
+\draw[->,dotted] (ti-peak) -- (vi-t);
+\draw[->,dotted] (vi-peak) -- (vi-t);
+\draw[->,dotted] (Bi) -- (vi-t);
+%\draw[->] (theta-i) -- (vi-t);
+\draw[->] (vi-t) -- (Yi-t);
 \draw[->] (eta-i) -- (Yi-t);
-\draw[->,dotted] (Clod) -- (Ci-t);
-\draw[->] (Clod) -- (Yi-t);
+\draw[->,dotted] (vlod) -- (vi-t);
+\draw[->] (vlod) -- (Yi-t);
 \draw[->] (sigma-obs) -- (Yi-t);
 
 \end{tikzpicture}
-\caption{Hierarchical structure}
+\caption[Hierarchical structure]{Hierarchical structure}
 \end{figure}
 
 \subsection{Inference}
@@ -148,8 +159,8 @@ The latter were chosen to reflect the prior belief that viral load peaks shortly
     $t_{0,i}$ & $N(0, 5^2)$ & $-8.22$ & $0$ & $8.22$ \\ 
     $\mu_{\log t_\text{peak}}$ & $N(\log(3), \log(2.5)^2)$ & $\log (0.66)$ & $\log (3)$ & $\log (13.54)$ \\ 
     $\sigma_{\log t_\text{peak}}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\ 
-    $\mu_{C_\text{peak}}$ & $N(17, 5^2)$ & $8.78$ & $17$ & $25.22$ \\ 
-    $\sigma_{C_\text{peak}}$ & $\text{Half-Cauchy}(0, 4)$ & $0.31$ & $4$ & $50.82$ \\ 
+    $\mu_{v_\text{peak}}$ & $N(17, 5^2)$ & $8.78$ & $17$ & $25.22$ \\ 
+    $\sigma_{v_\text{peak}}$ & $\text{Half-Cauchy}(0, 4)$ & $0.31$ & $4$ & $50.82$ \\ 
     $\mu_{\log\beta}$ & $N(\log(3.5), \log(1.4)^2)$ & $\log (2.01)$ & $\log (3.5)$ & $\log (6.09)$ \\ 
     $\sigma_{\log\beta}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\
    \hline
@@ -159,6 +170,12 @@ The latter were chosen to reflect the prior belief that viral load peaks shortly
 \end{table}
 
 \section{Comparison to \texorpdfstring{\textcite{hakkiOnset}}{Hakki \etal (2022)}}
+
+\subsection{Viral load model}
+
+\subsection{Observation model}
+
+\subsection{Within-individual correlation}
 
 \section{Final analysis}
 
