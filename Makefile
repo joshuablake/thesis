@@ -1,6 +1,6 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
-ATACCC_DEPS = ATACCC.tex
+ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
@@ -28,12 +28,18 @@ incidence-prevalence.pdf: $(INC_PREV_DEPS) $(SHARED_DEPS)
 
 #####################################################
 ## ATACCC CHAPTER
+ATACCC/typical_trajectory.png: ATACCC/trajectories.R utils.R
+	Rscript $<
 
 ATACCC.pdf: $(ATACCC_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 ATACCC-distributions/%:
 	rsync -aq bsu:~/COVID/ons-incidence/duration_estimation/SARS-CoV-2-viral-shedding-dynamics/for_thesis/ ATACCC-distributions/
+
+ATACCC-appendix-original-analysis.pdf: ATACCC-appendix-original-analysis.tex $(SHARED_DEPS)
+	$(LATEX_CMD)
+
 
 #####################################################
 ## IMPERFECT TESTING CHAPTER
