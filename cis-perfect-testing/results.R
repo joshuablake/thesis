@@ -29,20 +29,6 @@ tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
 truth = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
   filter(source == "Combined")
 
-theme_survival_time_series = function() {
-    rlang::list2(
-        standard_plot_theming(),
-        scale_x_continuous(breaks = 0:100*14, minor_breaks = 0:100*2),
-        labs(
-            x = "t",
-            fill = "Hazard prior",
-            colour = "Hazard prior"
-        ),
-        theme(legend.position = "bottom"),
-        coord_cartesian(xlim = c(0, 100))
-    )
-}
-
 surv_nat_plot = tbl_posteriors |>
       ggplot() +
       ggdist::geom_lineribbon(

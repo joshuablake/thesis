@@ -1,6 +1,6 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
-ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png
+ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png ATACCC/duration.png ATACCC/fits.png ATACCC/fit_individual_55.png
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
@@ -39,6 +39,15 @@ ATACCC-distributions/%:
 
 ATACCC-appendix-original-analysis.pdf: ATACCC-appendix-original-analysis.tex $(SHARED_DEPS)
 	$(LATEX_CMD)
+
+ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png: ATACCC/posteriors.R utils.R ATACCC/fit.rds ATACCC/fit2.rds
+	Rscript $<
+
+ATACCC/fits.png ATACCC/fit_individual_55.png: ATACCC/goodness_fit.R utils.R ATACCC/fit.rds ATACCC/data.rds
+	Rscript $<
+
+ATACCC/duration.png: ATACCC/duration.R utils.R ATACCC-distributions/posterior_samples2.rds
+	Rscript $<
 
 
 #####################################################
