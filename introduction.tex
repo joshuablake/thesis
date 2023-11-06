@@ -1,0 +1,34 @@
+\section{Backcalculation}
+
+\emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
+\Textcite{brookmeyerMethod} developed it in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome).
+HIV is transmitted sexually or through blood and causes the disease AIDS.
+It has killed 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
+In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the incubation distribution (the time between infection and AIDS diagnosis)~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
+\todo{maybe move some of this to intro}
+AIDS is incurable, therefore, AIDS prevalence is equivalent to cumulative incidence.
+
+
+The original formulations of backcalculation neglected the observation process.
+AIDS is almost always diagnosed and recorded in developed countries.
+That is, the observations of AIDS diagnoses are the same as the true incidence of AIDS.
+An exception is that the reporting delay may be important~\autocite{paganoHIV}.
+Reporting delay is not relevant to the studies in this thesis, and I ignore it in this and further discussion.
+Therefore, two processes needed to be considered in the context of HIV/AIDS: infection and prevalence.
+
+For SARS-CoV-2, measurements of prevalence are noisy because they are based on population sampling.
+The sampling is described as the observation process.
+The observation process noise is much larger than the noise of the prevalence process (see \cref{inc-prev:sec:observation-process}).
+Therefore, the latter is negligible and again two processes need to be considered: infection and observation.
+
+\section{Durations} \label{inc-prev:sec:duration}
+
+Two approaches are commonly used to estimate durations: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
+For SARS-CoV-2, both approaches would be based on the results of PCR testing.
+Modelling a biomarker would mean modelling the viral load, measured as a Ct value (see \cref{E-ATACCC}).
+Modelling the duration would consider only the binary result at each test (positive or negative); in this thesis a \emph{survival analysis} framework is adopted (see \cref{E-perf-test,E-imperf-test}).
+% Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
+Other related approaches, such as a multi-state model~\autocite{jacksonMSM}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
+Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
+Modelling a biomarker uses more information per observation, but requires stronger assumptions.
+
