@@ -11,16 +11,17 @@
 
 This chapter defines incidence and prevalence, and the relationship between these quantities.
 In the course of explaining this relationship, it will become clear that the duration of PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
+
 I start by defining these terms in \cref{inc-prev:sec:definitions}.
 I then move on to explaining the three processes that are involved: the \emph{infection process}, the \emph{prevalence process} and the \emph{observation process}.
 The infection process (\cref{inc-prev:sec:infection-process}) models how infections arise.
 The concepts here are well-established within infectious disease epidemiology (see\todo{ref intro chapter}).
-The prevalence process describes the relationship between incidence and prevalence.
+The prevalence process (\cref{inc-prev:sec:prevalence-process}) describes the relationship between incidence and prevalence.
 Here, I adapt previous work to the SARS-CoV-2 context.
 In particular, the recoveries need explicit modelling which was not required for HIV/AIDS.
 The observation process describes the relationship between prevalence and the observed data.
 Unlike in HIV/AIDS backcalculation, the CIS has a sampling mechanism that needs to be modelled.
-This model is guided by its specific study design of the CIS.
+This model is guided by the specific study design of the CIS.
 Therefore, the model is specific to this context, although much would be applicable to other, similarly designed prevalence surveys.
 Finally, \cref{inc-prev:sec:MCMC} will introduce Markov chain Monte Carlo (MCMC), an inference technique I will make extensive use of in this thesis, before \cref{inc-prev:sec:conclusion} concludes the chapter.
 
@@ -28,12 +29,12 @@ Finally, \cref{inc-prev:sec:MCMC} will introduce Markov chain Monte Carlo (MCMC)
 
 Time will be considered discrete in this chapter.
 I use days, however, the results generalise in the obvious way to other time units.
+I make this choice for pragmatic reasons.
 Most epidemiological data is only available at daily granularity or, when more granular data exists, is often unreliable.
 Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection); these variations are not of interest in most contexts.
 
-\emph{Incidence} on day $t$, $Z_t$, is the number of people in a given population who become infected on day $t$; when expressed as a proportion of the population it is the \emph{incidence proportion}~\autocite[89]{lashModern}.
-The incidence proportion is $Z_t/\Npop$, where $\Npop$ is the number of people in the population.
-As discussed in\todo{ref intro}, the timing of infection events is not directly observable and must be inferred from other data.
+\emph{Incidence} on day $t$, $Z_t$, is the number of people in a given population who become infected on day $t$; when expressed as a proportion of the population it is the \emph{incidence proportion}~\autocite[89]{lashModern}, $Z_t/\Npop$, where $\Npop$ is the number of people in the population.
+As discussed in\todo{ref intro}, the timing of infection events is very rarely directly observable and must be inferred from other data.
 Despite this issue, it remains the single most important quantity for informing the response to an epidemic or pandemic.
 
 \emph{Prevalence} of a disease on day $t$, is the number of people with the disease on that day~\autocite[90]{lashModern}.
@@ -45,13 +46,13 @@ Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$.
 Therefore, the prevalence is $P_t/\Npop$.
 
-Duration distributions can be expressed in several equivalent ways.
+Duration, or time-to-event, distributions can be expressed in several equivalent ways.
 The duration distribution I will be concerned with is the distribution of the number of days for which an individual is prevalent.
 Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$.
-I define their \emph{infection episode} as beginning on day $B_i$ and ending on day $E_i$.
+I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$.
 $D_i = E_i - B_i + 1$ is their \emph{duration of positivity}, the number of days for which they are prevalent.
-I model each $D_i$ as a discrete independent and identically distributed random variable; extending the methodology to account for covariates is left to further work.
-The duration is a positive integer, \ie $D \in \{1, 2, \dots\}$.
+I model each $D_i$ as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
+The duration is a positive integer, \ie $D_i \in \{1, 2, \dots\}$.
 The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=0}^d f_{D}(i)$.
 The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$~\autocite{yanDistribution}.
 The \emph{hazard} at time $t$ is the probability of recovering at time $t$ conditional on having survived to time $t$: $\lambda(t) = \prob(D = t \mid D \geq t) = f_{D}(d) / S(d)$.
@@ -62,29 +63,31 @@ Throughout this thesis, the survival function will be the primary quantity of in
 \section{Infection process} \label{inc-prev:sec:infection-process}
 The infection process is a \emph{point} or \emph{counting} process, where each infection is an event.
 
-A point process is a random function of continuous time $K(\tau)$.
-$K(t)$ must take non-negative integer values and be non-decreasing in $\tau$.
+A point process is a random function of continuous time $K(t)$.
+$K(t)$ must take non-negative integer values and be non-decreasing in $t$.
 The interpretation of $K(t)$ is the number of events, here infections, that have occurred in the interval $(-\infty, t]$~\autocites[244]{yanDistribution}.
 In the context of a disease, the point process is discretised into incidence for integer $t$ as $Z_t = K(t) - K(t-1)$.
 
-A counting process has \emph{independent increments} if the number of events in disjoint intervals are independent.
+A counting process has \emph{independent increments} if the number of events in disjoint intervals are independent~\autocite[244]{yanDistribution}.
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
 
 A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
-A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int_s^t \lambda(r) dr \right)$ where $\lambda(r) \geq 0$ is the \emph{intensity} of the epidemic at time $r$~\autocites[244]{yanDistribution}.
-That is, a Poisson process where the intensity varies over time, and possibly with other covariates.
-Extensions to this model can incorporate covariates, such as space or age~\autocite[e.g.][]{diggleModeling}.
+A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \lambda(r) dr \right)$ where $\lambda(r) \geq 0$ is the \emph{intensity} of the epidemic at time $r$~\autocites[244]{yanDistribution}.
+A time-homogenous Poisson process is the special case where $\lambda(r)$ is constant.
+The independent increment property says that, conditional on $\lambda(r)$, the number of infections in disjoint intervals are independent.
+This implies $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
+Extensions to this model can incorporate covariates, such as geography or age~\autocite[e.g.][]{diggleModeling}.
 
 The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
-The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic.
-Furthermore, there is only one realisation of the epidemic, and hence
+The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic~\autocites{beckerDependent}{brookmeyerMethod}.
 
-Two features of a Poisson process can be violated for epidemics.
-Epidemics commonly exhibit overdispersion and have feedback loops.
-Overdispersion means that the variance in the number of infections in a time interval is higher than its mean.
-In a Poisson process these counts have a Poisson distribution, hence, their mean and variance are equal.
+Two features of a Poisson process are violated for epidemics.
+Epidemics commonly exhibit overdispersion and have feedback loops~\autocite{beckerDependent}.
+Overdispersion means that $\V(Z_t) > \E(Z_t)$ for any day $t$.
+In a Poisson process these counts have a Poisson distribution, hence, $\V(Z_t) = \E(Z_t)$.
 Feedback loops mean that the stochastically low or high numbers of infections, possibly due to overdispersion, affect the future number of infections.
 This violates the assumption of independent increments.
+In particular, $\lambda(t+\delta t)$ is dependent on $K(t)$ for $\delta t > 0$.
 Both of these features violate the properties of a Poisson process.
 Despite these issues, consistent inference on the incidence can still be produced using the Poisson process model, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
 
@@ -95,13 +98,13 @@ Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autoci
 An infamous example of a SARS-CoV-2 super-spreading event was the Skagit County choir practice in March 2020~\autocite{hamnerHigh}.
 One infected individual is thought to have infected at least 32 further individuals during a single choir practice.
 For comparison, the average individual infected around three others in the early stages of the pandemic~\autocite{pellisChallenges}. 
-Overdispersion could be incorporated by modelling the counts in a given time interval as a negative binomial, rather than Poisson, distribution.
-The mean of these distributions is equal, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
-The negative binomial tends to Poisson as $k\to\infty$.
+Overdispersion can be incorporated by replacing the assumption that $K(s) - K(t)$ is Poisson distributed with assuming it is negative binomially distributed.
+This would not affect $\E(K(s) - K(t))$, but the negative binomial introduces an additional overdispersion parameter, commonly notated $k$.
+%The negative binomial tends to Poisson as $k\to\infty$.
 Generally, $k<1$ is considered as significant levels of overdispersion.
-Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, increased by some interventions including lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
-For a negative binomial process, the count's standard deviation scales on the order of the mean.
-Conversely, for a Poisson process, the standard deviation is on the order of the square root of the mean.
+Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, and may be decreased by some interventions including lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
+If $K(s) - K(t)$ has a negative binomial distribution, then its standard deviation scales on the order of the mean.
+If it is Poisson distributed, then the standard deviation is on the order of the square root of the mean.
 A particular implication of this is that the coefficient of variation (the standard deviation divided by the mean) tends to zero for a Poisson process, but tends to a constant for a negative binomial process.
 The disadvantage of the negative binomial distribution is that it loses much of the mathematical convenience of a Poisson distribution.
 
@@ -111,7 +114,7 @@ If a super-spreading event occurs, then many more individuals than suggested by 
 These additional infections will propagate the epidemic further, increasing the intensity at future times.
 Point processes can be extended to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
 
-An alternative to a Poisson process is \emph{mechanistic models}.
+An alternative to explicit use of counting processes is using \emph{mechanistic models}.
 Mechanistic models explicitly describe the population and transmission between individuals.
 They vary greatly in their details and realism~\autocite{murilloMultiscale}.
 Mechanistic models are discussed further in \cref{E-SEIR}.
@@ -130,19 +133,19 @@ Mechanistic models are discussed further in \cref{E-SEIR}.
 % Deterministic backcalculation assumes that the variance in the population is negligible, and therefore that the prevalence is equal to the mean prevalence.
 % This is justified because the variance due to sampling is much larger than the variance due to the true prevalence.
 
-\section{Prevalence process}
+\section{Prevalence process} \label{inc-prev:sec:prevalence-process}
 
 The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
-I define the period the individual is prevalent for as their \emph{infection episode}.
-I index infection episodes with $i$.
-Denote the time that the infection episode begins as $B_i$ and the time it ends as $E_i \geq B_i$.
-The individual is prevalent during the interval $[B_i, E_i]$ (\ie including $B_i$ and $E_i$).
-The duration of the infection episode, the number of days for which they are prevalent, is $D_i = E_i - B_i + 1$.
-I assume that the $D_i$s are iid, with a discrete distribution defined by $\prob(D_i = d) = f_D(d)$ for $d = 1, \dots, d_\text{max}$, for some maximum episode length $d_\text{max}$, and $\prob(D_i = d) = 0$ otherwise.
-Denote by $F_D$ the cdf of $D_i$, that is $F_D(d) = \prob(D_i \leq d)$.
-
+%I define the period the individual is prevalent for as their \emph{infection episode}.
+%I index infection episodes with $i$.
+%Denote the time that the infection episode begins as $B_i$ and the time it ends as $E_i \geq B_i$.
+%The individual is prevalent during the interval $[B_i, E_i]$ (\ie including $B_i$ and $E_i$).
+%The duration of the infection episode, the number of days for which they are prevalent, is $D_i = E_i - B_i + 1$.
+%I assume that the $D_i$s are iid, with a discrete distribution defined by $\prob(D_i = d) = f_D(d)$ for $d = 1, \dots, d_\text{max}$, for some maximum episode length $d_\text{max}$, and $\prob(D_i = d) = 0$ otherwise.
+%Denote by $F_D$ the cdf of $D_i$, that is $F_D(d) = \prob(D_i \leq d)$.
 From this, we can derive the relationship between incidence and prevalence.
-Denote by $R_{t,t'}$ be the number of infection episodes that begin at time $t$ and end at time $t'$.
+
+Denote by $R_{t,t'}$ be the number of infection episodes with $B_i=t$ and $E_i=t'$.
 For each infection beginning at $t$, the probability that it ends at $t'$ is $\prob(E_i = t' \mid B_i = t) = \prob(D_i = t' - t + 1 \mid B_i = t) = f_D(t' - t + 1)$.
 Since these durations are assumed independent, the number of episodes of each duration is multinomially distributed~\autocite{paganoHIV}.
 Therefore:
@@ -199,6 +202,7 @@ Therefore:
   \E \left( \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} \right) &= Z_t F_D(t'+1) \label{inc-prev:eq:EsumRt} \\
   \V \left( \sum_{i=0}^{t'} R_{t,t+i} \mid \vec{Z} \right) &= Z_t F_D(t'+1) (1 - F_D(t'+1)) \label{inc-prev:eq:VsumRt}
 \end{align}
+by the properties of the binomial distribution (see \cref{E-distributions}).
 
 The first moment follows.
 \begin{align}
@@ -210,7 +214,6 @@ The first moment follows.
   &= \sum_{i=0}^{d_\text{max}-1} Z_{t-i} S(i+1) \label{inc-prev:eq:EPt}
 \end{align}
 where $S(i+1) = 1-F_D(i) = \prob(D \geq i+1)$ is the \emph{survival function} of $D$.
-The survival function will be further explored in \cref{inc-prev:sec:duration}.
 
 The second moment is simplified by the independence.
 \begin{align}
@@ -247,10 +250,18 @@ The second moment is simplified by the independence.
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
-The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation, specifically a discrete version of the Volterra equation of the first kind~\autocite{brookmeyerBackcalculation}.
-\todo{Go back to this reference and clarify why this matters}
-The variance is upper bounded by this expectation, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
-\Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to the prevalence process; I will discuss $S$ further in \cref{inc-prev:sec:duration}.
+The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation.
+The equation is of the same as the equation used for HIV/AIDS backcalculation, which itself is often found in a variety of applications~\autocite[and references therein]{brookmeyerBackcalculation}.
+The system can be written in the form $\E(\vec{P} \mid \vec{Z}) = \matr{L} \vec{Z}$ where $\matr{L}$ is a lower-triangular matrix.
+Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ given $\vec{P}$, are well-established~\autocite[e.g.:][section 8.2]{highamAccuracy}.
+However, these algorithms can be unstable, meaning that numerical errors are large.
+This is a particular issue if $S(1)$ is small.
+Since, by definition, $S(1)=1$ here, this is not an issue in this context.
+%However, if instead of estimating the incidence of PCR positives, the aim was to estimate the incidence of infections, then $S(1)$ would be small and this would be an issue.
+%While this quantity is more epidemiologically relevant, the time from infection to PCR positivity is short and, for now, I will neglect the difference.
+
+The variance in \cref{inc-prev:eq:boundVPt} is upper bounded by \cref{inc-prev:eq:EPt}, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
+\Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to the prevalence process.
 
 \section{Observation process} \label{inc-prev:sec:observation-process}
 
@@ -260,12 +271,13 @@ The variance is upper bounded by this expectation, a fact that will prove useful
 % I use Bayesian inference, therefore the data contributes through the likelihood.
 The previous sections have explained the processes leading to the population prevalence.
 However, we do not directly observe the population prevalence but a sample of it.
-This section describes the observation process, that is, the process by which the prevalence surveys are conducted.
+The sampling is described mathematically by the observation process.
 The survey design considered here reflects the CIS, although is applicable to many randomly sampled prevalence survey with samples for all $t$.
 
 On day $t$ (for $t = 1, \dots, T$) a prevalence survey such as the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
 Therefore, I model the number of positive tests, $X_t$, as $X_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$.
 The conditioning on $n_t$ and $\Npop$ is implicit in what follows.
+These quantities are assumed to be fixed by the study design and population choice, and independent of $P_t$ and $Z_t$.
 
 The $X_t$s are conditionally independent, given the population prevalences at each time, $\vec{P} = (P_1, \dots, P_t)^T$. 
 %For now, I assume that the sample is chosen uniformly at random from the population of interest.
@@ -328,6 +340,61 @@ This section showed that, when using a prevalence survey such as CIS, the likeli
 
 
 \section{Markov chain Monte Carlo} \label{inc-prev:sec:MCMC}
+
+MCMC is a class of algorithms for sampling from a distribution where the normalising constant for the distribution is unknown.
+I will use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data.
+MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid \vec{y})$ by constructing a Markov chain with $p(\psi \mid \vec{y})$ as its stationary distribution~\autocite[275]{gelmanBDA}.
+It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, here the target posterior.
+This section outlines some basic principles of MCMC and considerations when using it in practice.
+Any reader interested in more technical details or proofs of the results here should consult the references within this section.
+
+The Metropolis-Hastings algorithm~\autocite{hastingsMCMC} describes a general method for constructing such a Markov chain.
+The algorithm requires a proposal distribution $q(\psi' \mid \psi)$, which proposes moving to a new state $\psi'$ from the current state $\psi$, and a calculation of $p(\psi \mid \vec{y})$ up to some constant, $\pi(\psi)$.
+The proposal distribution is most commonly a Normal distribution centred on $\psi$, this is used in \cref{E-SEIR}.
+The proposal is then either accepted or rejected based on the \emph{acceptance ratio}, which is computed using $\pi$.
+The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further details in available in a wide-range of sources~\autocites[e.g.][]{brooksMCMCNotes}[chapter 11]{gelmanBDA}.
+\begin{algorithm}
+ set $\psi^0$ to some initial value\;
+ \For{$i = 1, \dots, M$}{
+  sample a proposal $\psi' \sim q(\psi' \mid psi)$ \;
+  calculate the acceptance probability $\alpha(\psi, \psi') = \min \left( 1, \frac{\pi(\psi') q(\psi \mid \psi')}{\pi(\psi) q(\psi' \mid \psi)} \right)$ \;
+  with probability $\alpha(\psi, \psi')$ set $\psi^i$ to $\psi'$, otherwise set $\psi^i$ to $\psi^{i-1}$ \;
+ }
+ \caption{The Metropolis-Hastings algorithm.}
+ \label{inc-prev:algorithm:MH}
+\end{algorithm}
+
+\todo[inline]{Talk about HMC and NUTS}
+
+Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}\todo{cite BUGS course}.
+
+Convergence is how quickly the Markov chain approaches the stationary distribution.
+Early draws from the Markov chain reflect the choice of the starting point, $\psi^0$, rather than the stationary distribution that the chain will eventually converge to~\autocite[282]{gelmanBDA}.
+The simplest technique for assessing convergence is graphically, using traceplots~\autocite[81]{brooksMCMCNotes}.
+Traceplots show the value of $\psi^i$ against $i$.
+If the chain has converged, then the traceplot will show a random walk around the stationary distribution.
+This can be improved by using multiple chains with different starting points~\autocite[283]{gelmanBDA}.
+If both chains have converged, then they will be in the same location.
+
+A more complex measure of convergence when running multiple MCMC chains is comparing the within-chain variance to the between-chains variance.
+The principle here is that if all chains have converged then they are sampling from the same distribution.
+This means that the within-chain and between-chain variances are the same~\autocite[82]{brooksMCMCNotes}.
+In particular, I will make use of the improved Rhat statistic~\autocite{vehtariRhat}.
+%The Rhat statistic is defined for a scalar parameter $\psi$.
+%Let $\psi^{(ij)}$ denote the $i$th (of $M$) sample from the $j$th chain (of $N$).
+%Let $\bar{\psi}^j$ denote the mean value of the samples of $\psi$ from the $j$th chain, $\bar{\psi}^j = \frac{1}{M} \sum_{i=1}^M \psi^{(ij)}$.
+%Let $\bar{\psi}$ denote the mean value of the samples of $\psi$ from all chains, $\bar{\psi} = \frac{1}{N} \sum_{j=1}^N \bar{\psi}^j$.
+%Then the between-chain variance is $B = \frac{M}{N-1} \sum_{j=1}^N (\bar{\psi}^j - \bar{\psi})^2$.
+%The within-chain variance is $W = \frac{1}{N} \sum_{j=1}^N \frac{1}{M-1} \sum_{i=1}^M (\psi^{(ij)} - \bar{\psi}^j)^2$.
+A Rhat of 1 means that the within-chain and between-chain variance are equal, informally that convergence is perfect, as far as can be measured by this technique.
+Various rules-of-thumb exist for what should be considered an acceptable Rhat.
+Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 is more appropriate~\autocite{vehtariRhat}.
+
+The stability of estimates considers the error arising because only a finite sample of the distribution of interest is available.
+Furthermore, the sample will tend to be autocorrelated meaning that estimates using the example have higher variance than if it were an iid sample from the posterior~\autocite[286]{gelmanBDA}.
+The \emph{effective sample size} corrects for the autocorrelation.
+The effective sample size can be interpreted as the number of iid samples that would have the same variance as the MCMC sample~\autocite[286]{gelmanBDA}{vehtariRhat}.
+Various techniques have been proposed for computing the effective sample size, I will follow the approach of \textcite{vehtariRhat}.
 
 \section{Conclusion} \label{inc-prev:sec:conclusion}
 
