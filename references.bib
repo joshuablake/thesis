@@ -429,6 +429,23 @@
   pagetotal = {23}
 }
 
+@article{duaneHybrid,
+  title = {Hybrid {{Monte Carlo}}},
+  author = {Duane, Simon and Kennedy, A. D. and Pendleton, Brian J. and Roweth, Duncan},
+  date = {1987-09-03},
+  journaltitle = {Physics Letters B},
+  shortjournal = {Physics Letters B},
+  volume = {195},
+  number = {2},
+  pages = {216--222},
+  issn = {0370-2693},
+  doi = {10.1016/0370-2693(87)91197-X},
+  url = {https://www.sciencedirect.com/science/article/pii/037026938791197X},
+  urldate = {2023-11-09},
+  abstract = {We present a new method for the numerical simulation of lattice field theory. A hybrid (molecular dynamics/Langevin) algorithm is used to guide a Monte Carlo simulation. There are no discretization errors even for large step sizes. The method is especially efficient for systems such as quantum chromodynamics which contain fermionic degrees of freedom. Detailed results are presented for four-dimensional compact quantum electrodynamics including the dynamical effects of electrons.},
+  file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Duane et al_1987_Hybrid Monte Carlo.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\7QGS2KUD\\037026938791197X.html}
+}
+
 @article{ejimaEstimation,
   title = {Estimation of Timing of Infection from Longitudinal {{SARS-CoV-2}} Viral Load Data: Mathematical Modelling Study},
   shorttitle = {Estimation of Timing of Infection from Longitudinal {{SARS-CoV-2}} Viral Load Data},
@@ -743,6 +760,22 @@
   isbn = {978-0-89871-521-7},
   pagetotal = {680},
   file = {C:\Users\Joshua\Documents\paper_pdfs\Higham_2002_Accuracy and stability of numerical algorithms.pdf}
+}
+
+@article{hoffmanNUTS,
+  title = {The {{No-U-turn}} Sampler: Adaptively Setting Path Lengths in {{Hamiltonian Monte Carlo}}},
+  shorttitle = {The {{No-U-turn}} Sampler},
+  author = {Hoffman, Matthew D. and Gelman, Andrew},
+  date = {2014-01-01},
+  journaltitle = {The Journal of Machine Learning Research},
+  shortjournal = {J. Mach. Learn. Res.},
+  volume = {15},
+  number = {1},
+  pages = {1593--1623},
+  issn = {1532-4435},
+  abstract = {Hamiltonian Monte Carlo (HMC) is a Markov chain Monte Carlo (MCMC) algorithm that avoids the random walk behavior and sensitivity to correlated parameters that plague many MCMC methods by taking a series of steps informed by first-order gradient information. These features allow it to converge to high-dimensional target distributions much more quickly than simpler methods such as random walk Metropolis or Gibbs sampling. However, HMC's performance is highly sensitive to two user-specified parameters: a step size ε and a desired number of steps L. In particular, if L is too small then the algorithm exhibits undesirable random walk behavior, while if L is too large the algorithm wastes computation. We introduce the No-U-Turn Sampler (NUTS), an extension to HMC that eliminates the need to set a number of steps L. NUTS uses a recursive algorithm to build a set of likely candidate points that spans a wide swath of the target distribution, stopping automatically when it starts to double back and retrace its steps. Empirically, NUTS performs at least as efficiently as (and sometimes more effciently than) a well tuned standard HMC method, without requiring user intervention or costly tuning runs. We also derive a method for adapting the step size parameter ε on the fly based on primal-dual averaging. NUTS can thus be used with no hand-tuning at all, making it suitable for applications such as BUGS-style automatic inference engines that require efficient "turnkey" samplers.},
+  keywords = {adaptive Monte Carlo,Bayesian inference,dual averaging,Hamiltonian Monte Carlo,Markov chain Monte Carlo},
+  file = {C:\Users\Joshua\Documents\paper_pdfs\Homan_Gelman_2014_The No-U-turn sampler.pdf}
 }
 
 @book{ibrahimBayesian,
@@ -1170,6 +1203,38 @@
   urldate = {2023-01-11},
   langid = {english},
   file = {C:\Users\Joshua\Documents\paper_pdfs\National Audit Office, UK Government_2022_The rollout of the COVID-19 vaccination programme in England.pdf}
+}
+
+@article{nealImproved,
+  title = {An Improved Acceptance Procedure for the Hybrid {{Monte Carlo}} Algorithm},
+  author = {Neal, Radford M.},
+  date = {1994-03-01},
+  journaltitle = {Journal of Computational Physics},
+  shortjournal = {Journal of Computational Physics},
+  volume = {111},
+  number = {1},
+  pages = {194--203},
+  issn = {0021-9991},
+  doi = {10.1006/jcph.1994.1054},
+  url = {https://www.sciencedirect.com/science/article/pii/S0021999184710540},
+  urldate = {2023-11-09},
+  abstract = {The probability of accepting a candidate move in the hybrid Monte Carlo algorithm can be increased by considering a transition to be between windows of several states at the beginning and end of the trajectory, with a particular state within the selected window then being chosen according to the Boltzmann probabilities. The detailed balance condition used to justify the algorithm still holds with this procedure, provided the start state is randomly positioned within its window. The new procedure is shown empirically to significantly improve the acceptance rate for a test system of uncoupled oscillators. It also allows expectations to be estimated using data from all states in the windows, rather than just states that are accepted.},
+  file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Neal_1994_An Improved Acceptance Procedure for the Hybrid Monte Carlo Algorithm.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\Q8UCBN4M\\S0021999184710540.html}
+}
+
+@incollection{nealMCMC,
+  title = {{{MCMC}} Using {{Hamiltonian}} Dynamics},
+  booktitle = {Handbook of {{Markov Chain Monte Carlo}}},
+  author = {Neal, Radford M.},
+  editor = {Brooks, Steve and Gelman, Andrew and Jones, Galin and Meng, Xiao-Li},
+  date = {2011-05-10},
+  eprint = {qfRsAIKZ4rIC},
+  eprinttype = {googlebooks},
+  publisher = {{CRC Press}},
+  abstract = {Since their popularization in the 1990s, Markov chain Monte Carlo (MCMC) methods have revolutionized statistical computing and have had an especially profound impact on the practice of Bayesian statistics. Furthermore, MCMC methods have enabled the development and use of intricate models in an astonishing array of disciplines as diverse as fisherie},
+  isbn = {978-1-4200-7942-5},
+  langid = {english},
+  keywords = {Mathematics / Probability \& Statistics / General}
 }
 
 @article{osogamiClosed,

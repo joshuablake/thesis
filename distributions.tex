@@ -28,8 +28,8 @@ Name & Notation & Parameters & Mean & Variance & pmf \\
 \hline \\
 Binomial & $\Bin(n, p)$ & $n \in \nats$ (number of trials, integer)\newline $0 \leq p \leq 1$ (probability of success) & $np$ & $np(1-p)$ & ${n \choose x}p^x(1-p)^{n-x}$ \\
 Poisson & $\Poi(\lambda)$ & $\lambda > 0$ (average rate) & $\lambda$ & $\lambda$ & $\frac{e^{-\lambda}\lambda^x}{x!}$ \\
-Negative Binomial (standard) & $\NB(r, p)$ & $r > 0$ (number of failures until stopping)\newline $0 < p < 1$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} p^x (1-p)^r$ \\
-Negative Binomial (centred) & $\NB(\mu, r)$ & $\mu > 0$ (mean) \newline r (dispersion) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} \left( \frac{r}{r+\mu} \right)^\mu \left( \frac{\mu}{r+\mu} \right)^k$ \\
+Negative Binomial (standard) & $\NBs(r, p)$ & $r > 0$ (number of failures until stopping)\newline $0 < p < 1$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} p^x (1-p)^r$ \\
+Negative Binomial (centred) & $\NBc(\mu, r)$ & $\mu > 0$ (mean) \newline r (dispersion) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} \left( \frac{r}{r+\mu} \right)^\mu \left( \frac{\mu}{r+\mu} \right)^k$ \\
 Beta-Binomial (centred) & $\BB(n, p, \rho)$ & $n \in \nats$ (number of trials, integer)\newline $0 \leq p \leq 1$ (success probability)\newline $\rho > 0$ (overdispersion) & $np$ & $np(1-p)(1+n\rho)(1+\rho)^{-1}$ & ${n \choose x} \frac{B(x+p/\rho, n-x+(1-p)/\rho)}{B(p/\rho, (1-p)/\rho)}$ \\
 Multinomial & $\MN(n, \vec{p})$ & $n \in \nats$ (number of trials, integer)\newline $\vec{p} > 0$ (vector of $k$ probabilities, $\sum_{i=1}^k p_i = 1$) & $n \vec{p}$ & See below & $\frac{n!}{x_1!x_2!\ldots x_k!}p_1^{x_1}p_2^{x_2}\ldots p_k^{x_k}$ \\
 \end{tabular}

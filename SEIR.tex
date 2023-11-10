@@ -168,12 +168,10 @@ The system can now be written as follows~\autocite[94]{keelingModeling}:
 \end{align}
 where $n$ is the number of infected compartments.
 The infectious period is now distributed $\GamDist(n, n\gamma)$.
+Gamma distributions are a realistic model for a variety of diseases~\autocite{wearingAppropriate}.
 A gamma distribution with the first parameter equal to 1 is an exponential distribution, connecting this model to the basic SIR model in \cref{SEIR:sec:SIR}.
 The distribution for the time spent in the infected compartments tends to a constant (\ie the same for all individuals) as $n \to \infty$~\autocite{lloydRealistic}.
 The form of these equations is chosen so that $1/\gamma$ remains the mean infectious period.
-
-Using a two parameter distribution allows the first two moments of the infectious period to be specified.
-This is normally sufficient to give realistic dynamics within a mean-field model.
 
 \subsection{The SEIR model}
 \begin{figure}[h]
@@ -497,7 +495,7 @@ Recall that each region is run independenlty (see \cref{SEIR:sec:geography}), $\
 
 \section{Inference and implementation} \label{SEIR:sec:inference-implementation}
 
-\subsection{MCMC}
+\subsection{MCMC} \label{SEIR:sec:MCMC}
 
 I use an adaptive random-walk Metropolis-Hastings algorithm.
 The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
