@@ -19,7 +19,7 @@ The concepts here are well-established within infectious disease epidemiology (s
 The prevalence process (\cref{inc-prev:sec:prevalence-process}) describes the relationship between incidence and prevalence.
 Here, I adapt previous work to the SARS-CoV-2 context.
 In particular, recoveries need considering, which was not the case for HIV/AIDS.
-The observation process describes the relationship between prevalence and the observed data.
+The observation process (\cref{inc-prev:sec:observation-process}) describes the relationship between prevalence and the observed data, ultimately allowing inference of incidence based on this data.
 Unlike in HIV/AIDS backcalculation, the CIS has a sampling mechanism that needs to be modelled.
 This model is guided by the specific study design of the CIS.
 Therefore, the model is specific to this context, although much would be applicable to other, similarly designed prevalence surveys.
@@ -53,20 +53,21 @@ Consider an individual $i$ infected on day $B_i$ that is prevalent during the in
 I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$.
 $D_i = E_i - B_i + 1$ is their \emph{duration of positivity}, the number of days for which they are prevalent.
 I model each $D_i$ as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
-The duration is a positive integer, \ie $D_i \in \{1, 2, \dots \dmax \}$, where $\dmax$ is the maximum duration.
+The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
 The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
-The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$ (in some of the literature on survival with discrete variables, the convention that the survival function is $\prob(D >d)$, rather than $\prob(D \geq d)$, is used).
+The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$ (a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
 The \emph{hazard} on day $d$ is the probability of recovering at time $d$ conditional on having survived to time $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
 Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
 
 Since $D_i$ is a discrete random variable, $f_D(d) \geq 0$ for all $d$ and $\sum_{i=1}^{\dmax} f_D(i) = 1$.
 This implies that $F_D(d)$ is monotonically increasing.
 Therefore, $S(d)$ is monotonically decreasing.
-Both $F_D$ are $S$ are in the interval $[0, 1]$.
+Both $F_D$ and $S$ are in the interval $[0, 1]$.
 $\lambda(d)$ is in the interval $[0, 1]$, and can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
-The infection process is a \emph{point} or \emph{counting} process, where each infection is an event.
+The infection process is the mathematical description of incidence.
+It is a \emph{point} or \emph{counting} process, where each infection is an event.
 
 A point process is a random function of continuous time $K(t)$.
 $K(t)$ must take non-negative integer values and be monotonically increasing in $t$.
@@ -91,7 +92,7 @@ Epidemics commonly exhibit \emph{overdispersion} and have feedback loops~\autoci
 
 Overdispersion means that $\V(Z_t) > \E(Z_t)$.
 In a Poisson process $Z_t$ has a Poisson distribution, hence, $\V(Z_t) = \E(Z_t)$.
-Therefore, overdispersed epidemics cannot be modelled by a Poisson process.
+Therefore, an overdispersed epidemic modelled as a Poisson process will be less variable than the realised epidemic.
 
 A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
 A super-spreading event is an event where many more people than average are infected.
@@ -113,14 +114,14 @@ The disadvantage of the negative binomial distribution is that it loses much of 
 Feedback loops mean that stochastically low or high numbers of infections affect the future number of infections.
 That is, $\nu(t+\Delta t)$ is dependent on $K(t)$, even after conditioning on $\nu(t)$, for $\Delta t > 0$.
 This violates the assumption of independent increments.
-Both of these features violate the properties of a Poisson process.
-Despite these issues, consistent inference on the incidence can still be produced using the Poisson process model, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
-
-The independence assumption of a Poisson or negative binomial process is violated by an infectious disease because stochastically high (or low) or low incidence, feeds back to the process intensity at future times.
+The reasons infectious diseases generate feedback loops is because stochastically high or low incidence feeds back to the process intensity at future times.
 This can be seen most obviously in the event of a super-spreading event.
 If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
 These additional infections will propagate the epidemic further, increasing the intensity at future times.
 Point processes can be extended to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
+
+Both overdispersion and feedback loops violate the properties of a Poisson process.
+Despite these issues, consistent inference on the incidence can still be produced using the Poisson process model, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
 
 An alternative to explicit use of counting processes is using \emph{mechanistic models}.
 Mechanistic models explicitly describe the population and transmission between individuals.
@@ -195,7 +196,7 @@ This reduces the stochasticity to only that attributable to the prevalence proce
 In particular, because the duration of individuals is independent, $R_{t_z,t_p}$ and $R_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$; importantly, this holds even if $t_p = t_p'$.
 Therefore, $P_{t_z,t_p}$ and $P_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$.
 
-In \cref{inc-prev:sec:observation-process} I will show that only $\E(P_t \mid \vec{Z})$ and bounds on $\V(P_t \mid \vec{Z})$ will be relevant.
+In \cref{inc-prev:sec:observation-process} I will show that only $\E(P_t \mid \vec{Z})$ and bounds on $\V(P_t \mid \vec{Z})$ will be relevant for inferring incidence.
 These can be derived from their constituent parts.
 
 Start by considering the recoveries.
@@ -227,7 +228,7 @@ The second moment is simplified by the independence.
 \begin{align}
 \V(P_t \mid \vec{Z})
   &= \V\left(\sum_{i=1}^{d_\text{max}-1} P_{t-i,t} \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:Pt-to-Ptt}} \\
-  &= \sum_{i=1}^{d_\text{max}-1} \V\left(P_{t-i,t} \mid \vec{Z} \right) &\text{by the conditionl independence} \\
+  &= \sum_{i=1}^{d_\text{max}-1} \V\left(P_{t-i,t} \mid \vec{Z} \right) &\text{by the conditional independence} \\
   &= \sum_{i=1}^{d_\text{max}-1} \V\left(\sum_{j=0}^{i-1} R_{t-i,t-i+j} \mid \vec{Z} \right) &\text{by~\cref{inc-prev:eq:Ptt-to-R}}\\
   &= \sum_{i=1}^{d_\text{max}-1} Z_{t-i} F_D(i) (1 - F_D(i)) &\text{by~\cref{inc-prev:eq:VsumRt}} \\
   &\leq \sum_{i=1}^{d_\text{max}-1} Z_{t-i} (1 - F_D(i)) &\text{as $F_D \leq 1$}\\
@@ -261,7 +262,7 @@ The second moment is simplified by the independence.
 The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation.
 The equation is of the same as the equation used for HIV/AIDS backcalculation, which itself is often found in a variety of applications~\autocite[and references therein]{brookmeyerBackcalculation}.
 The system can be written in the form $\E(\vec{P} \mid \vec{Z}) = \matr{L} \vec{Z}$ where $\matr{L}$ is a lower-triangular matrix.
-Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ given $\vec{P}$, are well-established~\autocite[e.g.:][section 8.2]{highamAccuracy}.
+Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ (non-random in this expression) for a known $\E (\vec{P} \mid \vec{Z} )$, are well-established~\autocite[e.g.:][section 8.2]{highamAccuracy}.
 However, these algorithms can be unstable, meaning that numerical errors are large.
 This is a particular issue if $S(1)$ is small.
 Since, by definition, $S(1)=1$ here, this is not an issue in this context.
@@ -269,7 +270,7 @@ Since, by definition, $S(1)=1$ here, this is not an issue in this context.
 %While this quantity is more epidemiologically relevant, the time from infection to PCR positivity is short and, for now, I will neglect the difference.
 
 The variance in \cref{inc-prev:eq:boundVPt} is upper bounded by \cref{inc-prev:eq:EPt}, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
-\Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to the prevalence process.
+\Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to modelling the prevalence process.
 
 \section{Observation process} \label{inc-prev:sec:observation-process}
 
@@ -282,7 +283,7 @@ However, we do not directly observe the population prevalence but a sample of it
 The sampling is described mathematically by the observation process.
 The survey design considered here reflects the CIS, although is applicable to many randomly sampled prevalence survey with samples for all $t$.
 
-On day $t$ (for $t = 1, \dots, T$) a prevalence survey such as the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
+On day $t$ (for $t = 1, \dots, T$), a prevalence survey such as the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
 Therefore, I model the number of positive tests, $X_t$, as $X_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$.
 The conditioning on $n_t$ and $\Npop$ is implicit in what follows.
 These quantities are assumed to be fixed by the study design and population choice, and independent of $P_t$ and $Z_t$.
@@ -350,24 +351,20 @@ This section showed that, when using a prevalence survey such as CIS, the likeli
 \section{Markov chain Monte Carlo} \label{inc-prev:sec:MCMC}
 
 MCMC is a class of algorithms for sampling from a distribution where the normalising constant for the distribution is unknown.
-I will use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data.
-MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid \vec{y})$ by constructing a Markov chain with $p(\psi \mid \vec{y})$ as its stationary distribution~\autocite[275]{gelmanBDA}.
-It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, here the target posterior.
+I will use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data (again, scalar or vector).
+MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid y)$ by constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution~\autocite[275]{gelmanBDA}.
+It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, \ie the target posterior.
 This section outlines some basic principles of MCMC and considerations when using it in practice.
 Any reader interested in more technical details or proofs of the results here should consult the references within this section.
 
-The Metropolis-Hastings algorithm~\autocite{hastingsMCMC} describes a general method for constructing such a Markov chain.
-The algorithm requires a proposal distribution $q(\psi' \mid \psi)$, which proposes moving to a new state $\psi'$ from the current state $\psi$, and a calculation of $p(\psi \mid \vec{y})$ up to some constant, $\pi(\psi)$.
-The proposal distribution is most commonly a (possibly multivariate) Normal distribution centred on $\psi$, this is used in \cref{E-SEIR}.
+A common way of constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution is using the Metropolis-Hastings algorithm~\autocite{hastingsMCMC}.
+The algorithm requires a proposal distribution $q(\psi' \mid \psi)$, which proposes that the chain moves to a new state $\psi'$ from its current state $\psi$, and a calculation of $p(\psi \mid y)$ up to some constant, $\pi(\psi)$.
 The proposal is then either accepted or rejected based on the \emph{acceptance ratio}, which is computed using $\pi$.
-Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC.
-The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
-One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:MCMC}.
-The full Metropolis-Hastings algorithm is given in \cref{inc-prev:algorithm:MH}, with further details in available in a wide-range of sources~\autocites[e.g.][]{brooksMCMCNotes}[chapter 11]{gelmanBDA}.
+The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further details in available in a wide-range of sources~\autocites[e.g.][]{brooksMCMCNotes}[chapter 11]{gelmanBDA}.
 \begin{algorithm}
  set $\psi^0$ to some initial value\;
  \For{$i = 1, \dots, M$}{
-  sample a proposal $\psi' \sim q(\psi' \mid psi)$ \;
+  sample a proposal $\psi' \sim q(\psi' \mid \psi)$ \;
   calculate the acceptance probability $\alpha(\psi, \psi') = \min \left( 1, \frac{\pi(\psi') q(\psi \mid \psi')}{\pi(\psi) q(\psi' \mid \psi)} \right)$ \;
   with probability $\alpha(\psi, \psi')$ set $\psi^i$ to $\psi'$, otherwise set $\psi^i$ to $\psi^{i-1}$ \;
  }
@@ -375,15 +372,24 @@ The full Metropolis-Hastings algorithm is given in \cref{inc-prev:algorithm:MH},
  \label{inc-prev:algorithm:MH}
 \end{algorithm}
 
+The proposal distribution $q$ is most commonly a (possibly multivariate) Normal distribution centred on $\psi$; this scheme is used in \cref{E-SEIR}.
+Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC.
+The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
+One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:MCMC}.
+
 MCMC using a Normal proposal distribution can be inefficient.
 In particular, it often fails to propose moves into the tails of the posterior distribution\todo{any suggested refs for this (Paul?) - we've discussed this lots but I've never read it anywhere}.
-\emph{Hamiltonian Monte Carlo} (HMC)~\autocites{nealMCMC}{nealImproved}{duaneHybrid} improves the proposals by using information from the gradient of the posterior density (with respect to the parameters).
+\emph{Hamiltonian Monte Carlo} (HMC)~\autocites{nealMCMC}{nealImproved}{duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
 HMC simulates a physical system travelling through the posterior space with momentum.
 The momentum increases in the direction the posterior density increases, using the gradient.
-The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the number of steps to take in the Hamiltonian dynamics.
+\todo{add something about leapfrog steps}
+This means that the sampler tends to propose moves with higher posterior density.
+The Metropolis-Hastings algorithm is then used to accept or reject the proposed move.
+
+The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the number of leapfrog steps to take in the Hamiltonian dynamics.
 NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
 I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
-Stan implements \emph{automatic differentiation} to calculate the gradient of the posterior density without any user input.
+Stan implements \emph{automatic differentiation}\todo{ref automatic diff} to calculate the gradient of the posterior density without any user input.
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
 
@@ -409,7 +415,7 @@ In particular, I will make use of the improved Rhat statistic~\autocite{vehtariR
 %The within-chain variance is $W = \frac{1}{N} \sum_{j=1}^N \frac{1}{M-1} \sum_{i=1}^M (\psi^{(ij)} - \bar{\psi}^j)^2$.
 A Rhat of 1 means that the within-chain and between-chain variance are equal, informally that convergence is perfect, as far as can be measured by this technique.
 Various rules-of-thumb exist for what should be considered an acceptable Rhat.
-Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 is more appropriate~\autocite{vehtariRhat}.
+Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 or 1.05 is more appropriate~\autocite{vehtariRhat}.
 
 The stability of estimates considers the error arising because only a finite sample of the distribution of interest is available.
 Furthermore, the sample will tend to be autocorrelated meaning that estimates using the example have higher variance than if it were an iid sample from the posterior~\autocite[286]{gelmanBDA}.
