@@ -4,6 +4,7 @@
 \ifSubfilesClassLoaded{
     \setcounter{chapter}{7}
 }
+
 \chapter{Mechanistic modelling of incidence and transmission} \label{SEIR}
 
 \todo[inline]{Add an intro with an overview of what this chapter contains. Include why I discuss mechanistic models, how I will use them, and what they add to the previous analyses.}
@@ -321,6 +322,19 @@ To summarise, baseline rates and contexts of contacts between age groups are tak
 How these contacts relate to time use is taken from the UK Time Use Survey\todo{cite time use survey}.
 How the population spent their time each week during the pandemic is taken from the Google mobility data\todo{cite mobility data}, which measured the locations of Android users over the period of interest.
 \todo[inline]{is the above paragraph too hand wavy?}
+
+I use previously developed estimates of how contact matrices change over time.
+These matrices were produced for \textcite{birrellRealtime}.
+These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
+These use data from the POLYMOD study~\autocite{mossongSocial} and UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
+POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on age and location (home, work, school, leisure, transport, or other) of these contacts.
+UKTUS asked a representative sample of the UK population about how much time they spent doing various activities each day.
+\Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
+\Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
+These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
+Google mobility data measures the location of Android users over time, relative to a pre-pandemic baseline.
+These data sources are then used to down or upweight the number of contacts in each setting, as estimated by \textcite{vanleeuwenAugmenting}.
+For mathematical details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
 
 Some behavioural changes (\eg mask wearing) and their consequent impacts on transmission are not captured by the contact survey.
 To allow for these changes, $\beta$ is allowed to vary over time.
