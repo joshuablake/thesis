@@ -98,6 +98,7 @@ $\beta$ is the effective? transmission rate, or the number of individuals an inf
 $\gamma$ is the recovery rate, or the proportion of infected individuals that recover per day; hence, $1/\gamma$ is the mean infectious period.
 These parameters are assumed to be constant over time (this assumption is relaxed in \cref{SEIR:sec:time-varying-foi}).
 
+\todo[inline]{double check correct terms for the below, especially rates vs instantaneous proportion and per unit time vs per day}
 The term $\beta s(t)i(t)$ is the rate at which susceptible individuals (as a proportion of the total population size) are infected~\autocite[18]{keelingModeling}.
 Susceptible individuals move from the $s(t)$ to $i(t)$ when they are infected.
 This term can be arrived at by considering a single infected individual.
@@ -238,6 +239,10 @@ The infectious period is still distributed $\GamDist(n, n\gamma)$.
 
 \subsection{Structured populations} \label{SEIR:sec:structured-populations}
 
+To relax the assumption of a well-mixed population, the population can be stratified by some characteristic.
+
+\todo[inline]{start with a generic intro on structured populations and use of matrices, then give age as a motivating example, finally specifics go elsehwere}
+
 \todo[inline]{Possibly add a paragraph about the importance of age and mixing patterns, maybe show a contact matrix?}
 
 To allow for age, the population is divided into age groups.
@@ -273,11 +278,15 @@ where $\circ$ is the element-wise product (\ie: $(\matr{A} \circ \matr{B})_{ij} 
 
 $K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
 Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
-$\beta_{ij}$ is then estimated, although often with a parsimonious model.
+Ideally, all the $\beta_{ij}$ terms would be estimated, but there is normally inadequate data to do so, requiring assumptions to be made to reduce the number of parameters~\autocite[65]{keelingModeling}.
+% $\beta_{ij}$ is then estimated, although often with a parsimonious model\todo{ref / give examples / delete on how age-specfic susceptibility / transmissibility happens}.
 A common assumption is that $\beta_{ij}$ can be decomposed into two independent components such that $\beta_{ij} = \beta \beta^\text{susc}_{i} \beta^\text{inf}_j$.
 For any stratum $i$, $\beta^\text{susc}_i$ is known as the \emph{relative susceptibility} of stratum $i$.
 Informally, it is how vulnerable to infection individuals in stratum $i$ are.
-Formally, it is the probability that a susceptible individual in stratum $i$ will be infected upon contact with an infectious individual, relative to a individual in the reference stratum.
+Formally, define an $a_0$ and $a'_0$ and enforce $\beta^\text{susc}_{a_0}=1$ for identifiability.
+Then $\beta^\text{susc}_i$ is the relative risk of an individual in stratum $i$ being infected, relative to an individual in stratum $a_0$.
+\todo{clarify notation and explaantion here of reference class}
+it is the probability that a susceptible individual in stratum $i$ will be infected upon contact with an infectious individual, relative to a individual in the reference stratum.
 Similarly, $\beta^\text{inf}_i$ is known as the \emph{relative infectiousness} of stratum $i$.
 Informally, it is how likely individuals in stratum $i$ are to pass on the infection.
 Formally, it is the relative risk of an infectious individual in stratum $i$ infecting a susceptible individual upon contact, relative to an individual in the reference stratum.
@@ -286,12 +295,17 @@ These measures could be biological, \eg due to differences in immune systems, or
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
+\todo[inline]{move the below into a context-specific section}
 Based on prior work\todo{cite}, I assume that all individuals have the same \emph{infectiousness} but that there is a difference in \emph{susceptibility}.
 Therefore, $\beta^\text{inf}_{j} = 1$ for all $j$.
 The prior literature suggests that children are less susceptible than adults, but otherwise there is little difference in susceptibility.
 Therefore, I set $\beta^\text{susc}_i$ to 1 for adult-aged strata and $\beta^\text{susc}_i = \beta_c$ for child-aged strata.
 
 \subsection{Geographic structure} \label{SEIR:sec:geography}
+\todo[inline]{remove this section and just explain what I'm doing in this case in an implementation section}
+
+To allow for regional hetereogeneity....
+This assumes non-interaction between regions...
 
 The well-mixed population assumption is implausible for geographically dispersed populations.
 Additionally, due to non-response bias, CIS is not geographically representative.
@@ -317,7 +331,7 @@ This was in response to government policy, an individual's perceived risk, and a
 I follow \textcite{birrellRealtime}, using a combination of Google mobility data and a time-varying transmission intensity to include these changes.
 
 Between-age-group contacts rates have previously been inferred from a combination of contact surveys, time use data, and mobility data~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}.
-I use the outputs from this analysis as $\matr{M}$.
+I use the outputs from this analysis as $\matr{K}$ in equation\todo{ref where this contact matrix fits in}.
 To summarise, baseline rates and contexts of contacts between age groups are taken from the contact survey POLYMOD~\autocite{mossongSocial}.
 How these contacts relate to time use is taken from the UK Time Use Survey\todo{cite time use survey}.
 How the population spent their time each week during the pandemic is taken from the Google mobility data\todo{cite mobility data}, which measured the locations of Android users over the period of interest.
@@ -349,6 +363,7 @@ Two parameters are unspecified here: the initial random of the random walk, $\be
 See \cref{perf-test:sec:parameters-priors} for the implementation and parameterisation of these.
 
 \section{Observation model} \label{SEIR:sec:observation}
+\todo[inline]{Be clear this section is to fit to CIS data}
 
 A variety of different approaches can be taken to link a transmission model to observations.
 Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
@@ -364,6 +379,7 @@ The class of distributions which can be represented as a series of compartments 
 \Textcite{osogamiClosed} define a subset of phase-type distributions which they refer to as Erlang-Coxian (EC) distributions.
 EC distributions are convenient because they are flexible enough to approximate any distribution, and have a closed form expression for the parameters.
 
+\todo[inline]{need more explanation here: what is a phase-type distribution, be less terse in the following text}
 A $l$-phase EC distribution is a convolution of a $(l-2)$-phase gamma distribution and a two-phase acyclic, arbitrary phase-type distribution.
 The time between entering the 1st state and the $l+1$th state, the absorbing state, is the duration.
 A schematic of an EC distribution and its parameters is shown in \cref{SEIR:fig:EC}.
@@ -549,6 +565,7 @@ Both of these rely on an assumption that the epidemic is in the steady-state exp
 
 For any short period of time when $\vec{s}$ is approximately constant, the system of ODEs can be solved analytically to produce exponential growth.
 In fact, all the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same initial exponential growth rate, $\psi$.
+\todo{move R definition for each model into where they are introduced}
 If $\vec{s} = 1$ then the basic reproduction number can be linked to the growth rate of this epidemic as follows~\autocites{birrellRealtimea}{wearingAppropriate}:
 \begin{align}
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
@@ -593,7 +610,7 @@ The parameters governing the duration of positivity ($\kappa$s) were explained p
     \hline \\
     Mean latent period & $1/\sigma$ & 3.5 days (fixed) & From a paper \\
     Mean infectious period & $1/\gamma$ & 4 days (fixed) & From a paper \\
-    Initial proportion without immunity & $\vec\pi$ & See \cref{SEIR:table:immunity} & \\
+    Initial proportion without immunity & $\vec\pi$ & See \cref{SEIR:table:immunity-prior} & \\
     Initial proportion infected & $i^+$ & $\BetaDist(0.5, 1000)$ & Weakly informative \\
     Relative susceptibility of children & $\beta_c$ & $\LN(-0.4325, 0.1174)$ &  \\
     Initial growth rate & $\psi$ & $\N(0.06, 0.04)$ & Weakly informative \\
@@ -604,7 +621,27 @@ The parameters governing the duration of positivity ($\kappa$s) were explained p
 \caption[SEIR model priors]{Priors for each parameter. For details of the distributions and their parameterisations see \cref{E-distributions}.}
 \label{SEIR:table:priors}
 \end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{l|lllll}
+         & $[0,16)$ & $[16,25)$ & $[25,50)$ & $[50,70)$ & $[70,\infty)$ \\
+        \hline
+        East Midlands & $\BetaDist(8.5, 301)$ & $\BetaDist(18, 256)$ & $\BetaDist(19, 475)$ & $\BetaDist(20, 493)$ & $\BetaDist(5, 337)$ \\
+        East of England & $\BetaDist(7.9, 236)$ & $\BetaDist(21, 248)$ & $\BetaDist(35, 677)$ & $\BetaDist(26, 613)$ & $\BetaDist(5.6, 332)$ \\
+        London & $\BetaDist(9.7, 131)$ & $\BetaDist(50, 328)$ & $\BetaDist(154, 1331)$ & $\BetaDist(106, 990)$ & $\BetaDist(7.6, 204)$ \\
+        North East & $\BetaDist(6.1, 180)$ & $\BetaDist(12, 145)$ & $\BetaDist(14, 274)$ & $\BetaDist(14, 295)$ & $\BetaDist(4.2, 240)$ \\
+        North West & $\BetaDist(12, 252)$ & $\BetaDist(38, 353)$ & $\BetaDist(72, 885)$ & $\BetaDist(44, 695)$ & $\BetaDist(6.3, 264)$ \\
+        South East & $\BetaDist(8.9, 404)$ & $\BetaDist(17, 319)$ & $\BetaDist(20, 577)$ & $\BetaDist(19, 586)$ & $\BetaDist(4.4, 356)$ \\
+        South West & $\BetaDist(6.9, 415)$ & $\BetaDist(11, 277)$ & $\BetaDist(12, 556)$ & $\BetaDist(11, 559)$ & $\BetaDist(4, 492)$ \\
+        West Midlands & $\BetaDist(8, 167)$ & $\BetaDist(19, 151)$ & $\BetaDist(32, 475)$ & $\BetaDist(33, 504)$ & $\BetaDist(5.8, 241)$ \\
+        Yorkshire and The Humber & $\BetaDist(9.2, 314)$ & $\BetaDist(19, 242)$ & $\BetaDist(27, 589)$ & $\BetaDist(18, 474)$ & $\BetaDist(4.9, 316)$ \\
+    \end{tabular}
+\caption{Priors for $\vec{\pi}$, the proportion of the population without prior immunity, in each age group and region combination. Based on seroprevalence in blood donors~\autocite{amirthalingamSeroprevalence} and a representative sample of children~\autocite{ratcliffeCommunity} in August 2020.}
+\label{SEIR:table:immunity-prior}
+\end{table}
 \end{landscape}
+
 
 \subsection{Solving the systems of ODEs}
 I solve the system of ODEs using Euler's method, discretised at half day timesteps.
