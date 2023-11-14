@@ -90,6 +90,15 @@ cisRuns-output/%:
 SEIR.pdf: $(SEIR_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
+#SEIR/CIS-.png: SEIR/CIS.R utils.R SEIR/CIS_results.csv SEIR/CIS_predictive.csv:
+	#Rscript $<
+
+SEIR/CIS_params.csv:
+	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_combined.csv $@
+
+SEIR/CIS_predictive.csv:
+	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_predictive.csv $@
+
 #####################################################
 ## DISTRIBUTIONS CHAPTER
 
