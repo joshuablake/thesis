@@ -393,7 +393,7 @@ Stan implements \emph{automatic differentiation}\todo{ref automatic diff} to cal
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
 
-Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}\todo{cite BUGS course}.
+Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}~\autocite[72]{lunnBUGS}.
 
 Convergence is how quickly the Markov chain approaches the stationary distribution.
 Early draws from the Markov chain reflect the choice of the starting point, $\psi^0$, rather than the stationary distribution that the chain will eventually converge to~\autocite[282]{gelmanBDA}.
