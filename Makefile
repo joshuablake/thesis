@@ -4,7 +4,7 @@ ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_tr
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
-SEIR_DEPS = SEIR.tex
+SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png
 DISTRIBUTIONS_DEPS = distributions.tex
 
 thesis.pdf: $(SHARED_DEPS) $(ATACCC_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) $(INC_PREV_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
@@ -91,7 +91,7 @@ SEIR.pdf: $(SEIR_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 #SEIR/CIS-.png: SEIR/CIS.R utils.R SEIR/CIS_results.csv SEIR/CIS_predictive.csv:
-	#Rscript $<
+#	Rscript $<
 
 SEIR/CIS_params.csv:
 	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_combined.csv $@
