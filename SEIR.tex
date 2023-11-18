@@ -494,6 +494,11 @@ See \cref{SEIR:MCMC-algorithm} for full details.
  \label{SEIR:MCMC-algorithm}
 \end{algorithm}
 
+For each region, I ran 4 chains for 1,000,000 iterations.
+The first 500,000 were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
+This gives 20,000 posterior samples per region.
+This was further thinned to 2,000 samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
+
 \subsection{Parameterisation}
 
 \subsubsection{WAIFW matrix}
@@ -702,10 +707,10 @@ All other parameters had weakly informative priors.
     Initial proportion infected & $i^+$ & $\BetaDist(0.5, 1000)$ & Weakly informative \\
     Relative susceptibility of children & $\beta_c$ & $\LN(-0.4325, 0.1174)$ &  \\
     Initial growth rate & $\psi$ & $\N(0.06, 0.04)$ & Weakly informative \\
-    Standard deviation of random walk & $\sigma$ & $\Exponential(80)$ & Weakly informative \\ %penalised model complexity prior~\autocite{simpsonPenalising} \\
+    Standard deviation of random walk steps on log scale & $\sigma_\epsilon$ & $\Exponential(80)$ & Weakly informative \\ %penalised model complexity prior~\autocite{simpsonPenalising} \\
     Overdispersion of observations & $\rho$ & $\Exponential(2 \times 10^5)$ & Weakly informative
 \end{tabular}
-\todo[inline]{Find citation for children}
+\todo[inline]{Dani/Paul: I think I took the prior for $\beta_c$ from RTM, but can't find the reference now - any ideas?}
 \caption[SEIR model priors]{Priors for each parameter. For details of the distributions and their parameterisations see \cref{E-distributions}.}
 \label{SEIR:table:priors}
 \end{table}
@@ -750,17 +755,51 @@ I ran a simulation study of the East of England region.
 This checked that the inference procedure (described in \cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
 I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
 This is because the prior used for the main analysis was too weak on this prior to create realistic simulations.
+Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
 
-Simulating from the prior then attempting to recover the parameters is the basis of simulation-based calibration~\autocite{taltsValidating}.
-The coverage of the posterior credible intervals should be their nominal value.
+Simulating from the prior then attempting to recover the parameters is the basis of simulation-based calibration~\autocites{cookValidation}{taltsValidating}.
+The coverage of the posterior credible intervals should be their nominal value (\eg 95\% of the 95\% credible intervals should contain the true paramter value).
 Furthermore, the combination of the posteriors across all simulations should recover the prior.
 
-To estimate the posterior, I ran a single MCMC chain for 500,000 iterations, discarding the first half as burn-in.
+To estimate the posterior, I ran a single MCMC chain per simulated data set for 500,000 iterations, discarding the first 300,000 iterations as burn-in, and thinning every 100 iterations.
+Therefore, posterior calculations are based on 2,000 samples per data set.
 On some occasions, the proposal distribution's covariance matrix became singular (or close to singular).
 This means it is not possible to propose a new value.
-In these cases, I restarted the chain with a new seed.
+In these cases, I restarted the chain with a new seed, discarding all information from the original chain; this was required at most once per chain.
 
 \section{Application to CIS data} \label{SEIR:sec:application}
+
+All regions' MCMC chains converged satisfactorily.
+Two chains had to be restarted with new seeds to achieve this as they converged to locations which were clearly incorrect (not shown).
+Following this, the Rhat for all parameters except $\sigma_\epsilon$ had Rhat < 1.01.
+All $\sigma_\epsilon$ parameters had Rhat < 1.05.
+All parameters had ESS > 500, except $\sigma_\epsilon$ in London which had ESS of 182.
+Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters had sufficient ESS and Rhat, I considered the chains to have converged.
+
+
+\begin{figure}
+    \thisfloatpagestyle{empty}
+    \vspace{-3cm}
+    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_young}}
+    \captionsetup{width=0.8\paperwidth}
+    \captionof{figure}[Posterior predictive prevalence (younger ages)]{%
+        Posterior predictive prevalence by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
+        The central ribbon and line shows the posterior median and 95\% CrI estimate for the proportion of the relevant strata PCR positive on each day.
+        The error bar is the 95\% CrI including the noise due to the sampling (\ie observation process), aggregated by week.
+        The dots show the observed prevalence in CIS, aggregated by week.
+    }
+    \label{SEIR:fig:prev-young}
+\end{figure}
+\begin{figure}
+    \thisfloatpagestyle{empty}
+    \vspace{-3cm}
+    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_old}}
+    \captionsetup{width=0.8\paperwidth}
+    \captionof{figure}[Posterior predictive prevalence (older ages)]{%
+        Posterior predictive prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the others and details of the plot).
+    }
+    \label{SEIR:fig:prev-old}
+\end{figure}
 
 \section{Discussion} \label{SEIR:sec:discussion}
 

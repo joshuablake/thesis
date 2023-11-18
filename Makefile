@@ -4,7 +4,7 @@ ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_tr
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 INC_PREV_DEPS = incidence-prevalence.tex
-SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png
+SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence_young.png SEIR/CIS/incidence_old.png
 DISTRIBUTIONS_DEPS = distributions.tex
 
 thesis.pdf: $(SHARED_DEPS) $(ATACCC_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) $(INC_PREV_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
@@ -90,14 +90,26 @@ cisRuns-output/%:
 SEIR.pdf: $(SEIR_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
-#SEIR/CIS-.png: SEIR/CIS.R utils.R SEIR/CIS_results.csv SEIR/CIS_predictive.csv:
+#SEIR/CIS/%.png: SEIR/CIS.R utils.R SEIR/CIS_results.csv SEIR/CIS_predictive.csv:
 #	Rscript $<
 
-SEIR/CIS_params.csv:
+SEIR/CIS/incidence_%.png SEIR/CIS/prev_%.png: SEIR/CIS/posterior_predictive.R utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
+	Rscript $<
+
+SEIR/CIS/params.csv:
 	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_combined.csv $@
 
-SEIR/CIS_predictive.csv:
+SEIR/CIS/predictive.csv:
 	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_predictive.csv $@
+
+SEIR/CIS/data.csv:
+	scp hpc:/home/jbb50/PhD_work/SEIR_model/SRS_extracts/20230829_STATS18115/modelling_data.csv $@
+
+SEIR/sim/%.csv:
+	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/EoE/*.csv SEIR/sim/
+
+SEIR/sim/coverage.png: SEIR/sim/coverage.R utils.R SEIR/sim/posteriors_combined.csv SEIR/sim/true_vals.csv
+	Rscript $<
 
 #####################################################
 ## DISTRIBUTIONS CHAPTER
