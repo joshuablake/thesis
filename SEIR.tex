@@ -7,48 +7,50 @@
 
 \chapter{Estimating transmission using mechanistic modelling} \label{SEIR}
 
-This chapter uses mechanistic models for estimating the transmission of SARS-CoV-2.
-This is an alternative approach to the statistical methods used in \cref{E-backcalc}.
-Mechanistic models explicitly represent the infection process driving the spread of infectious disease.
-The explicit representation means that a mechanistic model's state and parameters have biological and/or epidemiological interpretations; these interpretations provide scientific understanding of the disease.
-Of particular interest is that the basic reproduction number, $R_0$, and the effective reproduction number, $R_e(t)$, can both be calculated as simple functions of the model parameters; using \cref{E-backcalc} additional modelling would be required to estimate these numbers.
-Furthermore, mechanistic models can be used for scenario-based modelling, whereby the effect of different interventions can be simulated.
+This chapter uses mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
+Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving model's state and parameters have a biological and/or epidemiological interpretation.
+Of particular interest is that the basic reproduction number, $R_0$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
+Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
 All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
 However, they make stronger assumptions about the disease than statistical models, and often perform worse in short-term forecasting\todo{add a citation}.
 
 \Cref{SEIR:sec:transmission-generic} introduces a generic framework for mechanistic modelling of infectious diseases.
 % This framework is then applied to SARS-CoV-2 in \cref{SEIR:sec:transmission-application}.
-It describes the \emph{transmission model}, corresponding to the infection process (see \cref{E-inc-prev:sec:infection-process}).
+It describes the \emph{transmission model}, corresponding to the infection process (from \cref{E-inc-prev:sec:infection-process}).
 The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
-The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process (see \cref{E-inc-prev:sec:prevalence-process}) and the observation process (see \cref{E-inc-prev:sec:observation-process}).
-\Cref{SEIR:sec:inference-implementation} describes the inference process, parameterisation, and priors for this model.
-I ensure that the model can recover the parameters successfully in a simulation study in \cref{SEIR:sec:sim-study} before applying it to the CIS data in \cref{SEIR:sec:application}, which includes comparisons to the results in \cref{E-backcalc}.
+The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process (from \cref{E-inc-prev:sec:prevalence-process}) and the observation process (from \cref{E-inc-prev:sec:observation-process}).
+\Cref{SEIR:sec:inference-implementation} describes how I will apply the model to the CIS prevalence data, including the inference process, parameterisation, and priors for this model.
+\Cref{SEIR:sec:sim-study} checks this recovers the parameters successfully using a simulation study.
+\Cref{SEIR:sec:application} then describes the results with the CIS data, including making comparisons to the results in \cref{E-backcalc}.
 Finally, \cref{SEIR:sec:discussion} discusses the results, limitations, and extensions of this work.
 
 The literature on mechanistic models is vast, having been developed for over a century; the model in \cref{SEIR:sec:SIR} was first formulated in the 1920s~\autocite{kermackContribution}.
-This chapter explains only the background I will use in the application to SARS-CoV-2.
+\Cref{SEIR:sec:transmission-generic} explains only the parts relevant to the remainder of the chapter.
 For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
 
 Notation in this chapter differs from the rest of this thesis.
-I adopt conventions and notation from the infectious disease modelling field, although this is not consistent in the literature.
-In particular, case no longer signifies whether a variable is random or not, but will be clear from the context.
+I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
+In particular, upper or lower case no longer signifies whether a variable is random or not, but this is clear from the context.
 
 \section{Transmission models} \label{SEIR:sec:transmission-generic}
 
-\todo[inline]{ref intro to compartmental model setup}
+\todo[inline]{I think this intro needs references but I'm struggling to find suitable ones}
 This section introduces the class of mechanistic transmission models known as \emph{compartmental} models.
 Compartmental models are the most widely-used class of mechanistic infectious disease model.
-A compartmental model is named because they place every member of the population under study into a compartment; each compartment represents a disease state (\eg susceptible).
+A compartmental model is named because they place every member of the population under study into a compartment; each compartment representing a disease state (\eg susceptible).
 
-A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$.
+A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence}.
 The elements of $\vec{x}(t)$ are the proportion of the population (or number of individuals) in each compartment at time $t$.
-The parameters $\vec{\theta}$ are constants that determine, along with the model structure, how the state vector changes over time.
+The parameters $\vec{\theta}$ determine, along with the model structure, how the state vector changes over time.
+Inference about $\vec{x}(t)$ and $\vec{\theta}$ is through an observation model, $p(\vec{y}(t) \mid \vec{x}(t), \vec{\theta})$ which links $\vec{x}(t)$ to some observation $\vec{y}(t)$~\autocite{birrellEvidence}; I discuss observation models further in \cref{SEIR:sec:observation}.
+
 Compartmental models can be \emph{deterministic} or \emph{stochastic}.
-Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic, although rarely analytically-tractable, function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$.
+Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \theta) = 0$~\autocite{birrellEvidence}.
+In most situations, the function is not analytically-tractable and requires numeric methods to solve.
 %The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
 %There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
 Stochastic models are most commonly specified in discrete time, using a Markov assumption.
-That is, they specify a probability distribution $p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$.
+That is, they specify a probability distribution $p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ for integer $t$ and assume that, having conditioned on $\vec{x}(t-1)$, $\vec{x}(t)$ is independent of $\vec{x}(t')$ for all $t' < t - 1$~\autocite{birrellEvidence}.
 This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
 
 Deterministic models are also known as \emph{mean-field} models because they can are the behaviour corresponding to a stochastic model's mean.
@@ -56,7 +58,7 @@ When the number of infected individuals is large, the law of large numbers means
 An alternative justification, when making noisy observations of the system, is that the additional noise from the stochastic model is negligible compared to this observation noise.
 This second justification is of the same form as the one made for neglecting the stochasticity of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
 The remainder of this chapter uses only deterministic models, because throughout the time period this thesis considers there were enough infectious individuals.
-For an introduction to stochastic models, see \textcite[chapter 6]{keelingModeling}.
+For an introduction to stochastic models, see \textcite[chapter 6]{keelingModeling} or \textcite{birrellEvidence}.
 % \todo{Maybe say something about still having a stochastic observation model, if not clear enough from intro}
 
 In particular, this chapter discusses deterministic models whose evolution is specified by a system of ODEs, $d\vec{x}/dt$.
