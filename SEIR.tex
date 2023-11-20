@@ -776,7 +776,9 @@ All $\sigma_\epsilon$ parameters had Rhat < 1.05.
 All parameters had ESS > 500, except $\sigma_\epsilon$ in London which had ESS of 182.
 Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters had sufficient ESS and Rhat, I considered the chains to have converged.
 
-
+Overall the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
+There are a few features of the data which are not captured by the model though.
+In particular, prevalence during October is higher in the 16--25s than the model predicts and lower in the 11--16s.
 \begin{figure}
     \thisfloatpagestyle{empty}
     \vspace{-3cm}
@@ -785,8 +787,9 @@ Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters
     \captionof{figure}[Posterior predictive prevalence (younger ages)]{%
         Posterior predictive prevalence by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
         The central ribbon and line shows the posterior median and 95\% CrI estimate for the proportion of the relevant strata PCR positive on each day.
-        The error bar is the 95\% CrI including the noise due to the sampling (\ie observation process), aggregated by week.
+        The lighter outer ribbon is the 95\% CrI including the noise due to the sampling (\ie observation process), aggregated by week.
         The dots show the observed prevalence in CIS, aggregated by week.
+        For a well-calibrated model, 95\% of the dots would be within the outer ribbon.
     }
     \label{SEIR:fig:prev-young}
 \end{figure}
@@ -796,12 +799,83 @@ Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_old}}
     \captionsetup{width=0.8\paperwidth}
     \captionof{figure}[Posterior predictive prevalence (older ages)]{%
-        Posterior predictive prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the others and details of the plot).
+        Posterior predictive prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the other age groups and details).
     }
     \label{SEIR:fig:prev-old}
 \end{figure}
 
+The 11--16 age group (roughly corresponding to compulsory secondary school education) is estimated to have the highest incidence (see \cref{SEIR:fig:incidence}).
+Incidence is smooth within each week but shows discontinuities between weeks.
+This is because the parameters within $\vec{\lambda}(t)$ are constant within each week.
+A constant $\vec{\lambda}(t)$ leads to exponential growth over short time periods, once the initial dynamics have died out.
+When the peak in incidence is estimated to occur varied by region, but due to this reason, is almost always on a Friday (see \cref{SEIR:fig:peak-incidence}).
+
+\begin{figure}
+    \includegraphics{SEIR/CIS/incidence}
+    \caption[Posterior estimates of incidence]{%
+        Posterior estimates (95\% CrI) of incidence by region and age.
+        See main text for discussion.
+    }
+    \label{SEIR:fig:incidence}
+\end{figure}
+
+The parameters $\beta_t$ absorb all the time-varying changes in transmission not captured by Google mobility and school attendance data.
+They trend downwards up until early December when they start increasing again.
+Each region is estimated independently, however correlation is clear across the regions.
+\begin{figure}
+    \includegraphics{SEIR/CIS/beta_walk}
+    \caption[Posterior estimates of $\beta_t$]{%
+        Posterior estimates $\beta_t$ for each week.
+        Shown are "violins" where the width is proportional to the kernel-density estimated posterior density at that point.
+        Values trend downwards until early December when an increase starts.
+    }
+    \label{SEIR:fig:beta-walk}
+\end{figure}
+
 \section{Discussion} \label{SEIR:sec:discussion}
+
+Parameterisation of this model is limited by the inference techniques.
+The algorithm used here tends to struggle with a large number of parameters.
+Alternative proposal schemes, such as blocking\todo{cite what RTM does?}, could help, or a more advanced algorithm such as NUTS (used elsewhere in this thesis).
+
+The current model is not very flexible with regards to the age distribution of infections.
+The lack of flexibility is visible in \cref{SEIR:fig:prev-young} where how well the model reproduces the data varies by age group.
+In some regions, there appears to be a trade-off between the 11--16s and 16--25s, with the model misfitting in opposite directions.
+The age distribution of infections determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one inferred parameter, $\beta_c$.
+More parameters would help to capture these dynamics more accurately.
+Increasing the number of parameters inferred in the contact matrices would allow for more flexibility in the age distribution of infections, either by introducing additional susceptibility or infectiousness parameters, or by allowing these parameters to vary over time.
+For example, the introduction and relaxation of control measures within schools over time is a plausible mechanism changing the age distribution of infections that cannot be captured in the current model because it only uses school attendance data with no allowance for the changing risk of within-school contacts.
+
+The weekly patterns in incidence are another limitation of the current parameterisation.
+The random walk and contact matrices both vary only on the weekly timescale.
+A daily random walk could provide more flexibility here.
+However, this would greatly increase the number of parameters.
+An alternative would be a smoothly-varying function or an approximation of a random walk such as that proposed by \textcite{ghoshApproximate}.
+
+The parameters $\beta_t$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
+These factors are likely to be correlated across the country, giving the similar patterns for different regions (see \cref{SEIR:fig:beta-walk}).
+Exploiting these correlations by linking their values across regions could improve the precision of the estimates.
+This would require a more complex model without the independence of parameters between regions.
+
+Various factors could explain the pattern in the $\beta_t$ values, which have a minima near the start of December.
+Some hypothesis follow, although this analysis is unable to distinguish causality.
+Increased caution as cases and deaths increased could explain the decrease (\eg masking or stricter adherence to social distancing).
+The increase coincides with the rise of the Alpha variant, known to be more transmissible.
+This is a likely cause of the increase.
+A multiple variant model might be able to capture this more accurately.
+This would stratify positive tests in CIS by pre-Alpha or Alpha variant.
+Then, each variant would be explicitly included in the model to fit to this data.
+
+Extending the estimates here to the rest of the pandemic would clearly be of interest.
+However, this requires a more complex model structure.
+I chose the end of the modelling period to coincide with the vaccination rollout.
+Vaccination dramatically affects the transmission dynamics by introducing some additional immunity into the population.
+Mechanistic models require explicit representation of this immunity\todo{cite something about vaccination}.
+
+\todo[inline]{move the following discussion to conclusion chapter as relevant to whole thesis}
+Household structure is not included in this model.
+The household-based design of the survey is likely to induce clustering in results, increasing the variance of the measured prevalence.
+The beta-binomial likelihood structure should capture some of this variance within each strata\todo{ref beta-binomial as a model for clustering}, but not between strata.
 
 \section{Conclusion}
 

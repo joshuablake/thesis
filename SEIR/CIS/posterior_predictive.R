@@ -1,4 +1,5 @@
 library(dplyr)
+library(lubridate)
 library(ggplot2)
 library(patchwork)
 library(purrr)
@@ -57,7 +58,7 @@ noisy_predict = predictions |>
 weekly_predictions = noisy_predict |>
     group_by(
         region, .draw, age,
-        week = lubridate::floor_date(day, unit = "week", week_start = "Monday") + 3,
+        week = floor_date(day, unit = "week", week_start = "Monday") + 3,
     ) |>
     summarise(
         n = sum(num_tests),
@@ -74,7 +75,7 @@ create_prev_plot = function(age_groups, label) {
         filter(age %in% age_groups) |>
         ggplot(aes(week)) +
         geom_point(aes(y = p)) +
-        geom_errorbar(aes(ymin = pred_p.lower, ymax = pred_p.upper)) +
+        geom_ribbon(aes(ymin = pred_p.lower, ymax = pred_p.upper), alpha = 0.1) +
         geom_lineribbon(
             aes(day, prevalence, ymin = prevalence.lower, ymax = prevalence.upper),
             data = filter(prediction_intervals, age %in% age_groups),
@@ -105,29 +106,57 @@ old_ages = unique(weekly_predictions$age)[4:6]
 create_prev_plot(young_ages, "young")
 create_prev_plot(old_ages, "old")
 
-create_incidence_plot = function(age_groups, label) {
-    plot = prediction_intervals |>
-        filter(age %in% age_groups) |>
-        ggplot() +
-        geom_lineribbon(
-            aes(day, incidence),
-            data = prediction_intervals,
-            alpha = 0.4
-        ) +
-        labs(
-            x = "Date",
-            y = "Incidence"
-        ) +
-        standard_plot_theming() +
-        theme(legend.position = "none")
-    ggsave(
-        filename = here::here(
-            glue::glue("SEIR/CIS/incidence_{label}.png")
+p_incidence = prediction_intervals |>
+    ggplot() +
+    geom_ribbon(
+        aes(
+            day,
+            ymin = incidence.lower,
+            ymax = incidence.upper,
+            fill = age
         ),
-        plot = plot,
-        width = 15,
-        height = 20,
-        units = "cm",
-        dpi = 300
-    )
-}
+        alpha = 0.4
+    ) +
+    facet_wrap(~region, ncol = 2) +
+    labs(
+        x = "Date",
+        y = "Incidence"
+    ) +
+    standard_plot_theming() +
+    theme(legend.position = "none")
+ggsave(
+    filename = here::here(
+        glue::glue("SEIR/CIS/incidence.png")
+    ),
+    plot = p_incidence,
+    width = 15,
+    height = 20,
+    units = "cm",
+    dpi = 300
+)
+
+peak_days = predictions |>
+    group_by(region, age, .draw) |>
+    summarise(peak_incidence= as.integer(day[which.max(incidence)])) |>
+    ungroup()
+
+p_peak = peak_days |>
+    count(region, age, peak_incidence) |>
+    mutate(tot = sum(n), .by = c(region, age)) |>
+    mutate(p_peak = n / tot, peak_incidence = as_date(peak_incidence)) |>
+    filter(p_peak > 0.02) |>
+    ggplot(aes(peak_incidence, p_peak, colour = age)) +
+    geom_point() +
+    facet_wrap(~region, ncol = 2) 
+    
+# peak_days |>
+#     group_by(region, age) |>
+#     median_qi(peak_incidence, .simple_names = FALSE) |>
+#     ungroup() |>
+#     mutate(
+#         across(contains("peak_incidence"), as_date),
+#         text = paste(peak_incidence, "(", peak_incidence.lower, ",", peak_incidence.upper, ")"),
+#     ) |>
+#     select(region, age, text) |>
+#     pivot_wider(names_from = age, values_from = text) |>
+#     readr::write_csv("SEIR/CIS/peak_incidence.csv")
