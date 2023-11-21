@@ -18,7 +18,7 @@ The infection process (\cref{inc-prev:sec:infection-process}) models how infecti
 The concepts here are well-established within infectious disease epidemiology (see\todo{ref intro chapter}).
 The prevalence process (\cref{inc-prev:sec:prevalence-process}) describes the relationship between incidence and prevalence.
 Here, I adapt previous work to the SARS-CoV-2 context.
-In particular, recoveries need considering, which was not the case for HIV/AIDS.
+In particular, recovering from infection needs to be considering, which was not the case for HIV/AIDS.
 The observation process (\cref{inc-prev:sec:observation-process}) describes the relationship between prevalence and the observed data, ultimately allowing inference of incidence based on this data.
 Unlike in HIV/AIDS backcalculation, the CIS has a sampling mechanism that needs to be modelled.
 This model is guided by the specific study design of the CIS.
@@ -38,7 +38,7 @@ Furthermore, within-day patterns produce variations in transmission (\eg due to 
 As discussed in\todo{ref intro}, the timing of infection events is very rarely directly observable and must be inferred from other data.
 Despite this issue, it remains the single most important quantity for informing the response to an epidemic or pandemic.
 
-\emph{Prevalence} of a disease on day $t$, is the number of people with the disease on that day~\autocite[90]{lashModern}.
+\emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
 What it means to have a disease can vary by context (see\todo{ref section discussing what it means to have covid}).
 Here, an individual is defined to have SARS-CoV-2 on day $t$ if, had they been swabbed on day $t$, that swab would return a positive PCR test.
 I refer to these individuals as \emph{prevalent} individuals.
@@ -47,17 +47,18 @@ Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$.
 Therefore, the prevalence is $P_t/\Npop$.
 
+\todo[inline]{Add some refs about duration and survival}
 Duration, or time-to-event, distributions can be expressed in several equivalent ways.
 The duration distribution I will be concerned with is the distribution of the number of days for which an individual is prevalent.
 Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$.
 I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$.
 $D_i = E_i - B_i + 1$ is their \emph{duration of positivity}, the number of days for which they are prevalent.
-I model each $D_i$ as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
+I model the $D_i$s as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
 The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
 The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$ (a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
 The \emph{hazard} on day $d$ is the probability of recovering at time $d$ conditional on having survived to time $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
-Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
+Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be expressed in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
 
 Since $D_i$ is a discrete random variable, $f_D(d) \geq 0$ for all $d$ and $\sum_{i=1}^{\dmax} f_D(i) = 1$.
 This implies that $F_D(d)$ is monotonically increasing.
@@ -78,7 +79,7 @@ A counting process has \emph{independent increments} if the number of events in 
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
 
 A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
-A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the epidemic at time $r$~\autocites[244]{yanDistribution}.
+A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the epidemic process at time $r$~\autocites[244]{yanDistribution}.
 A time-homogenous Poisson process is the special case where $\nu(r)$ is constant.
 The independent increment property says that, conditional on $\nu(r)$, the number of infections in disjoint intervals are independent.
 This implies $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
