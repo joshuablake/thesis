@@ -20,6 +20,7 @@ It describes the \emph{transmission model}, corresponding to the infection proce
 The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
 The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process (from \cref{E-inc-prev:sec:prevalence-process}) and the observation process (from \cref{E-inc-prev:sec:observation-process}).
 \Cref{SEIR:sec:inference-implementation} describes how I will apply the model to the CIS prevalence data, including the inference process, parameterisation, and priors for this model.
+This transmission model is the same as that in \textcite{birrellRealtime}, but the observation model is novel.
 \Cref{SEIR:sec:sim-study} checks this recovers the parameters successfully using a simulation study.
 \Cref{SEIR:sec:application} then describes the results with the CIS data, including making comparisons to the results in \cref{E-backcalc}.
 Finally, \cref{SEIR:sec:discussion} discusses the results, limitations, and extensions of this work.
@@ -320,7 +321,7 @@ The rate that individuals move between the susceptible and exposed compartments 
 In practical situations, estimating all of the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
 It is infeasible because the progression of the epidemic depends on $\vec{\lambda}(t)$, which has dimension $A$, while $\matr{\beta}$ has dimension $A^2$.
 Common assumptions include assuming symmetry, \ie $\beta_{aa'} = \beta_{a'a}$, or that the direction of transmission is irrelevant, \ie $\beta_{aa'} = \beta_{a} \beta_{a'}$.
-Alternatively, as in the scalar case, $\beta_{aa'}$ can be decomposed into the contact rate between strata $a$ and $a'$, $\kappa_{aa'}$ and the probability of transmission upon contact, $q_{aa'}$, and then assumptions made about the components.
+% Alternatively, as in the scalar case, it may be easier to iden $\beta_{aa'}$ can be decomposed into the contact rate between strata $a$ and $a'$, $\kappa_{aa'}$ and the probability of transmission upon contact, $q_{aa'}$, and then assumptions made about the components.
 The choice of assumptions depends on the context, including the disease being studied and the data available.
 
 Reproduction numbers in models with structured populations need to be careful to consider the distribution of infections across the strata.
@@ -464,11 +465,11 @@ The parameter estimates are in \cref{SEIR:table:ec-params}.
 The modelled proportion of individuals that are PCR positive in the can then be linked to the data using a Beta-Binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
 If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests, then the likelihood is:
 \begin{align}
-    \prod_{i,t} \BB (y_{it} \mid n_{it}, \sum_{k=1}^l p_{ki}(t), \rho)
+    \prod_{a,t} \BB (y_{at} \mid n_{at}, \sum_{k=1}^l \bar{p}_{kat}, \rho)
+    \label{SEIR:eq:likelihood}
 \end{align}
-using the mean-dispersion parametrisation of the beta-binomial distribution (see \cref{E-distributions}).
-$\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
-At $\rho=0$, the beta-binomial coincides with the binomial distribution.
+where $\bar{p}_{kat} = \int_{t}^{t+1} p_{ka}(s) ds$ is the mean occupancy in compartment $p_k$ and strata $a$ over day $t$ and $\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
+In this parameterisation (see \cref{E-distributions}) at $\rho=0$ the beta-binomial coincides with the binomial distribution and as $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$.
 
 \section{Inference and implementation} \label{SEIR:sec:inference-implementation}
 
@@ -533,79 +534,81 @@ I use the following age-based strata, which align closely with the strata previo
     \item $[70, \infty)$: elderly.
 \end{enumerate}
 
-I will use the parameterisation of \textcite{birrellRealtime}, with the decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'}$ to separate out contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probabilities $q_{aa'}$, assumed constant; and a random effect for time $\beta(t)$.
+I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, with the decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$ to separate out contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probabilities $q_{aa'}$, assumed constant; a global effect for time $\beta(t)$; and the population of the stratum, $N_{a'}$.
 
-I take values for the contact rates, $\kappa_{aa'}(t)$, from other data sources.
-I use previously produced estimates of these rates based on time use data, and mobility data~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
+This parameterisation takes values for the contact rates, $\kappa_{aa'}(t)$, from other data sources.
+These values are produced based on several data sources~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}.
+%; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
 % These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
-Baseline (pre-pandemic) estimates of contacts in various settings are taken from the POLYMOD study~\autocite{mossongSocial} and UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
-POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on age and location (home, work, school, leisure, transport, or other) of these contacts.
+First, take a baseline from the POLYMOD study's~\autocite{mossongSocial} baseline (pre-pandemic) estimates of contacts in various settings and the UK Time Use Survey (UKTUS)'s~\autocite{UKTUS} estimates of time use.
+POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on the contact's age and location (home, work, school, leisure, transport, or other).
 UKTUS asked a representative sample of the UK population about how much time they spent doing various activities each day.
 \Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
 \Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
-These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
+The changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
 Google mobility data measures the location of Android users over time, relative to a pre-pandemic baseline.
 These data sources are then used to down or upweight the number of contacts in each setting.
-These estimates of contacts by setting and then recombined across settings to from $\kappa_{aa'}$
-For mathematical details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
+These estimates of contacts by setting are then recombined across settings to from $\kappa_{aa'}$
+For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
 
 Some behavioural changes (\eg mask wearing) impact transmission.
 However, these are not captured by the contact survey.
-To allow for these changes and other model misspecficiation, I follow \textcite{birrellRealtime} in placing a random walk prior on $\beta(t)$ in log space on the weekly timescale:
+To allow for these changes and uncertainty produced by the procedure above, I follow \textcite{birrellRealtime} in placing a random walk prior on $\beta(t)$ in log space on the weekly timescale:
 \begin{align}
     \beta(t) &= \beta_{w(t)} \\
     \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
     \epsilon_w &\sim \N(0, 1)
 \end{align}
 where $w(t)$ is the week number of time $t$, with week 1 being the first week modelled.
-The remaining parameters $\beta_1$, the initial random of the random walk, and $\sigma_\epsilon$, the standard deviation of the random walk, will have priors placed on them, with their values inferred in the usual way.
+The remaining parameters $\beta_1$, the initial random of the random walk, and $\sigma_\epsilon$, the standard deviation of the random walk, will have priors placed on them (see \cref{SEIR:sec:priors}), with their values inferred in the usual way.
 
-$K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
-Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
-Ideally, all the $\beta_{ij}$ terms would be estimated, but there is normally inadequate data to do so, requiring assumptions to be made to reduce the number of parameters~\autocite[65]{keelingModeling}.
-% $\beta_{ij}$ is then estimated, although often with a parsimonious model\todo{ref / give examples / delete on how age-specfic susceptibility / transmissibility happens}.
-A common assumption is that $\beta_{ij}$ can be decomposed into two independent components such that $\beta_{ij} = \beta \beta^\text{susc}_{i} \beta^\text{inf}_j$.
-For any stratum $i$, $\beta^\text{susc}_i$ is known as the \emph{relative susceptibility} of stratum $i$.
+% $K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
+% Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
+% Ideally, all the $\beta_{ij}$ terms would be estimated, but there is normally inadequate data to do so, requiring assumptions to be made to reduce the number of parameters~\autocite[65]{keelingModeling}.
+% % $\beta_{ij}$ is then estimated, although often with a parsimonious model\todo{ref / give examples / delete on how age-specfic susceptibility / transmissibility happens}.
+% A common assumption is that $\beta_{ij}$ can be decomposed into two independent components such that $\beta_{ij} = \beta \beta^\text{susc}_{i} \beta^\text{inf}_j$.
+% For any stratum $i$, $\beta^\text{susc}_i$ is known as the \emph{relative susceptibility} of stratum $i$.
 
 $q_{aa'}$ remains to be specified.
-I decompose it into two independent components such that $q_{aa'} = q^\text{susc}_{a} q^\text{inf}_{a'}$.
+I again follow the approach of \textcite{birrellRealtime}, decomposing it into two independent components such that $q_{aa'} = q^\text{susc}_{a} q^\text{inf}_{a'}$.
 $q^\text{susc}_a$ is the \emph{susceptibility} of stratum $a$, \ie how vulnerable to infection individuals in stratum $a$ are.
-$q^\text{inf}_a$ is the \emph{transmissibility} of stratum $a$, \ie how likely individuals in stratum $a$ are to pass on an infection.
-Then $\beta^\text{susc}_i$ is the relative risk of an individual in stratum $i$ being infected, relative to an individual in stratum $a_0$.
+$q^\text{inf}_{a'}$ is the \emph{transmissibility} of stratum $a'$, \ie how likely individuals in stratum $a$ are to pass on an infection.
+% Then $\beta^\text{susc}_i$ is the relative risk of an individual in stratum $i$ being infected, relative to an individual in stratum $a_0$.
 These measures include both biological differences, \eg due to differences in immune systems, or behavioural, \eg if infants are less hygenic than adults.
 
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
 Previous studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults\todo{cite where age difference in transmission comes from}.
-Therefore, I set $\beta^\text{inf}_{a} = 1$ for all $a$, $\beta^\text{susc}_{a} = q_c$ for the youngest stratum, and $\beta^\text{susc}_{a} = 1$ for the remaining strata.
+Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for the youngest stratum, and $q^\text{susc}_{a} = 1$ for the remaining strata.
 
 \subsubsection{Identifiability}
 
 Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
 Rather than directly inferring $\beta_1$, I infer the initial growth rate of the epidemic.
 In addition, I use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infected and the initial proportion that are susceptible only.
-Both of these rely on an assumption that the epidemic is in the steady-state exponential growth phase at time 0.
+Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{SEIR:sec:SIR}).
 
-When $\vec{s}$ is approximately constant, and hence the epidemic grows exponentially (see \cref{SEIR:sec:SIR}), the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments all grow at the same initial exponential growth rate, $\psi$.
-If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model can be linked to this growth rate by~\autocites{birrellBayesian}{wearingAppropriate}:\begin{align}
+During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
+This follows directly from the ODEs where $\vec{s}$ is constant. 
+The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\phi$ should be more computationally efficient.
+If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocites{birrellBayesian}{wearingAppropriate}:
+\begin{align}
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
 \end{align}
 
-Furthermore, $\R$ is linked to $\beta_1$ via $\matr{\beta}$ (see \cref{SEIR:sec:structured-populations}).
-This implies that the model can be parameterised by using $\psi$ in place of $\beta_1$.
-The growth rate $\psi$ is easily identifiable from the data, and therefore this parameterisation should be more efficient.
+Furthermore, $\R$ is a function of $\matr{\beta}$, and hence $\beta_1$ (as explained in \cref{SEIR:sec:structured-populations}).
+Combining these expressions, the model can be parameterised by using $\psi$ in place of $\beta_1$.
 The following procedure gives $\beta_1$ in terms of $\psi$.
 First, calculate $\R$ from $\psi$ using \cref{SEIR:eq:rtoR}; denote this $\hat{R}$.
-Then calculate $R^* = \rho(\matr{\beta}) / \gamma$ when $\beta_1=1$ (recalling that $\rho(\matr{\beta})$ denotes the dominant eigenvalues of $\matr{\beta}$).
-Multiplying a matrix by a scalar multiplies its dominant eigenvalue by that same scalar, therefore, setting $\beta_1 = \hat{R} / R^*$ gives the desired $\R$.
+Then calculate $R^* = \rho(\matr{\beta}) / \gamma$ when $\beta_1=1$ (recall that $\rho(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
+Multiplying a matrix by a scalar multiplies its dominant eigenvalue by that same scalar, therefore, setting $\beta_1 = \hat{R} / R^*$ gives the desired means that $\R$ at time 0 is $\hat{R}$, as desired.
 
 To form a parsimonious parameterisation of the initial state, first focus on the initial proportion of the population that is in the infected compartments.
 Recall that in the exponential growth phase, the relative proportion of each strata that is infected is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
-Let the proportion of the population in the $i$ states at time 0 in the strata with the highest proportion infected, $i^+$, be a model parameter.
+Introduce a model parameter $i^+$, the proportion of the population in the $i$ states at time 0 in the strata with the highest proportion infected.
 Then, $\vec{i_0} = \vec{i_1} + \vec{i_2} = \frac{i^+}{\max \vec{d}} \vec{d}$.
-Now introduce an additional vector of parameters, $\vec{\pi}$, where $\pi_i$ is the proportion of strata $i$ without immunity at time 0.
-That is, at time 0, $\vec{r} = 1 - \vec{\pi}$.
+Now introduce an additional vector of parameters, $\vec{\pi}$, where $\pi_a$ is the proportion of strata $i$ without immunity at time 0, hence, $\vec{r} = 1 - \vec{\pi}$.
 
 From the system of ODEs\todo{might need to reorder this because I've not presented these yet.. } and the knowledge that all the compartments are growing exponentially at rate $\psi$, one can derive the following for the initial state of the compartments:
 \begin{align}
@@ -668,7 +671,7 @@ All other parameters had weakly informative priors.
 
 \subsection{Full model} \label{SEIR:sec:full-model}
 
-\todo[inline]{check likelihood is mentioned somewhere in this section}
+\todo[inline]{work out where to present full model equations and then edit/rearrange this section to reflect this}
 
 \begin{figure}
 \makebox[\textwidth][c]{
@@ -744,7 +747,7 @@ The system of differential equations for each region is below.
 \todo[inline]{following paragraph needs rewording having reordered this chapter}
 Recall that each region is run independently (see \cref{SEIR:sec:geography}), $\matr{\beta}(t)_{ij} = \beta(t) \beta^\text{susc}_i$ with $\beta^\text{susc}_i = \beta_c$ for child-aged strata and $\beta^\text{susc}_i = 1$ for adult-aged strata.
 
-As in \cref{E-backcalc}, I use CIS data to estimate the model for each region independently.
+As in \cref{E-backcalc}, I use CIS data to estimate the model for each region independently, and over the same period as in that chapter.
 As well as the motivation given previously, this allows heterogeneity in the parameters between regions.
 This heterogeneity could arise from a range of socioeconomic factors.
 Furthermore, the assumption of homogeneous mixing within age groups is more plausible for regions than the whole of England.
@@ -756,22 +759,19 @@ However, for a large epidemic, the non-interaction is a good approximation~\auto
 The test results are aggregated to age group and region on each day.
 
 \subsection{Solving the systems of ODEs} \label{SEIR:sec:solving-ODEs}
-I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 0.5$days.
-That is to find the state of the system at time $t+1/2$ given the state at time $t$, I add half the derivative to the state at time $t$.
-\todo[inline]{add these equations}
+I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
+That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + \frac{d\vec{x}(t)}{dt} \delta t$
 
-The prevalence on day $t$, used for the likelihood, is the mean of the solution on the two corresponding days.
-
+The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likelihood}), can be calculated as $\bar{p}_{kat} = \frac{1}{2} ( p_{kat} + p_{ka,t+1/2} )$.
 
 \section{Simulation study} \label{SEIR:sec:sim-study}
-I ran a simulation study of the East of England region.
-This checked that the inference procedure (described in \cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
+I ran a simulation study to check that the inference procedure (described in \cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
 I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
 This is because the prior used for the main analysis was too weak on this prior to create realistic simulations.
 Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
 
 Simulating from the prior then attempting to recover the parameters is the basis of simulation-based calibration~\autocites{cookValidation}{taltsValidating}.
-The coverage of the posterior credible intervals should be their nominal value (\eg 95\% of the 95\% credible intervals should contain the true paramter value).
+The coverage of the posterior credible intervals should be their nominal value (\eg 95\% of the 95\% credible intervals should contain the true parameter value).
 Furthermore, the combination of the posteriors across all simulations should recover the prior.
 
 To estimate the posterior, I ran a single MCMC chain per simulated data set for 500,000 iterations, discarding the first 300,000 iterations as burn-in, and thinning every 100 iterations.
@@ -780,25 +780,22 @@ On some occasions, the proposal distribution's covariance matrix became singular
 This means it is not possible to propose a new value.
 In these cases, I restarted the chain with a new seed, discarding all information from the original chain; this was required at most once per chain.
 
+\todo[inline]{add simulation study results}
+
 \section{Application to CIS data} \label{SEIR:sec:application}
 
-All regions' MCMC chains converged satisfactorily.
-Two chains had to be restarted with new seeds to achieve this as they converged to locations which were clearly incorrect (not shown).
-Following this, the Rhat for all parameters except $\sigma_\epsilon$ had Rhat < 1.01.
-All $\sigma_\epsilon$ parameters had Rhat < 1.05.
-All parameters had ESS > 500, except $\sigma_\epsilon$ in London which had ESS of 182.
-Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters had sufficient ESS and Rhat, I considered the chains to have converged.
+
 
 Overall the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
-There are a few features of the data which are not captured by the model though.
+There are a few features of the data which are not captured by the model.
 In particular, prevalence during October is higher in the 16--25s than the model predicts and lower in the 11--16s.
 \begin{figure}
     \thisfloatpagestyle{empty}
     \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_young}}
     \captionsetup{width=0.8\paperwidth}
-    \captionof{figure}[Posterior predictive prevalence (younger ages)]{%
-        Posterior predictive prevalence by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
+    \captionof{figure}[SEIR prevalence goodness-of-fit (younger ages)]{%
+        Goodness-of-fit to prevalence data by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
         The central ribbon and line shows the posterior median and 95\% CrI estimate for the proportion of the relevant strata PCR positive on each day.
         The lighter outer ribbon is the 95\% CrI including the noise due to the sampling (\ie observation process), aggregated by week.
         The dots show the observed prevalence in CIS, aggregated by week.
@@ -811,17 +808,18 @@ In particular, prevalence during October is higher in the 16--25s than the model
     \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_old}}
     \captionsetup{width=0.8\paperwidth}
-    \captionof{figure}[Posterior predictive prevalence (older ages)]{%
-        Posterior predictive prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the other age groups and details).
+    \captionof{figure}[SEIR prevalence goodness-of-fit (older ages)]{%
+        Goodness-of-fit prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the other age groups and details).
     }
     \label{SEIR:fig:prev-old}
 \end{figure}
 
 The 11--16 age group (roughly corresponding to compulsory secondary school education) is estimated to have the highest incidence (see \cref{SEIR:fig:incidence}).
 Incidence is smooth within each week but shows discontinuities between weeks.
-This is because the parameters within $\vec{\lambda}(t)$ are constant within each week.
-A constant $\vec{\lambda}(t)$ leads to exponential growth over short time periods, once the initial dynamics have died out.
+This is because the parameters within $\matr{\beta}(t)$ are constant within each week.
+A constant $\matr{\beta}(t)$ leads to exponential growth over short time periods, once the initial dynamics have died out.
 When the peak in incidence is estimated to occur varied by region, but due to this reason, is almost always on a Friday (see \cref{SEIR:fig:peak-incidence}).
+\todo[inline]{add peak incidence date plot}
 
 \begin{figure}
     \includegraphics{SEIR/CIS/incidence}
@@ -835,6 +833,10 @@ When the peak in incidence is estimated to occur varied by region, but due to th
 The parameters $\beta_t$ absorb all the time-varying changes in transmission not captured by Google mobility and school attendance data.
 They trend downwards up until early December when they start increasing again.
 Each region is estimated independently, however correlation is clear across the regions.
+
+\todo[inline]{add Rt results}
+
+\todo[inline]{add attack rates and compare with an external data source}
 \begin{figure}
     \includegraphics{SEIR/CIS/beta_walk}
     \caption[Posterior estimates of $\beta_t$]{%
@@ -845,19 +847,53 @@ Each region is estimated independently, however correlation is clear across the 
     \label{SEIR:fig:beta-walk}
 \end{figure}
 
+All regions' MCMC chains converged satisfactorily.
+Two chains had to be restarted with new seeds to achieve this as they converged to locations which were clearly incorrect (not shown).
+Following this, the Rhat for all parameters except $\sigma_\epsilon$ had Rhat < 1.01.
+All $\sigma_\epsilon$ parameters had Rhat < 1.05.
+All parameters had ESS > 500, except $\sigma_\epsilon$ in London which had ESS of 182.
+Since $\sigma_\epsilon$ is not a parameter of interest, and all other parameters had sufficient ESS and Rhat, I considered the chains to have converged.
+
+\todo[inline]{add comparison to backcalculation once I have those results}
+
 \section{Discussion} \label{SEIR:sec:discussion}
 
-Parameterisation of this model is limited by the inference techniques.
-The algorithm used here tends to struggle with a large number of parameters.
-Alternative proposal schemes, such as blocking\todo{cite what RTM does?}, could help, or a more advanced algorithm such as NUTS (used elsewhere in this thesis).
+The results in this chapter show the feasibility of fitting a mechanistic model using only data on prevalence.
+If the distributions for length-of-stay in each compartment are known, then all other model parameters are able to be estimated.
+This includes estimating the age distribution of the infections and the susceptibility of children.
 
-The current model is not very flexible with regards to the age distribution of infections.
-The lack of flexibility is visible in \cref{SEIR:fig:prev-young} where how well the model reproduces the data varies by age group.
-In some regions, there appears to be a trade-off between the 11--16s and 16--25s, with the model misfitting in opposite directions.
-The age distribution of infections determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one inferred parameter, $\beta_c$.
-More parameters would help to capture these dynamics more accurately.
-Increasing the number of parameters inferred in the contact matrices would allow for more flexibility in the age distribution of infections, either by introducing additional susceptibility or infectiousness parameters, or by allowing these parameters to vary over time.
-For example, the introduction and relaxation of control measures within schools over time is a plausible mechanism changing the age distribution of infections that cannot be captured in the current model because it only uses school attendance data with no allowance for the changing risk of within-school contacts.
+Unlike most prior work, this modelling is based on a data source that is representative of the general population.
+Therefore, the results are have fewer biases and informed by data to a greater extent than this work.
+There is little-to-no ascertainment bias in the CIS, unlike sources relying on testing behaviour (in the UK, pillar 2 testing).
+The CIS allows data-informed estimates of transmission in children, unlike sources relying on severe events that occur almost entirely in adults\todo{cite something about mildness in children or age distribution of severe events}.
+
+The parameters $\beta_t$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
+\todo{discuss the results and implications for policy or understanding transmission}
+Many factors contribute to the pattern in the $\beta_t$ values, which have a minima near the start of December.
+While this analysis cannot establish causation, several hypotheses can be identified that are worth further investigation.
+The decreases in $\beta_t$ over the autumn could be due to increased caution as cases and deaths increased (\eg masking or stricter adherence to social distancing)\todo{cite something about caution and reaction to rising cases, or survey data showing this happened - CoMix?}, or the impact of local measures in the highest transmission areas\todo{cite local measures}.
+The increases in $\beta_t$ in December coincide with the rise of the Alpha variant~\autoref{lythgoeLineage}, known to be more transmissible~\auocite{daviesEstimated}.
+A multiple variant model might be able to capture this rise more accurately.
+Such a model would stratify positive tests in the CIS by pre-Alpha or Alpha variant.
+Then, each variant would be explicitly included in the model to fit to this data.
+
+These factors, and many others, are likely to be correlated across the country.
+This can explain that similar patterns emerge for $\beta_t$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these not being estimated independently.
+These correlations could be exploited by linking their values across regions.
+This could improve the precision of the estimates, but would require a more complex model.
+
+\todo[inline]{discuss comparisons with the backcalculation}
+
+The current model could be more flexible with regards to the age distribution of infections.
+This would better exploit one of the strengths of the CIS: that there is data on all age groups.
+In some regions, there appears to be a trade-off between the 11--16s and 16--25s, with the model misfitting in opposite directions (see \cref{SEIR:fig:prev-young}).
+This implies that the data would allow identification of a more flexible age-based model.
+Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one inferred parameter that affects the age distribution, $\beta_c$.
+More parameters could capture the age distribution more accurately.
+There are various ways to increase the model's flexibility, including introducing additional susceptibility or infectiousness parameters, or by allowing these parameters to vary over time.
+It is plausible that these distributions changed over time in a way not captured by $\matr{\kappa}$, for example due to the introduction and relaxation of control measures within schools.
+$\matr{\kappa}$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
+Similarly, there is evidence that $q_c$ is different for Alpha and pre-Alpha variants\todo{cite a systematic review}, which could again motivate these changing over time.
 
 The weekly patterns in incidence are another limitation of the current parameterisation.
 The random walk and contact matrices both vary only on the weekly timescale.
@@ -865,22 +901,11 @@ A daily random walk could provide more flexibility here.
 However, this would greatly increase the number of parameters.
 An alternative would be a smoothly-varying function or an approximation of a random walk such as that proposed by \textcite{ghoshApproximate}.
 
-The parameters $\beta_t$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
-These factors are likely to be correlated across the country, giving the similar patterns for different regions (see \cref{SEIR:fig:beta-walk}).
-Exploiting these correlations by linking their values across regions could improve the precision of the estimates.
-This would require a more complex model without the independence of parameters between regions.
-
-Various factors could explain the pattern in the $\beta_t$ values, which have a minima near the start of December.
-Some hypothesis follow, although this analysis is unable to distinguish causality.
-Increased caution as cases and deaths increased could explain the decrease (\eg masking or stricter adherence to social distancing).
-The increase coincides with the rise of the Alpha variant, known to be more transmissible.
-This is a likely cause of the increase.
-A multiple variant model might be able to capture this more accurately.
-This would stratify positive tests in CIS by pre-Alpha or Alpha variant.
-Then, each variant would be explicitly included in the model to fit to this data.
+This discussion makes clear that the results are limited by the number of parameters, currently limited by the inference algorithm.
+The algorithm used here tends to struggle with a large number of parameters.
+Alternative proposal schemes, such as updating the parameters in blocks\todo{cite what RTM does?}, could help, or a more advanced algorithm such as NUTS (used elsewhere in this thesis).
 
 Extending the estimates here to the rest of the pandemic would clearly be of interest.
-However, this requires a more complex model structure.
 I chose the end of the modelling period to coincide with the vaccination rollout.
 Vaccination dramatically affects the transmission dynamics by introducing some additional immunity into the population.
 Mechanistic models require explicit representation of this immunity\todo{cite something about vaccination}.
