@@ -8,72 +8,74 @@
 \chapter{Estimating duration using biomarkers} \label{ATACCC}
 
 \Cref{E-inc-prev} showed that the duration of PCR positivity is a key parameter for estimating the incidence of SARS-CoV-2 infections.
-This chapter estimates the duration of PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
-I model a biomarker, the log viral load, over the course of an infection.
+The aim of this chapter is to estimate the duration of PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
+I model a biomarker, the log viral load, over the course of an infection.\todo{make sure log viral load and Ct values are introduced in chapter 2}
 From this model, I derive the distribution of the duration of PCR positivity.
 
-\Cref{ATACCC:sec:background} explains how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature.
-Next, \cref{ATACCC:sec:hakki} explains \textcite{hakkiOnset}'s application of these methods to the ATACCC data and in Section \cref{ATACCC:sec:observation-modification} the observation model of Hakki is modified  to improve convergence.
-This modification is based on an earlier analysis I did with a slightly different model and a preliminary version of the dataset, described in \cref{ATACCC:sec:original-analysis}.
-I convert the model and parameter estimates of the biomarker to a duration of PCR positivity in \cref{ATACCC:sec:duration}.
+First, I will explain how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature (\cref{ATACCC:sec:background}).
+Next, I describe the model of \textcite{hakkiOnset} in detail, which applies these methods to the ATACCC data (\cref{ATACCC:sec:hakki}) and before I modifying its observation model (\cref{ATACCC:sec:observation-modification})\todo{think if some justification is needed here, and if so how to do it - remember Hakki is a published and peer-reviewed analysis}.
+This modification is based on an earlier analysis using a preliminary version of the dataset, described in \cref{ATACCC:sec:original-analysis}.
+Finally, I convert the model and parameter estimates of the biomarker's trajectory to a duration of PCR positivity (\cref{ATACCC:sec:duration}).
 I will refine this estimate in future chapters before its use in estimating transmission.
 
 \section{Background} \label{ATACCC:sec:background}
 
 Two major approaches have been taken to model SARS-CoV-2 viral load trajectories.
 There are either using ordinary differential equations (ODEs) with a biological interpretation or using mathematical functions that are flexible enough to capture the dynamics.
-Both of these approaches have been used with other viruses and biomarkers.
-
-ODE-based approaches have parameters represent biological properties of the virus and host, such as the immune response ~\autocites[e.g.:][]{ejimaEstimation,keVivo,kimQuantitative,goncalvesTiming,perelsonMechanistic}.
+The ODE-based approach uses parameters representing biological properties of the virus and host~\autocites[e.g.:][]{ejimaEstimation,keVivo,kimQuantitative,goncalvesTiming,perelsonMechanistic}.
 Such models are rarely analytically-tractable and the system's evolution is computed using numeric methods.
-
-The second approach is to approximate the trajectories from these models using general mathematical functions.
-In these models, the function's parameters are clearly related to features of the biomarker's trajectory, such as the time from first detection to peak viral load, and the viral load at the peak.
-Most common is a piecewise model, where the logarithm of viral load increases linearly, peaks instantaneously, and then decreases linearly~\autocites{clearyUsing,kisslerViral,larremoreTest}; although more flexible functions have also been suggested~\autocites{quiltyQuarantine}.
-
-In both approaches, random effects are used to represent variation between hosts within the population, capturing the non-independence of longitudinal data from the same host.
-This chapter uses the model of \textcite{hakkiOnset}.
-This model is approximately piecewise log-linear, however, a slight adjustment is made which means that the model is continuous (see \cref{ATACCC:sec:hakki} for details).
-
-Random effects are used to capture the variation between individuals and the correlation between measurements within the same individual.
-In this context, a random effect means that parameter values are specific to each individual, rather than being a population average.
-The parameter's distribution across the population is assumed to be some known distribution, normally a normal or log-normal distribution~\autocite[chapter 24]{lashModern}.
-Specifically, if $\phi_j$ is the value of some parameter for individual $j$, $\mu_\phi$ is the population mean of $\phi$, and $\sigma_\phi$ is the population standard deviation, then we model $\phi_j$ as: $\phi_j \sim \N(\mu_\phi, \sigma_\phi^2)$ or $\phi_j \sim \LN(\mu_\phi, \sigma_\phi^2)$.
-$\mu_\phi$ and $\sigma_\phi$ are parameters; in a Bayesian setting, a prior is placed on them in the normal way.
-This generalises to a vector of parameters per individual, $\vec{\phi}_j$, in the obvious way.
-In this chapter, $\mu_\phi$ and $\sigma_\phi$ are the parameters of interest, because we want to generalise our model across the population.
-The $\phi_j$s, which tells us about the parameter only for individuals in our sample, are considered nuisance parameters.
-
-Following much of the literature referenced in this section, I will take a Bayesian approach in this chapter.
-In the Bayesian context, random effect models are often referred to as hierarchical or multilevel models because they can be interpreted as placing a prior at two levels of a parameter hierarchy~\autocite[chapter 5]{gelmanBDA}.
-$\phi_j$ would be referred to as the bottom level of the hierarchy, with $\mu$ and $\sigma$ being the top level.
-More complex models could have more levels, for instance if the individuals are grouped into subpopulations.
+% Both of these approaches have been used with other viruses and biomarkers.
+The approach that is the focus of this chapter is using a pieceiwse linear model for the biomaker trajectory and random effects to allow for within-individual correlation.
 
 Piecewise linear, random effect models have a long history of use for longitudinal data in biostatistics~\autocites{slateStatistical}.
 Often, as here, they are used to model the temporal evolution of biomarkers.
 A few example applications are: CD4 counts following HIV infection~\autocites{langeHierarchical,lynchPredicting}, parasite density in blood samples following malaria treatment~\autocites{fogartyBayesian}, and measurements of cognitive decline due to Alzheimer's disease~\autocites{bealisleBayesian}.
 
+In these models, the function's parameters are clearly related to features of the biomarker's trajectory, such as the time from first detection to peak viral load, and the viral load at the peak.
+The piecewise linear model is the most common in the context of SARS-CoV-2 viral load~\autocites{clearyUsing,kisslerViral,larremoreTest}
+Here, the logarithm of viral load increases linearly, peaks instantaneously, and then decreases linearly; more flexible functions have also been suggested~\autocites{quiltyQuarantine}.
+This model for the trajectory I adopt in this chapter, from \textcite{hakkiOnset}, is based on the piecewise log-linear model, however, they approximate the model so that the trajectory is continuous (see \cref{ATACCC:sec:hakki} for details).
+
+Random effects represent the within-individual correlation within the population while borrowing information between individuals~\autocite[chapter 24]{lashModern}.
+Measurements of viral load from the same individual are correlated.
+A random effect means that these measurements share parameter(s), providing correlation.
+However, the random effect(s) for each individual is drawn towards a common mean, allowing information on their value to be shared between individuals.
+Following much of the literature referenced in this section, I will take a Bayesian approach in this chapter.
+In the Bayesian context, random effect models are often referred to as hierarchical or multilevel models because they can be interpreted as placing a prior at two levels of a parameter hierarchy~\autocite[chapter 5]{gelmanBDA}.
+% $\phi_j$ would be referred to as the bottom level of the hierarchy, with $\mu$ and $\sigma$ being the top level.
+% More complex models could have more levels, for instance if the individuals are grouped into subpopulations.
+
+% Random effects are used to capture the variation between individuals and the correlation between measurements within the same individual.
+% In this context, a random effect means that parameter values are specific to each individual, rather than being a population average.
+% The parameter's distribution across the population is assumed to be some known distribution, normally a normal or log-normal distribution~\autocite[chapter 24]{lashModern}.
+% Specifically, if $\phi_j$ is the value of some parameter for individual $j$, $\mu_\phi$ is the population mean of $\phi$, and $\sigma_\phi$ is the population standard deviation, then we model $\phi_j$ as: $\phi_j \sim \N(\mu_\phi, \sigma_\phi^2)$ or $\phi_j \sim \LN(\mu_\phi, \sigma_\phi^2)$.
+% $\mu_\phi$ and $\sigma_\phi$ are parameters; in a Bayesian setting, a prior is placed on them in the normal way.
+% This generalises to a vector of parameters per individual, $\vec{\phi}_j$, in the obvious way.
+% In this chapter, $\mu_\phi$ and $\sigma_\phi$ are the parameters of interest, because we want to generalise our model across the population.
+% The $\phi_j$s, which tells us about the parameter only for individuals in our sample, are considered nuisance parameters.
+
 \section{\texorpdfstring{\textcite{hakkiOnset}}{Hakki \etal (2022)}} \label{ATACCC:sec:hakki}
 
 The model of \textcite{hakkiOnset} has two components: a latent viral load model and an observation model.
-The viral load model produces a deterministic trajectory for the viral load of an individual, based on the model parameters.
-The observation model then describes how the PCR testing process produces noisy observations of this viral load, including the possibility of false positive and negatives, and the limit of detection of the PCR test.
+The viral load model produces a deterministic trajectory for the viral load of an individual, a function of the model parameters.
+The observation model then describes how the PCR testing process produces noisy observations of this viral load.
+The observation model includes the possibility of false positive and negatives, and the limit of detection of the PCR test.
 \todo{Make sure limit of detection is introduced previously when I first talk about PCR}
 % The limit of detection means that viral loads below a certain threshold are not detected by the PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Viral load exhibits exponential growth followed by exponential decline.
-\Textcite{hakkiOnset} use a model which is approximately piecewise linear but continuous.
-A continuous viral load trajectory should give better performance when using gradient-based inference methods such as Hamiltonian Monte Carlo (HMC)\todo{cite paper or ref section}.
-The model for the viral load at time $t$, $\hat{v}_i(t)$, in individual $i$ is shown in \cref{ATACCC:fig:viral-load-model} and given by:
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see\todo{ref wherever I end up describing NUTS}).
+The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
+As NUTS uses gradient information, it is more efficient when the model is differentiable.
+This leads to the following model for the viral load at time $t$, $v_i(t)$, in individual $i$ is shown in \cref{ATACCC:fig:viral-load-model} and given by:
 \begin{align}
 v_i(\tau) = v_{\max,i} \frac{a_i+b_i}{b_ie^{-a_i(\tau-\tau_{\max,i})} + a_ie^{b_i(\tau-\tau_{max,i})}}. \label{ATACCC:eq:viral-load}
 \end{align}
-Time is continuous and relative to the time that individual $i$ was first tested.
+Time, $\tau$, is continuous and defined uniquely for each individual such that $\tau = 0$ at the time that individual $i$ was first tested.
 $v_{\max,i}$ is the maximum viral load, which occurs at time $\tau_{\max,i}$.
 As $\lvert \tau - \tau_{\max} \rvert$ becomes large, the viral load trajectory tends towards exponential growth (before the peak) or decline (after the peak) in viral load at rates $a_i$ and $b_i$ respectively.
-Before the peak, this is because $b(\tau-\tau_{\max,i})$ is small and hence $a\exp(b(\tau-\tau_{\max,i}))$ is negligible.
-After the peak, this is because $b\exp(-a(\tau-\tau_{\max,i}))$ is negligible.
+% Before the peak, this is because $b(\tau-\tau_{\max,i})$ is small and hence $a\exp(b(\tau-\tau_{\max,i}))$ is negligible.
+% After the peak, this is because $b\exp(-a(\tau-\tau_{\max,i}))$ is negligible.
 This happens quickly for realistic values of the parameters.
 Therefore, the log viral load is approximately piecewise linear (see \cref{ATACCC:fig:viral-load-model} for a representative viral load trajectory).
 $\vec{\phi}_i = (v_{\max,i}, a_i, b_i)^T$ are the random effects for individual $i$.
@@ -89,7 +91,8 @@ Ct values are linearly related to viral load (see\todo{ref intro section}).
 A negative PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
 Positive PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 
-The noisy observations are modelled by assuming each measurement of log viral load is a realisation of a iid Normally-distributed random variable error with mean 0 and standard deviation $\sigma_v$.
+The noisy observations are modelled by assuming each measurement of log viral load is a realisation of an iid Normally-distributed random variable error with mean 0 and standard deviation $\sigma_v$.
+\todo{Paul/Dani: is this phrasing "a realisation of [a] random variable" OK?}
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
 Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$ where $x_0$ and $\sigma_0^2$ are parameters to be estimated.
@@ -101,8 +104,8 @@ Let the observed log viral load for individual $i$ at time $t$ be $y_{i,t}$, wit
 Then, its likelihood is:
 \begin{align}
 p(y_{i,t} \mid \cdot) &= \begin{cases}
-    \rho f_N(y_{i,t} \mid x_0, \sigma_0^2) + (1 - \rho) f_N(y_{i,t} \mid \log \hat{v}_i(t), \sigma_v^2) & \text{if $y_{i,t} > 0$}\\
-    \rho F_N(v_\text{lod} \mid x_0, \sigma_0^2) + (1 - \rho) F_N(\vlod \mid \log \hat{v}_i(t), \sigma_v^2) & \text{if $y_{i,t} = 0$} \label{ATACCC:eq:hakki-likelihood}
+    \rho f_N(y_{i,t} \mid x_0, \sigma_0^2) + (1 - \rho) f_N(y_{i,t} \mid \log v_i(t), \sigma_v^2) & \text{if $y_{i,t} > v_\text{lod}$}\\
+    \rho F_N(v_\text{lod} \mid x_0, \sigma_0^2) + (1 - \rho) F_N(\vlod \mid \log v_i(t), \sigma_v^2) & \text{if $y_{i,t} = v_\text{lod}$} \label{ATACCC:eq:hakki-likelihood}
 \end{cases}
 \end{align}
 where $f_N(y \mid \mu, \sigma^2)$ and $F_N(y \mid \mu, \sigma^2)$ are the pdf and cdf at $y$ of a Normal distribution with mean $\mu$ and variance $\sigma^2$ respectively.
@@ -110,8 +113,8 @@ The first term on each line is the likelihood contribution from test failures, e
 The second term on the first line is the likelihood of the observed log viral load from non-failed test results.
 The second term on the bottom line is the likelihood of the negative (censored) tests from non-failed test results.
 
-Conditional on all $\hat{v}_i$s, the observations are assumed independent.
-Because $\hat{v}_i$ is a deterministic transform of $\vec{\phi}_i$ and $\tau_i$, the observations are independent conditional on the model parameters, and the full likelihood is simply the product of the likelihoods of each observation.
+Conditional on all $v_i$s, the observations are assumed independent.
+Because $v_i$ is a deterministic transform of $\vec{\phi}_i$ and $\tau_i$, the observations are independent conditional on the model parameters, and the full likelihood is simply the product of the likelihoods of each observation.
 
 Individuals are split into groups based on their vaccination status.
 The first group is unvaccinated and infected with a variety of pre-Alpha, Alpha, and Delta variants.
@@ -131,14 +134,14 @@ This can be expressed as follows.
   \log \vec{\phi}_i &= \vec{\mu}_\phi + \vec{\sigma}_\phi \circ \vec{\eta}_i
 \end{align}
 where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the parameters, $\matr{C}_\phi$ is a correlation matrix, and $\circ$ is element-wise multiplication.
-Combining $\matr{C}$ and $\vec{\sigma}_\phi$ allows recovering $\matr\Sigma_\phi$ because $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
+These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
 Correlation matrices have diagonal elements all 1, therefore this reparameterisation has the same number of parameters as the original model.
 
 \textcite{hakkiOnset} uses weakly informative priors, similar to those previously used~\autocite{singanayagamCommunity}.
 These are given in \cref{ATACCC:table:hakki-priors}.
 I reran \textcite{hakkiOnset}'s analysis using R~4.3.1~\autocite{R-4-3-1}.
 The inference was performed using RStan~2.32.3~\autocite{RStan-2-32-3} and Stan~2.32.2~\autocite{Stan-2-32-2}.
-Inference settings were the same as \textcite{hakkiOnset}.
+Inference settings were the same as \textcite{hakkiOnset}, which included 8 chains with a total of 8000 iterations each with the first 3000 used as warm-up.
 \begin{table}
 \begin{tabular}{l c l l}
     Parameter description & Symbol & Distribution \\
@@ -164,32 +167,33 @@ Inference settings were the same as \textcite{hakkiOnset}.
 The model of \textcite{hakkiOnset} did not converge fully (see \cref{ATACCC:sec:results}).
 In particular, the Rhat values, traceplots, and effective sample size for the parameters of the observation model were poor.
 
-Based on my previous analysis (see \cref{ATACCC:sec:original-analysis}) and the fit to the data, I hypothesised that the cause of this was overcomplicating the model for test failures.
-Specifically, false positives do not appear to be present in the dataset.
+Based on the fit to the data achieved when implementing an earlier version of the model (see \cref{ATACCC:sec:original-analysis}), I hypothesised that the cause of this was overcomplicating the model for test failures.
+Specifically, false positives are not needed to be explain the observations (the results in \cref{fig:paper:duration,ATACCC:fig:goodness-of-fits} do not allow false negatives but fit the data well).
+\todo{this sentence is a bit clumsy...}
 Therefore, the model for test failures can be simplified to simply have a constant probability of a false negative.
 % These false negatives could represent a variety of scenarios, such as poor swabbing technique.
 Formally, the model can be expressed by replacing \cref{ATACCC:eq:hakki-likelihood} with the following.
 \begin{align}
 p(y_{i,t} \mid \cdot) &= \begin{cases}
-    (1 - \rho) f_N(y_{i,t} \mid \log \hat{v}_i(t), \sigma_v^2) & \text{if $y_{i,t} > 0$}\\
-    \rho + (1 - \rho) F_N(\vlod \mid \log \hat{v}_i(t), \sigma_v^2) & \text{if $y_{i,t} = 0$.}
+    (1 - \rho) f_N(y_{i,t} \mid \log v_i(t), \sigma_v^2) & \text{if $y_{i,t} > v_\text{lod}$}\\
+    \rho + (1 - \rho) F_N(\vlod \mid \log v_i(t), \sigma_v^2) & \text{if $y_{i,t} = v_\text{lod}$.}
 \end{cases}
 \end{align}
 
 The parameters $x_0$ and $\sigma_0$ are no longer used in the model.
-For all other parameters, I kept the priors the same as \textcite{hakkiOnset}, including the prior on $\rho$, and performed inference with the same settings.
+For all other parameters, I kept the priors the same as \textcite{hakkiOnset}, including the prior on $\rho$, and performed inference with the same settings (see end of \cref{ATACCC:sec:hakki}).
 
 
 \section{Deriving duration from the parameters} \label{ATACCC:sec:duration}
 The ultimate aim of this chapter is to produce an estimate of the distribution for the duration of PCR positivity.
 So far, only the viral load trajectories have been considered.
-The time that individual $i$ are first and last positive are the two values of $\tau$ such that $\log \hat{v}_i(\tau) = 0$.
+The time that individual $i$ are first and last positive are the two values of $\tau$ such that $\log v_i(\tau) = v_\text{lod}$.
 Denote these times as $\tau_{0,i}$ and $\tau_{1,i}$.
 Hence, their duration of PCR positivity, in continuous time, is $d_i = \tau_{1,i} - \tau_{0,i}$.
 
 At $\tau_{0,i}$ and $\tau_{1,i}$, the approximation as exponential growth (described in \cref{ATACCC:sec:hakki}) is good.
-Therefore, set $\log \hat{v}(\tau)$ and one of the exponential terms to 0 in \cref{ATACCC:eq:viral-load}.
-This gives the following expressions:
+Therefore, set $\log v(\tau)$ and one of the exponential terms to 0 in \cref{ATACCC:eq:viral-load}.
+When $v_\text{lod} = 0$, as it does here, this gives the following expressions:
 $$
 \begin{aligned}
 \tau_{0,i}
@@ -201,8 +205,9 @@ d_i
 &= \frac{1}{a_i b_i} \left( (a_i + b_i) (\log v_{\max,i} + \log(a_i + b_i)) - a_i \log a_i - b_i \log b_i \right).
 \end{aligned}
 $$
-Note that $d_i$ does not depend on $\tau_{\max,i}$, only the random effects.
+Note that $d_i$ does not depend on $\tau_{\max,i}$, only $\phi_i$.
 
+\todo[inline]{insert a better explanation of $F_D$'s posterior}
 For later use, a discretised version is preferred (as described in \cref{E-inc-prev}).
 To calculate the discrete version of this distribution, $F_D$, a Monte Carlo integration is used with the following relation.
 \begin{align}
@@ -217,33 +222,34 @@ I found 100,000 draws produced stable estimates of the tail of $F_D$.
 
 \section{Results} \label{ATACCC:sec:results-discussion}
 
-The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution.
-These issues do not occur in the modified model introduced in \cref{ATACCC:sec:observation-modification}, although both model have convergence issues (Rhat > 1.4 and ESS < 20) for some individual-level parameters; with the simplified model this is only individual 55.
-
-Individual 55 has an extremely noisy set of observations.
-This means that two viral load trajectories fit the data well (shown in \cref{ATACCC:fig:individual-55}).
-The first, found by two chains, increases very quickly, peaks 4.0 days after the first test, then declines slowly.
-The second, found by the other six chains, is more symmetrical, peaking 7.2 days after the first test.
-Because the individual trajectories are not of interest for this analysis, and the population-level parameters agree between the two sets of chains, I consider this lack of convergence acceptable.
-\begin{figure}
-  \centering \includegraphics{ATACCC/fit_individual_55}
-  \caption[Goodness-of-fit for individual 55]{Fit to individual 55's data coloured by MCMC chain. Two chains favour the quickly increasing viral load trajectory, peaking at day 4.0, the other six favour the slower trajectory, peaking at day 7.2. \label{ATACCC:fig:individual-55}}
-\end{figure}
-
+The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
+The simplified model I proposed in \cref{ATACCC:sec:observation-modification} solved this issue, meaning that this analysis converged.
 
 The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits}).
 Almost all test results are captured in the 95\% credible intervals.
-Individual 55 has some fitting issues, as explored above.
+Individual 55 has some fitting issues, explored further below.
 Individual 57 appears to have far noisier measurements than the other individuals, suggesting that the observation noise might vary between individuals.
 Including a random effect on $\sigma_v$ could capture this affect.
 However, it would complicate the model, be unlikely to change the estimates of the parameters of interest, and may not be identifiable.
-
 \begin{figure}
   \thisfloatpagestyle{empty}
   \vspace{-3cm}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{ATACCC/fits}}
   \captionsetup{width=0.8\paperwidth}
   \captionof{figure}[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for each individual, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value. \label{ATACCC:fig:goodness-of-fits}}
+\end{figure}
+
+While the population-level parameters converged in the modified model, both model had convergence issues (Rhat > 1.4 and ESS < 20) for some individual-level parameters.
+However, this was greatly improved with the simplified model, limited to a single individual, number 55.
+Individual 55 has an extremely noisy set of observations.
+This means that two viral load trajectories fit the data well (shown in \cref{ATACCC:fig:individual-55}).
+The first, found by two chains, increases very quickly, peaks 4.0 days after the first test, then declines slowly.
+The second, found by the other six chains, is more symmetrical, peaking 7.2 days after the first test.
+The individual trajectories are not of interest for this analysis, and the population-level parameters agree between the two sets of chains, therefore this should not affect any estiamtes of interest.
+\todo{clunky phrasing...}
+\begin{figure}
+  \centering \includegraphics{ATACCC/fit_individual_55}
+  \caption[Goodness-of-fit for individual 55]{Fit to individual 55's data coloured by MCMC chain. Two chains favour the quickly increasing viral load trajectory, peaking at day 4.0, the other six favour the slower trajectory, peaking at day 7.2. \label{ATACCC:fig:individual-55}}
 \end{figure}
 
 The two models give very similar estimates for the population-level parameters (see \cref{ATACCC:fig:compare-hakki-modified}).
