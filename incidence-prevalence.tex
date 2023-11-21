@@ -55,16 +55,16 @@ I define this period as an \emph{infection episode}, beginning on day $B_i$ and 
 $D_i = E_i - B_i + 1$ is their \emph{duration of positivity}, the number of days for which they are prevalent.
 I model the $D_i$s as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
-The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{k=1}^d f_{D}(k)$.
-The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$ (a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
+The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_work out where to present full model equations and then edit/rearrange this section to reflect this{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
+The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
+%(a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
 The \emph{hazard} on day $d$ is the probability of recovering on day $d$ conditional on still being positive on day $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
 Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be expressed in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
 
-Since $D_i$ is a discrete random variable, $f_D(d) \geq 0$ for all $d$ and $\sum_{k=1}^{\dmax} f_D(k) = 1$.
-This implies that $F_D(d)$ is monotonically increasing.
-Therefore, $S(d)$ is monotonically decreasing.
-Both $F_D$ and $S$ are in the interval $[0, 1]$.
-$\lambda(d)$ is in the interval $[0, 1]$, and can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
+Since $D_i$ is a discrete random variable, $0 \leq f_D(d) \leq 1$ for all $d$ and $\sum_{k=1}^{\dmax} f_D(k) = 1$.
+This implies that $F_D(d) \in [0, 1]$ and increases monotonically.
+Therefore, $S(d) \in [0, 1]$ and decreases monotonically.
+Similarly, $\lambda(d) \in [0,1]$, but can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
 The infection process is the mathematical description of how infections occur.
@@ -78,8 +78,8 @@ In the context of a disease, the point process can be discretised into the incid
 A counting process has \emph{independent increments} if the number of events in disjoint intervals are independent conditional on the intensity~\autocite[244]{yanDistribution}.
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
 
-A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
-A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the epidemic process at time $r$~\autocites[244]{yanDistribution}.
+A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites[e.g., in the context of HIV:][]{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
+A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the infection process at time $r$~\autocites[244]{yanDistribution}.
 A time-homogenous Poisson process is the special case where $\nu(r)$ is constant.
 The independent increment property says that, conditional on $\nu(r)$, the number of infections in disjoint intervals are independent.
 This implies $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
