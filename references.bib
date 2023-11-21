@@ -357,6 +357,23 @@
   file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Cevik et al_2020_SARS-CoV-2, SARS-CoV, and MERS-CoV viral load dynamics, duration of viral.pdf;C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Cevik et al_2020_SARS-CoV-2, SARS-CoV, and MERS-CoV viral load dynamics, duration of viral2.pdf}
 }
 
+@article{chenRole,
+  title = {The Role of Children in Household Transmission of {{COVID-19}}: A Systematic Review and Meta-Analysis},
+  shorttitle = {The Role of Children in Household Transmission of {{COVID-19}}},
+  author = {Chen, Feifan and Tian, Yan and Zhang, Lixin and Shi, Yuan},
+  date = {2022-05-11},
+  journaltitle = {International Journal of Infectious Diseases},
+  shortjournal = {International Journal of Infectious Diseases},
+  issn = {1201-9712},
+  doi = {10.1016/j.ijid.2022.05.016},
+  url = {https://www.sciencedirect.com/science/article/pii/S1201971222002831},
+  urldate = {2022-05-20},
+  abstract = {Background Household is potentially the highest-risk exposure setting of SARS-COV-2 transmission, in which the role of children has remained controversial. Methods Through retrieval in PubMed and EMBASE, studies were included in two parts: meta-analysis of the household secondary attack rate (SAR) and case analysis of household pediatric infections. Results A total of 95 articles were included: 48 for meta-analysis and 47 for case analysis. Pediatric COVID-19 only comprised a minority of the household transmission. The total pooled household SAR of child index cases and contacts were 0.20 (95\% CI: 0.15-0.26) and 0.24 (95\% CI: 0.18-0.30). Lower household transmissibility was reported in both child index cases and contacts compared to adults (RR\,=\,0.64, 95\% CI: 0.50-0.81; RR=0.74, 95\% CI: 0.64-0.85). Younger children were as susceptible as the older children (RR=0.89, 95\% CI: 0.72-1.10). Through subgroup analyses of different variants and periods, increased household SAR was observed in children (Wild: 0.20; Alpha: 0.42; Delta: 0.35; Omicron: 0.56) and no significant difference was found in household SAR between children and adults when new variants dominated. Conclusions Although children were demonstrated not to be dominant in the household transmission, their transmissibility of SARS-CoV-2 appeared on the rise as new variants emerge.},
+  langid = {english},
+  keywords = {Child,COVID-19,Household transmission,SARS-CoV-2},
+  file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Chen et al_2022_The role of children in household transmission of COVID-19.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\XLZJHWLR\\S1201971222002831.html}
+}
+
 @online{cisMethodsONS,
   title = {Coronavirus ({{COVID-19}}) {{Infection Survey}}: Methods and Further Information},
   author = {{Office for National Statistics}},
@@ -921,6 +938,26 @@
   abstract = {Hamiltonian Monte Carlo (HMC) is a Markov chain Monte Carlo (MCMC) algorithm that avoids the random walk behavior and sensitivity to correlated parameters that plague many MCMC methods by taking a series of steps informed by first-order gradient information. These features allow it to converge to high-dimensional target distributions much more quickly than simpler methods such as random walk Metropolis or Gibbs sampling. However, HMC's performance is highly sensitive to two user-specified parameters: a step size ε and a desired number of steps L. In particular, if L is too small then the algorithm exhibits undesirable random walk behavior, while if L is too large the algorithm wastes computation. We introduce the No-U-Turn Sampler (NUTS), an extension to HMC that eliminates the need to set a number of steps L. NUTS uses a recursive algorithm to build a set of likely candidate points that spans a wide swath of the target distribution, stopping automatically when it starts to double back and retrace its steps. Empirically, NUTS performs at least as efficiently as (and sometimes more effciently than) a well tuned standard HMC method, without requiring user intervention or costly tuning runs. We also derive a method for adapting the step size parameter ε on the fly based on primal-dual averaging. NUTS can thus be used with no hand-tuning at all, making it suitable for applications such as BUGS-style automatic inference engines that require efficient "turnkey" samplers.},
   keywords = {adaptive Monte Carlo,Bayesian inference,dual averaging,Hamiltonian Monte Carlo,Markov chain Monte Carlo},
   file = {C:\Users\Joshua\Documents\paper_pdfs\Homan_Gelman_2014_The No-U-turn sampler.pdf}
+}
+
+@article{houseInferring,
+  ids = {houseInferringa},
+  title = {Inferring Risks of Coronavirus Transmission from Community Household Data},
+  author = {House, Thomas and Riley, Heather and Pellis, Lorenzo and Pouwels, Koen B and Bacon, Sebastian and Eidukas, Arturas and Jahanshahi, Kaveh and Eggo, Rosalind M and Sarah Walker, A.},
+  date = {2022-09-01},
+  journaltitle = {Statistical Methods in Medical Research},
+  shortjournal = {Stat Methods Med Res},
+  volume = {31},
+  number = {9},
+  pages = {1738--1756},
+  publisher = {{SAGE Publications Ltd STM}},
+  issn = {0962-2802},
+  doi = {10.1177/09622802211055853},
+  url = {https://doi.org/10.1177/09622802211055853},
+  urldate = {2022-11-15},
+  abstract = {The response of many governments to the COVID-19 pandemic has involved measures to control within- and between-household transmission, providing motivation to improve understanding of the absolute and relative risks in these contexts. Here, we perform exploratory, residual-based, and transmission-dynamic household analysis of the Office for National Statistics COVID-19 Infection Survey data from 26 April 2020 to 15 July 2021 in England. This provides evidence for: (i) temporally varying rates of introduction of infection into households broadly following the trajectory of the overall epidemic and vaccination programme; (ii) susceptible-Infectious transmission probabilities of within-household transmission in the 15?35\% range; (iii) the emergence of the Alpha and Delta variants, with the former being around 50\% more infectious than wildtype and 35\% less infectious than Delta within households; (iv) significantly (in the range of 25?300\%) more risk of bringing infection into the household for workers in patient-facing roles pre-vaccine; (v) increased risk for secondary school-age children of bringing the infection into the household when schools are open; (vi) increased risk for primary school-age children of bringing the infection into the household when schools were open since the emergence of new variants.},
+  langid = {english},
+  file = {C:\Users\Joshua\Documents\paper_pdfs\House et al_2022_Inferring risks of coronavirus transmission from community household data.pdf}
 }
 
 @book{ibrahimBayesian,
@@ -2201,6 +2238,37 @@
   abstract = {Markov chain Monte Carlo is a key computational tool in Bayesian statistics, but it can be challenging to monitor the convergence of an iterative stochastic algorithm. In this paper we show that the convergence diagnostic Rˆ of Gelman and Rubin (1992) has serious flaws. Traditional Rˆ will fail to correctly diagnose convergence failures when the chain has a heavy tail or when the variance varies across the chains. In this paper we propose an alternative rank-based diagnostic that fixes these problems. We also introduce a collection of quantile-based local efficiency measures, along with a practical approach for computing Monte Carlo error estimates for quantiles. We suggest that common trace plots should be replaced with rank plots from multiple chains. Finally, we give recommendations for how these methods should be used in practice.},
   keywords = {archived},
   file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Vehtari et al_2021_Rank-normalization, folding, and localization.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\X6LBQR5C\\20-BA1221.html}
+}
+
+@article{vinerTransmission,
+  title = {Transmission of {{SARS-CoV-2}} by Children and Young People in Households and Schools: A Meta-Analysis of Population-Based and Contact-Tracing Studies},
+  shorttitle = {Transmission of {{SARS-CoV-2}} by Children and Young People in Households and Schools},
+  author = {Viner, Russell and Waddington, Claire and Mytton, Oliver and Booy, Robert and Cruz, Joana and Ward, Joseph and Ladhani, Shamez and Panovska-Griffiths, Jasmina and Bonell, Chris and Melendez-Torres, G. J.},
+  date = {2022-03-01},
+  journaltitle = {Journal of Infection},
+  shortjournal = {Journal of Infection},
+  volume = {84},
+  number = {3},
+  pages = {361--382},
+  issn = {0163-4453},
+  doi = {10.1016/j.jinf.2021.12.026},
+  url = {https://www.sciencedirect.com/science/article/pii/S0163445321006332},
+  urldate = {2022-05-20},
+  abstract = {Background The role of children and young people (CYP) in transmission of SARS-CoV-2 in household and educational settings remains unclear. We undertook a systematic review and meta-analysis of contact-tracing and population-based studies at low risk of bias. Methods We searched 4 electronic databases on 28 July 2021 for contact-tracing studies and population-based studies informative about transmission of SARS-CoV-2 from 0 to 19 year olds in household or educational settings. We excluded studies at high risk of bias, including from under-ascertainment of asymptomatic infections. We undertook multilevel random effects meta-analyses of secondary attack rates (SAR: contact-tracing studies) and school infection prevalence, and used meta-regression to examine the impact of community SARS-CoV-2 incidence on school infection prevalence. Findings 4529 abstracts were reviewed, resulting in 37 included studies (16 contact-tracing; 19 population studies; 2 mixed studies). The pooled relative transmissibility of CYP compared with adults was 0.92 (0.68, 1.26) in adjusted household studies. The pooled SAR from CYP was lower (p~=~0.002) in school studies 0.7\% (0.2, 2.7) than household studies (7.6\% (3.6, 15.9) . There was no difference in SAR from CYP to child or adult contacts. School population studies showed some evidence of clustering in classes within schools. School infection prevalence was associated with contemporary community 14-day incidence (OR 1.003 (1.001, 1.004), p{$<$}0.001). Interpretation We found no difference in transmission of SARS-CoV-2 from CYP compared with adults within household settings. SAR were markedly lower in school compared with household settings, suggesting that household transmission is more important than school transmission in this pandemic. School infection prevalence was associated with community infection incidence, supporting hypotheses that school infections broadly reflect community infections. These findings are important for guiding policy decisions on shielding, vaccination school and operations during the pandemic.},
+  langid = {english},
+  file = {C:\Users\Joshua\Documents\paper_pdfs\Viner et al_2022_Transmission of SARS-CoV-2 by children and young people in households and.pdf}
+}
+
+@article{walkerTracking,
+  title = {Tracking the Emergence of {{SARS-CoV-2 Alpha}} Variant in the {{United Kingdom}}},
+  author = {Walker, A. Sarah and Vihta, Karina-Doris and Gethings, Owen and Pritchard, Emma and Jones, Joel and House, Thomas and Bell, Iain and Bell, John I. and Newton, John N. and Farrar, Jeremy},
+  date = {2021},
+  journaltitle = {New England Journal of Medicine},
+  volume = {385},
+  number = {27},
+  pages = {2582--2585},
+  publisher = {{Mass Medical Soc}},
+  doi = {10.1056/NEJMc2103227}
 }
 
 @article{wearingAppropriate,

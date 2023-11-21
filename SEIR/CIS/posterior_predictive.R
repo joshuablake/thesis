@@ -156,12 +156,19 @@ p_peak = peak_days |>
     filter(p_peak > 0.02) |>
     ggplot(aes(peak_incidence, p_peak, colour = age)) +
     geom_point() +
-    facet_wrap(~region, ncol = 2) 
+    facet_wrap(~region, nrow = 2) +
+    standard_plot_theming() +
+    theme(legend.position = "bottom") +
+    labs(
+        x = "Day",
+        y = "Posterior probability",
+        colour = "Age group"
+    )
 ggsave(
     filename = here::here("SEIR/CIS/p_peak.png"),
     plot = p_peak,
-    width = 10,
-    height = 20,
+    width = 15,
+    height = 10,
     units = "cm",
     dpi = 300
 )
