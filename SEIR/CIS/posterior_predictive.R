@@ -8,6 +8,7 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
+# Read posterior predictives
 predictions = readr::read_csv(here::here("SEIR/CIS/predictive.csv")) |>
     mutate(
         .chain = factor(chain + 1),
@@ -17,6 +18,7 @@ predictions = readr::read_csv(here::here("SEIR/CIS/predictive.csv")) |>
     ) |>
     select(!c(chain, iteration))
 
+# Read data
 data = readr::read_csv(here::here("SEIR/CIS/data.csv")) |>
     mutate(
         obs_prevalence = obs_positives / num_tests,
@@ -29,11 +31,12 @@ data = readr::read_csv(here::here("SEIR/CIS/data.csv")) |>
         day <= max(predictions$day),
     )
 
+# Calculate posterior predictive intervals
 prediction_intervals = predictions |>
     group_by(region, day, age) |>
     median_qi()
 
-# get theta parameter values
+# Get theta posterior
 thetas = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
     filter(parameter == "theta") |>
     transmute(
@@ -43,6 +46,7 @@ thetas = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
         theta = exp(value)
     )
 
+# Generate posterior predictives including sampling noise
 noisy_predict = predictions |>
     left_join(data, by = join_by(region, day, age)) |>
     left_join(thetas, by = join_by(region, .chain, .iteration)) |>
@@ -55,6 +59,7 @@ noisy_predict = predictions |>
         )
     )
 
+# Aggregate to weekly predictions because daily are too noisy to interpret
 weekly_predictions = noisy_predict |>
     group_by(
         region, .draw, age,
@@ -101,11 +106,13 @@ create_prev_plot = function(age_groups, label) {
     )
 }
 
+# Generate goodness-of-fit plots, separately for age groups due to size
 young_ages = unique(weekly_predictions$age)[1:3]
 old_ages = unique(weekly_predictions$age)[4:6]
 create_prev_plot(young_ages, "young")
 create_prev_plot(old_ages, "old")
 
+# Generate posterior incidence plots
 p_incidence = prediction_intervals |>
     ggplot() +
     geom_ribbon(
@@ -135,11 +142,13 @@ ggsave(
     dpi = 300
 )
 
+# Calculate when incidence peaks for each posterior sample (by age and region)
 peak_days = predictions |>
     group_by(region, age, .draw) |>
     summarise(peak_incidence= as.integer(day[which.max(incidence)])) |>
     ungroup()
 
+# Transform into a daily probability that incidence is at its peak
 p_peak = peak_days |>
     count(region, age, peak_incidence) |>
     mutate(tot = sum(n), .by = c(region, age)) |>
@@ -148,15 +157,24 @@ p_peak = peak_days |>
     ggplot(aes(peak_incidence, p_peak, colour = age)) +
     geom_point() +
     facet_wrap(~region, ncol = 2) 
+ggsave(
+    filename = here::here("SEIR/CIS/p_peak.png"),
+    plot = p_peak,
+    width = 10,
+    height = 20,
+    units = "cm",
+    dpi = 300
+)
     
-# peak_days |>
-#     group_by(region, age) |>
-#     median_qi(peak_incidence, .simple_names = FALSE) |>
-#     ungroup() |>
-#     mutate(
-#         across(contains("peak_incidence"), as_date),
-#         text = paste(peak_incidence, "(", peak_incidence.lower, ",", peak_incidence.upper, ")"),
-#     ) |>
-#     select(region, age, text) |>
-#     pivot_wider(names_from = age, values_from = text) |>
-#     readr::write_csv("SEIR/CIS/peak_incidence.csv")
+# Output peak incidence dates as a CSV for humans
+peak_days |>
+    group_by(region, age) |>
+    median_qi(peak_incidence, .simple_names = FALSE) |>
+    ungroup() |>
+    mutate(
+        across(contains("peak_incidence"), as_date),
+        text = paste(peak_incidence, "(", peak_incidence.lower, ",", peak_incidence.upper, ")"),
+    ) |>
+    select(region, age, text) |>
+    pivot_wider(names_from = age, values_from = text) |>
+    readr::write_csv("SEIR/CIS/peak_incidence.csv")
