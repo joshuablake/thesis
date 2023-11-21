@@ -54,19 +54,19 @@ I define this period as an \emph{infection episode}, beginning on day $B_i$ and 
 $D_i = E_i - B_i + 1$ is their \emph{duration of positivity}, the number of days for which they are prevalent.
 I model each $D_i$ as a discrete independent and identically distributed (iid) random variable; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
-The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
+The first way of expressing the distribution of $D_i$ is as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{k=1}^d f_{D}(k)$.
 The \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$ (a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
-The \emph{hazard} on day $d$ is the probability of recovering at time $d$ conditional on having survived to time $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
+The \emph{hazard} on day $d$ is the probability of recovering at time $d$ conditional on still being positive on day $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
 Throughout this thesis, the survival function will be the primary quantity of interest, and it will normally be parameterised in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
 
-Since $D_i$ is a discrete random variable, $f_D(d) \geq 0$ for all $d$ and $\sum_{i=1}^{\dmax} f_D(i) = 1$.
+Since $D_i$ is a discrete random variable, $f_D(d) \geq 0$ for all $d$ and $\sum_{k=1}^{\dmax} f_D(k) = 1$.
 This implies that $F_D(d)$ is monotonically increasing.
 Therefore, $S(d)$ is monotonically decreasing.
 Both $F_D$ and $S$ are in the interval $[0, 1]$.
 $\lambda(d)$ is in the interval $[0, 1]$, and can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
-The infection process is the mathematical description of incidence.
+The infection process is the mathematical description of how infections occur.
 It is a \emph{point} or \emph{counting} process, where each infection is an event.
 
 A point process is a random function of continuous time $K(t)$.
@@ -118,7 +118,7 @@ The reasons infectious diseases generate feedback loops is because stochasticall
 This can be seen most obviously in the event of a super-spreading event.
 If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
 These additional infections will propagate the epidemic further, increasing the intensity at future times.
-Point processes can be extended to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
+Point processes can be generalised to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
 
 Both overdispersion and feedback loops violate the properties of a Poisson process.
 Despite these issues, consistent inference on the incidence can still be produced using the Poisson process model, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.
