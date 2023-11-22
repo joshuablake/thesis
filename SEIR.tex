@@ -284,7 +284,6 @@ The reproduction number in terms of the parameters is unchanged by this extensio
 
 \subsection{Structured populations} \label{SEIR:sec:structured-populations}
 
-\todo[inline]{add structured pop refs}
 To relax the assumption of a homogeneous population, the population can be stratified.
 If the strata have differing transmission patterns, this can change the dynamics of the epidemic.
 The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors (\eg genetics reducing the susceptibility of some individuals~\autocite[208]{andersonInfectious}).
@@ -311,14 +310,14 @@ Assume any such individual comes into contact with individuals in strata $a$ at 
 Following the same argument as in \cref{SEIR:sec:SIR} finds that, in expectation, the infected individual makes contact with susceptible individuals in stratum $a$ at a rate of $\kappa_{aa'} s_a(t)$.
 Assume that there is a constant probability of transmission upon contact between an infected in strata $a'$ and susceptible in strata $a$ individual, $q_{aa'}$.
 Therefore, the expected rate of infections in strata $a$ caused by this infected individual is $\kappa_{aa'} s_a(t) q_{aa'}$.
-Multiplying by the number of infected individuals in strata $a'$, $N_{a'} i_{a'}(t)$, gives $\kappa_{aa'} q_{aa'} s_a(t) N_{a'} i_{a'}(t)$.
-The constant terms here are absorbed into the WAIFW matrix, giving $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite{section 9.2}{diekmannMathematical}.
+Multiplying by the number of infected individuals in strata $a'$, $N_{a'} i_{a'}(t)$, gives $\kappa_{aa'} q_{aa'} s_a(t) N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
+The constant terms here are absorbed into the WAIFW matrix, giving $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
 The total force of infection on strata $a$ from all strata is, therefore, $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$.
 Equivalently, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
 If all $\beta_{aa'}$ are equal, then the model is equivalent to the homogeneous model (\ie without any structure).
 The rate that individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
 
-In practical situations, estimating all of the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
+In practical situations, estimating all the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
 It is infeasible because the progression of the epidemic depends on $\vec{\lambda}(t)$, which has dimension $A$, while $\matr{\beta}$ has dimension $A^2$.
 Common assumptions include assuming symmetry, \ie $\beta_{aa'} = \beta_{a'a}$, or that the direction of transmission is irrelevant, \ie $\beta_{aa'} = \beta_{a} \beta_{a'}$.
 % Alternatively, as in the scalar case, it may be easier to iden $\beta_{aa'}$ can be decomposed into the contact rate between strata $a$ and $a'$, $\kappa_{aa'}$ and the probability of transmission upon contact, $q_{aa'}$, and then assumptions made about the components.
@@ -469,7 +468,7 @@ If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out o
     \label{SEIR:eq:likelihood}
 \end{align}
 where $\bar{p}_{kat} = \int_{t}^{t+1} p_{ka}(s) ds$ is the mean occupancy in compartment $p_k$ and strata $a$ over day $t$ and $\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
-In this parameterisation (see \cref{E-distributions}) at $\rho=0$ the beta-binomial coincides with the binomial distribution and as $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$.
+In this parameterisation (detailed in \cref{E-distributions}) at $\rho=0$ the beta-binomial coincides with the binomial distribution and as $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
 \section{Inference and implementation} \label{SEIR:sec:inference-implementation}
 
@@ -786,7 +785,7 @@ In these cases, I restarted the chain with a new seed, discarding all informatio
 
 \section{Application to CIS data} \label{SEIR:sec:application}
 
-\todo[inline]{sort region names in plots}
+\todo[inline]{format region names in plots}
 
 Overall the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
 There are a few features of the data which are not captured by the model.
@@ -833,11 +832,9 @@ When the peak in incidence is estimated to occur varied by region, but due to th
 \begin{figure}
     \includegraphics{SEIR/CIS/p_peak}
     \caption[Posterior estimates of peak incidence timing]{%
-        Posterior estimates (95\% CrI) of incidence by region and age.
-        See main text for discussion.
+        Posterior probability of the peak incidence for each region and age combination occurring on each day.
     }
-    \label{SEIR:fig:incidence}
-    \todo[inline]{write peak incidence caption}
+    \label{SEIR:fig:peak-incidence}
 \end{figure}
 
 
