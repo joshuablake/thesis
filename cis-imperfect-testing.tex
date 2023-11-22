@@ -33,7 +33,7 @@ In particular, I estimate a very high probability of the episode lasting less th
 
 Comparing the simulated and CIS data suggested that this is due to the high frequency of single positive episodes in the CIS data.
 A single positive episode is one in which the episode contains exactly one positive test, intuitively these cause short estimates because there is no lower bound on the length of time the episode lasts.
-Furthermore, due to the truncation, there is little or no ability to upper bound the number of very short episodes because these would almost all be missed.
+Furthermore, due to missing short episodes, there is little or no ability to upper bound the number of very short episodes because these would almost all be missed.
 \Textcite{shenNonparametrica} (building on \textcite{panNote}) showed, in a related setting, that the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
 While the result is not directly applicable, and can not simply be extended, to the more complex scenario within CIS, it does still build an intuition that these single positive episodes could be causing this issue.
 Furthermore, simulations building in even a few excess single positive episodes led to problematic estimation even within the CIS setting.
@@ -165,7 +165,7 @@ ways:
   negligible probability of a false negative test at this point).
 \item
   The duration of the episode is less than $t_{ib_i}^N$. These first
-  two mechanisms are how truncation previously occurred, with
+  two mechanisms are why episodes were missed in the previous chapter, with combined
   probability $p_{it}$.
 \item
   The duration of the episode is at least as long as $t_{it}^N$ but
