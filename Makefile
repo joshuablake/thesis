@@ -1,13 +1,14 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
+BIOLOGY_DATA_DEPS = biology-data.tex
+INC_PREV_DEPS = incidence-prevalence.tex
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png ATACCC/duration.png ATACCC/fits.png ATACCC/fit_individual_55.png
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
-INC_PREV_DEPS = incidence-prevalence.tex
-SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/beta_walk.png
+SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/p_peak.png SEIR/CIS/beta_walk.png
 DISTRIBUTIONS_DEPS = distributions.tex
 
-thesis.pdf: $(SHARED_DEPS) $(ATACCC_DEPS) $(IMPERF_DEPS) $(PERF_DEPS) $(INC_PREV_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
+thesis.pdf: $(SHARED_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
 latex.out/thesis.aux:
@@ -19,6 +20,12 @@ clean:
 .PHONY: FORCE
 
 all: thesis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf incidence-prevalence.pdf SEIR.pdf
+
+#####################################################
+## BIOLOGY DATA CHAPTER
+
+biology-data.pdf: $(BIOLOGY_DATA_DEPS) $(SHARED_DEPS)
+	$(LATEX_CMD)
 
 #####################################################
 ## INCIDENCE PREVALENCE CHAPTER
@@ -96,7 +103,7 @@ SEIR.pdf: $(SEIR_DEPS) $(SHARED_DEPS)
 SEIR/CIS/beta_walk.png: SEIR/CIS/random_walk.R utils.R SEIR/CIS/params.csv
 	Rscript $<
 
-SEIR/CIS/incidence.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png: SEIR/CIS/posterior_predictive.R utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
+SEIR/CIS/p_peak.png SEIR/CIS/incidence.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png: SEIR/CIS/posterior_predictive.R utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
 	Rscript $<
 
 SEIR/CIS/params.csv:

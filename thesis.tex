@@ -158,37 +158,7 @@ The relationship between Ct and viral load is noisy and can vary based on many f
 
 \section{Thesis outline}
 
-\chapter{SARS-CoV-2: biology and data} \label{intro:sec:studies}
-
-\section{PCR testing} \label{intro:sec:PCR}
-
-\section{Assessment of Transmission and Contagiousness of COVID-19 in Contacts}
-
-\section{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
-
-The CIS (Coronavirus (COVID-19) Infection Survey) continually enrols individuals and tests them on an ongoing basis, following a
-specified testing protocol. The protocol specifies that the initial five
-tests are spaced every 7 days, then the spacing is every 28 days.
-However, real-world considerations often lead to variations in test
-times and missed tests. Our analysis focuses solely on the binary result
-(positive or negative) of these tests, assuming no misclassification
-bias.
-
-The CIS (Coronavirus Infection Survey) is a longitudinal study on a representative sample of households.
-A full description of the study can be found in the supplementary materials of \textcite{pouwelsCommunity} or the study protocol~\autocite{cisProtocol}.
-In brief, households are invited to the study from databases held by the ONS.
-The number invited was to satisfy various target number of individuals swabbing per fortnight; relevant to the discussion in this document is that the target increased from 2,500 by the end of May 2020 to 150,000 in October 2020.
-Within a household, all individuals aged 2 and over were invited to participate.
-Once invited, an enrolment swab would be taken followed by 4 further weekly swabs (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolment) after which monthly swabs are taken.
-
-During the period we consider, the total cohort size expands due to the continuous recruitment into the study.
-Following this, the number then decreases and stabilises as those recruited to meet the October target transition from weekly onto monthly testing.
-See figure \@ref(fig:test-schedules) for further detail.
-
-\todo[inline]{Add some descriptive figures e.g. those in \url{~/COVID/ons-incidence/duration_estimation/reproducible-sims/reports/simulation-studies.pdf}}
-
-Consider the CIS data.
-It consists of a series of tests on the same individuals (longitudinal data), where some individuals have a series of positive tests.
+\subfile{biology-data}
 
 \subfile{incidence-prevalence}
 

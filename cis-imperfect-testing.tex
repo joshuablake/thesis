@@ -48,14 +48,7 @@ There are two strands of evidence that support this hypothesis.
 First, it is well known that PCR testing can return false negatives \todo{refs for sensitivity} and I needed to explicitly include these in the viral load model of \cref{E-ATACCC}; they can be directly observed within CIS as intermittent negatives (see below).
 Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate}).
 
-\todo[inline]{These next two paragraphs are kinda disjointed but not sure how to bring them in}
-
-\emph{Intermittent negatives} are the clearest example of a false negative.
-An intermittent negative is when an individual tests negative but tested positive previously and subsequently.
-Intermittent negatives are stripped out when creating the dataset used for all duration analyses in this chapter (as described in \cref{E-episode-def}), but demonstrate that false negatives do occur.
-
-Whether a future positive is part of the same episode of a reinfection is not always trivial; I rely on a process developed previously by Sarah Walker, see \cref{E-episode-def}.
-However, up until the emergence of the Omicron variant, reinfections are rare, especially in a short time frame, and hence the tricky cases are rare until this time (late 2021).
+\todo[inline]{maybe mention intermittent negatives, referring to its introduction in chapter 2}
 
 \section{Simulating false negatives} \label{imperf-test:sec:simulate}
 
