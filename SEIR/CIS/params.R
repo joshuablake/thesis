@@ -35,41 +35,47 @@ posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
         )
     )
 
-# posterior |>
-#     filter(.iteration >= 500e3) |>
-#     group_nest(region, parameter, i) |>
-#     mutate(
-#         Rhat = map_dbl(
-#             data,
-#             ~.x |>
-#                 select(!.draw) |>
-#                 pivot_wider(
-#                     names_from = .chain,
-#                 ) |>
-#                 select(!.iteration) |>
-#                 as.matrix() |>
-#                 rstan::Rhat()
-#         )
-#     ) |>
-#     arrange(desc(Rhat))
+Rhat = posterior |>
+    filter(.iteration >= 500e3) |>
+    group_nest(region, parameter, i) |>
+    mutate(
+        Rhat = map_dbl(
+            data,
+            ~.x |>
+                select(!.draw) |>
+                pivot_wider(
+                    names_from = .chain,
+                ) |>
+                select(!.iteration) |>
+                as.matrix() |>
+                rstan::Rhat()
+        )
+    ) |>
+    arrange(desc(Rhat))
+readr::write_csv(Rhat, here::here("SEIR/CIS/rhat.csv"))
 
-# posterior |>
-#     filter(.iteration >= 500e3) |>
-#     group_nest(region, parameter, i) |>
-#     mutate(
-#         ESS = map_dbl(
-#             data,
-#             ~.x |>
-#                 select(!.draw) |>
-#                 pivot_wider(
-#                     names_from = .chain,
-#                 ) |>
-#                 select(!.iteration) |>
-#                 as.matrix() |>
-#                 rstan::ess_bulk()
-#         )
-#     ) |>
-#     arrange(ESS)
+Rhat |>
+    group_by(region) |>
+    summarise(n_bad = sum(Rhat > 1.1))
+
+posterior |>
+    filter(.iteration >= 500e3) |>
+    group_nest(region, parameter, i) |>
+    mutate(
+        ESS = map_dbl(
+            data,
+            ~.x |>
+                select(!.draw) |>
+                pivot_wider(
+                    names_from = .chain,
+                ) |>
+                select(!.iteration) |>
+                as.matrix() |>
+                rstan::ess_bulk()
+        )
+    ) |>
+    arrange(ESS) |>
+    readr::write_csv(here::here("SEIR/CIS/ess.csv"))
 
 posterior |>
     filter(
@@ -94,3 +100,25 @@ prior_samples = tibble(
         names_to =  "parameter",
         values_to = "value"
     )
+
+posterior |>
+    filter(region == "South_East_England") |>
+    ggplot(aes(.iteration, value, colour = .chain)) +
+    geom_line() +
+    facet_wrap(~parameter+i, scale = "free_y") 
+posterior |>
+    filter(region == "North_West_England") |>
+    ggplot(aes(.iteration, value, colour = .chain)) +
+    geom_line() +
+    facet_wrap(~parameter+i, scale = "free_y") 
+posterior |>
+    filter(region == "West_Midlands") |>
+    ggplot(aes(.iteration, value, colour = .chain)) +
+    geom_line() +
+    facet_wrap(~parameter+i, scale = "free_y") 
+
+posterior |>
+    filter(region == "West_Midlands", parameter == "theta") |>
+    ggplot(aes(.iteration, value, colour = .chain)) +
+    geom_line() +
+    scale_y_log10()

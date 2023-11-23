@@ -100,7 +100,7 @@ These readings are censored is the same way as true readings.
 A censored test failure represents a false negative, otherwise the test failure represents a false positive.
 \textcite{hakkiOnset} uses a prior for $x_0$ centred on $\vlod$, which encodes a prior belief that false negatives and false positives occur with equal probability.
 
-Let the observed log viral load for individual $i$ at time $t$ be $y_{i,t}$, with $y_{i,t}=0$ if the test is negative.
+Let the observed log viral load for individual $i$ at time $t$ be $y_{i,t}$, with negative tests signified by $y_{i,t}=v_\text{lod}$.
 Then, its likelihood is:
 \begin{align}
 p(y_{i,t} \mid \cdot) &= \begin{cases}
