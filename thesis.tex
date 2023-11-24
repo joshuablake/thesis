@@ -119,8 +119,15 @@
 \makeatletter
 \let\blx@noerroretextools\empty
 \makeatother
-\usepackage[backend=biber,style=authoryear,uniquename=false,sortcites=true]{biblatex}
+\usepackage[backend=biber,style=authoryear,uniquename=false,sortcites=true,maxcitenames=2,sorting=ynt,style=apa]{biblatex}
 \addbibresource{references.bib}
+% Display a linked DOI
+\DeclareFieldFormat{doi}{%
+  \mkbibacro{DOI}\addcolon\space
+  \ifhyperref
+    {\href{https://doi.org/#1}{\nolinkurl{#1}}}
+    {\nolinkurl{#1}}%
+}
 
 \usepackage{subfiles} % Best loaded last in the preamble
 \addbibresource{references.bib}
