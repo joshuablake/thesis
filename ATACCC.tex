@@ -84,6 +84,7 @@ $\tau_{\max,i}$ is inferred independently for each individual because the time f
 \begin{figure}
   \centering \includegraphics{ATACCC/typical_trajectory}
   \caption[Example viral load model trajectory.]{Example viral load trajectory produced by \textcite{hakkiOnset}'s viral load model, using realistic parameter values. The increase in log viral load is approximately linear with a gradient of $a_i$, here 5. The decrease is also linear, with gradient $-b_i$, here -1.4. The peak is at time $\tau_{\max,i}$, here 0, and log viral load $\log v_{\max,i}$, here = 15. The smoothing (lack of linearity) near the peak is visible. \label{ATACCC:fig:viral-load-model}}
+  \todo[inline]{Add a few lines to example plot showing the effect of different parameters, move parameters to key}
 \end{figure}
 
 PCR tests are noisy observations of the viral load.
@@ -223,10 +224,10 @@ I found 100,000 draws produced stable estimates of the tail of $F_D$.
 
 \section{Results} \label{ATACCC:sec:results-discussion}
 
-\todo[inline]{Probably important to show estimated test sensitivity here to refer to later}
 
 The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
 The simplified model I proposed in \cref{ATACCC:sec:observation-modification} solved this issue, meaning that this analysis converged.
+\todo[inline]{Add traceplots}
 
 The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits}).
 Almost all test results are captured in the 95\% credible intervals.
@@ -292,6 +293,8 @@ Therefore, I show results only from the modified model (which had better converg
 
 The vaccinated population have shorter durations of PCR positivity than the unvaccinated population (see \cref{ATACCC:fig:duration}).
 The median duration of PCR positivity for the vaccinated population is 13 days (95\% CrI: 11--16 days), but it is 16 days (95\% CrI: 14--19 days) for the unvaccinated population.
+
+\todo[inline]{Probably important to show estimated test sensitivity here to refer to later}
 
 \section{Discussion}
 
