@@ -170,9 +170,8 @@ The model of \textcite{hakkiOnset} did not converge fully (see \cref{ATACCC:sec:
 In particular, the Rhat values, traceplots, and effective sample size for the parameters of the observation model were poor.
 
 Based on the fit to the data achieved when implementing an earlier version of the model (see \cref{ATACCC:sec:original-analysis}), I hypothesised that the cause of this was overcomplicating the model for test failures.
-Specifically, false positives are not needed to be explain the observations (the results in \cref{fig:paper:duration,ATACCC:fig:goodness-of-fits} do not allow false negatives but fit the data well).
-\todo{this sentence is a bit clumsy...}
-Therefore, the model for test failures can be simplified to simply have a constant probability of a false negative.
+Specifically, the model excluding false positives explains the data well (the results in \cref{fig:paper:duration,ATACCC:fig:goodness-of-fits} do not allow false negatives but fit the data well).
+Therefore, the model for test failures can be simplified to only false negatives.
 % These false negatives could represent a variety of scenarios, such as poor swabbing technique.
 Formally, the model can be expressed by replacing \cref{ATACCC:eq:hakki-likelihood} with the following.
 \begin{align}
@@ -187,8 +186,9 @@ For all other parameters, I kept the priors the same as \textcite{hakkiOnset}, i
 
 
 \section{Deriving duration from the parameters} \label{ATACCC:sec:duration}
+
 The ultimate aim of this chapter is to produce an estimate of the distribution for the duration of PCR positivity.
-So far, only the viral load trajectories have been considered.
+So far, only the viral load trajectories have been considered; \textcite{hakkiOnset} does not consider this duration either.
 The time that individual $i$ are first and last positive are the two values of $\tau$ such that $\log v_i(\tau) = v_\text{lod}$.
 Denote these times as $\tau_{0,i}$ and $\tau_{1,i}$.
 Hence, their duration of PCR positivity, in continuous time, is $d_i = \tau_{1,i} - \tau_{0,i}$.
@@ -243,14 +243,12 @@ However, it would complicate the model, be unlikely to change the estimates of t
   \captionof{figure}[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for each individual, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value. \label{ATACCC:fig:goodness-of-fits}}
 \end{figure}
 
-While the population-level parameters converged in the modified model, both model had convergence issues (Rhat > 1.4 and ESS < 20) for some individual-level parameters.
-However, this was greatly improved with the simplified model, limited to a single individual, number 55.
-Individual 55 has an extremely noisy set of observations.
-This means that two viral load trajectories fit the data well (shown in \cref{ATACCC:fig:individual-55}).
+For individual-level parameters, both models had convergence issues in places (Rhat > 1.4 and ESS < 20).
+However, this was greatly improved with the simplified model, occurring only for parameters relating to a single individual, number 55.
+Individual 55 has an extremely noisy set of observations, fit well by two different viral load trajectories (shown in \cref{ATACCC:fig:individual-55}).
 The first, found by two chains, increases very quickly, peaks 4.0 days after the first test, then declines slowly.
 The second, found by the other six chains, is more symmetrical, peaking 7.2 days after the first test.
-The individual trajectories are not of interest for this analysis, and the population-level parameters agree between the two sets of chains, therefore this should not affect any estiamtes of interest.
-\todo{clunky phrasing...}
+The population-level parameter estimates agree between the two sets of chains, therefore the issue should not affect any estiamtes of interest.
 \begin{figure}
   \centering \includegraphics{ATACCC/fit_individual_55}
   \caption[Goodness-of-fit for individual 55]{Fit to individual 55's data coloured by MCMC chain. Two chains favour the quickly increasing viral load trajectory, peaking at day 4.0, the other six favour the slower trajectory, peaking at day 7.2. \label{ATACCC:fig:individual-55}}
@@ -308,7 +306,7 @@ All these factors could change the viral dynamics~\autocite{russellWithinhost} a
 Therefore, the relationships shown here cannot be considered causal, or even generalisable to contexts where these other confounders are not present.
 
 A strength of the ATACCC data is that the sample is drawn from the general population.
-This is unlike most estimates (see\todo{ref review of lit}) which are from hospitalised patients or healthcare workers.
+This is unlike most estimates (see\todo{ref section reviewing lit on duration}) which are from hospitalised patients or healthcare workers.
 This means that, notwithstanding the issues highlighted in the previous paragraph, the estimates are likely to be generalisable to the general population.
 
 In the following chapters, I will use the estimates from the unvaccinated individuals.
@@ -327,6 +325,7 @@ This is exactly the situation in the UK in early 2021.
 The next two chapters will incorporate CIS data to improve the estimates of these tail probabilities.
 
 \ifSubfilesClassLoaded{
+  \listoftodos
   \appendix
   \subfile{distributions}
   \subfile{ATACCC-appendix-original-analysis}
