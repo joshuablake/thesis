@@ -4,7 +4,9 @@
 
 \chapter{Original ATACCC analysis} \label{ATACCC:sec:original-analysis}
 
-This chapter describes an early analysis I did on an initial version of the ATACCC dataset.
+\todo[inline]{Check for "REF" in this appendix}
+
+This appendix describes an early analysis I did on an initial version of the ATACCC dataset.
 This dataset is not publicly available.
 It contains 79 individuals, all those in the study at that time with at least one positive test.
 The duration distribution estimated is very similar to that in \cref{E-ATACCC} but more certain because it assumes that the random effects are drawn independently.
@@ -52,12 +54,12 @@ and cdf (respectively) of a Normal distribution with mean $\mu$ and variance $\s
 
 We assume that all observations (both of the same and different individuals) are independent conditional on the model parameters.
 The parameter $\vec\theta_i$ introduces dependence between observations of the same individuals.
-\autoref{sec:paper:hierarchy} explains the hierarchical structure which borrows information between individuals.
+\Cref{sec:paper:hierarchy} explains the hierarchical structure which borrows information between individuals.
 
 \subsection{Hierarchical structure}\label{sec:paper:hierarchy}
 
 We assume that $\log t_{i,\text{peak}}$, $C_{i,\text{peak}}$, and $\log \beta_i$ are drawn independently from univariate normal distributions (details below).
-Other parameters are not hierarchical and have prior distributions placed on them in the normal way; \autoref{fig:paper:model_DAG} shows these relationships.
+Other parameters are not hierarchical and have prior distributions placed on them in the normal way; \cref{fig:paper:model_DAG} shows these relationships.
 As in \textcite{fogartyBayesian}, a log transform is applied to the parameters which must be positive for biological plausibility.
 As well as restricting these parameters to be positive, this enables the skewed distribution observed in SARS-CoV-2 with some individuals testing positive for much longer than the median.
 
@@ -115,7 +117,7 @@ The latter were chosen to reflect the prior belief that viral load peaks shortly
 
 \subsection{Goodness of fit}
 
-The model generally shows a good fit to the observed data (see \autoref{fig:paper:goodness_of_fit}).
+The model generally shows a good fit to the observed data (see \cref{fig:paper:goodness_of_fit}).
 For individuals with few or no observations before their peak viral load, information is borrowed from other individuals to infer when this is likely to have occurred.
 Most observations, excluding those that look to be false negatives (negatives surrounded by two high viral load positives) fall within the 95\% predictive intervals.
 
@@ -129,9 +131,9 @@ Most observations, excluding those that look to be false negatives (negatives su
 
 \subsection{Parameter estimates}
 
-We estimate that the time from the time from when an individual has a 50\% chance of detection to peak viral load (equivalently: when $\hat{C} = C_\text{lod}$) is 2.4 (posterior median; with 95\% central CrI 1.5--3.3) days with a population standard deviation on the log scale of 0.69 (0.42--1.06).
+We estimate that the time from when an individual has a 50\% chance of detection to peak viral load (equivalently: when $\hat{C} = C_\text{lod}$) is 2.4 (posterior median; with 95\% central CrI 1.5--3.3) days with a population standard deviation on the log scale of 0.69 (0.42--1.06).
 The mean peak viral corresponds to 17.8 (17.1--18.6) Ct units, with a standard deviation of 2.2 (1.5--3.2) Ct units, after which the decrease in viral corresponds to Ct values increasing by 1.6 (1.5--1.8) Ct / day, with a standard deviation on the log scale of 0.50 (0.40--0.61).
-Predictive distributions for these parameters for a new individual are shown in \autoref{fig:paper:indiv_predict}.
+Predictive distributions for these parameters for a new individual are shown in \cref{fig:paper:indiv_predict}.
 We estimate a 6.8 (5.0--8.8) \% probability of a false negative independent of the viral load of an individual.
 
 \begin{figure}
@@ -143,7 +145,7 @@ We estimate a 6.8 (5.0--8.8) \% probability of a false negative independent of t
 
 The time between the two points when $\hat{C} = C_\text{lod}$ for an individual can be considered a duration of infection.
 This gives a mean duration estimated at 18.4 (16.5--20.9) days but the distribution is skewed, as seen by the median of 16.6 (14.8--18.5) days.
-The full distribution is in \autoref{fig:paper:duration}.
+The full distribution is in \cref{fig:paper:duration}.
 \begin{figure}
     \centering
     \makebox[\textwidth][c]{\includegraphics{ATACCC/appendix/duration}}
@@ -154,7 +156,7 @@ The full distribution is in \autoref{fig:paper:duration}.
 \section{Discussion}
 
 This study presents estimates of viral load dynamics based on a general population sample with daily swabbing.
-Our results show a peak Ct value around 5 Ct lower than \textcite{kisslerViral}, that is a higher viral load, although occurring at a similar time (see \autoref{tab:paper:compare}) and a longer time from first detection to peak viral load than \textcite{jonesEstimating}.
+Our results show a peak Ct value around 5 Ct lower than \textcite{kisslerViral}, that is a higher viral load, although occurring at a similar time (see \cref{tab:paper:compare}) and a longer time from first detection to peak viral load than \textcite{jonesEstimating}.
 This could be because of the different populations in each study. \Textcite{kisslerViral}'s data is collected from longitudinal swabbing of individuals professionally involved in the National Basketball Association (NBA).
 Of the individuals who were included in their analysis, around half were in professional athletes, likely in peak physical condition, and 90\% were male.
 Our data is collected from the general population who were reported as contacts of individuals detected through surveillance open to all members of the public.
