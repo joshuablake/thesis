@@ -22,8 +22,8 @@ Plausible estimates of the duration distribution are produced, however, they req
 
 \section{The problem} \label{imperf-test:sec:problem}
 
-Applying the method of \cref{E-perf-test} to CIS data gave implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
-In particular, I estimate a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work~\autocite[e.g.:][]{cevikShedding}.
+Applying the method of \cref{E-perf-test} to CIS data gives implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
+In particular, it estimates a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work~\autocite[e.g.:][]{cevikShedding}.
 
 \begin{figure}
   \centering %\includegraphic{}
@@ -31,30 +31,26 @@ In particular, I estimate a very high probability of the episode lasting less th
   \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{E-perf-test} gives implausibly short estimates. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
-Comparing the simulated and CIS data suggested that this is due to the high frequency of single positive episodes in the CIS data.
-A single positive episode is one in which the episode contains exactly one positive test, intuitively these cause short estimates because there is no lower bound on the length of time the episode lasts.
+Comparing the simulated and CIS data suggests that this is due to the high frequency of single positive episodes in the CIS data.
+A single positive episode is an episode containing exactly one positive test; intuitively, these cause short estimates because there is no lower bound on the length of time the episode lasts.
 Furthermore, due to missing short episodes, there is little or no ability to upper bound the number of very short episodes because these would almost all be missed.
-\Textcite{shenNonparametrica} (building on \textcite{panNote}) showed, in a related setting, that the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
-While the result is not directly applicable, and can not simply be extended, to the more complex scenario within CIS, it does still build an intuition that these single positive episodes could be causing this issue.
-Furthermore, simulations building in even a few excess single positive episodes led to problematic estimation even within the CIS setting.
-\todo[inline]{My previous application and discussion of \textcite{shenNonparametrica} in this setting would need quite significant reworking to include; is this needed or is this slightly hand-wavy discussion enough?}
+\Textcite{shenNonparametrica} (extending \textcite{panNote}) showed that, in a similar setting to here\todo{note why it is different}, the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
+While the result cannot simply be extended to the more complex study design of the CIS, it reinforces the intuition that single positive episodes are likely to be problematic.
+Furthermore, simulations (not shown) building in even a few excess single positive episodes led to problematic estimation even within the CIS setting.
 
-Discussion and interrogation of the data led me to believe the most likely reason for an unexpectedly high number of single positive episodes was the presence of false negatives, meaning a false negative as a negative test result returned by a detectable individual.
-This can occur for a variety of reasons, most commonly that an individual swabs themselves poorly and hence the concentration of virus on the swab is too low to be detected by the PCR process (see \cref{E-intro:sec:PCR}).
-Plausibly, a variety of other reasons could also lead to a false negative such as logistical issues or mislabelling of samples.
-Consideration of these reasons are beyond the scope of this thesis, and I group all of these possible reasons together.
-
-There are two strands of evidence that support this hypothesis.
-First, it is well known that PCR testing can return false negatives \todo{refs for sensitivity} and I needed to explicitly include these in the viral load model of \cref{E-ATACCC}; they can be directly observed within CIS as intermittent negatives (see below).
+% Discussion and interrogation of the data led me to
+I hypothesised that the reason for the unexpectedly high number of single positive episodes (compared to simulation) was the presence of false negatives results.
+There are two strands of evidence supporting this hypothesis.
+First, it is well known that PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); they were explicitly include these in the viral load model of \cref{E-ATACCC}.
+Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that they occur within the CIS.
 Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate}).
-
-\todo[inline]{maybe mention intermittent negatives, referring to its introduction in chapter 2}
 
 \section{Simulating false negatives} \label{imperf-test:sec:simulate}
 
 The simplest model for false negatives is a constant probability of returning a negative test even when detectable.
-The probability of testing positive given being detectable is known as the test sensitivity.
-The impact of a test sensitivity, $\psens$, less than perfect (\ie less than 100\%) is formalised by replacing the deterministic $y_i(t)$ with a random binary variable such that:
+The probability of testing positive given being detectable is known as the \emph{test sensitivity}, $\psens$.
+$\psens = 1$ means that there are no false negatives, the situation previously considered.
+False negatives are formalised by replacing the deterministic $y_i(t)$ with a random binary variable such that:
 \begin{equation}
   \prob(Y_i(t) = 1) \begin{cases}
       \psens &b_i \leq t \leq e_i \\
@@ -62,26 +58,35 @@ The impact of a test sensitivity, $\psens$, less than perfect (\ie less than 100
   \end{cases} 
 \end{equation}
 with $Y_i(t)$ still only defined for $t \in t_i$.
-However, an implausibly low value for $\psens$ is required to reproduce the rate of single positive episodes seen in CIS.
+\todo{check all this notation: is $y_t(t)$ and $t_i$ defined?}
+However, an implausibly low value for $\psens$ is required to reproduce the rate of single positive episodes seen in the CIS.
 \todo[inline]{Figure demonstrating this and references to what reasonable test sensitivities are, including the estimate from the ATACCC chapter}
 
 More plausibly, the rate of false negatives varies over the course of an episode.
 False negatives are more likely to occur when the viral load of an individual is low, because there is less virus in their body to be sampled.
-Following the short, initial period of growth, viral load largely declines monotonically with time (see \cref{E-ATACCC}).
+In \cref{E-ATACCC} this mechanism is incorporated by the left-censored observations.
 This suggests that a model with a declining test sensitivity as a function of time since infection might be more suitable.
 
 \todo[inline]{Next paragraph needs editing for clarity}
-Examination of the CIS data also provides evidence for a declining test sensitivity.
-We can approximately bound the test sensitivity by assuming that all intermittent negatives are false negatives, that the negative following the last positive in an episode could be either a true or false negative, and all other negatives are true negatives.
-The point estimate for the test sensitivity is the true positives / (true positives + false negatives).
-In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie: the first positive test in the episode).
-While the bounds are broad, they clearly suggest a declining test sensitivity over the course of an episode.
+The CIS data provides evidence for a test sensitivity declining over the course of an episode.
+To do this, I classify all test results into three classes, making the following assumptions.
+\begin{enumerate}
+    \item All positive results are true positives.
+    \item All intermittent negatives are false negatives.
+    \item The negative at the end of an episode is a possible false negative.
+    \item All other negatives are true negatives.
+\end{enumerate}
+Here, I am assuming that the probability of two false negative tests at the end of an episode is negligible.
+Then I calculate the test sensitivity as a function of days since the first positive in an episode, bounding this by assuming either all or none of those in group 3 are false negatives.
+% The test sensitivity is the true positives / (true positives + false negatives).
+% In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie: the first positive test in the episode).
+This generates broad bounds, although suggest a declining test sensitivity over the course of an episode (see \cref{imperf-test:fig:bounding-cis-sensitivity}).
 \begin{figure}
-  \todo[inline]{Include the analysis of CIS data with bounding test sensitivity}
+  \todo[inline]{Extract figure from SRS}
   \caption[Bounding test sensitivity using CIS data]{Bounding the test sensitivity using CIS data as a function of time since the infection was detected (see main text for explanation of how the bounds are formed).\label{imperf-test:fig:bounding-cis-sensitivity}}
 \end{figure}
 
-I propose the following model for test sensitivity compatible with \cref{imperf-test:fig:bounding-cis-sensitivity}, consisting of a linearly declining period then a constant period:
+Based on \cref{imperf-test:fig:bounding-cis-sensitivity}, I propose the following model for test sensitivity, consisting of a linearly declining period then a constant period:
 \begin{equation}
   p_\text{sens}(t) = \begin{cases}
     0.9 - \frac{0.9-0.5}{50}t &t \leq 50 \\
@@ -92,7 +97,7 @@ where $t$ is the time in days since infection.
 Simulated data using this test sensitivity is much more similar to the data, while being more plausible than very low probabilities of false negatives.
 \todo{Figure comparing the variable test sensitivity to fixed and CIS data}
 
-\todo[inline]{Add the evidence that false negatives do create the ssame issue in inference in real and simulated data}
+\todo[inline]{Add the evidence that false negatives do create the same issue in inference in real and simulated data}
 
 \section{Modelling} \label{imperf-test:sec:modelling}
 
@@ -101,7 +106,7 @@ The simple model ensures the likelihood remains tractable.
 This requires modifying both $p_{ia}$ to allow for the episode possibly being longer than observed, and $p_{it}$ to allow for additional episodes being missed.
 
 A constant test sensitivity is assumed throughout this section.
-Further work is required to introduce the more realistic varying test sensitivity (discussed in \cref{imperf-test:sec:discussion}).
+Further work is required to introduce the more realistic assumption of declining test sensitivity over the course of an episode.
 
 \subsection{Modifying \texorpdfstring{$p_{ia}$}{pia}} \label{modifying-p_ia}
 
@@ -112,7 +117,7 @@ A mixture of these scenarios then forms the episode's likelihood contribution, w
 
 For tractability, assume that the negative test bounding the start of the infection, at $l_i^{(b)}$, is a true negative.
 This assumption is reasonable because the test sensitivity is high early in an infection, therefore $l_i^{(b)}$ is unlikely to be a false negative.
-\todo{Are these bounds correct?}
+\todo{Are these bounds correct - check notation from prev chapter?}
 We will consider only the tests between $r_i^{(b)}$ and $l_i^{(e)}$ inclusive (the positive tests providing a lower bound on the length of the episode).
 Denote these tests by $t'_i = \{ t \in t_i : r_i^{(b)} \leq t \leq l_i^{(e)} \}$ and their results by $y_i'$.
 We know that the test results at times in $t_i'$ are either true positives or false negatives. 
@@ -183,6 +188,8 @@ Hence, the replacement for $1 - p_{it}$ is:
 
 \section{Simulation study results} \label{imperf-test:sec:sim-study-results}
 
+\todo[inline]{notes on sim results into prose}
+
 \begin{itemize}
   \item When sensitivity is too bad (0.6), cannot recover the true distribution. The assumptions in the model, that the first test is a true positive and no missed infections prior, cannot hold.
   \item Assuming too low a test sensitivity (bottom left triangle) means that number of missed infections will be overestimated and the duration distribution will be overestimated (\ie episodes are too long on average).
@@ -191,6 +198,8 @@ Hence, the replacement for $1 - p_{it}$ is:
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
 \subsection{Data}
+
+\todo[inline]{Check if I've talked about the data before - previous chapter?}
 
 I use the CIS data described in \cref{E-intro:sec:cis}, with positive tests heuristically divided into episodes.
 Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{E-episode-def}).
@@ -212,12 +221,24 @@ I filter the episodes as follows.
 
 \subsection{Methods}
 
-Think about what I need to include here.
+\todo[inline]{Add additional info on methods. Prior on number missed; hyperparameters}
 Might include hyperparameters etc or assumptions made?
 
 \subsection{Results}
 
+\todo[inline]{notes on real results into prose}
+
+\begin{itemize}
+    \item not sensitivite to survival prior
+    \item sensitive to test sensitivity assumptions and prior on number missed
+    \item comparison with ATACCC
+    \item mean and median summaries
+    \item 
+\end{itemize}
+
 \section{Discussion} \label{imperf-test:sec:discussion}
+
+\todo[inline]{discussion on real results into prose}
 
 \begin{itemize}
   \item Survival prior matters for quantitative details but not qualitative shape. 
@@ -227,6 +248,8 @@ Might include hyperparameters etc or assumptions made?
 \end{itemize}
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
+
+\todo[inline]{write conclusion}
 
 \ifSubfilesClassLoaded{
   \listoftodos

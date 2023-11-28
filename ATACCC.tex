@@ -24,9 +24,9 @@ I will refine this estimate in future chapters before its use in estimating tran
 Two major approaches have been taken to model SARS-CoV-2 viral load trajectories.
 There are either using ordinary differential equations (ODEs) with a biological interpretation or using mathematical functions that are flexible enough to capture the dynamics.
 The ODE-based approach uses parameters representing biological properties of the virus and host~\autocites[e.g.:][]{ejimaEstimation,keVivo,kimQuantitative,goncalvesTiming,perelsonMechanistic}.
-Such models are rarely analytically-tractable and the system's evolution is computed using numeric methods.
+Such models are rarely analytically-tractable and the system's evolution is computed using numerical methods.
 % Both of these approaches have been used with other viruses and biomarkers.
-The approach that is the focus of this chapter is using a pieceiwse linear model for the biomaker trajectory and random effects to allow for within-individual correlation.
+The approach that is the focus of this chapter is using a piecewise linear model for the biomaker trajectory and random effects to allow for within-individual correlation.
 
 Piecewise linear, random effect models have a long history of use for longitudinal data in biostatistics~\autocites{slateStatistical}.
 Often, as here, they are used to model the temporal evolution of biomarkers.
@@ -98,7 +98,7 @@ The noisy observations are modelled by assuming each measurement of log viral lo
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
 Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$ where $x_0$ and $\sigma_0^2$ are parameters to be estimated.
-These readings are censored is the same way as true readings.
+These readings are censored in the same way as true readings.
 A censored test failure represents a false negative, otherwise the test failure represents a false positive.
 \textcite{hakkiOnset} uses a prior for $x_0$ centred on $\vlod$, which encodes a prior belief that false negatives and false positives occur with equal probability.
 
@@ -111,7 +111,7 @@ p(y_{i,t} \mid \cdot) &= \begin{cases}
 \end{cases}
 \end{align}
 where $f_N(y \mid \mu, \sigma^2)$ and $F_N(y \mid \mu, \sigma^2)$ are the pdf and cdf at $y$ of a Normal distribution with mean $\mu$ and variance $\sigma^2$ respectively.
-The first term on each line is the likelihood contribution from test failures, either a false positive (top line) of false negative (bottom line).
+The first term on each line is the likelihood contribution from test failures, either a false positive (top line) or false negative (bottom line).
 The second term on the first line is the likelihood of the observed log viral load from non-failed test results.
 The second term on the bottom line is the likelihood of the negative (censored) tests from non-failed test results.
 
@@ -245,10 +245,11 @@ However, it would complicate the model, be unlikely to change the estimates of t
 
 For individual-level parameters, both models had convergence issues in places (Rhat > 1.4 and ESS < 20).
 However, this was greatly improved with the simplified model, occurring only for parameters relating to a single individual, number 55.
-Individual 55 has an extremely noisy set of observations, fit well by two different viral load trajectories (shown in \cref{ATACCC:fig:individual-55}).
+Individual 55 has an extremely noisy set of observations.
+This means that two viral load trajectories fit the data well (shown in \cref{ATACCC:fig:individual-55}).
 The first, found by two chains, increases very quickly, peaks 4.0 days after the first test, then declines slowly.
 The second, found by the other six chains, is more symmetrical, peaking 7.2 days after the first test.
-The population-level parameter estimates agree between the two sets of chains, therefore the issue should not affect any estiamtes of interest.
+The population-level parameter estimates agree between the two sets of chains, therefore the issue should not affect any estimaates of interest.
 \begin{figure}
   \centering \includegraphics{ATACCC/fit_individual_55}
   \caption[Goodness-of-fit for individual 55]{Fit to individual 55's data coloured by MCMC chain. Two chains favour the quickly increasing viral load trajectory, peaking at day 4.0, the other six favour the slower trajectory, peaking at day 7.2. \label{ATACCC:fig:individual-55}}
