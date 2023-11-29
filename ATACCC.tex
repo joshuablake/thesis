@@ -14,7 +14,7 @@ I model a biomarker, the log viral load, over the course of an infection.\todo{m
 From this model, I derive the distribution of the duration of PCR positivity.
 
 First, I will explain how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature (\cref{ATACCC:sec:background}).
-Next, I describe the model of \textcite{hakkiOnset} in detail, which applies these methods to the ATACCC data (\cref{ATACCC:sec:hakki}) and before I modifying its observation model (\cref{ATACCC:sec:observation-modification})\todo{think if some justification is needed here, and if so how to do it - remember Hakki is a published and peer-reviewed analysis}.
+Next, I describe the model of \textcite{hakkiOnset} in detail, which applies these methods to the ATACCC data (\cref{ATACCC:sec:hakki}) and before modifying its observation model to improve the inference (\cref{ATACCC:sec:observation-modification}).
 This modification is based on an earlier analysis using a preliminary version of the dataset, described in \cref{ATACCC:sec:original-analysis}.
 Finally, I convert the model and parameter estimates of the biomarker's trajectory to a duration of PCR positivity (\cref{ATACCC:sec:duration}).
 I will refine this estimate in future chapters before its use in estimating transmission.
@@ -93,8 +93,7 @@ Ct values are linearly related to viral load (see\todo{ref intro section}).
 A negative PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
 Positive PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 
-The noisy observations are modelled by assuming each measurement of log viral load is a realisation of an iid Normally-distributed random variable error with mean 0 and standard deviation $\sigma_v$.
-\todo{Paul/Dani: is this phrasing "a realisation of [a] random variable" OK?}
+The noisy observations are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v)$.
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
 Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$ where $x_0$ and $\sigma_0^2$ are parameters to be estimated.
@@ -227,7 +226,6 @@ I found 100,000 draws produced stable estimates of the tail of $F_D$.
 
 The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
 The simplified model I proposed in \cref{ATACCC:sec:observation-modification} solved this issue, meaning that this analysis converged.
-\todo[inline]{Add traceplots}
 
 The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits}).
 Almost all test results are captured in the 95\% credible intervals.
@@ -282,6 +280,8 @@ This leads to a shorter duration of PCR positivity in the vaccinated group.
   \caption{Population-level estimates of the viral load parameters (posterior medians and 95\% CrI). The vaccinated population have higher peak viral loads but clear the virus faster. \label{ATACCC:table:population-estimates}}
 \end{table}
 
+The negative rate, $\rho$, is estimated to be quite low, 5.3\% (95\% CrI: 3.7--7.3\%).
+
 The $F_D$ estimates for the two groups are in \cref{ATACCC:fig:duration}.
 In \cref{ATACCC:sec:results-discussion}, the two models gave very similar results.
 Therefore, I show results only from the modified model (which had better convergence).
@@ -292,8 +292,6 @@ Therefore, I show results only from the modified model (which had better converg
 
 The vaccinated population have shorter durations of PCR positivity than the unvaccinated population (see \cref{ATACCC:fig:duration}).
 The median duration of PCR positivity for the vaccinated population is 13 days (95\% CrI: 11--16 days), but it is 16 days (95\% CrI: 14--19 days) for the unvaccinated population.
-
-\todo[inline]{Probably important to show estimated test sensitivity here to refer to later}
 
 \section{Discussion}
 

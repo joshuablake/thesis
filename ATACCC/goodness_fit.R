@@ -8,7 +8,7 @@ library(tidyverse)
 source(here::here("ATACCC/trajectory_functions.R"))
 source(here::here("utils.R"))
 
-fit = here::here("ATACCC/fit.rds") |>
+fit = here::here("ATACCC/fit2.rds") |>
     readRDS()
 
 tbl_data = here::here("ATACCC/data.rds") |>
