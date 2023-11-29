@@ -705,6 +705,10 @@ See \cref{SEIR:MCMC-algorithm} for full details.
  \label{SEIR:MCMC-algorithm}
 \end{algorithm}
 
+I transformed parameters with restricted ranges for sampling, to improve efficiency.
+Parameters which are constrained to the positive reals ($\sigma_\epsilon$, $\rho$, and $q_c$) were sampled on the log scale.
+Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) were sampled on the logit scale.
+
 I run 4 chains for 1,000,000 iterations each.
 The first 500,000 were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
 This gives 20,000 posterior samples per region.
@@ -887,6 +891,13 @@ Unlike most prior work, this modelling is based on a data source that is represe
 Therefore, the results are have fewer biases and informed by data to a greater extent than this work.
 There is little-to-no ascertainment bias in the CIS, unlike sources relying on testing behaviour (in the UK, pillar 2 testing).
 The CIS allows data-informed estimates of transmission in children, unlike sources relying on severe events that occur almost entirely in adults~\autocite{bhopalChildren}.
+
+This approach provides additional understanding, compared to the approach in \cref{E-backcalc}.
+For example, decomposing the change in transmission into changing contacts, $\matr{\kappa}(t)$, changing susceptibility $\vec{s}(t)$, and other unmeasured factors, $\beta(t)$.
+By understanding which of these components is changing, policies can be better targeted.
+If it is shown that $\beta(t)$ decreases, this implies that for a given amount of activity in the population, there is less transmission.
+Such decreases might be beneficial as it allows society to operate in a more normal manner without increasing transmission.
+Breaking the trade-off between transmission and activity is desirable because it reduces the disease burden without burdesome restrictions on individuals day-to-day lives.
 
 The parameters $\beta_t$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
 \todo{discuss the results and implications for policy or understanding transmission}

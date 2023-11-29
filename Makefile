@@ -106,11 +106,8 @@ SEIR/CIS/beta_walk.png: SEIR/CIS/random_walk.R utils.R SEIR/CIS/params.csv
 SEIR/CIS/p_peak.png SEIR/CIS/incidence.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png: SEIR/CIS/posterior_predictive.R utils.R SEIR/utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
 	Rscript $<
 
-SEIR/CIS/params.csv:
-	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_combined.csv $@
-
-SEIR/CIS/predictive.csv:
-	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/posteriors_predictive.csv $@
+SEIR/CIS/params.csv SEIR/CIS/predictive.csv SEIR/CIS/final_state.csv:
+	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/CIS/*.csv SEIR/CIS/
 
 SEIR/CIS/data.csv:
 	scp hpc:/home/jbb50/PhD_work/SEIR_model/SRS_extracts/20230829_STATS18115/modelling_data.csv $@
