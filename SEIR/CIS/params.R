@@ -77,15 +77,15 @@ posterior |>
     arrange(ESS) |>
     readr::write_csv(here::here("SEIR/CIS/ess.csv"))
 
-posterior |>
-    filter(
-        !parameter %in% c("beta", "pi", "theta")
-    ) |>
-    ggplot(aes(x = value)) +
-    geom_density(aes(colour = "Posterior")) +
-    geom_density(aes(colour = "Prior"), data = prior_samples) +
-    facet_grid(region~parameter, scales = "free") #+
-    coord_cartesian(ylim = c(0, 1))
+# posterior |>
+#     filter(
+#         !parameter %in% c("beta", "pi", "theta")
+#     ) |>
+#     ggplot(aes(x = value)) +
+#     geom_density(aes(colour = "Posterior")) +
+#     geom_density(aes(colour = "Prior"), data = prior_samples) +
+#     facet_grid(region~parameter, scales = "free") #+
+#     coord_cartesian(ylim = c(0, 1))
 
 n_prior_samples = 10e3
 prior_samples = tibble(
@@ -101,24 +101,24 @@ prior_samples = tibble(
         values_to = "value"
     )
 
+# posterior |>
+#     filter(region == "South_East_England") |>
+#     ggplot(aes(.iteration, value, colour = .chain)) +
+#     geom_line() +
+#     facet_wrap(~parameter+i, scale = "free_y") 
 posterior |>
-    filter(region == "South_East_England") |>
+    filter(region == "North_East_England") |>
     ggplot(aes(.iteration, value, colour = .chain)) +
     geom_line() +
     facet_wrap(~parameter+i, scale = "free_y") 
-posterior |>
-    filter(region == "North_West_England") |>
-    ggplot(aes(.iteration, value, colour = .chain)) +
-    geom_line() +
-    facet_wrap(~parameter+i, scale = "free_y") 
-posterior |>
-    filter(region == "West_Midlands") |>
-    ggplot(aes(.iteration, value, colour = .chain)) +
-    geom_line() +
-    facet_wrap(~parameter+i, scale = "free_y") 
+# posterior |>
+#     filter(region == "West_Midlands") |>
+#     ggplot(aes(.iteration, value, colour = .chain)) +
+#     geom_line() +
+#     facet_wrap(~parameter+i, scale = "free_y") 
 
-posterior |>
-    filter(region == "West_Midlands", parameter == "theta") |>
-    ggplot(aes(.iteration, value, colour = .chain)) +
-    geom_line() +
-    scale_y_log10()
+# posterior |>
+#     filter(region == "West_Midlands", parameter == "theta") |>
+#     ggplot(aes(.iteration, value, colour = .chain)) +
+#     geom_line() +
+#     scale_y_log10()

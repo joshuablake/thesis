@@ -7,6 +7,7 @@ library(stringr)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
+source(here::here("SEIR/utils.R"))
 
 # Read posterior predictives
 predictions = readr::read_csv(here::here("SEIR/CIS/predictive.csv")) |>
@@ -14,7 +15,8 @@ predictions = readr::read_csv(here::here("SEIR/CIS/predictive.csv")) |>
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
-        age = str_replace(age, fixed("+"), "Inf")
+        age = str_replace(age, fixed("+"), "Inf"),
+        region = region_labels(region)
     ) |>
     select(!c(chain, iteration))
 
@@ -23,7 +25,8 @@ data = readr::read_csv(here::here("SEIR/CIS/data.csv")) |>
     mutate(
         obs_prevalence = obs_positives / num_tests,
         age = str_replace(age, fixed("("), "[") |>
-            str_replace(fixed("]"), ")")
+            str_replace(fixed("]"), ")"),
+        region = region_labels(region),
     ) |>
     rename(day = date) |>
     filter(
@@ -40,7 +43,7 @@ prediction_intervals = predictions |>
 thetas = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
     filter(parameter == "theta") |>
     transmute(
-        region,
+        region = region_labels(region),
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         theta = exp(value)
@@ -79,12 +82,13 @@ create_prev_plot = function(age_groups, label) {
     plot = weekly_predictions |>
         filter(age %in% age_groups) |>
         ggplot(aes(week)) +
-        geom_point(aes(y = p)) +
+        geom_point(aes(y = p), size = 0.5) +
         geom_ribbon(aes(ymin = pred_p.lower, ymax = pred_p.upper), alpha = 0.1) +
         geom_lineribbon(
             aes(day, prevalence, ymin = prevalence.lower, ymax = prevalence.upper),
             data = filter(prediction_intervals, age %in% age_groups),
-            alpha = 0.4
+            alpha = 0.4,
+            size = 0.2
         ) +
         facet_grid(region ~ age) +
         standard_plot_theming() +
@@ -92,7 +96,10 @@ create_prev_plot = function(age_groups, label) {
             x = "Date",
             y = "Prevalence"
         ) +
-        theme(legend.position = "none")
+        theme(
+            legend.position = "none",
+            strip.text = element_text(size = 7)
+        )
 
     ggsave(
         filename = here::here(

@@ -6,8 +6,7 @@ library(stringr)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
-
-
+source(here::here("SEIR/utils.R"))
 
 # rename_params = function(name) {
 #     case_match(
@@ -24,13 +23,13 @@ source(here::here("utils.R"))
 posterior_samples = readr::read_csv(
     here::here("SEIR/sim/posteriors_combined.csv")
 )
-posterior_samples |>
-    filter(parameter == "psir", iteration > 300e3) |>
-    ggplot(aes(iteration, value)) +
-    geom_line() +
-    facet_wrap(~ sim, scales = "free_y")
+# posterior_samples |>
+#     filter(parameter == "psir", iteration > 500e3) |>
+#     ggplot(aes(iteration, value)) +
+#     geom_line() +
+#     facet_wrap(~ sim, scales = "free_y")
 posterior_intervals = posterior_samples |>
-    filter(iteration > 300e3) |>
+    filter(iteration > 500e3) |>
     group_by(sim, parameter) |>
     median_qi(value, .width = c(0.5, 0.75, 0.95))
 true_params =  readr::read_csv(
@@ -38,10 +37,9 @@ true_params =  readr::read_csv(
 ) |>
     rename(parameter = param)
 coverage = posterior_intervals |>
-    left_join(true_params, by = c("sim", "parameter" = "param")) |>
+    left_join(true_params, by = c("sim", "parameter")) |>
     mutate(
         contains = .lower <= true & true <= .upper,
-        .width = .width,
     ) |>
     summarise(
         x = sum(contains),
@@ -71,18 +69,25 @@ p_coverage = ggplot(coverage, aes(colour = factor(.width))) +
         y = "Parameter",
         colour = "CrI width"
     ) +
-    theme(legend.position = "bottom")
+    theme(
+        legend.position = "bottom",
+        axis.text.y = element_text(
+            size = 5,
+            lineheight = 1.2
+        )
+    ) +
+    scale_y_discrete(labels = parameter_labels)
 ggsave(
-    filename = here::here("SEIR/sim/coverage.png"),
+    filename = here::here("SEIR/sim/coverage.pdf"),
     plot = p_coverage,
-    width = 10,
+    width = 12,
     height = 10,
     unit = "cm"
 )
 
 p_true_vs_posterior = posterior_intervals |>
     # grab any width: only care about point estimates here
-    filter(.width == 0.95, !str_detect(parameter, "beta"), sim != 59) |>
+    filter(.width == 0.95, !str_detect(parameter, "beta")) |>
     # calculate bias by joining with true values
     left_join(true_params, by = c("sim", "parameter")) |>
     ggplot(aes(true, value)) +
@@ -91,6 +96,7 @@ p_true_vs_posterior = posterior_intervals |>
     geom_smooth(method = "lm", formula = y ~ x) +
     standard_plot_theming() +
     geom_point() +
+    geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0) +
     labs(
         y = "Posterior median",
         x = "True value"
@@ -104,30 +110,30 @@ ggsave(
     dpi = 300
 )
 
-posterior_samples |>
-    filter(!str_detect(parameter, "beta"), sim != 59, iteration > 300e3) |>
-    # calculate bias by joining with true values
-    ggplot() +
-    geom_histogram(aes(value, after_stat(density), colour = "Combined posterior", fill = "Combined posterior"), bins = 100) +
-    geom_density(aes(true, colour = "Prior"), data = filter(true_params, !str_detect(parameter, "beta"))) +
-    facet_wrap(~parameter, scales = "free")
-    geom_abline(slope = 1, intercept = 0) +
-    geom_smooth(method = "lm", formula = y ~ x) +
-    standard_plot_theming() +
-    geom_point() +
-    labs(
-        x = "Posterior median",
-        y = "True value"
-    )
+# posterior_samples |>
+#     filter(!str_detect(parameter, "beta"), sim != 59, iteration > 500e3) |>
+#     # calculate bias by joining with true values
+#     ggplot() +
+#     geom_histogram(aes(value, after_stat(density), colour = "Combined posterior", fill = "Combined posterior"), bins = 100) +
+#     geom_density(aes(true, colour = "Prior"), data = filter(true_params, !str_detect(parameter, "beta"))) +
+#     facet_wrap(~parameter, scales = "free")
+#     geom_abline(slope = 1, intercept = 0) +
+#     geom_smooth(method = "lm", formula = y ~ x) +
+#     standard_plot_theming() +
+#     geom_point() +
+#     labs(
+#         x = "Posterior median",
+#         y = "True value"
+#     )
 
-posterior_samples |>
-    filter(!str_detect(parameter, "beta"), sim != 59, iteration > 300e3) |>
-    # calculate bias by joining with true values
-    ggplot() +
-    standard_plot_theming() +
-    geom_density(aes(value, after_stat(density), group = sim), alpha = 0.1) +
-    geom_density(aes(true, colour = "Prior"), data = filter(true_params, !str_detect(parameter, "beta"))) +
-    facet_wrap(~parameter, scales = "free")
+# posterior_samples |>
+#     filter(!str_detect(parameter, "beta"), sim != 59, iteration > 500e3) |>
+#     # calculate bias by joining with true values
+#     ggplot() +
+#     standard_plot_theming() +
+#     geom_density(aes(value, after_stat(density), group = sim), alpha = 0.1) +
+#     geom_density(aes(true, colour = "Prior"), data = filter(true_params, !str_detect(parameter, "beta"))) +
+#     facet_wrap(~parameter, scales = "free")
 
 # ggsave(
 #     filename = here::here("SEIR/sim/summary.png"),
@@ -197,3 +203,15 @@ posterior_samples |>
 #     ggplot(aes(date)) +
 #     facet_wrap(~age) + 
 #     geom_line(aes(y = prevalence, colour = (sim == 59), group = sim), alpha = 0.1)
+
+# posterior_intervals |>
+#     filter(parameter == "theta", value < -30, .width == 0.95)
+# posterior_samples |>
+#     filter(parameter == "theta", sim == 11, iteration > 500e3) |>
+#     ggplot(aes(iteration, value)) +
+#     geom_line() +
+#     standard_plot_theming()
+
+# posterior_intervals |>
+#     filter(value == .lower | value == .upper, .width == 0.5) |>
+#     count(sim)
