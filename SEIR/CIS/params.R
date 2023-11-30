@@ -107,7 +107,7 @@ prior_samples = tibble(
 #     geom_line() +
 #     facet_wrap(~parameter+i, scale = "free_y") 
 posterior |>
-    filter(region == "North_East_England") |>
+    filter(region == "North_West_England") |>
     ggplot(aes(.iteration, value, colour = .chain)) +
     geom_line() +
     facet_wrap(~parameter+i, scale = "free_y") 

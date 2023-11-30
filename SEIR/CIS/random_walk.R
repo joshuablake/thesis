@@ -27,11 +27,16 @@ posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
             # Remove first and last character from i
             as.integer(substr(i, 2, nchar(i) - 1))
         ),
+        value,
+    ) |>
+    mutate(
+        # Use centered parameterisation
+        .by = c(region, .draw),
         value = if_else(
             i == 0,
             0,
-            value
-        )
+            value * value[i == 0]
+        ),
     )
 
 walk = posterior |>
@@ -71,7 +76,7 @@ p_walk = walk |>
     stat_slab(side = "both") +
     facet_wrap(~region, ncol = 2) +
     standard_plot_theming() +
-    scale_y_log10() +
+    # scale_y_log10() +
     # tick labels every 3 weeks
     scale_x_discrete(
         breaks = function(x) x[c(TRUE, rep(FALSE, 3))]

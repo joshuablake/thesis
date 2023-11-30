@@ -23,11 +23,11 @@ source(here::here("SEIR/utils.R"))
 posterior_samples = readr::read_csv(
     here::here("SEIR/sim/posteriors_combined.csv")
 )
-# posterior_samples |>
-#     filter(parameter == "psir", iteration > 500e3) |>
-#     ggplot(aes(iteration, value)) +
-#     geom_line() +
-#     facet_wrap(~ sim, scales = "free_y")
+posterior_samples |>
+    filter(parameter == "psir", iteration > 500e3) |>
+    ggplot(aes(iteration, value)) +
+    geom_line() +
+    facet_wrap(~ sim, scales = "free_y")
 posterior_intervals = posterior_samples |>
     filter(iteration > 500e3) |>
     group_by(sim, parameter) |>
