@@ -21,7 +21,6 @@
 # *.eps
 /*.pdf
 CollegeShields/*.pdf
-*.png
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
