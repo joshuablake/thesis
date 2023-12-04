@@ -10,7 +10,7 @@ source(here::here("utils.R"))
 start_date = ymd("2020-08-31")
 
 posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
-    filter(stringr::str_starts(parameter, "beta")) |>
+    filter(stringr::str_starts(parameter, "beta"), iteration >= 500e3) |>
     extract(
         parameter,
         into = c("parameter", "i"), 
@@ -35,7 +35,7 @@ posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
         value = if_else(
             i == 0,
             0,
-            value * value[i == 0]
+            value * exp(value[i == 0])
         ),
     )
 
@@ -56,34 +56,41 @@ walk_summary = walk |>
 walk_summary |>
     mutate(date = start_date + i * 7) |>
     ggplot(aes(date, beta, color = region)) +
+    geom_point() +
     geom_errorbar(aes(ymin = beta.lower, ymax = beta.upper), alpha = 0.5) +
     facet_wrap(~region) +
     standard_plot_theming() +
+    geom_hline(yintercept = 1, linetype = "dashed", alpha = 0.5) +
     scale_y_log10(
-        breaks = c(0.01, 0.1, 1, 10, 100)
+        breaks = c(0.5, 1, 2, 0.67, 1.5),
+        limits = c(0.5, NA),
+        minor_breaks = numeric()
     )
 
 
 # A violin plot of the posterior distribution of beta for each region and week.
-# The x-axis is "continuous" so that ggplot2 does something sensible with the
-# tick labels but "discrete" for the violins so that there is a separate violin
-# per week.
 p_walk = walk |>
     mutate(date = start_date + i * 7) |>
     ggplot(aes(factor(date), beta)) +
-    # geom_violin(aes(factor(date)))
-    # stat_eye(point_size = 0.1) +
     stat_slab(side = "both") +
     facet_wrap(~region, ncol = 2) +
     standard_plot_theming() +
-    # scale_y_log10() +
+    scale_y_log10(
+        breaks = c(0.5, 1, 2, 0.67, 1.5),
+        limits = c(0.5, NA),
+        minor_breaks = numeric()
+    ) +
     # tick labels every 3 weeks
     scale_x_discrete(
         breaks = function(x) x[c(TRUE, rep(FALSE, 3))]
     ) +
     geom_hline(yintercept = 1, linetype = "dashed", alpha = 0.5) +
     # Angle text for readability
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(
+        x = "Date",
+        y = expression(beta[t])
+    )
 ggsave(
     plot = p_walk,
     filename = here::here("SEIR/CIS/beta_walk.png"),

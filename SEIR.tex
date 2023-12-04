@@ -9,25 +9,22 @@
 
 This chapter uses mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
 Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving model's state and parameters have a biological and/or epidemiological interpretation.
-Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
+% Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
+This allow changes in transmission to be decomposed into the components of the model, \eg the number of contacts per day or the probability of transmission upon contact.
 Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
 All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
 However, they make stronger assumptions about the disease and population behaviour than statistical models.
 
-\Cref{SEIR:sec:transmission-generic} introduces a generic framework for mechanistic modelling of infectious diseases.
+I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{SEIR:sec:transmission-generic}).
 % This framework is then applied to SARS-CoV-2 in \cref{SEIR:sec:transmission-application}.
-It describes the \emph{transmission model}, corresponding to the infection process (from \cref{E-inc-prev:sec:infection-process}).
+It describes the \emph{transmission model}, corresponding to the infection process.
 The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
-The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process (from \cref{E-inc-prev:sec:prevalence-process}) and the observation process (from \cref{E-inc-prev:sec:observation-process}).
-\Cref{SEIR:sec:inference-implementation} describes how I will apply the model to the CIS prevalence data, including the inference process, parameterisation, and priors for this model.
-This transmission model is the same as that in \textcite{birrellRealtime}, but the observation model is novel.
-\Cref{SEIR:sec:sim-study} checks this recovers the parameters successfully using a simulation study.
-\Cref{SEIR:sec:application} then describes the results with the CIS data, including making comparisons to the results in \cref{E-backcalc}.
-Finally, \cref{SEIR:sec:discussion} discusses the results, limitations, and extensions of this work.
-
-The literature on mechanistic models is vast, having been developed for over a century; the model in \cref{SEIR:sec:SIR} was first formulated in the 1920s~\autocite{kermackContribution}.
-\Cref{SEIR:sec:transmission-generic} explains only the parts relevant to the remainder of the chapter.
-For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
+The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
+These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{SEIR:sec:inference-implementation}).
+This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
+I then use a simulation study to check this recovers the parameters successfully (\cref{SEIR:sec:sim-study}).
+Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{SEIR:sec:application}).
+Finally, I discuss the results, limitations, and extensions of this work (\cref{SEIR:sec:discussion}).
 
 Notation in this chapter differs from the rest of this thesis.
 I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
@@ -49,32 +46,37 @@ Deterministic models are defined by the state vector $\vec{x}(t)$ being a determ
 In most situations, the function is not analytically-tractable and requires numeric methods to solve.
 %The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
 %There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
+
 Stochastic models are most commonly specified in discrete time, using a Markov assumption.
-That is, they specify a probability distribution $p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ for integer $t$ and assume that, having conditioned on $\vec{x}(t-1)$, $\vec{x}(t)$ is independent of $\vec{x}(t')$ for all $t' < t - 1$~\autocite{birrellEvidence}.
+They specify a probability distribution $p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ for integer $t$ and assume that, having conditioned on $\vec{x}(t-1)$, $\vec{x}(t)$ is independent of $\vec{x}(t')$ for all $t' < t - 1$~\autocite{birrellEvidence}.
 This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
 
 Deterministic models are also known as \emph{mean-field} models because they can are the behaviour corresponding to a stochastic model's mean.
 When the number of infected individuals is large, the law of large numbers means that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
 An alternative justification, when making noisy observations of the system, is that the additional noise from the stochastic model is negligible compared to this observation noise.
 This second justification is of the same form as the one made for neglecting the stochasticity of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
-The remainder of this chapter uses only deterministic models, because throughout the time period this thesis considers there were enough infectious individuals.
+
+The remainder of this chapter uses only deterministic models.
+Throughout the time period this thesis considers, there were many infectious individuals.
 For an introduction to stochastic models, see \textcite[chapter 6]{keelingModeling} or \textcite{birrellEvidence}.
 
-These classifications only describe the transmission model.
-The observation model, which links $\vec{x}(t)$ to data, is generally includes some stochasticity regardless~\autocite{birrellEvidence}.
 
 This chapter discusses deterministic models whose evolution is specified by a system of ODEs, $d\vec{x}/dt$.
-Therefore, in an ODE model, time is necessarily continuous, although discretised when solving (see \cref{SEIR:sec:inference-implementation}).
+In an ODE model, time is necessarily continuous, although discretised when solving (see \cref{SEIR:sec:inference-implementation}).
 For concreteness, I use units of days throughout, although the model can use any unit of time.
 The number or proportion of individuals in each compartment is also continuous, which is a reasonable approximation when the population is large.
 
 \Cref{SEIR:sec:SIR} introduces the \emph{susceptible-infected-recovered} (SIR) model, a simple compartmental model for a disease where individuals are immune to reinfection following their recovery.
 The SIR model is named because each individual in the population is divided into one of three states: susceptible, infectious, or recovered.
 This model has several assumptions which make it inappropriate to model SARS-CoV-2; therefore, in the remainder of this section I introduce standard extensions to the SIR model which relax these assumptions.
-First, in \cref{SEIR:sec:non-exponential} I relax the assumption that the infectious period is exponentially-distributed to allow gamma distributions.
-Then, in \cref{SEIR:sec:SEIR} I relax the assumption that individuals are infectious immediately after they are infected; it does this by extending the SIR model to the SEIR model with the additional E signifying an \emph{exposed} compartment.
-Finally, in \cref{SEIR:sec:structured-populations} I include heterogeneity in the population, stratifying by important characteristic(s).
+First, in \cref{SEIR:sec:non-exponential}, I relax the assumption that the infectious period is exponentially-distributed to allow gamma distributions.
+Then, in \cref{SEIR:sec:SEIR}, I relax the assumption that individuals are infectious immediately after they are infected; it does this by extending the SIR model to the SEIR model with the additional E signifying an \emph{exposed} compartment.
+Finally, in \cref{SEIR:sec:structured-populations}, I include heterogeneity in the population, stratifying by important characteristic(s).
 % Finally, \cref{SEIR:sec:time-varying-foi} relaxes the assumption of a constant transmission rate to allow for time-varying behavioural changes.
+
+The literature on mechanistic models is vast, having been developed for over a century; the model in \cref{SEIR:sec:SIR} was first formulated by \textcite{kermackContribution}.
+In this section, I will explain only the parts relevant to the remainder of the chapter.
+For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
 
 
 \subsection{The SIR model} \label{SEIR:sec:SIR}
@@ -209,7 +211,7 @@ This parameterisation is chosen to give $1/\gamma$ as the mean infectious period
 A gamma distribution with the first parameter equal to 1 is an exponential distribution, in which case this model collapses to the basic SIR model in \cref{SEIR:sec:SIR}.
 As $n$ increases, the between-individual variability in infectious period length reduces, tending to a constant as $n \to \infty$~\autocite{lloydRealistic}.
 
-The new compartments are considered biologically identical here.
+The new compartments are biologically identical, without an interpretation differentiating the compartments.
 They should be considered as a mathematical trick so that the ODE system produces a gamma distribution rather than an interpretable quantity.
 
 % (it is slightly unclear what it means for a variable to have a distribution in a deterministic model, the clearest explanation is that this is the distribution which the ).
@@ -286,7 +288,7 @@ The reproduction number in terms of the parameters is unchanged by this extensio
 
 To relax the assumption of a homogeneous population, the population can be stratified.
 If the strata have differing transmission patterns, this can change the dynamics of the epidemic.
-The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors (\eg genetics reducing the susceptibility of some individuals~\autocite[208]{andersonInfectious}).
+The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors such as genetics~\autocite[208]{andersonInfectious}.
 I will assume that the disease progression (\ie length of the exposed and infectious periods) is the same for all strata, although this assumption can be relaxed.
 Stratification requires two major changes model changes: extension of the state vector and describing the between-strata interactions.
 
@@ -470,9 +472,6 @@ In this parameterisation (detailed in \cref{E-distributions}) at $\rho=0$ the be
 
 The ultimate aim of this chapter is to infer the transmission dynamics from the CIS prevalence data.
 This section considers the practicalities of achieving this aim via mechanistic models.
-First, I deal with the inference procedure including the MCMC algorithm (\cref{SEIR:sec:MCMC}), parameterising the model (\cref{SEIR:sec:parameterisation}), and the priors for these parameters (\cref{SEIR:sec:priors}).
-This leads to a fully characterised model, explained in \cref{SEIR:sec:full-model}.
-Finally, \cref{SEIR:sec:solving-ODEs} deals with solving the ODE equations numerically.
 
 \subsection{WAIFW matrix}
 
@@ -711,7 +710,7 @@ Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) we
 
 I run 4 chains for 1,000,000 iterations each.
 The first 500,000 were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
-This gives 20,000 posterior samples per region.
+This gives 5,000 posterior samples per region.
 This was further thinned to 2,000 samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
 
 Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
@@ -757,7 +756,8 @@ From the system of ODEs and the knowledge that all the compartments are growing 
 
 I ran a simulation study to check that the inference procedure (described in \cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
 I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
-This is because the prior used for the main analysis was too weak on this prior to create realistic simulations.
+I used the more informative prior for the simulation study to ensure that the simulations were realistic.
+The weakly informative prior, used for the main analysis, allows a wide range of epidemics including some that are shrinking at the start of the time period.
 Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
 
 All fixed values, including $\matr{\kappa}$, used the values from the main analysis.
@@ -775,33 +775,51 @@ In particular, the October half-term school holiday is visible, especially in th
     \label{SEIR:fig:sim-data}
 \end{figure}
 
-Simulating from the prior then attempting to recover the parameters is the basis of simulation-based calibration~\autocites{cookValidation}{taltsValidating}.
-The coverage of the posterior credible intervals should be their nominal value (\eg 95\% of the 95\% credible intervals should contain the true parameter value).
-Furthermore, the combination of the posteriors across all simulations should recover the prior.
+% Furthermore, the combination of the posteriors across all simulations should recover the prior.
 
-To estimate the posterior, I ran a single MCMC chain per simulated data set for 500,000 iterations, discarding the first 300,000 iterations as burn-in, and thinning every 100 iterations.
-Therefore, posterior calculations are based on 2,000 samples per data set.
-On some occasions, the proposal distribution's covariance matrix became singular (or close to singular).
-\todo{Update with fitting issues if they reoccur on final runs}
-This means it is not possible to propose a new value.
-In these cases, I restarted the chain with a new seed, discarding all information from the original chain; this was required at most once per chain.
-
-To check that the inference was working correctly, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter and simulation.
+To check the performance of the inference procedure, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter and simulation.
 I define coverage as the proportion of simulations where the true value of the parameter in that simulation was within the credible interval.
+This procedure is a simplified version of simulation-based calibration~\autocites{cookValidation}{taltsValidating}.
 The coverage for each parameter should equal the nominal probability (\eg the coverage should be 50\% for the 50\% credible intervals).
 I constructed a confidence interval for the coverage using the Pearson-Klopper method implemented in the binom package~\autocite{binom1-1}.
 
-Overall, coverage was\todo{comment on sim study coverage}
+The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
+There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow; this is a common problem when using random-walk MCMC.
+\todo{cite issues with random-walk MCMC exploring space}
+This is similar when considering coverage of the derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
     \includegraphics{SEIR/sim/coverage}
     \caption[Coverage of simulation study]{%
-        Coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter.
-        The lines shows the nominal coverage.
+        Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter; see text for full definition.
+        Vertical lines show the nominal coverage.
     }
     \label{SEIR:fig:sim-coverage}
 \end{figure}
+\begin{figure}
+    \includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}
+    \caption[Coverage of simulation study (derived quantities)]{%
+        Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for incidence (top) and prevalence (bottom); see text for full definition.
+        Horizontal lines show the nominal coverage.
+    }
+    \label{SEIR:fig:sim-inc-prev}
+\end{figure}
 
-\todo[inline]{add simulation study results}
+In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully recovered; the other parameters are only partially so: their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
+The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
+This suggests that these parameters are not practically identifiable in this setting.
+The posteriors align very closely with the priors (not shown) which reinforces this finding.
+The lack of identifiability for $\vec{\pi}$ aligns with previous work showing this parameter is structurally unidentifiable, \ie not identifiable even in the limit of infinite data~\autocite{dankwaStructural}.
+\begin{figure}
+    \includegraphics{SEIR/sim/true_vs_posterior}
+    \caption[True vs posterior parameter values]{%
+        True vs posterior median parameter values for each parameter in each simulation.
+        The black line shows the line $y = x$ which the dots would lie on if the parameter is fully recovered.
+        The blue line is a linear regression line.
+        For $i^+$, $q_c$, and $\psi$, the posterior recovers the true values.
+        For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value.
+    }
+    \label{SEIR:fig:true-vs-posterior}
+\end{figure}
 
 \section{Application to CIS data} \label{SEIR:sec:application}
 
@@ -862,22 +880,27 @@ The parameters $\beta_t$ absorb all the time-varying changes in transmission not
 They trend downwards up until early December when they start increasing again.
 Each region is estimated independently, however correlation is clear across the regions.
 
-\todo[inline]{add Rt results}
-
-\todo[inline]{add attack rates and compare with an external data source}
 \begin{figure}
     \includegraphics{SEIR/CIS/beta_walk}
     \caption[Posterior estimates of $\beta_t$]{%
         Posterior estimates $\beta_t$ for each week.
-        Shown are "violins" where the width is proportional to the kernel-density estimated posterior density at that point.
+        Shown are ``violins'' where the width is proportional to the kernel-density estimated posterior density at that point.
         Values trend downwards until early December when an increase starts.
     }
     \label{SEIR:fig:beta-walk}
 \end{figure}
 
-All regions' MCMC chains converged, assessed using the Rhat statistic and ESS.
-Rhat for all parameters is < 1.02, and for all parameters except $\sigma_\epsilon$ (a nuisance parameter), less than 1.01.
-All parameters had ESS > 500, except $\sigma_\epsilon$ in the East Midlands, which had ESS of 334.
+One MCMC chain for the North West region appeared to get stuck, with very few moves after the first 100,000 iterations.
+I reran this chain with a new seed.
+Following this, all regions' MCMC chains converged, assessed using the Rhat statistic and ESS.
+Rhat for all parameters is < 1.01, except $\sigma_\epsilon$ in London which had a Rhat of 1.018.
+All parameters had ESS > 1000, except $\sigma_\epsilon$ in London and the East, which had ESS of 197 and 757 respectively.
+As all the parameters of primary interest had high Rhat and ESS, and no parameters had large issues, the inference procedure is considered to have converged.
+\begin{figure}
+    % \includegraphics{SEIR/CIS/attack_rates}
+    \caption{Posterior estimates of the attack rate in each region and age group.}
+    \todo[inline]{Add and write about attack rates}
+\end{figure}
 
 \todo[inline]{add comparison to backcalculation once I have those results}
 
@@ -900,21 +923,19 @@ Such decreases might be beneficial as it allows society to operate in a more nor
 Breaking the trade-off between transmission and activity is desirable because it reduces the disease burden without burdesome restrictions on individuals day-to-day lives.
 
 The parameters $\beta_t$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
-\todo{discuss the results and implications for policy or understanding transmission}
 Many factors contribute to the pattern in the $\beta_t$ values, which have a minima near the start of December.
 While this analysis cannot establish causation, several hypotheses can be identified that are worth further investigation.
-The decreases in $\beta_t$ over the autumn could be due to increased caution(\eg masking or stricter adherence to social distancing) and/or interventions short of a lockdown as cases and deaths increased~\autocite{jarvisEffect}, or the impact of local measures in the highest transmission areas\todo{cite local measures}.
+The decreases in $\beta_t$ over the autumn could be due to increased caution(\eg masking or stricter adherence to social distancing) and/or interventions short of a lockdown as cases and deaths increased~\autocite{jarvisEffect}, or the impact of local measures in the highest transmission areas~\autocite{scottCovid19}.
+Local measures are not well captured by $\matr{\kappa}$ because the matrix was for the whole of England.
+Allowing each region to have its own $\matr{\kappa}$ may capture the effect of local measures more accurately.
 The increases in $\beta_t$ in December coincide with the rise of the Alpha variant~\autocite{lythgoeLineage}, known to be more transmissible~\autocite{daviesEstimated}.
 A multiple variant model might be able to capture this rise more accurately.
 Such a model would stratify positive tests in the CIS by pre-Alpha or Alpha variant.
 Then, each variant would be explicitly included in the model to fit to this data.
 
-These factors, and many others, are likely to be correlated across the country.
-This can explain that similar patterns emerge for $\beta_t$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these not being estimated independently.
-These correlations could be exploited by linking their values across regions.
-This could improve the precision of the estimates, but would require a more complex model.
-
-\todo[inline]{discuss comparisons with the backcalculation}
+These factors are correlated across the country.
+This can explain that similar patterns emerge for $\beta_t$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these being estimated independently (\ie there is no model structure which favours correlated values).
+These correlations could be exploited to improve the precision of estimates with a more complex model which borrows information across regions.
 
 The current model could be more flexible with regards to the age distribution of infections.
 This would better exploit one of the strengths of the CIS: that there is data on all age groups.
@@ -925,7 +946,7 @@ More parameters could capture the age distribution more accurately.
 There are various ways to increase the model's flexibility, including introducing additional susceptibility or infectiousness parameters, or by allowing these parameters to vary over time.
 It is plausible that these distributions changed over time in a way not captured by $\matr{\kappa}$, for example due to the introduction and relaxation of control measures within schools.
 $\matr{\kappa}$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
-Similarly, there is evidence that $q_c$ is different for Alpha and pre-Alpha variants\todo{cite a systematic review}, which could again motivate these changing over time.
+Similarly, there is evidence that $q_c$ is different for Alpha and pre-Alpha variants~\autocite{zhuRole}, which could again motivate these changing over time.
 
 The weekly patterns in incidence are another limitation of the current parameterisation.
 The random walk and contact matrices both vary only on the weekly timescale.
@@ -942,10 +963,7 @@ I chose the end of the modelling period to coincide with the vaccination rollout
 Vaccination dramatically affects the transmission dynamics by introducing some additional immunity into the population.
 Mechanistic models require explicit representation of this immunity\todo{cite something about vaccination}.
 
-\todo[inline]{move the following discussion to conclusion chapter as relevant to whole thesis}
-Household structure is not included in this model.
-The household-based design of the survey is likely to induce clustering in results, increasing the variance of the measured prevalence.
-The beta-binomial likelihood structure should capture some of this variance within each strata\todo{ref beta-binomial as a model for clustering}, but not between strata.
+\todo[inline]{discuss comparisons with the backcalculation}
 
 \section{Conclusion}
 

@@ -198,6 +198,9 @@ The relationship between Ct and viral load is noisy and can vary based on many f
 \subfile{SEIR}
 
 \chapter{Conclusion}
+Household structure is not included in this model.
+The household-based design of the survey is likely to induce clustering in results, increasing the variance of the measured prevalence.
+The beta-binomial likelihood structure should capture some of this variance within each strata\todo{ref beta-binomial as a model for clustering}, but not between strata.
 
 \listoftodos
 

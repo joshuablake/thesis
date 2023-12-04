@@ -5,7 +5,7 @@ INC_PREV_DEPS = incidence-prevalence.tex
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png ATACCC/duration.png ATACCC/fits.png ATACCC/fit_individual_55.png
 IMPERF_DEPS = cis-imperfect-testing.tex
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
-SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/sim/data.png SEIR/sim/coverage.pdf SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/p_peak.png SEIR/CIS/beta_walk.png
+SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/sim/data.png SEIR/sim/predictive_coverage.png SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/p_peak.png SEIR/CIS/beta_walk.png
 DISTRIBUTIONS_DEPS = distributions.tex
 
 thesis.pdf: $(SHARED_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
@@ -113,7 +113,10 @@ SEIR/CIS/data.csv:
 	scp hpc:/home/jbb50/PhD_work/SEIR_model/SRS_extracts/20230829_STATS18115/modelling_data.csv $@
 
 SEIR/sim/%.csv:
-	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/EoE/*.csv SEIR/sim/
+	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/EoE_fixed/*.csv SEIR/sim/
+
+SEIR/sim/predictive_coverage.png: SEIR/sim/predictive_check.R utils.R SEIR/sim/sim_output.csv SEIR/sim/posteriors_predictive.csv
+	Rscript $<
 
 SEIR/sim/true_vs_posterior.png SEIR/sim/coverage.pdf: SEIR/sim/coverage.R utils.R SEIR/sim/posteriors_combined.csv SEIR/sim/true_vals.csv
 	Rscript $<
