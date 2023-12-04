@@ -896,10 +896,14 @@ Following this, all regions' MCMC chains converged, assessed using the Rhat stat
 Rhat for all parameters is < 1.01, except $\sigma_\epsilon$ in London which had a Rhat of 1.018.
 All parameters had ESS > 1000, except $\sigma_\epsilon$ in London and the East, which had ESS of 197 and 757 respectively.
 As all the parameters of primary interest had high Rhat and ESS, and no parameters had large issues, the inference procedure is considered to have converged.
+
+The \emph{attack rate} is the proportion of the population that have been infected at least once\todo{cite attack rate}.
+In this model it is $1 - \vec{s}$.
+The attack rate is highest in the $[11, 16)$ age group in the North West at 50\% (95\% CrI: 48\%--52\%) (see \cref{SEIR:fig:attack-rates}).
 \begin{figure}
-    % \includegraphics{SEIR/CIS/attack_rates}
-    \caption{Posterior estimates of the attack rate in each region and age group.}
-    \todo[inline]{Add and write about attack rates}
+    \includegraphics{SEIR/CIS/attack_rates}
+    \caption{Posterior median and 95\% CrI of the attack rate in each region and age group.}
+    \label{SEIR:fig:attack-rates}
 \end{figure}
 
 \todo[inline]{add comparison to backcalculation once I have those results}
