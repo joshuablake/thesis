@@ -76,7 +76,7 @@ The formal specification of this, including the required population-level parame
 \begin{figure}
     \centering
     \makebox[\textwidth][c]{\includegraphics[scale=0.8]{ATACCC/appendix/Bayesian_piecewise_DAG}}
-    \caption{Directed acyclic graph showing the relationship between parameters in the model. Dotted lines represent deterministic (functional) relationships and solid lines stochastic (distributional) relationships. The box represents a fixed (known) quantity and double circle an observed quantity (the data). Index $i$ ranges over individuals, and $t$ over time. Parameters indexed by $i$ exist once for each individual. See main text for equations governing the relationships and the distributions used.}
+    \caption[DAG showing hiearchical structure]{Directed acyclic graph showing the relationship between parameters in the model. Dotted lines represent deterministic (functional) relationships and solid lines stochastic (distributional) relationships. The box represents a fixed (known) quantity and double circle an observed quantity (the data). Index $i$ ranges over individuals, and $t$ over time. Parameters indexed by $i$ exist once for each individual. See main text for equations governing the relationships and the distributions used.}
     \label{fig:paper:model_DAG}
 \end{figure}
 
@@ -109,7 +109,7 @@ The latter were chosen to reflect the prior belief that viral load peaks shortly
     $\sigma_{\log\beta}$ & $\text{Half-Cauchy}(0, 0.67)$ & $0.05$ & $0.67$ & $8.51$ \\
    \hline
 \end{tabular}
-\caption{Priors used, columns 3 to 5 gives quantiles of the distributions specified. See main text for description of the parameters.}
+\caption[Priors]{Priors used, columns 3 to 5 gives quantiles of the distributions specified. See main text for description of the parameters.}
 \label{tab:paper:priors}
 \end{table}
 
@@ -125,7 +125,7 @@ Most observations, excluding those that look to be false negatives (negatives su
     \centering
     \vspace*{-3cm}
     \makebox[\textwidth][c]{\includegraphics[scale=0.9]{ATACCC/appendix/goodness_of_fit}}
-    \caption{Predictive median (solid line), 50\% and 95\% predictive intervals (light and dark shading respectively) for test results (ignoring false negatives). Points show actual observations.}
+    \caption[Goodness-of-fit]{Predictive median (solid line), 50\% and 95\% predictive intervals (light and dark shading respectively) for test results (ignoring false negatives). Points show actual observations.}
     \label{fig:paper:goodness_of_fit}
 \end{figure}
 
@@ -149,7 +149,7 @@ The full distribution is in \cref{fig:paper:duration}.
 \begin{figure}
     \centering
     \makebox[\textwidth][c]{\includegraphics{ATACCC/appendix/duration}}
-    \caption{Proportion of people with $\hat{C} > C_\text{lod}$ a given number of days after this first occurred. Shading indicates central 95\% credible interval.}
+    \caption[Proportion of population positive]{Proportion of people with $\hat{C} > C_\text{lod}$ a given number of days after this first occurred. Shading indicates central 95\% credible interval.}
     \label{fig:paper:duration}
 \end{figure}
 
@@ -176,7 +176,7 @@ However, since individuals were tested for a maximum of 21 days in this study, a
     Mean Ct at peak viral load / Ct & 17.8 (17.1--18.6) & 22.4 (20.7--24.0) \\
     Mean increase in Ct following peak / Ct / day & 1.6 (1.5--1.8) & 2.1 (1.7--2.6)
     \end{tabular}}
-    \caption{Summary of results in comparison to previous studies. \Textcite{jonesEstimating} do not give values in terms of Ct.}
+    \caption[Comparison to previous studies.]{Summary of results in comparison to previous studies. \Textcite{jonesEstimating} do not give values in terms of Ct.}
     \label{tab:paper:compare}
 \end{table}
 
