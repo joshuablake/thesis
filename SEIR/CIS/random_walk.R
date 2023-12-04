@@ -6,6 +6,7 @@ library(lubridate)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
+source(here::here("SEIR/utils.R"))
 
 start_date = ymd("2020-08-31")
 
@@ -17,7 +18,7 @@ posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
         regex = "^([^\\[]+)(\\[[0-9]+\\])?$"
     ) |>
     transmute(
-        region,
+        region = region_labels(region),
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
@@ -93,7 +94,7 @@ p_walk = walk |>
     )
 ggsave(
     plot = p_walk,
-    filename = here::here("SEIR/CIS/beta_walk.png"),
+    filename = here::here("SEIR/CIS/beta_walk.pdf"),
     width = 15,
     height = 20,
     units = "cm",
