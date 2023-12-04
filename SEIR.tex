@@ -796,7 +796,9 @@ This is similar when considering coverage of the derived quantities incidence an
     \label{SEIR:fig:sim-coverage}
 \end{figure}
 \begin{figure}
-    \includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}
+    \thisfloatpagestyle{empty}
+    \vspace{-3cm}
+    \makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}}
     \caption[Coverage of simulation study (derived quantities)]{%
         Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for incidence (top) and prevalence (bottom); see text for full definition.
         Horizontal lines show the nominal coverage.
@@ -855,7 +857,9 @@ The 11--16 age group (roughly corresponding to compulsory secondary school educa
 Incidence is smooth within each week but shows discontinuities between weeks.
 This is because the parameters within $\matr{\beta}(t)$ are constant within each week.
 A constant $\matr{\beta}(t)$ leads to exponential growth over short time periods, once the initial dynamics have died out.
-When the peak in incidence is estimated to occur varied by region, but due to this reason, is almost always on a Friday (see \cref{SEIR:fig:peak-incidence}).
+When the peak in incidence is estimated to occur varied by region, but due to this reason, is almost always on a Sunday (see \cref{SEIR:fig:peak-incidence}).
+For Yorkshire, the peak is estimated to occur in late October.
+For all other regions, it is estimated to occur in late December or Early January, the period during which severe social distancing measures were applied.
 \begin{figure}
     \includegraphics{SEIR/CIS/incidence}
     \caption[Posterior estimates of incidence]{%
@@ -865,13 +869,13 @@ When the peak in incidence is estimated to occur varied by region, but due to th
     \label{SEIR:fig:incidence}
 \end{figure}
 
-\begin{figure}
-    \includegraphics{SEIR/CIS/p_peak}
-    \caption[Posterior estimates of peak incidence timing]{%
-        Posterior probability of the peak incidence for each region and age combination occurring on each day.
-    }
-    \label{SEIR:fig:peak-incidence}
-\end{figure}
+% \begin{figure}
+%     \includegraphics{SEIR/CIS/p_peak}
+%     \caption[Posterior estimates of peak incidence timing]{%
+%         Posterior probability of the peak incidence for each region and age combination occurring on each day.
+%     }
+%     \label{SEIR:fig:peak-incidence}
+% \end{figure}
 
 
 The parameters $\beta_t$ absorb all the time-varying changes in transmission not captured by Google mobility and school attendance data.
