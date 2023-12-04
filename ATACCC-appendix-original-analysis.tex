@@ -4,8 +4,6 @@
 
 \chapter{Original ATACCC analysis} \label{ATACCC:sec:original-analysis}
 
-\todo[inline]{Check for "REF" in this appendix}
-
 This appendix describes an early analysis I did on an initial version of the ATACCC dataset.
 This dataset is not publicly available.
 It contains 79 individuals, all those in the study at that time with at least one positive test.
@@ -82,8 +80,8 @@ The formal specification of this, including the required population-level parame
 
 \subsection{Inference}
 
-Inference was performed by Hamiltonian Monte Carlo (HMC) implemented in Stan 2.26.1~[REF].
-To aid with mixing, the hierarchical parameters were implemented using the non-centred parameterisation~[REF].
+Inference was performed by Hamiltonian Monte Carlo (HMC) implemented in Stan 2.26.1~\autocite{Stan-2-32-2}.
+To aid with mixing, the hierarchical parameters were implemented using the non-centred parameterisation~\autocites{papaspiliopoulosGeneral,stanReparameterization}.
 In addition, $t_{i,0}$ was reparameterised in terms of the absolute time of peak.
 Convergence was assessed by checking R-hat < 1.1, and visual inspection of traceplots, and effective sample size.
 

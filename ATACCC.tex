@@ -65,7 +65,7 @@ The observation model includes the possibility of false positive and negatives, 
 % The limit of detection means that viral loads below a certain threshold are not detected by the PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see\todo{ref wherever I end up describing NUTS}).
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-backcalc:sec:MCMC}).
 The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
 This leads to the following model for the viral load at time $t$, $v_i(t)$, in individual $i$ is shown in \cref{ATACCC:fig:viral-load-model} and given by:
@@ -89,7 +89,7 @@ $\tau_{\max,i}$ is inferred independently for each individual because the time f
 
 PCR tests are noisy observations of the viral load.
 A positive PCR test has a Ct value.
-Ct values are linearly related to viral load (see\todo{ref intro section}).
+Ct values are linearly related to viral load (see\todo{make sure relationship between Ct values and viral load is introduced previously}).
 A negative PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
 Positive PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 
@@ -218,7 +218,7 @@ To calculate the discrete version of this distribution, $F_D$, a Monte Carlo int
 \end{align}
 where $\I$ is the indicator function.
 Here, $D_i$ is drawn conditional on the population-level parameters $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
-Equivalent forms of $F_D$, such as the survival and hazard functions, can be calculated using the relations in\todo{ref section defining survival functions}.
+Equivalent forms of $F_D$, such as the survival and hazard functions, can be calculated using the relations in \cref{E-backcalc:sec:definitions}.
 I found 100,000 draws produced stable estimates of the tail of $F_D$.
 
 \section{Results} \label{ATACCC:sec:results-discussion}
@@ -324,7 +324,6 @@ This is exactly the situation in the UK in early 2021.
 The next two chapters will incorporate CIS data to improve the estimates of these tail probabilities.
 
 \ifSubfilesClassLoaded{
-  \listoftodos
   \appendix
   \subfile{distributions}
   \subfile{ATACCC-appendix-original-analysis}
