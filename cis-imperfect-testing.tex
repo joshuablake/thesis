@@ -34,14 +34,14 @@ In particular, it estimates a very high probability of the episode lasting less 
 Comparing the simulated and CIS data suggests that this is due to the high frequency of single positive episodes in the CIS data.
 A single positive episode is an episode containing exactly one positive test; intuitively, these cause short estimates because there is no lower bound on the length of time the episode lasts.
 Furthermore, due to missing short episodes, there is little or no ability to upper bound the number of very short episodes because these would almost all be missed.
-\Textcite{shenNonparametrica} (extending \textcite{panNote}) showed that, in a similar setting to here\todo{note why it is different}, the maximum likelihood (frequentist) estimator is inconsistent and can lead to severe underestimation (bias) of the survival function.
+\Textcite{shenNonparametrica}, extending \textcite{panNote}, showed that the maximum likelihood estimator is inconsistent and can lead to a severely biased underestimation of the survival function, albeit when only the terminating event is interval censored\todo{double check the setting of Shen}.
 While the result cannot simply be extended to the more complex study design of the CIS, it reinforces the intuition that single positive episodes are likely to be problematic.
-Furthermore, simulations (not shown) building in even a few excess single positive episodes led to problematic estimation even within the CIS setting.
+Furthermore, simulations building in even a few excess single positive episodes led to problematic estimation even within the CIS setting (not shown).
 
 % Discussion and interrogation of the data led me to
 I hypothesised that the reason for the unexpectedly high number of single positive episodes (compared to simulation) was the presence of false negatives results.
 There are two strands of evidence supporting this hypothesis.
-First, it is well known that PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); they were explicitly include these in the viral load model of \cref{E-ATACCC}.
+First, it is well known that PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); I explicitly include them in the viral load model of \cref{E-ATACCC}.
 Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that they occur within the CIS.
 Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate}).
 
@@ -64,12 +64,11 @@ However, an implausibly low value for $\psens$ is required to reproduce the rate
 
 More plausibly, the rate of false negatives varies over the course of an episode.
 False negatives are more likely to occur when the viral load of an individual is low, because there is less virus in their body to be sampled.
-In \cref{E-ATACCC} this mechanism is incorporated by the left-censored observations.
+In \cref{E-ATACCC}, this mechanism is incorporated by the left-censored observations.
 This suggests that a model with a declining test sensitivity as a function of time since infection might be more suitable.
 
-\todo[inline]{Next paragraph needs editing for clarity}
 The CIS data provides evidence for a test sensitivity declining over the course of an episode.
-To do this, I classify all test results into three classes, making the following assumptions.
+\Cref{imperf-test:fig:bounding-cis-sensitivity} demonstrates this by classifying all test results as follows.
 \begin{enumerate}
     \item All positive results are true positives.
     \item All intermittent negatives are false negatives.
@@ -80,7 +79,7 @@ Here, I am assuming that the probability of two false negative tests at the end 
 Then I calculate the test sensitivity as a function of days since the first positive in an episode, bounding this by assuming either all or none of those in group 3 are false negatives.
 % The test sensitivity is the true positives / (true positives + false negatives).
 % In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie: the first positive test in the episode).
-This generates broad bounds, although suggest a declining test sensitivity over the course of an episode (see \cref{imperf-test:fig:bounding-cis-sensitivity}).
+This generates broad bounds, although suggest a declining test sensitivity over the course of an episode.
 \begin{figure}
   \todo[inline]{Extract figure from SRS}
   \caption[Bounding test sensitivity using CIS data]{Bounding the test sensitivity using CIS data as a function of time since the infection was detected (see main text for explanation of how the bounds are formed).\label{imperf-test:fig:bounding-cis-sensitivity}}
@@ -154,41 +153,39 @@ Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
 \subsection{Modifying \texorpdfstring{$p_{it}$}{pit}} \label{modifying-p_it}
 
-With false negatives, an episode with can be undetected in the following
-ways:
-
+With false negatives, an episode with can be undetected in the following four ways; the first two of these are the same as before, but the second two are new.
+\todo[inline]{Check all this notation with the previous chapter's}
 \begin{enumerate}
 \item
-  The episode begins before $\min(t_i)$ (assuming there is a
-  negligible probability of a false negative test at this point).
+  The episode begins before $\min(t_i)$.
+  I assume there is a negligible probability of a false negative test at this point because viral load is high.
 \item
-  The duration of the episode is less than $t_{ib_i}^N$. These first
-  two mechanisms are why episodes were missed in the previous chapter, with combined
-  probability $p_{it}$.
+  The duration of the episode is less than $t_{ib_i}^N$.
 \item
-  The duration of the episode is at least as long as $t_{it}^N$ but
-  less than the time to the second test after $t$, $t_{it}^{2N}$,
-  and a false negative episode occurred at the first test after $t$.
+  The duration of the episode is at least as long as $t_{it}^N$ but less than the time to the second test after $t$, $t_{it}^{2N}$, and a false negative episode occurred at the first test after $t$.
   This occurs with probability:
   \begin{math}
     (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(t_i)}^T \left( S_\theta(t_{ib}^N + 1) - S_\theta(t_{ib}^{2N} + 1)\right).
   \end{math}
 \item
-  The duration of the episode is at least as long as $t_{it}^{2N}$,
-  and all the tests within the episode (at least two) are false
-  negatives. We assume this occurs with negligible probability.
+  The duration of the episode is at least as long as $t_{it}^{2N}$, and all the tests within the episode (at least two) are false
+negatives.
+  I assume this occurs with negligible probability.
 \end{enumerate}
 
 Hence, the replacement for $1 - p_{it}$ is:
 \begin{align}
 1 - p_{it}'
 &= 1 - p_{it} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(t_i)}^T \left( S_\theta(t_{ib}^N + 1) - S_\theta(t_{ib}^{2N} + 1)\right) \\
-&= \frac{1}{T} \sum_{b=\min(t_i)}^T \left( p_\text{sens} S_\theta(t_{ib}^N + 1) + (1 - p_\text{sens}) S_\theta(t_{ib}^{2N} + 1)\right) \\
+&= \frac{1}{T} \sum_{b=\min(t_i)}^T \left( p_\text{sens} S_\theta(t_{ib}^N + 1) + (1 - p_\text{sens}) S_\theta(t_{ib}^{2N} + 1)\right).
 \end{align}
+
+$p_{it}'$ and $p_{ia}'$ are substituted for $p_{it}$ and $p_{ia}$ respectively in \cref{E-perf-test:eq:full-posterior}.
+The posterior density is otherwise unchanged.
 
 \section{Simulation study results} \label{imperf-test:sec:sim-study-results}
 
-\todo[inline]{notes on sim results into prose}
+\todo[inline]{Turn notes on sim results into prose}
 
 \begin{itemize}
   \item When sensitivity is too bad (0.6), cannot recover the true distribution. The assumptions in the model, that the first test is a true positive and no missed infections prior, cannot hold.
