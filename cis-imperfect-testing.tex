@@ -148,6 +148,7 @@ p_{ia}'
 &= \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( p(y_i', b_i, e_i \leq r_i^{(e)} \mid p_\text{sens}, \theta) p(y_i', b_i e_i > r_i^{(e)} \mid p_\text{sens}, \theta) \right) p(b_i \mid p_\text{sens}, \theta) \\
 &= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \\ & \ \times \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) + (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1) \right) p(b_i \mid p_\text{sens}, \theta) \\
 &= \left( \prod_{t \in t_i'} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right)\sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - p_\text{sens} S_\theta(r_i^{(e)} - b_i - 1) \right) p(b_i \mid p_\text{sens}, \theta).
+\label{imperf-test:eq:pia-prime}
 \end{align}
 Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
@@ -178,23 +179,55 @@ Hence, the replacement for $1 - p_{it}$ is:
 1 - p_{it}'
 &= 1 - p_{it} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(t_i)}^T \left( S_\theta(t_{ib}^N + 1) - S_\theta(t_{ib}^{2N} + 1)\right) \\
 &= \frac{1}{T} \sum_{b=\min(t_i)}^T \left( p_\text{sens} S_\theta(t_{ib}^N + 1) + (1 - p_\text{sens}) S_\theta(t_{ib}^{2N} + 1)\right).
+\label{imperf-test:eq:pit-prime}
 \end{align}
 
 $p_{it}'$ and $p_{ia}'$ are substituted for $p_{it}$ and $p_{ia}$ respectively in \cref{E-perf-test:eq:full-posterior}.
 The posterior density is otherwise unchanged.
 
-\section{Simulation study results} \label{imperf-test:sec:sim-study-results}
+\section{Simulation study} \label{imperf-test:sec:sim-study-results}
 
-\todo[inline]{Turn notes on sim results into prose}
+I repeated the simulation study in \cref{E-perf-test:sec:sim-study}, except I used the model of \cref{imperf-test:sec:modelling} with either a constant test sensitivity or the more realistic varying sensitivity.
+I focus on the independent (vague) and model combination priors for the survival (described in \cref{E-perf-test:sec:parameters-priors}.
+These were shown to be the best performing priors in \cref{E-perf-test:sec:results}
 
-\begin{itemize}
-  \item When sensitivity is too bad (0.6), cannot recover the true distribution. The assumptions in the model, that the first test is a true positive and no missed infections prior, cannot hold.
-  \item Assuming too low a test sensitivity (bottom left triangle) means that number of missed infections will be overestimated and the duration distribution will be overestimated (\ie episodes are too long on average).
-\end{itemize}
+With a constant test sensitivity of 0.8, the model recovers the true survival time well.
+However, with a lower test sensitivity of 0.6, this is no longer the case (see \cref{imperf-test:fig:constant-test-sensitivity}).
+The simplifications to the model made in \cref{imperf-test:sec:modelling} cause too large a misspecification at this point.
+The informative prior helps to overcome the misspecification, helping to recover the true survival time (in comparison to the vague prior).
+\begin{figure}
+  % \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-imperfect-testing/sim-constant-sensitivity}}
+  \includegraphics[width=\textwidth]{cis-imperfect-testing/sim-constant-sensitivity}
+  \caption[Simulation study results with constant test sensitivity]{%
+    Posterior (median and 95\% credible interval) of the survival time for the simulation study with a constant test sensitivity.
+    True survival time shown in black.
+    Left panel shows the results with a test sensitivity of 0.6, right panel shows the results with a test sensitivity of 0.8.
+  }
+  \label{imperf-test:fig:constant-test-sensitivity}
+\end{figure}
+
+If the test sensitivity is misspecified, that is the assumed value for $p_\text{sens}$ in \cref{imperf-test:eq:pit-prime,imperf-test:eq:pit-prime} is different to the value used in the simulation, then the survival time will be biased (see \cref{imperf-test:fig:misspecified-test-sensitivity}).
+If the test sensitivity is assumed to be too low, then the number of episodes inferred to have truly ended by the first negative will be too high, and the survival time will be underestimated.
+This affect dominates over the opposing bias of overestimating the number of missed episodes.
+The opposite occurs if the test sensitivity is assumed to be too high.
+\begin{figure}
+  % \makebox[\textwidth][c]{
+    \includegraphics[width=\textwidth]{cis-imperfect-testing/sim-misspecified-sensitivity}
+  \caption[Simulation study results with misspecified test sensitivity]{%
+    Posterior (median and 95\% credible interval) of the survival time for the simulation study with a misspecified test sensitivity.
+    True survival time shown in black.
+    All simulations use a constant test sensitivity of 0.8, but the model assumes different values.
+    All inference uses the combination prior, due to it performing better than the vague prior in \cref{imperf-test:fig:constant-test-sensitivity}.
+    The correctly specified model (middle pane) has a posterior median closely following the true value, with the credible intervals almost always including the true value.
+    Assuming a too low test sensitivity (left pane) starts by following the true value but then separates, with the posterior median being too high.
+    Assuming a too high (perfect) test sensitivity (right pane) underestimates the survival time almost throughout.
+  }
+  \label{imperf-test:fig:misspecified-test-sensitivity}
+\end{figure}
 
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
-\subsection{Data}
+\subsection{Methods}
 
 \todo[inline]{Check if I've talked about the data before - previous chapter?}
 
@@ -214,19 +247,17 @@ I filter the episodes as follows.
   A negative test to end the episode (\ie: following the final positive in the episode) has been recorded.
 \end{itemize}
 
-\todo[inline]{Descriptive analyses of the data here}
 
-\subsection{Methods}
-
-\todo[inline]{Add additional info on methods. Prior on number missed; hyperparameters}
-Might include hyperparameters etc or assumptions made?
+I form a prior for $\ntot$ from an extension of the model of \textcite{birrellRealtime}, used to produce incidence estimates.
+This gives a posterior mean of \numprint{4136368} cumulative infections in England in the time period I consider, with a posterior standard deviation of \numprint{27932}~\citePersonalComms{Paul Birrell}.
+Approximating this distribution as a negative binomial and scaling the mean to the size of the CIS cohort gives the prior $\ntot \sim \NBc(\numprint{25132}, \numprint{22047})$.
 
 \subsection{Results}
 
 \todo[inline]{notes on real results into prose}
 
 \begin{itemize}
-    \item not sensitivite to survival prior
+    \item not sensitive to survival prior
     \item sensitive to test sensitivity assumptions and prior on number missed
     \item comparison with ATACCC
     \item mean and median summaries
@@ -239,7 +270,7 @@ Might include hyperparameters etc or assumptions made?
 
 \begin{itemize}
   \item Survival prior matters for quantitative details but not qualitative shape. 
-  \item Number of missed infections prior is more important.
+  \item Number of missed infections prior is more important, but not the case in simulation (not shown).
   \item Unclear why this is the case, probably model misspecification meaning that fewer missed infections than expected.
   \item Two possible misspecifications: test sensitivity (not constant) and constant incidence.
 \end{itemize}
