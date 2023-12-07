@@ -23,7 +23,7 @@ Plausible estimates of the duration distribution are produced, however, they req
 \section{The problem} \label{imperf-test:sec:problem}
 
 Applying the method of \cref{E-perf-test} to CIS data gives implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
-In particular, it estimates a very high probability of the episode lasting less than five days, in conflict with the results of \cref{E-ATACCC} and other prior work~\autocite[e.g.:][]{cevikShedding}.
+In particular, it estimated a much shorter duration of positivity than in \cref{E-ATACCC}, despite those estimates being much more reliable over the first 2--3 weeks.
 
 \begin{figure}
   \centering %\includegraphic{}
@@ -91,6 +91,7 @@ Based on \cref{imperf-test:fig:bounding-cis-sensitivity}, I propose the followin
     0.9 - \frac{0.9-0.5}{50}t &t \leq 50 \\
     0.5 &t > 50
   \end{cases}
+  \label{imperf-test:eq:variable-test-sensitivity}
 \end{equation}
 where $t$ is the time in days since infection.
 Simulated data using this test sensitivity is much more similar to the data, while being more plausible than very low probabilities of false negatives.
@@ -187,7 +188,7 @@ The posterior density is otherwise unchanged.
 
 \section{Simulation study} \label{imperf-test:sec:sim-study-results}
 
-I repeated the simulation study in \cref{E-perf-test:sec:sim-study}, except I used the model of \cref{imperf-test:sec:modelling} with either a constant test sensitivity or the more realistic varying sensitivity.
+I repeated the simulation study in \cref{E-perf-test:sec:simulation-study}, except I used the model of \cref{imperf-test:sec:modelling} with either a constant test sensitivity or the more realistic varying sensitivity.
 I focus on the independent (vague) and model combination priors for the survival (described in \cref{E-perf-test:sec:parameters-priors}.
 These were shown to be the best performing priors in \cref{E-perf-test:sec:results}
 
@@ -225,46 +226,57 @@ The opposite occurs if the test sensitivity is assumed to be too high.
   \label{imperf-test:fig:misspecified-test-sensitivity}
 \end{figure}
 
+The results when a varying test sensitivity (\cref{imperf-test:eq:variable-test-sensitivity}) is used for the simulation are similar to a constant 0.8 test sensitivity (see \cref{imperf-test:fig:variable-test-sensitivity}).
+This suggests that the simplified model, with constant test sensitivity, is sufficient for recovering the true survival time.
+Therefore, I will apply this model to the real CIS data in the next section.
+\begin{figure}
+  % \makebox[\textwidth][c]{
+    \includegraphics[width=\textwidth]{cis-imperfect-testing/sim-variable-sensitivity}
+  \caption[Simulation study results with varying test sensitivity]{%
+    Posterior (median and 95\% credible interval) of the survival time for the simulation study with a variable test sensitivity.
+    All simulations use a constant test sensitivity of 0.8 and the combination prior (as in \cref{imperf-test:fig:misspecified-test-sensitivity}), but the model assumes different values.
+    The posterior estimate using a model with a constant test sensitivity of 0.8 (middle panel) is similar to the true value (black line).
+  }
+  \label{imperf-test:fig:variable-test-sensitivity}
+\end{figure}
+
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
-\subsection{Methods}
+This section applies the model described in this chapter to the CIS episodes dataset I described in \cref{E-perf-test:sec:approach}.
 
-\todo[inline]{Check if I've talked about the data before - previous chapter?}
+Unlike in the simulation studies, an uninformative prior on $\ntot$ led to implausible estimates of the duration distribution.
+The uninformative prior led to high posterior estimates, and hence an implausibly large number of episodes with durations of less than five days.
+Therefore, I based an informative prior for $\ntot$ on pre-existing estimates of the total number of infections over the period with posterior mean \numprint{4136368} and standard deviation \numprint{27932}~\autocite{birrellRTM2}.
+% This model gives a posterior mean of \numprint{4136368} cumulative infections in England in the time period I consider, with a posterior standard deviation of \numprint{27932}~\citePersonalComms{Paul Birrell}.
+\todo{Insert correct citation for RTM paper 2 once available}
+Approximating this distribution as a negative binomial and scaling the mean to the size f the CIS cohort gives the prior $\ntot \sim \NBc(\numprint{25132}, \numprint{22047})$.
 
-I use the CIS data described in \cref{E-intro:sec:cis}, with positive tests heuristically divided into episodes.
-Prior work categorised a series of positive tests within the same individual CIS were heuristically categorised into episodes (see \cref{E-episode-def}).
+With this prior, the model produces plausible estimates of the duration distribution (see \cref{imperf-test:fig:cis-estimates}).
+This estimate has more long episodes than the estimate in \cref{E-ATACCC}.
+The qualitative increase in long episodes is robust to the choice of prior for $\ntot$, the assumed value for $\psens$ (see \cref{imperf-test:fig:cis-sensitivity}), and the choice of prior for $\lambda$.
+However, the survival proportion over the first 4 weeks is sensitive to these choices.
+The estimate using a test sensitivity of 0.8 and $\NBc(\numprint{25132}, \numprint{22047})$ give a median survival time most similar to that of \cref{E-ATACCC}.
+\todo[inline]{Insert fig showing final estimate and comparison to ATACCC}
+\todo[inline]{
+  Insert figs showing, for different assumption:
+  proportion of individuals still positive at day 30 or 50 (tail),
+  overall survival curve, and
+  median survival time (in comparison to ATACCC).
+}
 
-I filter the episodes as follows.
-\begin{itemize}
-\item
-  The first positive in the episode occurred between 16th Oct 2020 and
-  5th Dec 2020 inclusive.
-\item
-  The individual had recorded a negative test prior to their episode
-  beginning (this could have happened at any time, including prior to
-  16th Oct).
-\item
-  A negative test to end the episode (\ie: following the final positive in the episode) has been recorded.
-\end{itemize}
-
-
-I form a prior for $\ntot$ from an extension of the model of \textcite{birrellRealtime}, used to produce incidence estimates.
-This gives a posterior mean of \numprint{4136368} cumulative infections in England in the time period I consider, with a posterior standard deviation of \numprint{27932}~\citePersonalComms{Paul Birrell}.
-Approximating this distribution as a negative binomial and scaling the mean to the size of the CIS cohort gives the prior $\ntot \sim \NBc(\numprint{25132}, \numprint{22047})$.
-
-\subsection{Results}
-
-\todo[inline]{notes on real results into prose}
-
-\begin{itemize}
-    \item not sensitive to survival prior
-    \item sensitive to test sensitivity assumptions and prior on number missed
-    \item comparison with ATACCC
-    \item mean and median summaries
-    \item 
-\end{itemize}
+The assumption that the estimates are most sensitive to is the strength of the prior on $\ntot$.
+A very weak, almost uninformative, prior on this quantity causes the posterior estimate to be much higher than the estimate from \textcite{birrellRTM2}.
+When increasing the prior's strength, the posterior estimate moves towards the prior smoothly, as expected (see\todo{figure showing $r$ vs $\ntot$}).
+Taking a prior from \textcite{birrellRTM2} means that the posterior survival is close to the \cref{E-ATACCC} estimate in the region where that estimate is reliable.
+This justifies the use of this prior.
 
 \section{Discussion} \label{imperf-test:sec:discussion}
+
+This chapter shows that a simple model of false negatives can be incorporated into the model of \cref{E-perf-test}.
+This model allows estimation of the duration distribution tails without the strong model assumptions used in \cref{E-ATACCC}.
+The qualitative features of the estimated distribution are robust to the assumed value for $\psens$, and the choice of prior for $\lambda$, although the quantative details are not.
+The estimates of the tail, the primary purpose of this chapter, are in addition robust to the choice of prior for $\ntot$.
+However, the rest of the distribution is sensitive to this choice.
 
 \todo[inline]{discussion on real results into prose}
 
@@ -275,9 +287,40 @@ Approximating this distribution as a negative binomial and scaling the mean to t
   \item Two possible misspecifications: test sensitivity (not constant) and constant incidence.
 \end{itemize}
 
+An informative prior on $\ntot$ is required is for the bulk of the distribution to be plausible.
+In the simulation study, the uninformative prior on $\ntot$ performed well, even when the test sensitivity was misspecified.
+One hypothesis is that the test sensitivity is significantly different to the function in \cref{imperf-test:eq:variable-test-sensitivity} causing an unintuitive pattern of results.
+In particular, the test sensitivity for long episodes may become much lower than 50\%.
+This allows many more episodes to be missed than the model assumes, and hence a higher $\ntot$ is required to explain the data.
+Furthermore, it violates assumptions made in \cref{imperf-test:sec:modelling}; this is similar to when the simulating using a too low test sensitivity.
+Violating these assumptions would lead to unpredictable inference results, perhaps those seen here.
+
+Ideally, the test sensitivity would be estimated from the data.
+However, this would require a model for time-varying test sensitivity to be incorporated into the model.
+Furthermore, it is unclear that such a model would be identifiable because it would not be clear whether to attribute negative results to false negatives or to recoveries\todo{cite something on this}.
+
+The assumption, made in \cref{E-perf-test}, was that the episode start times are independent.
+However, because infections are the result of a counting process with intensity shared between individuals (see \cref{E-inc-prev:sec:infection-process}), this assumption is violated.
+Prevalence was fairly constant over the period I chose, suggesting the same is true of the incidence.
+Additionally, some simulations exploring the results of changing incidence suggested this would not have a large effect on the results (not shown).
+
+% However, comparing the CIS and simulated datasets do not show any differences which suggest what in the data is causing these differences.
+% Then, the additional missed infections implied by a 
+% This would lead to more missed infections than the model assumes, and hence a higher $\ntot$ is required to explain the data.
+
+The estimates I give in this chapter are the first estimates of the duration of PCR-positivity, including the distribution tails, estimated from general population data.
+This feature of the distribution is important for understanding the proportion of prevalence attributable to long infections and interpreting PCR test results.
+Producing these estimates required applying previous survival analysis frameworks in the novel context of the CIS.
+The framework needed further modification to account for the presence of false negatives, done in this chapter.
+
 \section{Conclusion} \label{imperf-test:sec:conclusion}
 
-\todo[inline]{write conclusion}
+This chapter has produced estimates of the duration distribution of PCR-positivity using information from two studies: ATACCC and CIS.
+Assuming a test sensitivity of 0.8 and an informative prior on the number of infections, provided the preferred estimates.
+The posterior distribution for the survival is concentrated, producing narrow credible intervals.
+In the following chapters, I will take the posterior mean for the survival time at each point, neglecting this uncertainty, as the basis for estimating transmission.
+First, I will take a backcalculation approach (\cref{E-backcalc}), based on the framework in \cref{E-inc-prev}.
+Then, I will take a mechanistic approach (\cref{E-SEIR}), modelling the transmission process explicitly.
 
 \ifSubfilesClassLoaded{
   \listoftodos

@@ -55,8 +55,7 @@ p_misspecified_sensitivity = tbl_posteriors |>
     labs(
         colour = expression(p[sens]),
         fill = expression(p[sens])
-    ) #+
-    scale_y_log10()
+    )
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.png"),
     plot = p_misspecified_sensitivity,
@@ -65,3 +64,52 @@ ggsave(
     units = "cm",
     dpi = 300
 )
+
+p_variable_sensitivity = tbl_posteriors |>
+    filter(is.na(sensitivity.simulation), survival_prior == "Combination") |>
+    mutate(sensitivity.model = factor(sensitivity.model)) |>
+    ggplot() +
+    ggdist::geom_lineribbon(aes(time, S, ymin = S.lower, ymax = S.upper, fill = sensitivity.model, colour = sensitivity.model), linewidth = 1, alpha = 0.3) +
+    facet_wrap(~ sensitivity.model) +
+    geom_line(aes(time, S), data = truth, alpha = 0.5) +
+    theme_survival_time_series() +
+    labs(
+        colour = expression(p[sens]),
+        fill = expression(p[sens])
+    )
+ggsave(
+    filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.png"),
+    plot = p_variable_sensitivity,
+    width = 15,
+    height = 9,
+    units = "cm",
+    dpi = 300
+)
+
+# tbl_posteriors |>
+#     ggplot() +
+#     ggdist::geom_lineribbon(aes(time, S, ymin = S.lower, ymax = S.upper), linewidth = 1, alpha = 0.3) +
+#     facet_grid(model_name~sim_name) +
+#     geom_line(aes(time, S), data = truth, alpha = 0.5) +
+#     theme_survival_time_series() +
+#     labs(
+#         colour = expression(p[sens]),
+#         fill = expression(p[sens])
+#     )
+
+# tbl_posteriors |>
+#     count(sim_name, model_name, time) |>
+#     filter(n > 1)
+
+# ggsave(
+#     filename = here::here("cis-imperfect-testing/sim-all.png"),
+#     width = 15,
+#     height = 50,
+#     units = "cm",
+#     dpi = 300
+# )
+
+# tbl_posteriors |>
+#     filter(time == 5, S < 0.8, !stringr::str_detect(model_name, "inform-total")) |>
+#     arrange(S) |>
+#     select(model_name, sim_name) 
