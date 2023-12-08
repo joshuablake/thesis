@@ -194,7 +194,7 @@ Each episode, whether detected or not, must fall into one of these three classes
   $l_i^{(b)}$ is the day after the last negative test prior to the first positive test in the episode.
   $r_i^{(b)}$ is the day of the first positive test.
   Similarly, define $l_i^{(e)}$ and $r_i^{(e)}$ as the first and last days $e_i$ could have occurred.
-  If $i \in \set{D}$ then $n_{ia} =1$ admissible episodes occurred in individuals with test schedule $\sched{i}$, otherwise $n_{ia} = 0$.
+  If $i \in \set{D}$ then $n_{ia} =1$ admissible episodes occurred in individuals with test schedule $\sched_{i}$, otherwise $n_{ia} = 0$.
   Conditional on the episode occurring in individuals with test schedule $\sched_i$, it is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
   \label{perf-test:def:admissible}
 \item
@@ -349,12 +349,12 @@ Therefore, I derive $1 - p_{iu}$, again suppressing the conditioning on $\theta$
 1 - p_{iu}
 &= 1 - \prob((B_i, E_i) \in \Omega^C_i) \\
 &= 1 - \prob( \tau_{\sched_i}(B_i) + B_i > E_i \vee B_i \leq \min(\sched_i) ) \\
-&= 1 - \prob( \tau_{\sched_i}(B_i) > D_i , B_i > \min(\sched_i) )  - \prob( B_i \leq \min(\sched_i) ) \\
-&= 1 - \sum_{b={\min\sched_i} + 1}^T \prob( \tau_{\sched_i}(b) > D_i) \prob(B_i = b) - \sum_{t=1}^{\min\sched_i} \prob(B_i = b)\\
-&= 1 - \frac{1}{T} \sum_{b=\min(t_i)+1}^T (1 - S_\theta(\tau_{\sched_i}(b + 1))) - \frac{1}{T} \min\sched_i \\
-&= \frac{1}{T} \left(T - \sum_{b=\min\sched_i+1}^T (1 - S_\theta(\tau_{\sched_i}(b + 1))) - \min\sched_i \right) \\
+&= 1 - \prob( \tau_{\sched_i}(B_i) + 1 > D_i , B_i > \min(\sched_i) )  - \prob( B_i \leq \min(\sched_i) ) \\
+&= 1 - \sum_{b={\min\sched_i} + 1}^T \prob( \tau_{\sched_i}(b) + 1> D_i) \prob(B_i = b) - \sum_{t=1}^{\min\sched_i} \prob(B_i = b)\\
+&= 1 - \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T (1 - S_\theta(\tau_{\sched_i}(b) + 1)) - \frac{1}{T} \min\sched_i \\
+&= \frac{1}{T} \left(T - \sum_{b=\min\sched_i+1}^T (1 - S_\theta(\tau_{\sched_i}(b) + 1)) - \min\sched_i \right) \\
 &= \frac{1}{T} \left(T - (T - \min\sched_i) + \sum_{b=\min\sched_i+1}^T S_\theta(\tau_{\sched_i}(b + 1)) - \min\sched_i \right) \\
-&= \frac{1}{T} \sum_{b=\min(t_i)+1}^T S_\theta(\tau_{\sched_i}(b + 1)).
+&= \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T S_\theta(\tau_{\sched_i}(b) + 1). \label{perf-test:eq:piu}
 \end{align}
 
 
