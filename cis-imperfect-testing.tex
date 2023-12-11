@@ -46,8 +46,12 @@ Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that t
 Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (shown in \cref{imperf-test:fig:sim-single-pos} with method explained in \cref{imperf-test:sec:simulate}).
 \begin{figure}
   \centering \includegraphics{cis-imperfect-testing/sim-single-positive-episodes}
-  \todo[inline]{Figure showing estimates without false negatives}
-  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{E-perf-test} gives implausibly short estimates.}
+  \caption[Single positive episodes in CIS simulation]{%
+    Proportion of detected episodes which have a single positive episode.
+    y-axis is the number of simulations, out of 1000, with the indicated proportion.
+    The CIS data is shown as a vertical line.
+    Simulation methodology is explained in \cref{E-perf-test:sec:simulation-study}, with false negatives included as described in \cref{imperf-test:sec:simulate}.
+  }
   \label{imperf-test:fig:sim-single-pos}
 \end{figure}
 

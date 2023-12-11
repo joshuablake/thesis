@@ -12,7 +12,7 @@ sims = readRDS(here::here("cisRuns-output/sim_reps.rds")) |>
 p_single_pos = sims |>
     summarise(
         .by = c(.draw, scenario_name),
-        num_single = sum(n_pos == 1)
+        num_single = mean(n_pos == 1)
     ) |>
     mutate(
         sensitivity = stringr::str_split_fixed(scenario_name, "-", 3)[,3] |>
@@ -23,9 +23,10 @@ p_single_pos = sims |>
     geom_vline(aes(xintercept = 3730/4837, colour = "Observed"), size = 1) +
     standard_plot_theming() +
     labs(
-        x = "Number of single positive episodes",
+        x = "Proportion of episodes",
         y = "Number of simulations",
-        fill = "Test sensitivity"
+        fill = "Test sensitivity",
+        colour = ""
     )
 
 ggsave(
