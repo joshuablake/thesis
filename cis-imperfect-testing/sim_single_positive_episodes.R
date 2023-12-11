@@ -20,6 +20,7 @@ p_single_pos = sims |>
     ) |>
     ggplot() +
     geom_bar(aes(num_single, fill = sensitivity)) +
+    geom_vline(aes(xintercept = 3730/4837, colour = "Observed"), size = 1) +
     standard_plot_theming() +
     labs(
         x = "Number of single positive episodes",

@@ -24,7 +24,6 @@ Finally, I discuss the results and further work in \cref{imperf-test:sec:discuss
 
 Applying the method of \cref{E-perf-test} to CIS data gives implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
 In particular, it estimated a much shorter duration of positivity than in \cref{E-ATACCC}, despite those estimates being much more reliable over the first 2--3 weeks.
-
 \begin{figure}
   \centering %\includegraphic{}
   \todo[inline]{Figure showing estimates without false negatives}
@@ -44,7 +43,13 @@ I hypothesised that the reason for the unexpectedly high number of single positi
 There are two strands of evidence supporting this hypothesis.
 First, it is well known that PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); I explicitly include them in the viral load model of \cref{E-ATACCC}.
 Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that they occur within the CIS.
-Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (see \cref{imperf-test:sec:simulate}).
+Second, adjusting the simulation to include false negatives can reproduce both the CIS data more faithfully and exhibits the same issues when estimating the duration distribution (shown in \cref{imperf-test:fig:sim-single-pos} with method explained in \cref{imperf-test:sec:simulate}).
+\begin{figure}
+  \centering \includegraphics{cis-imperfect-testing/sim-single-positive-episodes}
+  \todo[inline]{Figure showing estimates without false negatives}
+  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{E-perf-test} gives implausibly short estimates.}
+  \label{imperf-test:fig:sim-single-pos}
+\end{figure}
 
 \section{Simulating false negatives} \label{imperf-test:sec:simulate}
 
@@ -261,13 +266,21 @@ This estimate has more long episodes than the estimate in \cref{E-ATACCC}.
 The qualitative increase in long episodes is robust to the choice of prior for $\ntot$, the assumed value for $\psens$ (see \cref{imperf-test:fig:cis-sensitivity}), and the choice of prior for $\lambda$.
 However, the survival proportion over the first 4 weeks is sensitive to these choices.
 The estimate using a test sensitivity of 0.8 and $\NBc(\numprint{25132}, \numprint{22047})$ give a median survival time most similar to that of \cref{E-ATACCC}.
-\todo[inline]{Insert fig showing final estimate and comparison to ATACCC}
-\todo[inline]{
-  Insert figs showing, for different assumption:
-  proportion of individuals still positive at day 30 or 50 (tail),
-  overall survival curve, and
-  median survival time (in comparison to ATACCC).
-}
+\begin{figure}
+  \todo[inline]{Insert fig showing final estimate and comparison to ATACCC}
+  \caption{Duration estimates using CIS and ATACCC data}
+  \label{imperf-test:fig:cis-estimates}
+\end{figure}
+\begin{figure}
+  \todo[inline]{
+    Insert figs showing, for different assumption:
+    proportion of individuals still positive at day 30 or 50 (tail),
+    overall survival curve, and
+    median survival time (in comparison to ATACCC).
+  }
+  \caption{Sensitivity of CIS estimates to assumptions}
+  \label{imperf-test:fig:cis-sensitivity}
+\end{figure}
 
 The assumption that the estimates are most sensitive to is the strength of the prior on $\ntot$.
 A very weak, almost uninformative, prior on this quantity causes the posterior estimate to be much higher than the estimate from \textcite{birrellRTM2}.
