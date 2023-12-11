@@ -8,9 +8,9 @@
 \chapter{Estimating transmission using mechanistic modelling} \label{SEIR}
 
 This chapter uses mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
-Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving model's state and parameters have a biological and/or epidemiological interpretation.
+Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving model's state and parameters a biological and/or epidemiological interpretation.
 % Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
-This allow changes in transmission to be decomposed into the components of the model, \eg the number of contacts per day or the probability of transmission upon contact.
+In particular, this allows changes in transmission to be decomposed into the components of the model, \eg the number of contacts per day or the probability of transmission upon contact.
 Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
 All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
 However, they make stronger assumptions about the disease and population behaviour than statistical models.
@@ -39,7 +39,7 @@ A compartmental model is named because they place every member of the population
 A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence}.
 The elements of $\vec{x}(t)$ are the proportion of the population (or number of individuals) in each compartment at time $t$.
 The parameters $\vec{\theta}$ determine, along with the model structure, how the state vector changes over time.
-Inference about $\vec{x}(t)$ and $\vec{\theta}$ is through an observation model, $p(\vec{y}(t) \mid \vec{x}(t), \vec{\theta})$ which links $\vec{x}(t)$ to some observation $\vec{y}(t)$~\autocite{birrellEvidence}; I discuss observation models further in \cref{SEIR:sec:observation}.
+Inference about $\vec{x}(t)$ and $\vec{\theta}$ is through an observation model, $p(\vec{y}(t) \mid \vec{x}(t), \vec{\theta})$ which links $\vec{x}(t)$ to some observation $\vec{y}(t)$~\autocite{birrellEvidence} (see\cref{SEIR:sec:observation}).
 
 Compartmental models can be \emph{deterministic} or \emph{stochastic}.
 Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \theta) = 0$~\autocite{birrellEvidence}.
@@ -51,9 +51,9 @@ Stochastic models are most commonly specified in discrete time, using a Markov a
 They specify a probability distribution $p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ for integer $t$ and assume that, having conditioned on $\vec{x}(t-1)$, $\vec{x}(t)$ is independent of $\vec{x}(t')$ for all $t' < t - 1$~\autocite{birrellEvidence}.
 This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
 
-Deterministic models are also known as \emph{mean-field} models because they can are the behaviour corresponding to a stochastic model's mean.
+Deterministic models are also known as \emph{mean-field} models because they represent the mean behaviour of the corresponding to a stochastic version?.
 When the number of infected individuals is large, the law of large numbers means that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
-An alternative justification, when making noisy observations of the system, is that the additional noise from the stochastic model is negligible compared to this observation noise.
+An alternative justification for this approximation , when making noisy observations of the system, is that the additional noise from the stochastic model is negligible compared to this observation noise.
 This second justification is of the same form as the one made for neglecting the stochasticity of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
 
 The remainder of this chapter uses only deterministic models.
@@ -66,8 +66,8 @@ In an ODE model, time is necessarily continuous, although discretised when solvi
 For concreteness, I use units of days throughout, although the model can use any unit of time.
 The number or proportion of individuals in each compartment is also continuous, which is a reasonable approximation when the population is large.
 
-\Cref{SEIR:sec:SIR} introduces the \emph{susceptible-infected-recovered} (SIR) model, a simple compartmental model for a disease where individuals are immune to reinfection following their recovery.
-The SIR model is named because each individual in the population is divided into one of three states: susceptible, infectious, or recovered.
+\Cref{SEIR:sec:SIR} introduces the \emph{susceptible-infected-recovered} (SIR) model, the simplest compartmental model for a disease where individuals are immune to reinfection following their recovery.
+The term SIR arises from the population being divided into one of three states: susceptible, infectious, or recovered.
 This model has several assumptions which make it inappropriate to model SARS-CoV-2; therefore, in the remainder of this section I introduce standard extensions to the SIR model which relax these assumptions.
 First, in \cref{SEIR:sec:non-exponential}, I relax the assumption that the infectious period is exponentially-distributed to allow gamma distributions.
 Then, in \cref{SEIR:sec:SEIR}, I relax the assumption that individuals are infectious immediately after they are infected; it does this by extending the SIR model to the SEIR model with the additional E signifying an \emph{exposed} compartment.
@@ -104,8 +104,9 @@ For further details I recommend the tutorial paper \textcite{kretzschmarMathemat
 \end{figure}
 
 The simplest compartmental model for a disease which confers immunity is the (SIR) model\todo{ref for SIR being simplest}.
-The name refers to the three compartments in the model, displayed in \cref{SEIR:fig:SIR}.
-Individuals in the susceptible compartment are those that could be infected (they have no immunity).
+The name refers to the three compartments in the model, displayed in 
+In the SIR model (see \cref{SEIR:fig:SIR).
+individuals in the susceptible compartment are those that could be infected (they have no immunity).
 The proportion of the population that is susceptible at time $t$ is $s(t)$.
 Individuals in the infectious compartment can infect others, and eventually recover.
 The proportion of the population that is infectious at time $t$ is $i(t)$.
@@ -121,7 +122,7 @@ The SIR model is described by the following system of ODEs~\autocite[19]{keeling
 \frac{dr(t)}{dt} &= \gamma i(t)
 \end{align}
 where $\lambda(t) = \beta i(t)$, is the \emph{force of infection}: the risk of infection for a susceptible individual at time $t$~\autocite[17]{keelingModeling}.
-Two parameters are present in this model, $\vec{\theta} = (\beta, \gamma)^T$.
+The dynamics of the model are described by parameters $\vec{\theta} = (\beta, \gamma)^T$.
 $\beta$ is the transmission rate, absorbing several terms as described below.
 $\gamma$ is the recovery rate, or the proportion of infected individuals that recover per day; hence, $1/\gamma$ is the mean infectious period~\autocite[367]{keelingModeling}.
 These parameters are assumed to be constant.
@@ -148,7 +149,7 @@ A few properties and assumptions of the SIR model are worth noting.
     A notable example is the early part of an epidemic when $s(t) \approx 1$.
     This is the phase of initial exponential growth of an epidemic, which produces the characteristic early epidemic curves.
     It is in this phase that the basic reproduction number provides a good approximation of the epidemic dynamics.
-    \item The basic reproduction number for this model is $\R = \beta / \gamma$~\autocite[20]{keelingModeling}.
+    \item The basic reproduction number for the SIR model is $\R = \beta / \gamma$~\autocite[20]{keelingModeling}.
     Intuitively, this can be thought of as the average number of infections caused by an infectious individual per day, $\beta$, multiplied by the average number of days they are infectious for, $1/\gamma$.
     \item The effective reproduction number for this model is $R_e(t) = \beta / \gamma s(t) = \R s(t)$~\autocite{pellisEstimation}.
     This is the basic reproduction number reduced because some infections are avoided due to individuals being immune.
@@ -157,9 +158,9 @@ A few properties and assumptions of the SIR model are worth noting.
     Births and deaths of individuals are also excluded, although they can easily be incorporated in situations where they are relevant~\autocites[26]{keelingModeling}[214]{kretzschmarMathematical}.
     \item There is no analytical solution to the system of ODEs: numerical methods are required to solve the system~\autocite[25]{keelingModeling}.
     \item In addition to the parameters, the state of the system at some time (normally the initial state, the state at time $t=0$) is required to solve the system.
-    \item Immunity is assumed to last until the end of the modelled period~\autocite[61]{andersonInfectious}.
-    In many contexts, including here, this assumption is justified because the modelled period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
-    For modelling longer time periods, waning immunity can be incorporated by allowing individuals to move from the recovered compartment back to the susceptible compartment~\autocite[40]{keelingModeling}.
+    \item Immunity is assumed to last until the end of the  period considered ~\autocite[61]{andersonInfectious}.
+    In many contexts, including here, this assumption is justified because the period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
+    For longer time periods, waning immunity can be incorporated by allowing individuals to move from the recovered compartment back to the susceptible compartment~\autocite[40]{keelingModeling}.
 \end{itemize}
 
 
@@ -193,7 +194,7 @@ A few properties and assumptions of the SIR model are worth noting.
 \end{figure}
 
 The basic SIR model implies that the distribution of the time spent in the infected compartment is exponential~\autocite[96]{keelingModeling}.
-This is an unrealistic assumption for most diseases and leads to an underestimation of the reproduction number if the model is fit to data~\autocites{lloydRealistic}{wearingAppropriate}.
+This is an unrealistic assumption for most diseases and leads to an underestimation of the reproduction number ~\autocites{lloydRealistic}{wearingAppropriate}.
 A standard extension to the SIR model is to allow the infectious period to follow a gamma distribution~\autocite[94]{keelingModeling}.
 This is done by adding multiple infected compartments, shown in \cref{SEIR:fig:SIR-gamma}.
 The system can now be written as follows:
@@ -290,22 +291,21 @@ To relax the assumption of a homogeneous population, the population can be strat
 If the strata have differing transmission patterns, this can change the dynamics of the epidemic.
 The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors such as genetics~\autocite[208]{andersonInfectious}.
 I will assume that the disease progression (\ie length of the exposed and infectious periods) is the same for all strata, although this assumption can be relaxed.
-Stratification requires two major changes model changes: extension of the state vector and describing the between-strata interactions.
+Stratification requires two major  model changes: extension of the state vector and description of the between-strata interactions.
 
 The state vector is now a vector of vectors, one for each of the compartments.
 I denote the set of strata, as $\set{A}$, with the set's size as $A$.
 For example, in the basic SIR model, $\vec{x}(t) = (\vec{s}(t), \vec{i}(t), \vec{r}(t))^T$.
-The $a$th element of each vector is the proportion of strata $a$ in that compartment.
-For example, $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
+The $a$th $(a=1 \ldots A)$?element of each vector is the proportion of strata $a$ in that compartment.
+In teh case of the susceptible compartment $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
 Hence, $N_a s_a(t)$ is the number of susceptible people in stratum $a$, where $N_a$ is the number of individuals in stratum $a$.
-These vectors replace the scalars in the previous equations.
+These vectors replace the scalars in previous equations.
 Various other definitions are possible and equivalent, for example defining $s_a$ as the proportion of the total population that are both in strata $a$ and susceptible or parameterised using numbers of individuals~\autocite[57]{keelingModeling}.
 
-The interactions between strata also need describing.
-This is done by replacing the scalar $\beta$ with a \emph{Who Acquires Infection From Whom} (WAIFW) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}; its interpretation is described below.
-The force of infection is now a vector, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
-Its interpretation can be arrived at by considering a single infected individual in strata $a'$, analogous to the previous explanation in the single stratum case.
-Assume any such individual comes into contact with individuals in strata $a$ at a rate of $\kappa_{aa'}$ in units of contacts per day.
+The interactions between strata is done by replacing the scalar $\beta$ with a \emph{Who Acquires Infection From Whom} (WAIFW) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}; its interpretation is described below.
+So the force of infection is now a vector, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
+Its interpretation can be arrived at by considering a single infected individual in strata $a'$, analogously to the single stratum case.
+Assume any such individual comes into contact with individuals in strata $a$ at a rate $\kappa_{aa'}$ in units of contacts per day.
 % Further, assume that each contact is with an individual chosen uniformly at random from within the strata.
 % For such a randomly selected individual, the probability that they are susceptible is $s_a(t)$.
 % Each of the infected individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
