@@ -12,18 +12,84 @@
 
 \chapter{Estimating incidence using backcalculation} \label{backcalc}
 
+\todo[inline]{
+    There is an asymmetry with this chapter and the following one on SEIR modelling.
+    In this chapter, the theory/background is explained in an introductory/background chapter, with a short chapter with the application-specifics and results here.
+    In the following chapter, the theory/background is explained within the chapter which means it is much longer.
+    I'm not sure if this is an issue? But this chapter seems quite short currently and the next one quite long.
+    I could move the SEIR theory to the background chapter, and possibly combine this chapter with the next one into a single chapter on incidence and transmission estimation?
+    This would make sense for allowing a comparison between the results into its own section as well, rather than currently it being placed slightly awkwardly in the results and discussion sections of the SEIR chapter.
+}
+
+
 Now that I have estimated the duration of PCR positivity, I can estimate the incidence of SARS-CoV-2.
 In this chapter, I will apply the theory introduced in \cref{E-incidence-prev} to the CIS data.
 I use the period from the expansion of the CIS, starting 31st August 2020, until there was significant vaccination rollout\todo{insert date}.
-First, I explain the method I will apply (\cref{})
+First, I explain the method I will apply (\cref{backcalc:sec:methods}) and then present the results (\cref{backcalc:sec:results}).
+I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{backcalc:sec:conclustion}.
 
-\section{Methods}
+\todo[inline]{
+    I should discuss the literature on estimating incidence based on SARS-CoV-2 prevalence data.
+    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}.
+    However, I think this goes better in the introduction, framing the whole thesis because it is important in understanding the motivation for the whole work.
+    At the same place, I could review the literature on mechanistic models using REACT and CIS.
+}
 
-\section{Results}
+\section{Methods} \label{backcalc:sec:methods}
 
-\section{Discussion}
+As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
+However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-incidence-prev:sec:prevalence-process}).
+I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
+The previous method was multilevel regression and poststratification (MRP)\todo{cite MRP}.
+I fit a similar model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
+Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
 
-\section{Conclusion}
+The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence can naturally be expressed as a generalised linear model (GLM).
+A natural formulation for either incidence proportion or prevalence in a stratum $i$ is $\logit(\pi_i) = g(t)$, where $\pi_i$ is the incidence proportion or prevalence in stratum $i$ and $g$ is a function of time, penalised towards being linear.
+This is a GLM with a logit link function.
+The logit transformation serves two purposes.
+First, it ensures that the incidence proportion or prevalence is between 0 and 1.
+Second, at low values of incidence or prevalence, linear growth is approximately exponential which is the natural assumption for an epidemic and has been shown to improve estimates of prevalence\todo{cite REACT paper on this, and check the exact meaning of "improve"}.
+However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM because a non-linear transformation is required to obtain prevalence from the logit of incidence proportion (the relationship on the natural scale is linear, as derived in \cref{E-incidence-prev:sec:prevalence-process}).
+Using a GLM is computationally useful due to the large number of pre-existing packages available for computing the posterior distribution, or its approximation, efficiently.
+Previously, when fitting to prevalence over long periods and including all appropriate covariates to correct for non-response bias, the model was too computationally expensive to fit using MCMC; instead, an implementation of the model using the Integrated Nested Laplace Approximation (INLA) algorithm was used~\citePersonalComms{Koen Pouwels}.
+
+I modified a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
+The model included fixed effects for age group\todo{check the model I used}.
+The likelihood is a beta-binomial distribution, a generalisation of the binomial distribution allowing for overdispersion (see \cref{E-distributions}).
+The overdispersion allows for household clustering\todo{ref beta-binomial as a model for clustering} and any other overdispersion in the data\todo{ref that epi data is often overdispersed}. 
+Finally, the model was fit independently for each region, implicitly adding interactions between region and all other variables.
+This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
+
+I used age groupings:\todo{insert age groupings}.
+These align with previous work on the CIS\todo{cite CIS reports}.
+They are based on school ages (primary, compulsory secondary, and post-compulsory secondary) for children to capture that school opening and closing may have a large effect on transmission.
+
+Having fit the prevalence model, I draw 10,000\todo{check number} prevalence trajectories in each stratum from the approximate posterior distribution of the model.
+For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
+Considering the relationship between incidence and prevalence to be deterministic, as \cref{E-inc-prev:sec:prevalence-process} justifies, equation implies that, for any stratum $\vec{P} = \matr{S} \vec{Z}$ where $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum, $\matr{S}$ is a matrix as defined below, and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
+The matrix $\matr{S}$ needs to be defined based on the survival function to preserve the relationship between incidence and prevalence.
+It is lower-triangular of the following form:
+\begin{align}
+    (\matr{S})_{i,j} = \begin{cases}
+        S(i - j + 1) & i - \dmax - 1 \leq j \leq i \\
+        0 & \text{otherwise.}
+    \end{cases}
+\end{align}
+Since the matrix is lower-triangular, the solution for $\vec{P}$ can be found efficiently using forward substitution\todo{cite forward substitution}.
+Forward substitution is numerically stable unless the diagonal elements are close to 0.
+Here, the diagonal is $S(1) = 1$ and hence the matrix is well-conditioned.
+\todo{I explained this more clearly in my first-year report, look that up!}
+
+The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
+For each posterior draw and day\todo{introduce discrete time in days earlier}, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
+The population numbers for each stratum are provided by the Office for National Statistics.
+
+\section{Results} \label{backcalc:sec:results}
+
+\section{Discussion} \label{backcalc:sec:discussion}
+
+\section{Conclusion} \label{backcalc:sec:conclustion}
 
 
 \ifSubfilesClassLoaded{

@@ -18,3 +18,4 @@ RStan
 Rhat
 oversmoothing
 oversmoothing
+poststratification
