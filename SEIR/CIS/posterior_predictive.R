@@ -137,7 +137,7 @@ p_incidence = prediction_intervals |>
         y = "Incidence"
     ) +
     standard_plot_theming() +
-    theme(legend.position = "none")
+    theme(legend.position = "bottom")
 ggsave(
     filename = here::here(
         glue::glue("SEIR/CIS/incidence.png")
