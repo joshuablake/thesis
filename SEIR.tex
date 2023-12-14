@@ -981,6 +981,14 @@ Mechanistic models require explicit representation of this immunity\todo{cite so
 
 \todo[inline]{discuss comparisons with the backcalculation}
 
+\begin{itemize}
+    \item Results here disagree with previous chapter's results.
+    \item The model in previous chapter is more flexible than here, showing the limitations discussed above. Previous chapter fits better.
+    \item The previous chapter's modelling benefits from being able to use flexible approximate inference methods that scale to many parameters, including random effects. Here, I am limited by the inference procedure. MCMC was unable to scale to the full model used in the previous chapter, which has a computationally cheaper likelihood as it is a GLM, not requiring solving an ODE.
+    \item Shows that there is a lot of information in the data which could be exploited by a suitably flexible mechanistic model. Such a model would be useful for policy-decisions because it could infer where transmission is occurring (\eg in schools or workplaces) and how this changes over time.
+    \item The narrower credible intervals in this chapter are a realisation of the standard bias-variance tradeoff. By making stronger assumptions regarding how transmission occurs, the variance is reduced. However, if these assumptions are incorrect (which is almost certainly the case), bias occurs.
+\end{itemize}
+
 \section{Conclusion}
 
 \todo[inline]{write conclusion and add to discussion once comparison with backcalculation is made}
