@@ -1,5 +1,6 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib refs-custom.bib cam-thesis.cls latex.out/thesis.aux FORCE
+INTRODUCTION_DEPS = introduction.tex
 BIOLOGY_DATA_DEPS = biology-data.tex
 INC_PREV_DEPS = incidence-prevalence.tex
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png ATACCC/duration.png ATACCC/fits.png ATACCC/fit_individual_55.png
@@ -9,7 +10,7 @@ BACKCALC_DEPS = backcalc.tex
 SEIR_DEPS = SEIR.tex SEIR/contact_matrices.png SEIR/sim/data.png SEIR/sim/predictive_coverage.png SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/p_peak.png SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.png
 DISTRIBUTIONS_DEPS = distributions.tex
 
-thesis.pdf: $(SHARED_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
+thesis.pdf: $(SHARED_DEPS) $(INTRODUCTION_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(SEIR_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
 	$(LATEX_CMD)
 
 latex.out/thesis.aux:
@@ -20,7 +21,13 @@ clean:
 
 .PHONY: FORCE
 
-all: thesis.pdf biology-data.pdf incidence-prevalence.pdf ATACCC.pdf ATACCC-appendix-original-analysis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf incidence-prevalence.pdf SEIR.pdf distributions.pdf
+all: thesis.pdf introduction.pdf biology-data.pdf incidence-prevalence.pdf ATACCC.pdf ATACCC-appendix-original-analysis.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf incidence-prevalence.pdf SEIR.pdf distributions.pdf
+
+#####################################################
+## INTRODUCTION CHAPTER
+
+introduction.pdf: $(INTRODUCTION_DEPS) $(SHARED_DEPS)
+	$(LATEX_CMD)
 
 #####################################################
 ## BIOLOGY DATA CHAPTER
