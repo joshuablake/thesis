@@ -318,6 +318,7 @@ Comparing this expression to the pmf of a negative binomial, we find that $\nnod
 
 Next, I derive $p_{ia}$.
 By definition (see~\cpageref{perf-test:def:admissible}), we have:
+\todo{Make sure "detectable" is defined: It's really a latent quantity, which could possibly be defined in terms of true viral load. I think "positive probability of testing positive" under the assumption of no false positives is what I will go with, or by reference to a multi-state model type view of infection.}
 \begin{align}
 p_{ia} &= \prob((b, e) \in \alpha_i \mid \theta) \\
 \alpha_i &= \{ (b, e) : l_i^{(b)} \leq b \leq r_i^{(b)} \wedge l_i^{(e)} \leq e \leq r_i^{(e)}\}.

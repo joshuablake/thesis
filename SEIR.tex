@@ -7,8 +7,8 @@
 
 \chapter{Estimating transmission using mechanistic modelling} \label{SEIR}
 
-This chapter uses mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
-Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving model's state and parameters a biological and/or epidemiological interpretation.
+In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
+Mechanistic models explicitly represent the infection process driving the spread of infectious disease, giving the model's state and parameters a biological and/or epidemiological interpretation.
 % Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
 In particular, this allows changes in transmission to be decomposed into the components of the model, \eg the number of contacts per day or the probability of transmission upon contact.
 Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
@@ -64,7 +64,7 @@ A formalisation of this argument underpins the mean-field approximation of the p
 
 The remainder of this chapter uses only deterministic models.
 This choice is appropriate for the the context this thesis considers because there were many individuals infectious with SARS-CoV-2 in this time period.
-For an introduction to stochastic models, see \textcite[chapter 6]{keelingModeling} or \textcite{birrellEvidence}.
+There are a wealth of introductory texts on stochastic models, I recommend \textcite[chapter 6]{keelingModeling} or \textcite{birrellEvidence}.
 
 
 This chapter discusses deterministic models whose evolution is specified by a system of ODEs, $d\vec{x}/dt$.
@@ -72,7 +72,7 @@ In an ODE model, time is necessarily continuous.%, although discretised when sol
 For concreteness, I use units of days throughout, although the model can use any unit of time.
 The number or proportion of individuals in each compartment is also continuous; clearly, this is not true in reality but is a good approximation when the population is large.
 
-In this section, I introduce the \emph{susceptible-infectious-recovered} (SIR) model and the extensions to it I require to appropriatly model SARS-CoV-2.
+In this section, I introduce the \emph{susceptible-infectious-recovered} (SIR) model and the extensions to it I require to appropriately model SARS-CoV-2.
 
 % \Cref{SEIR:sec:SIR} introduces the \emph{susceptible-infectious-recovered} (SIR) model, the simplest compartmental model for a disease where individuals are immune to reinfection following their recovery.
 % The name SIR derives from the structure of the model.
@@ -160,7 +160,7 @@ A few properties and assumptions of the SIR model are worth noting.
     \item The basic reproduction number for the SIR model is $\R = \beta / \gamma$~\autocite[20]{keelingModeling}.
     Intuitively, this can be thought of as the average number of infections caused by an infectious individual per day, $\beta$, multiplied by the average number of days for which they are infectious, $1/\gamma$.
     \item The effective reproduction number for this model is $R_e(t) = \beta / \gamma s(t) = \R s(t)$~\autocite{pellisEstimation}.
-    This is the basic reproduction number reduced because some infections are avoided due to individuals being immune.
+    $1-s(t)$ is the fraction of infections that are avoided because of the presence of immune individuals in the population.
     \item The population is assumed to be closed.
     This assumption implies several attributes.
     First, the total population size is constant.
@@ -218,7 +218,7 @@ The system can now be written as follows:
 \end{align}
 where $n$ is the number of infectious compartments, and redefining $\lambda(t) = \beta \sum_{j=1}^n i_j(t)$.
 In this model the infectious period is distributed $\GamDist(n, n\gamma)$, a realistic model for a variety of diseases~\autocite{wearingAppropriate}.
-This parameterisation is chosen to give $1/\gamma$ as the mean infectious period (the gamma distribution's definition and its expectation are in \cref{E-distributions}).
+This parameterisation is chosen to give $1/\gamma$ as the mean infectious period (further details on the Gamma distribution are in \cref{E-distributions}).
 A gamma distribution with the first parameter equal to 1 is an exponential distribution, in which case this model collapses to the basic SIR model in \cref{SEIR:sec:SIR}.
 As $n$ increases, the between-individual variability in infectious period length reduces, tending to a constant as $n \to \infty$~\autocite{lloydRealistic}.
 
@@ -301,33 +301,34 @@ To relax the assumption of a homogeneous population, the population can be strat
 If the strata have differing transmission patterns, this can change the dynamics of the epidemic.
 The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors such as genetics~\autocite[208]{andersonInfectious}.
 I will assume that the disease progression (\ie length of the exposed and infectious periods) is the same for all strata, although this assumption can be relaxed.
-Stratification requires two major  model changes: extension of the state vector and description of the between-strata interactions.
+Stratification requires two major  model changes: extension of the state vector and a description of the between-strata interactions.
 
 The state vector is now a vector of vectors, one for each of the compartments.
 I denote the set of strata, as $\set{A}$, with the set's size as $A$.
 For example, in the basic SIR model, $\vec{x}(t) = (\vec{s}(t), \vec{i}(t), \vec{r}(t))^T$.
-The $a$th $(a=1 \ldots A)$?element of each vector is the proportion of strata $a$ in that compartment.
-In teh case of the susceptible compartment $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
+Element $a \in \set{A}$ of each vector is the proportion of strata $a$ in that compartment.
+For example, $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
 Hence, $N_a s_a(t)$ is the number of susceptible people in stratum $a$, where $N_a$ is the number of individuals in stratum $a$.
-These vectors replace the scalars in previous equations.
-Various other definitions are possible and equivalent, for example defining $s_a$ as the proportion of the total population that are both in strata $a$ and susceptible or parameterised using numbers of individuals~\autocite[57]{keelingModeling}.
+These vectors replace the scalars in the previous equations.
+Other, equivalent formulations of this model exist within the literature.
+For example defining $s_a$ as the proportion of the total population that are both in strata $a$ and susceptible or parameterised using numbers of individuals~\autocite[57]{keelingModeling}, rather than as the proportion of strata $a$ as I have done here.
 
-The interactions between strata is done by replacing the scalar $\beta$ with a \emph{Who Acquires Infection From Whom} (WAIFW) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}; its interpretation is described below.
-So the force of infection is now a vector, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
-Its interpretation can be arrived at by considering a single infectious individual in strata $a'$, analogously to the single stratum case.
-Assume any such individual comes into contact with individuals in strata $a$ at a rate $\kappa_{aa'}$ in units of contacts per day.
+The interactions between strata are included by replacing the scalar $\beta$ with a \emph{Who Acquires Infection From Whom} (WAIFW) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}.
+The force of infection is now a vector, defined as $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
+Their interpretation can be arrived at by considering a single infectious individual in strata $a'$, analogous to the single stratum case.
+Assume any such individual comes into contact with individuals in strata $a$ at a rate $\kappa_{aa'}$ per day.
 % Further, assume that each contact is with an individual chosen uniformly at random from within the strata.
 % For such a randomly selected individual, the probability that they are susceptible is $s_a(t)$.
 % Each of the infectious individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
-Following the same argument as in \cref{SEIR:sec:SIR} finds that, in expectation, the infectious individual makes contact with susceptible individuals in stratum $a$ at a rate of $\kappa_{aa'} s_a(t)$.
-Assume that there is a constant probability of transmission upon contact between an infectious individual in strata $a'$ and susceptible in strata $a$ individual, $q_{aa'}$.
-Therefore, the expected rate of infections in strata $a$ caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$.
+Following the same argument as in \cref{SEIR:sec:SIR} finds that, in expectation, the infectious individual makes contact with susceptible individuals in stratum $a$ at a rate of $\kappa_{aa'} s_a(t)$ per day.
+Now assume that there is a constant probability of transmission upon contact between an infectious individual in strata $a'$ and susceptible in strata $a$ individual, $q_{aa'}$.
+Therefore, the expected rate of infections in strata $a$ caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$ per day.
 Multiplying by the number of infectious individuals in strata $a'$, $N_{a'} i_{a'}(t)$, gives $\kappa_{aa'} q_{aa'} s_a(t) N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
-The constant terms here are absorbed into the WAIFW matrix, giving $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
+The constant terms here are absorbed into the WAIFW matrix, hence $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
 The total force of infection on strata $a$ from all strata is, therefore, $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$.
 Equivalently, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
 If all $\beta_{aa'}$ are equal, then the model is equivalent to the homogeneous model (\ie without any structure).
-The rate that individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
+The rate at which individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
 
 In practical situations, estimating all the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
 It is infeasible because the progression of the epidemic depends on $\vec{\lambda}(t)$, which has dimension $A$, while $\matr{\beta}$ has dimension $A^2$.
@@ -335,10 +336,10 @@ Common assumptions include assuming symmetry, \ie $\beta_{aa'} = \beta_{a'a}$, o
 % Alternatively, as in the scalar case, it may be easier to iden $\beta_{aa'}$ can be decomposed into the contact rate between strata $a$ and $a'$, $\kappa_{aa'}$ and the probability of transmission upon contact, $q_{aa'}$, and then assumptions made about the components.
 The choice of assumptions depends on the context, including the disease being studied and the data available.
 
-Reproduction numbers in models with structured populations need to be careful to consider the distribution of infections across the strata.
-The WAIFM allows calculation of the number of secondary infections generated by a single infection in the $a$th strata; this follows directly from its definition as $\frac{1}{\gamma} \sum_{a' \in \set{A}} \beta_{aa'}$. 
+Reproduction numbers in models with structured populations need to consider the distribution of infections across the strata.
+The WAIFM allows calculation of the number of secondary infections generated by a single infection in the $a$th strata,  this follows directly from its definition as $\frac{1}{\gamma} \sum_{a' \in \set{A}} \beta_{aa'}$. 
 However, how to average these contributions to calculate the basic reproduction number is not obvious.
-The standard solution to this was proposed by \textcite{diekmannDefinition} (\textcite[chapter 7]{diekmannMathematical} provides a more gentle, but still rigorous, explanation).
+The standard solution to this was proposed by \textcite{diekmannDefinition} (see \textcite[chapter 7]{diekmannMathematical} for a more gentle, but still rigorous, explanation).
 First, they show that the distribution of infections across the strata during the initial period of exponential growth (when $\vec{s} \approx \vec{1}$) relies only on $\matr{\beta}$.
 This distribution is proportional to the \emph{dominant eigenvector} (the eigenvector corresponding to the largest eigenvalue) of $\matr{\beta}$.
 Denote by $D(\matr{\beta})$ the \emph{dominant eigenvalue} (the largest eigenvalue).
@@ -351,7 +352,7 @@ Respiratory diseases can be spread by conversational contacts, which show very c
 In particular, the contacts are \emph{associative} (contacts are more likely between individuals of similar ages) and younger age groups have more contacts; this will tend to concentrate the epidemic in these younger age groups~\autocite[67]{keelingModeling}.
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{SEIR/contact_matrices}
-  \caption[Age-based contact matrices]{Number of contacts reported between age groups in two contact surveys. Left shows the number of contacts reported in the POLYMOD survey~\autocite{mossongSocial}. Right shows the number of contacts reported in the BBC Pandemic survey~\autocite{klepacContacts}, which only collected data on those aged over 12. A clear diagonal, showing associative mixing is visible, and children have more contacts. Parallel diagonals off the main diagonal show mixing between parents and their children. Figure adapted from \textcite{klepacContacts} under CC BY-NC-ND 4.0 license.}
+  \caption[Age-based contact matrices]{Number of contacts reported between age groups in two contact surveys: (A) number of contacts reported in the POLYMOD survey~\autocite{mossongSocial}; (B) number of contacts reported in the BBC Pandemic survey~\autocite{klepacContacts}, which only collected data on those aged over 12. A clear diagonal, showing associative mixing is visible, and children have more contacts. Parallel diagonals off the main diagonal show mixing between parents and their children. Figure adapted from \textcite{klepacContacts}, licensed under CC BY-NC-ND 4.0.}
   \label{SEIR:fig:age-contacts}
 \end{figure}
 
@@ -360,7 +361,7 @@ In particular, the contacts are \emph{associative} (contacts are more likely bet
 A variety of different approaches can be taken to link a transmission model to observations.
 The method to do so is known as the observation model.
 The formulation of this model is heavily dependent on the data available.
-This means that, unlike for transmission models, formulating a single mathematical framework is hard or impossible.
+This means that there is a wide variety of models used.
 Therefore, this section  explains the model I propose for fitting to the CIS prevalence data.
 
 % Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
