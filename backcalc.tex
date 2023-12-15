@@ -23,7 +23,7 @@
 
 
 Now that I have estimated the duration of PCR positivity, I can estimate the incidence of SARS-CoV-2.
-In this chapter, I will apply the theory introduced in \cref{E-incidence-prev} to the CIS data.
+In this chapter, I will apply the theory introduced in \cref{E-inc-prev} to the CIS data.
 I use the period from the expansion of the CIS, starting 31st August 2020, until there was significant vaccination rollout\todo{insert date}.
 First, I explain the method I will apply (\cref{backcalc:sec:methods}) and then present the results (\cref{backcalc:sec:results}).
 I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{backcalc:sec:conclustion}.
@@ -38,7 +38,7 @@ I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{ba
 \section{Methods} \label{backcalc:sec:methods}
 
 As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
-However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-incidence-prev:sec:prevalence-process}).
+However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-inc-prev:sec:prevalence-process}).
 I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
 The previous method was multilevel regression and poststratification (MRP)\todo{cite MRP}.
 I fit a similar model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
@@ -50,7 +50,7 @@ This is a GLM with a logit link function.
 The logit transformation serves two purposes.
 First, it ensures that the incidence proportion or prevalence is between 0 and 1.
 Second, at low values of incidence or prevalence, linear growth is approximately exponential which is the natural assumption for an epidemic and has been shown to improve estimates of prevalence\todo{cite REACT paper on this, and check the exact meaning of "improve"}.
-However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM because a non-linear transformation is required to obtain prevalence from the logit of incidence proportion (the relationship on the natural scale is linear, as derived in \cref{E-incidence-prev:sec:prevalence-process}).
+However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM because a non-linear transformation is required to obtain prevalence from the logit of incidence proportion (the relationship on the natural scale is linear, as derived in \cref{E-inc-prev:sec:prevalence-process}).
 Using a GLM is computationally useful due to the large number of pre-existing packages available for computing the posterior distribution, or its approximation, efficiently.
 Previously, when fitting to prevalence over long periods and including all appropriate covariates to correct for non-response bias, the model was too computationally expensive to fit using MCMC; instead, an implementation of the model using the Integrated Nested Laplace Approximation (INLA) algorithm was used~\citePersonalComms{Koen Pouwels}.
 
