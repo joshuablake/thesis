@@ -4,24 +4,37 @@
 
 \chapter{Introduction} \label{intro}
 
-\section{The COVID-19 pandemic and ongoing burden}
+\begin{itemize}
+    \item Disease burden of pandemic and ongoing burden of COVID
+    \item To mitigate its effects, need to understand incidence and transmission but cannot observe directly
+    \item Importance of surveillance
+    \item Expected future pandemics, methods should be reusable
+\end{itemize}
 
-\section{SARS-CoV-2 and COVID-19}
+\section{SARS-CoV-2 real-time surveillance}
 
-Viral loads are infrequently measured exactly.
-The most common form of data obtained is cycle threshold (Ct) values from real-time quantitative  reverse-transcriptase polymerase chain reaction (PCR) tests.
-The Ct value is proportional to the negative log of the viral load which is convenient when modelling log viral load as a piecewise linear function, since Ct values themselves are piecewise linear under this assumption.
-When a host's viral load is too low (below the limit of detection of the PCR test), no Ct value is available and hence viral load can be considered censored at the limit of detection.
-The relationship between Ct and viral load is noisy and can vary based on many factors including quality of swab obtained, primers used (even between batches), and the PCR system set-up~\autocites{dahdouhCt,hanRTPCR}.
+\begin{itemize}
+    \item Most commonly used types of data: severe events (deaths/hospitalisations), widespread testing (pillar 2), 
+    \item Advantages of designed surveys (REACT, CIS)
+    \item Use of cohorts (ATACCC)
+    \item Statistical modelling performed during the pandemic
+\end{itemize}
 
-\section{Backcalculation}
+
+\section{Historical context}
+
+\begin{itemize}
+    \item Infectious disease epidemiology and biostatistics heavily developed in context of HIV/AIDS epidemic
+    \item Use much methodology and concepts from this field
+\end{itemize}
+
+\subsection{Backcalculation}
 
 \emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
 \Textcite{brookmeyerMethod} developed it in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome).
 HIV is transmitted sexually or through blood and causes the disease AIDS.
 It has killed 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
 In this context, backcalculation estimates the incidence of HIV infection from: data on the number of AIDS diagnoses, and the incubation distribution (the time between infection and AIDS diagnosis)~\autocites{brookmeyerBackcalculation}{brookmeyerMeasuring}.
-\todo{maybe move some of this to intro}
 AIDS is incurable, therefore, AIDS prevalence is equivalent to cumulative incidence.
 
 
@@ -37,7 +50,12 @@ The sampling is described as the observation process.
 The observation process noise is much larger than the noise of the prevalence process (see \cref{inc-prev:sec:observation-process}).
 Therefore, the latter is negligible and again two processes need to be considered: infection and observation.
 
-\section{Duration} \label{inc-prev:sec:duration}
+\begin{itemize}
+    \item Duration is important
+    \item Mathematical details in \cref{E-inc-prev}
+\end{itemize}
+
+\subsection{Duration} \label{inc-prev:sec:duration}
 
 Two approaches are commonly used to estimate durations: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
 For SARS-CoV-2, both approaches would be based on the results of PCR testing.
@@ -48,6 +66,34 @@ Other related approaches, such as a multi-state model~\autocite{jacksonMSM}, cou
 Therefore, the biomarker approach considers more information per observation, however, a model for the biomarker is required which generally requires stronger assumptions.
 Modelling a biomarker uses more information per observation, but requires stronger assumptions.
 
-\section{Thesis outline}
+\section{Thesis contribution}
+
+\begin{itemize}
+    \item Overall question: how can prevalence surveys best be used to understand incidence and transmission?
+    \item Inform future study design
+    \item Provide methodology
+\end{itemize}
+
+\subsection{Epidemiological contributions}
+
+\begin{itemize}
+    \item Estimate of duration of PCR-positivity: of interest for rest of thesis but also more broadly for public health (\eg interpreting PCR test results)
+    \item Use in interpreting test results
+    \item Incidence estimates from only CIS
+    \item Transmission estimates from only CIS
+\end{itemize}
+
+\subsection{Methodological contributions}
+
+\begin{itemize}
+    \item Double interval censoring with arbitrary truncation and false negatives
+    \item Combining ATACCC and CIS duration estimates
+    \item SEIR model using only prevalence surveys
+    \item Application within TRE
+\end{itemize}
+
+\subsection{Structure}
+
+Outline the chapters and how they fit together
 
 \end{document}
