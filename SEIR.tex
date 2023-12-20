@@ -5,378 +5,79 @@
     \setcounter{chapter}{7}
 }
 
-\chapter{Estimating transmission using mechanistic modelling} \label{SEIR}
+\chapter{Estimating transmission} \label{transmission}
 
-In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
-Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-back-calc:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
-Individuals are giving the model's state and parameters a biological and/or epidemiological interpretation.
-% Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
-In particular, this allows changes in transmission to be decomposed into the contributing factors, \eg the number of contacts per day or the probability of transmission upon contact.
-The ability to estimate the contribution of each of these factors can inform public health policy.
-Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
-A scenario here is the effect of a proposed intervention (or lack thereof), introduced into the model by modifying the relevant parameters.
-The mechanistic model can then be simulated forward in time to understand the intervention's effects.
-All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
-However, they make stronger assumptions about the disease and population behaviour than statistical models.
+\section{Backcalculation} \label{backcalc}
 
-The literature on mechanistic models is vast, having been developed for over a century.
-The model in \cref{SEIR:sec:SIR} was first formulated by \textcite{kermackContribution}.
-However, the earliest mechanistic model to be formulated mathematically was probably \textcite{rossMalariaA}'s model of malaria transmission~\autocite{lesslerMechanistic}.
-These early contributions led to important insights for public health.
-\Textcite{rossMalariaA} showed that, if mosquitoes were controlled but not eliminated, malaria could be controlled.
-\Textcite{kermackContribution} explained the observation that epidemics ended before all individuals were infected due to a population-level build-up of immunity known as \emph{herd immunity}.
+Now that I have estimated the duration of PCR positivity, I can estimate the incidence of SARS-CoV-2.
+In this chapter, I will apply the theory introduced in \cref{E-inc-prev} to the CIS data.
+I use the period from the expansion of the CIS, starting 31st August 2020, until there was significant vaccination rollout\todo{insert date}.
+First, I explain the method I will apply (\cref{backcalc:sec:methods}) and then present the results (\cref{backcalc:sec:results}).
+I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{backcalc:sec:conclustion}.
 
-A full review of this literature is beyond the scope of this thesis.
-In this chapter, I will discuss only the background relevant to the application.
-For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
-
-I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{SEIR:sec:transmission-generic}).
-% This framework is then applied to SARS-CoV-2 in \cref{SEIR:sec:transmission-application}.
-It describes the \emph{transmission model}, corresponding to the infection process.
-The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
-The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
-These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{SEIR:sec:inference-implementation}).
-This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
-I then use a simulation study to check this recovers the parameters successfully (\cref{SEIR:sec:sim-study}).
-Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{SEIR:sec:application}).
-Finally, I discuss the results, limitations, and extensions of this work (\cref{SEIR:sec:discussion}).
-
-Notation in this chapter differs from the rest of this thesis.
-I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
-In particular, upper or lower case no longer signifies whether a variable is random or not, but this is clear from the context.
-
-\section{Compartmental models} \label{SEIR:sec:transmission-generic}
-
-This section introduces the class of mechanistic transmission models known as \emph{compartmental} models.
-Compartmental models are the most widely-used class of mechanistic infectious disease model.
-A compartmental model is named because they place every member of the population under study into a compartment; each compartment representing a disease state (\eg susceptible).
-
-A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence}.
-\todo{Cite other papers: see Alice's thesis (chapter 3, especially 3.1), refs within Birrell, and \href{https://www.sciencedirect.com/science/article/pii/S2468042716300495}{Allen 2017}}
-The elements of $\vec{x}(t)$ are the latent proportion of the population (or number of individuals) in each compartment at time $t$.
-The parameters $\vec{\theta}$ determine, along with the model structure, how the state vector changes over time.
-Inference about $\vec{x}(t)$ and $\vec{\theta}$ is requires linking to data, $\vec{y}$, via an observation model, $p(\vec{y}(t) \mid \vec{x}, \vec{\theta})$ where $\vec{x}$ denotes conditioning on $\vec{x}(t)$ for all $t$~\autocite{birrellEvidence} (see \cref{SEIR:sec:observation}).
-That is, the observation model specifies the likelihood of the data given the model state.
-
-Compartmental models can be \emph{deterministic} or \emph{stochastic}.
-Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \vec{x}(0), \theta) = 0$~\autocite{birrellEvidence}.
-% In most situations, the function is not analytically-tractable and requires numeric methods to solve.
-%The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
-%There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
-
-Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters\todo{REF stochastic models}.
-Stochastic models are most commonly specified in discrete time, using a Markov assumption.
-A common simplification is to use discrete time and a Markov assumption; \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$~\autocite{birrellEvidence}.
-This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
-
-Deterministic models are also known as \emph{mean-field} models because they represent the mean behaviour of a corresponding stochastic model.
-When the number of infectious individuals is large, the law of large numbers implies that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
-This is especially true when making noisy observations of the system, and that the stochastic differences between the stochastic and its mean are negligible compared to the observation noise.
-A formalisation of this argument underpins the mean-field approximation of the prevalence process made in \cref{E-inc-prev:sec:observation-process}.
-
-The remainder of this chapter uses only deterministic models.
-This choice is appropriate for the the context this thesis considers because there were many individuals infectious with SARS-CoV-2 in this time period.
-There are a wealth of introductory texts on stochastic models, I recommend \textcite[chapter 6]{keelingModeling} or \textcite{birrellEvidence}.
-
-
-This chapter discusses deterministic models whose evolution is specified by a system of ODEs, $d\vec{x}/dt$.
-In an ODE model, time is necessarily continuous.%, although discretised when solving (see \cref{SEIR:sec:inference-implementation}).
-For concreteness, I use units of days throughout, although the model can use any unit of time.
-The number or proportion of individuals in each compartment is also continuous; clearly, this is not true in reality but is a good approximation when the population is large.
-
-In this section, I introduce the \emph{susceptible-infectious-recovered} (SIR) model and the extensions to it I require to appropriately model SARS-CoV-2.
-
-% \Cref{SEIR:sec:SIR} introduces the \emph{susceptible-infectious-recovered} (SIR) model, the simplest compartmental model for a disease where individuals are immune to reinfection following their recovery.
-% The name SIR derives from the structure of the model.
-% In particular, the model divides the population into one of three states: susceptible, infectious, or recovered.
-
-% This model has several assumptions which make it inappropriate to model SARS-CoV-2; therefore, in the remainder of this section I introduce standard extensions to the SIR model which relax these assumptions.
-% First, in \cref{SEIR:sec:non-exponential}, I relax the assumption that the infectious period is exponentially-distributed to allow gamma distributions.
-% Then, in \cref{SEIR:sec:SEIR}, I relax the assumption that individuals are infectious immediately after they are infected; it does this by extending the SIR model to the SEIR model with the additional E signifying an \emph{exposed} compartment.
-% Finally, in \cref{SEIR:sec:structured-populations}, I include heterogeneity in the population, stratifying by important characteristic(s).
-% Finally, \cref{SEIR:sec:time-varying-foi} relaxes the assumption of a constant transmission rate to allow for time-varying behavioural changes.
-
-
-\subsection{The SIR model} \label{SEIR:sec:SIR}
-
-\begin{figure}[h]
-\makebox[\textwidth][c]{
-\begin{tikzpicture}[
-    node distance = 2.5cm,
-    on grid,
-    auto,
-    ->,>=stealth',
-    every state/.style={draw,rectangle},
-    ]
-
-    \node[state] (S) {$s$};
-    \node[state, right=of S] (I) {$i$};
-    \node[state, right=of I] (R) {$r$};
-
-    \path (S) edge node {$\lambda(t)$} (I)
-          (I) edge node {$\gamma$} (R);
-\end{tikzpicture}
+\todo[inline]{
+    I should discuss the literature on estimating incidence based on SARS-CoV-2 prevalence data.
+    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}.
+    However, I think this goes better in the introduction, framing the whole thesis because it is important in understanding the motivation for the whole work.
+    At the same place, I could review the literature on mechanistic models using REACT and CIS.
 }
-  \caption[The SIR model]{Schematic of the basic SIR model. Arrows are labelled with the rates at which individuals move between compartments.}
-  \label{SEIR:fig:SIR}
-\end{figure}
 
-The simplest compartmental model for a disease which confers immunity is the (SIR) model\todo{ref for SIR being simplest} (depicted in \cref{SEIR:fig:SIR}).
-The name SIR derives from the structure of the model.
-In particular, the model divides the population (assumed closed, an assumption discussed later) into one of three compartments: susceptible, infectious, or recovered.
-% The state of the system is the proportion of the population in each compartment.
-In the SIR model, individuals are assumed to be homogeneous except for their disease state, \ie they are otherwise identical.
+\subsection{Methods} \label{backcalc:sec:methods}
 
-Individuals in the susceptible compartment are those that could be infected (they have no immunity).
-The proportion of the population that is susceptible at time $t$ is $s(t)$.
-Individuals in the infectious compartment can infect others, and eventually recover.
-The proportion of the population that is infectious at time $t$ is $i(t)$.
-Individuals in the recovered compartment are immune to the disease, and cannot be infected again.
-The proportion of the population that have recovered by time $t$ is $r(t)$.
-The model's state is $\vec{x}(t) = (s(t), i(t), r(t))^T$.
+As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
+However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-inc-prev:sec:prevalence-process}).
+I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
+The previous method was multilevel regression and poststratification (MRP)\todo{cite MRP}.
+I fit a similar model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
+Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
 
-The SIR model is described by the following system of ODEs~\autocite[19]{keelingModeling}:
+The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence can naturally be expressed as a generalised linear model (GLM).
+A natural formulation for either incidence proportion or prevalence in a stratum $i$ is $\logit(\pi_i) = g(t)$, where $\pi_i$ is the incidence proportion or prevalence in stratum $i$ and $g$ is a function of time, penalised towards being linear.
+This is a GLM with a logit link function.
+The logit transformation serves two purposes.
+First, it ensures that the incidence proportion or prevalence is between 0 and 1.
+Second, at low values of incidence or prevalence, linear growth is approximately exponential which is the natural assumption for an epidemic and has been shown to improve estimates of prevalence\todo{cite REACT paper on this, and check the exact meaning of "improve"}.
+However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM because a non-linear transformation is required to obtain prevalence from the logit of incidence proportion (the relationship on the natural scale is linear, as derived in \cref{E-inc-prev:sec:prevalence-process}).
+Using a GLM is computationally useful due to the large number of pre-existing packages available for computing the posterior distribution, or its approximation, efficiently.
+Previously, when fitting to prevalence over long periods and including all appropriate covariates to correct for non-response bias, the model was too computationally expensive to fit using MCMC; instead, an implementation of the model using the Integrated Nested Laplace Approximation (INLA) algorithm was used~\citePersonalComms{Koen Pouwels}.
+
+I modified a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
+The model included fixed effects for age group\todo{check the model I used}.
+The likelihood is a beta-binomial distribution, a generalisation of the binomial distribution allowing for overdispersion (see \cref{E-distributions}).
+The overdispersion allows for household clustering\todo{ref beta-binomial as a model for clustering} and any other overdispersion in the data\todo{ref that epi data is often overdispersed}. 
+Finally, the model was fit independently for each region, implicitly adding interactions between region and all other variables.
+This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
+
+I used age groupings:\todo{insert age groupings}.
+These align with previous work on the CIS\todo{cite CIS reports}.
+They are based on school ages (primary, compulsory secondary, and post-compulsory secondary) for children to capture that school opening and closing may have a large effect on transmission.
+
+Having fit the prevalence model, I draw 10,000\todo{check number} prevalence trajectories in each stratum from the approximate posterior distribution of the model.
+For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
+Considering the relationship between incidence and prevalence to be deterministic, as \cref{E-inc-prev:sec:prevalence-process} justifies, equation implies that, for any stratum $\vec{P} = \matr{S} \vec{Z}$ where $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum, $\matr{S}$ is a matrix as defined below, and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
+The matrix $\matr{S}$ needs to be defined based on the survival function to preserve the relationship between incidence and prevalence.
+It is lower-triangular of the following form:
 \begin{align}
-\frac{ds(t)}{dt} &= -\lambda(t) s(t) \\
-\frac{di(t)}{dt} &= \lambda(t) s(t) - \gamma i(t) \\
-\frac{dr(t)}{dt} &= \gamma i(t)
+    (\matr{S})_{i,j} = \begin{cases}
+        S(i - j + 1) & i - \dmax - 1 \leq j \leq i \\
+        0 & \text{otherwise.}
+    \end{cases}
 \end{align}
-where $\lambda(t) = \beta i(t)$, is the \emph{force of infection}: the risk of infection for a susceptible individual at time $t$~\autocite[17]{keelingModeling}.
-The dynamics of the model are described by the parameters $\vec{\theta} = (\beta, \gamma)^T$.
-$\beta$ is the transmission rate, absorbing several terms as described below.
-$\gamma$ is the recovery rate, or the rate that infectious individuals that recover per day; hence, $1/\gamma$ is the mean infectious period~\autocite[367]{keelingModeling}.
-These parameters are assumed to be constant.
+Since the matrix is lower-triangular, the solution for $\vec{P}$ can be found efficiently using forward substitution\todo{cite forward substitution}.
+Forward substitution is numerically stable unless the diagonal elements are close to 0.
+Here, the diagonal is $S(1) = 1$ and hence the matrix is well-conditioned.
+\todo{I explained this more clearly in my first-year report, look that up!}
 
-% The term $\beta s(t)i(t)$ is the rate at which susceptible individuals (as a proportion of the total population size) are infected~\autocite[18]{keelingModeling}.
-% Susceptible individuals move from the $s(t)$ to $i(t)$ when they are infected.
-The expression for the force of infection, $\lambda(t)$ can be arrived at by considering a single infectious individual~\autocite[214]{kretzschmarMathematical}.
-Assume this individual, on average, comes into contact with other individuals in the population at a rate of $\kappa$.
-Further, assume the population is \emph{well-mixed}, meaning that each contact is with an individual chosen uniformly at random from the population; this is implied by assuming a homogeneous population.
-For such a randomly selected individual, the probability that they are susceptible is $s(t)$.
-% Each of the infectious individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
-Therefore, in expectation, the infectious individual makes contact with susceptible individuals at a rate of $\kappa s(t)$ per day.
-Assume that there is a constant probability of transmission upon contact between an infectious and susceptible individual, $q$.
-Combined with the above, the expected rate of infections caused by this infectious individual is $\kappa s(t) q$ per day.
-The two constant terms here (number of contacts and probability of transmission) are absorbed into the transmission rate, $\beta = \kappa q$.
-Therefore, the rate of new infections generated by a single infectious individual is $\beta s(t)$ per day.
-Multiplying by the number of infectious individuals and dividing by the population size gives the rate per day at which susceptible individuals are infected as a proportion of the population, $\beta s(t) i(t) = \lambda(t) s(t)$.
+The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
+For each posterior draw and day\todo{introduce discrete time in days earlier}, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
+The population numbers for each stratum are provided by the Office for National Statistics.
 
-% The term $\gamma i(t)$, the rate at which infectious individuals (as a proportion of the total population size) recover, follows directly from the definitions of $\gamma$ and $i(t)$.
+\subsection{Results} \label{backcalc:sec:results}
 
-A few properties and assumptions of the SIR model are worth noting.
-\begin{itemize}
-    \item For any short period of time when $s(t)$ is approximately constant, the solution to the system of ODEs includes exponential growth in the number of infectious individuals: $i(t) = i_0 e^{\psi t}$ for some constants $i_0$ and $\psi$~\autocite[section 1.2]{diekmannMathematical}.
-    A notable example is the early part of an epidemic when $s(t) \approx 1$.
-    This is the phase of initial exponential growth of an epidemic, which produces the characteristic early epidemic curves.
-    It is in this phase that the basic reproduction number provides a good approximation of the epidemic dynamics.
-    \item The basic reproduction number for the SIR model is $\R = \beta / \gamma$~\autocite[20]{keelingModeling}.
-    Intuitively, this can be thought of as the average number of infections caused by an infectious individual per day, $\beta$, multiplied by the average number of days for which they are infectious, $1/\gamma$.
-    \item The effective reproduction number for this model is $R_e(t) = \beta / \gamma s(t) = \R s(t)$~\autocite{pellisEstimation}.
-    $1-s(t)$ is the fraction of infections that are avoided because of the presence of immune individuals in the population.
-    \item The population is assumed to be closed.
-    This assumption implies several attributes.
-    First, the total population size is constant.
-    Second, only a negligble number of infections are imported from outside the population.
-    Third, births and deaths of individuals are negligble over the length of time considered; simple extensions allow including them~\autocites[26]{keelingModeling}[214]{kretzschmarMathematical}.
-    \item There is no analytical solution to the system of ODEs: numerical methods are required to solve the system~\autocite[25]{keelingModeling}.
-    \item As notes previously, the parameters $\vec{\theta}$ and the intial state of the system, $\vec{x}(0)$ is required to solve the system.
-    \item Immunity is assumed to last until the end of the  period considered ~\autocite[61]{andersonInfectious}.
-    In many contexts, including here, this assumption is justified because the period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
-    For longer time periods, waning immunity can be incorporated by allowing individuals to move from the recovered compartment back to the susceptible compartment~\autocite[40]{keelingModeling}.
-\end{itemize}
+\subsection{Discussion} \label{backcalc:sec:discussion}
 
+\section{Mechanistic modelling}
 
-\subsection{Non-exponential waiting times} \label{SEIR:sec:non-exponential}
-\begin{figure}[h]
-\makebox[\textwidth][c]{
-\begin{tikzpicture}[
-    node distance = 2.5cm,
-    on grid,
-    auto,
-    ->,>=stealth',
-    every state/.style={draw,rectangle},
-    ]
-
-    \node[state] (S) {$s$};
-    \node[state, right=of S] (I1) {$i_1$};
-    \node[state, right=of I1] (I2) {$i_2$};
-    \node[state, right=of I2, draw=none] (I3) {$\cdots$};
-    \node[state, right=of I3] (I4) {$i_n$};
-    \node[state, right=of I4] (R) {$r$};
-
-    \path (S) edge node {$\beta i$} (I1)
-          (I1) edge node {$n\gamma$} (I2)
-          (I2) edge node {$n\gamma$} (I3)
-          (I3) edge node {$n\gamma$} (I4)
-          (I4) edge node {$n\gamma$} (R);
-\end{tikzpicture}
-}
-  \caption[The SIR model with non-exponential infectious period]{Schematic of the SIR model with non-exponential infectious period. The infectious period is modified by having multiple I states.}
-  \label{SEIR:fig:SIR-gamma}
-\end{figure}
-
-The basic SIR model implies that the distribution of the time spent in the infectious compartment is exponential~\autocite[96]{keelingModeling}.
-\todo{Expand on what ``exponential" means here, possibly as a mean-field approximation. See papers by Lloyd.}
-This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocites{lloydRealistic}{wearingAppropriate}.
-A standard extension to the SIR model is to allow the infectious period to follow a gamma distribution~\autocite[94]{keelingModeling}.
-This is done by adding multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
-The system can now be written as follows:
-\begin{align}
-\frac{ds(t)}{dt} &= -\lambda(t) s(t)\\
-\frac{di_1(t)}{dt} &= \lambda(t) s(t) - n\gamma i_1(t) \\
-\frac{di_2(t)}{dt} &= n\gamma i_1(t) - n \gamma i_2(t) \\
-&\vdots \nonumber \\
-\frac{di_n(t)}{dt} &= n\gamma i_{n-1}(t) - n \gamma i_n(t) \\
-\frac{dr(t)}{dt} &= n\gamma i_n(t)
-\end{align}
-where $n$ is the number of infectious compartments, and redefining $\lambda(t) = \beta \sum_{j=1}^n i_j(t)$.
-In this model the infectious period is distributed $\GamDist(n, n\gamma)$, a realistic model for a variety of diseases~\autocite{wearingAppropriate}.
-This parameterisation is chosen to give $1/\gamma$ as the mean infectious period (further details on the Gamma distribution are in \cref{E-distributions}).
-A gamma distribution with the first parameter equal to 1 is an exponential distribution, in which case this model collapses to the basic SIR model in \cref{SEIR:sec:SIR}.
-As $n$ increases, the between-individual variability in infectious period length reduces, tending to a constant as $n \to \infty$~\autocite{lloydRealistic}.
-
-The new compartments are biologically identical, without an interpretation differentiating the compartments.
-They should be considered as a mathematical trick so that the ODE system produces a gamma distribution rather than an interpretable quantity.
-
-% (it is slightly unclear what it means for a variable to have a distribution in a deterministic model, the clearest explanation is that this is the distribution which the ).
-
-The reproduction number in terms of the parameters is unchanged by this extension, \ie $\R = \beta / \gamma$.
-
-\subsection{The SEIR model} \label{SEIR:sec:SEIR}
-
-\begin{figure}[h]
-\makebox[\textwidth][c]{
-\begin{tikzpicture}[
-    node distance = 2cm,
-    on grid,
-    auto,
-    ->,>=stealth',
-    every state/.style={draw,rectangle},
-    % remember picture, overlay
-    ]
-
-    \node[state, xshift=-2cm] (S) {$s$};
-    \node[state, right=of S] (E1) {$e_1$};
-    \node[state, right=of E1] (E2) {$e_2$};
-    \node[state, right=of E2, draw=none] (E3) {$\cdots$};
-    \node[state, right=of E3] (E4) {$e_m$};
-    % \node[state, right=of E4] (I1) {$i_1$};
-    \node[state, below=of E1] (I1) {$i_1$};
-    \node[state, right=of I1] (I2) {$i_2$};
-    \node[state, right=of I2, draw=none] (I3) {$\cdots$};
-    \node[state, right=of I3] (I4) {$i_n$};
-    \node[state, right=of I4] (R) {$r$};
-
-    \path (S) edge node {$\beta i$} (E1)
-          (E1) edge node {$m\sigma$} (E2)
-          (E2) edge node {$m\sigma$} (E3)
-          (E3) edge node {$m\sigma$} (E4)
-          (I1) edge node {$n\gamma$} (I2)
-          (I2) edge node {$n\gamma$} (I3)
-          (I3) edge node {$n\gamma$} (I4)
-          (I4) edge node {$n\gamma$} (R);
-    \draw[->] (E4.east) -- ++(1,0) |- ([yshift=-1cm]E4.east) node [near start, right] {$m\sigma$} -|  (I1.north);
-\end{tikzpicture}
-}
-  \caption[The SEIR model]{Schematic of the SEIR model.}
-  \label{SEIR:fig:SEIR}
-\end{figure}
-
-The SIR model assumes that individuals are immediately infectious upon infection.
-This is unrealistic for most diseases, as there is a period between an individual being infected and them being infectious, known as the \emph{latent period}.
-\todo{I will probably end up defining the latent period in the intro, so should just ref that}
-Ignoring the latent period will again overestimate the reproduction number~\autocite{wearingAppropriate}.
-
-The SIR model can be extended to include a latent period by adding a latent compartment~\autocite[41]{keelingModeling}, also known as an \emph{exposed} compartment.
-This forms the susceptible-exposed-infectious-recovered (SEIR) model, shown in \cref{SEIR:fig:SEIR}.
-
-Similar to the infectious period, the latent period can be modelled as a gamma distribution by adding multiple latent compartments.
-\begin{align}
-\frac{ds}{dt} &= -\beta si \\
-\frac{de_1}{dt} &= \beta si - m\sigma e_1 \\
-\frac{de_2}{dt} &= m\sigma e_1 - m \sigma e_2 \\
-&\vdots \nonumber \\
-\frac{de_m}{dt} &= m\sigma e_{m-1} - m \sigma e_m \\
-\frac{di_1}{dt} &= m\sigma e_m - n\gamma i_1 \\
-\frac{di_2}{dt} &= n\gamma i_1 - n \gamma i_2 \\
-&\vdots \nonumber \\
-\frac{di_n}{dt} &= n\gamma i_{n-1} - n \gamma i_n \\
-\frac{dr}{dt} &= n\gamma i_n
-\end{align}
-where $m$ is the number of latent compartments and $1/\sigma$ is the mean duration of the latent period.
-The latent period is distributed $\GamDist(m, m\sigma)$ and the infectious period is still distributed $\GamDist(n, n\gamma)$.
-
-The reproduction number in terms of the parameters is unchanged by this extension, \ie $\R = \beta / \gamma$, however, the growth rate in the exponential phase will be slower than before~\autocite[41]{keelingModeling}.
-
-\subsection{Structured populations} \label{SEIR:sec:structured-populations}
-
-To relax the assumption of a homogeneous population, the population can be stratified.
-If the strata have differing transmission patterns, this can change the dynamics of the epidemic.
-The different patterns could be due to behavioural factors (\eg high-numbers of sexual partners in a sexually-transmitted disease~\autocite[69]{keelingModeling} or younger age groups making many more contacts for respiratory diseases~\autocite[176]{andersonInfectious}), or biological factors such as genetics~\autocite[208]{andersonInfectious}..
-I denote the set of strata, as $\set{A}$, with the set's size as $A$.
-I will assume that the disease progression (\ie length of the exposed and infectious periods) is the same for all strata, although this assumption can be relaxed.
-Stratification requires two major  model changes: extension of the state vector and a description of the between-strata interactions.
-
-The state vector is now a vector of vectors, one for each of the compartments
-For example, in the basic SIR model, $\vec{x}(t) = (\vec{s}(t), \vec{i}(t), \vec{r}(t))^T$.
-Element $a \in \set{A}$ of each vector is the proportion of strata $a$ in that compartment.
-For example, $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
-Hence, $N_a s_a(t)$ is the number of susceptible people in stratum $a$, where $N_a$ is the number of individuals in stratum $a$.
-These vectors replace the scalars in the previous equations.
-Other, equivalent formulations of this model exist within the literature.
-For example defining $s_a$ as the proportion of the total population that are both in strata $a$ and susceptible or parameterised using numbers of individuals~\autocite[57]{keelingModeling}, rather than as the proportion of strata $a$ as I have done here.
-
-The interactions between strata are included by replacing the scalar $\beta$ with a \emph{Who Acquires Infection From Whom} (WAIFW) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}.
-The force of infection is now a vector, defined as $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
-Their interpretation can be arrived at by considering a single infectious individual in strata $a'$, analogous to the single stratum case.
-Assume any such individual comes into contact with individuals in strata $a$ at a rate $\kappa_{aa'}$ per day.
-% Further, assume that each contact is with an individual chosen uniformly at random from within the strata.
-% For such a randomly selected individual, the probability that they are susceptible is $s_a(t)$.
-% Each of the infectious individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
-Following the same argument as in \cref{SEIR:sec:SIR} finds that, in expectation, the infectious individual makes contact with susceptible individuals in stratum $a$ at a rate of $\kappa_{aa'} s_a(t)$ per day.
-Now assume that there is a constant probability of transmission upon contact between an infectious individual in strata $a'$ and susceptible in strata $a$ individual, $q_{aa'}$.
-Therefore, the expected rate of infections in strata $a$ caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$ per day.
-Multiplying by the number of infectious individuals in strata $a'$, $N_{a'} i_{a'}(t)$, gives $\kappa_{aa'} q_{aa'} s_a(t) N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
-The constant terms here are absorbed into the WAIFW matrix, hence $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
-The total force of infection on strata $a$ from all strata is, therefore, $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$.
-Equivalently, $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i_j}(t)$.
-If all $\beta_{aa'}$ are equal, then the model is equivalent to the homogeneous model (\ie without any structure).
-The rate at which individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
-
-In practical situations, estimating all the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
-It is infeasible because the progression of the epidemic depends on $\vec{\lambda}(t)$, which has dimension $A$, while $\matr{\beta}$ has dimension $A^2$.
-Common assumptions include assuming symmetry, \ie $\beta_{aa'} = \beta_{a'a}$, or that the direction of transmission is irrelevant, \ie $\beta_{aa'} = \beta_{a} \beta_{a'}$.
-% Alternatively, as in the scalar case, it may be easier to iden $\beta_{aa'}$ can be decomposed into the contact rate between strata $a$ and $a'$, $\kappa_{aa'}$ and the probability of transmission upon contact, $q_{aa'}$, and then assumptions made about the components.
-The choice of assumptions depends on the context, including the disease being studied and the data available.
-
-Reproduction numbers in models with structured populations need to consider the distribution of infections across the strata.
-The WAIFM allows calculation of the number of secondary infections generated by a single infection in the $a$th strata,  this follows directly from its definition as $\frac{1}{\gamma} \sum_{a' \in \set{A}} \beta_{aa'}$. 
-However, how to average these contributions to calculate the basic reproduction number is not obvious.
-The standard solution to this was proposed by \textcite{diekmannDefinition} (see \textcite[chapter 7]{diekmannMathematical} for a more gentle, but still rigorous, explanation).
-First, they show that the distribution of infections across the strata during the initial period of exponential growth (when $\vec{s} \approx \vec{1}$) relies only on $\matr{\beta}$.
-This distribution is proportional to the \emph{dominant eigenvector} (the eigenvector corresponding to the largest eigenvalue) of $\matr{\beta}$.
-Denote by $D(\matr{\beta})$ the \emph{dominant eigenvalue} (the largest eigenvalue).
-The basic reproduction number is then defined as $\R = D(\matr{\beta}) / \gamma$.
-This $\R$ keeps the same interpretation as in the homogeneous case, \ie the average number of secondary infections caused by a single infection in a fully susceptible population, where the average is taken over the distribution implied by the dominant eigenvector.
-The important threshold that exponential growth occurs iff $\R > 1$ remains.
-
-Age-based contact patterns are important for the transmission dynamics of respiratory diseases~\autocites{birrellBayesian}{jacksonEffects}.
-Respiratory diseases can be spread by conversational contacts, which show very clear age patterns (see \cref{SEIR:fig:age-contacts}).
-In particular, the contacts are \emph{associative} (contacts are more likely between individuals of similar ages) and younger age groups have more contacts; this will tend to concentrate the epidemic in these younger age groups~\autocite[67]{keelingModeling}.
-\begin{figure}
-  \todo[inline]{From Dani: increase the size, particularly the title. Add (A) BBC to left (B) POLYMOD to right and refer to these in the  caption. Why "all"?}
-  \centering \includegraphics[width=\textwidth]{SEIR/contact_matrices}
-  \caption[Age-based contact matrices]{Number of contacts reported between age groups in two contact surveys: (A) number of contacts reported in the POLYMOD survey~\autocite{mossongSocial}; (B) number of contacts reported in the BBC Pandemic survey~\autocite{klepacContacts}, which only collected data on those aged over 12. A clear diagonal, showing associative mixing is visible, and children have more contacts. Parallel diagonals off the main diagonal show mixing between parents and their children. Figure adapted from \textcite{klepacContacts}, licensed under CC BY-NC-ND 4.0.}
-  \label{SEIR:fig:age-contacts}
-\end{figure}
-
-\section{Observation model} \label{SEIR:sec:observation}
-
-A variety of different approaches can be taken to link a transmission model to observations.
-The method to do so is known as the observation model.
-The formulation of this model is heavily dependent on the data available.
-This means that there is a wide variety of models used.
-Therefore, this section  explains the model I propose for fitting to the CIS prevalence data.
 {\color{red} After introducing the observational model in generic terms above (section 8.2) I would see a reorganisation of the section 8.3 as follows:   
 \begin{itemize}
     \item 8.3 (currently  titled Implementation) CIS-based transmission model (see comments on lines 484-486) 
@@ -388,6 +89,94 @@ Therefore, this section  explains the model I propose for fitting to the CIS pre
 \item 8.4 Simulation study
 \end{itemize}
 }
+
+\todo[inline]{Redo this intro, with some high-level comments taken from the full model section (eg following Birrell et al.)}
+
+\subsection{Methods}
+
+I use the same CIS data as in \cref{E-backcalc}, again considering each region independently.
+The model will be stratified only by region and age group, so the data are aggregated to these levels.
+Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole $[0, 11)$ age group.
+
+As well as the motivation given in \cref{E-backcalc}, independent regions allows heterogeneity in the parameters between regions, which could arise from a range of socioeconomic factors.
+Furthermore, the assumption of homogeneous mixing within age groups is more plausible for regions than the whole of England.
+By modelling each region independently, I assume that the epidemics in each region do not interact.
+Clearly, this is not realistic as travel between regions of England is common and unrestricted.
+However, for a large epidemic, the non-interaction is a good approximation~\autocite{birrellRealtimea}.
+
+\subsubsection{WAIFW matrix}
+
+A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{SEIR:sec:structured-populations}).
+I use the following age-based strata, which align closely with the age groupings previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
+\todo{Contrast with age groupings used in previous chapter}
+\begin{enumerate}
+    \item $[0, 11)$: children of pre-school and primary school age.
+    \item $[11, 16)$: children of compulsory secondary-school age.
+    \item $[16, 25)$: adolescents and young adults who may remain in formal education.
+    \item $[25, 50)$: younger working age adults.
+    \item $[50, 70)$: older working age adults.
+    \item $[70, \infty)$: elderly.
+\end{enumerate}
+
+I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, with the decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.
+This separates contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probabilities $q_{aa'}$, assumed constant; a region-wide effect for time $\beta(t)$; and the population of the stratum, $N_{a'}$.
+
+This parameterisation takes information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using pre-existing methodology~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}, which exploits
+%; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
+% These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
+pre-pandemic baseline estimates from the POLYMOD study~\autocite{mossongSocial}, and time use, from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
+POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on the contacts' age and location (home, work, school, leisure, transport, or other).
+UKTUS asked a representative sample of the UK population about how much time they spent doing various activities each day.
+\Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
+\Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
+These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
+Google mobility data provides the location of Android users over time, relative to a pre-pandemic baseline.
+These data sources are then used to down or up-weight the number of contacts in each setting.
+Resulting estimates of contacts by setting are then recombined across settings to form $\kappa_{aa'}$
+For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
+
+Some behavioural changes (\eg mask wearing) impact transmission.
+However, these are not captured by the contact survey.
+To allow for these changes as well as uncertainty produced by the procedure above, I follow \textcite{birrellRealtime} in placing a random walk prior on $\log\beta(t)$  on the weekly timescale:
+\begin{align}
+    \beta(t) &= \beta_{\tilde{w}(t)} \\
+    \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
+    \epsilon_w &\sim \N(0, 1)
+\end{align}
+where $\tilde{w}(t)$ is the week number of time $t$, with week 1 being the first week considered.
+Two hyperparameters will be inferred: $\beta_1$, the initial value of the random walk; and $\sigma_\epsilon$, the standard deviation of the random walk, will have priors placed on them (see \cref{SEIR:sec:priors}).
+
+% $K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
+% Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
+% Ideally, all the $\beta_{ij}$ terms would be estimated, but there is normally inadequate data to do so, requiring assumptions to be made to reduce the number of parameters~\autocite[65]{keelingModeling}.
+% % $\beta_{ij}$ is then estimated, although often with a parsimonious model
+% A common assumption is that $\beta_{ij}$ can be decomposed into two independent components such that $\beta_{ij} = \beta \beta^\text{susc}_{i} \beta^\text{inf}_j$.
+% For any stratum $i$, $\beta^\text{susc}_i$ is known as the \emph{relative susceptibility} of stratum $i$.
+
+Also $q_{aa'}$ remains to be specified.
+I again follow the approach of \textcite{birrellRealtime}, decomposing it into two independent components such that $q_{aa'} = q^\text{susc}_{a} q^\text{inf}_{a'}$, where
+$q^\text{susc}_a$ is the \emph{susceptibility} of stratum $a$, \ie how vulnerable to infection individuals in stratum $a$ are; and
+$q^\text{inf}_{a'}$ is the \emph{transmissibility} of stratum $a'$, \ie how likely individuals in stratum $a$ are to pass on an infection.
+% Then $\beta^\text{susc}_i$ is the relative risk of an individual in stratum $i$ being infected, relative to an individual in stratum $a_0$.
+These measures include both biological differences, \eg due to differences in immune systems, or behavioural, \eg if infants are less hygienic than adults.
+
+%Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
+%We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
+
+Previous studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
+Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for the youngest stratum, and $q^\text{susc}_{a} = 1$ for the remaining strata.
+$q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
+
+\subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
+
+The transmission model represents the infection process (introduced in \cref{E-inc-prev:sec:infection-process}.
+A variety of different approaches can be taken to link a transmission model to observations.
+In the context of CIS, this requires representing the prevalence and observation processes (introduced in \cref{E-inc-prev:sec:prevalence-process,E-inc-prev:sec:observation-process} respectively)
+The method to do so is known as the observation model.
+The formulation of this model is heavily dependent on the data available.
+This means that there is a wide variety of models used.
+Therefore, this section  explains the model I propose for fitting to the CIS prevalence data.
+
 % Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
 % The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
 One approach would be to convolve the incidence based on the transmission model with the PCR duration distribution.
@@ -501,88 +290,7 @@ If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out o
 where $\bar{p}_{kat} = \int_{t}^{t+1} p_{ka}(s) ds$ is the mean occupancy in compartment $p_k$ and strata $a$ over day $t$ and $\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
 In this parameterisation (detailed in \cref{E-distributions}) at $\rho=0$ the beta-binomial coincides with the binomial distribution and as $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
-\section{Implementation} \label{SEIR:sec:inference-implementation}
-
-\todo[inline]{Redo intro paragraph to "implementation" section}
-
-The ultimate aim of this chapter is to infer the transmission dynamics from the CIS prevalence data.
-This section considers the practicalities of achieving this aim via mechanistic models.
-
-\subsection{WAIFW matrix}
-
-A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{SEIR:sec:structured-populations}).
-I use the following age-based strata, which align closely with the age groupings previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
-\todo{Contrast with age groupings used in previous chapter}
-\begin{enumerate}
-    \item $[0, 11)$: children of pre-school and primary school age.
-    \item $[11, 16)$: children of compulsory secondary-school age.
-    \item $[16, 25)$: adolescents and young adults who may remain in formal education.
-    \item $[25, 50)$: younger working age adults.
-    \item $[50, 70)$: older working age adults.
-    \item $[70, \infty)$: elderly.
-\end{enumerate}
-
-I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, with the decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.
-This separates contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probabilities $q_{aa'}$, assumed constant; a region-wide effect for time $\beta(t)$; and the population of the stratum, $N_{a'}$.
-
-This parameterisation takes information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using pre-existing methodology~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}, which exploits
-%; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
-% These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
-pre-pandemic baseline estimates from the POLYMOD study~\autocite{mossongSocial}, and time use, from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
-POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on the contacts' age and location (home, work, school, leisure, transport, or other).
-UKTUS asked a representative sample of the UK population about how much time they spent doing various activities each day.
-\Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
-\Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
-These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
-Google mobility data provides the location of Android users over time, relative to a pre-pandemic baseline.
-These data sources are then used to down or up-weight the number of contacts in each setting.
-Resulting estimates of contacts by setting are then recombined across settings to form $\kappa_{aa'}$
-For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
-
-Some behavioural changes (\eg mask wearing) impact transmission.
-However, these are not captured by the contact survey.
-To allow for these changes as well as uncertainty produced by the procedure above, I follow \textcite{birrellRealtime} in placing a random walk prior on $log\beta(t)$  on the weekly timescale:
-\begin{align}
-    \beta(t) &= \beta_{w(t)} \\
-    \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
-    \epsilon_w &\sim \N(0, 1)
-\end{align}
-where $w(t)$ is the week number of time $t$, with week 1 being the first week considered.
-The remaining parameters: $\beta_1$, the initial value of the random walk; and $\sigma_\epsilon$, the standard deviation of the random walk, will have priors placed on them (see \cref{SEIR:sec:priors}), with their values inferred in the usual way.
-
-% $K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
-% Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
-% Ideally, all the $\beta_{ij}$ terms would be estimated, but there is normally inadequate data to do so, requiring assumptions to be made to reduce the number of parameters~\autocite[65]{keelingModeling}.
-% % $\beta_{ij}$ is then estimated, although often with a parsimonious model
-% A common assumption is that $\beta_{ij}$ can be decomposed into two independent components such that $\beta_{ij} = \beta \beta^\text{susc}_{i} \beta^\text{inf}_j$.
-% For any stratum $i$, $\beta^\text{susc}_i$ is known as the \emph{relative susceptibility} of stratum $i$.
-
-Also $q_{aa'}$ remains to be specified.
-I again follow the approach of \textcite{birrellRealtime}, decomposing it into two independent components such that $q_{aa'} = q^\text{susc}_{a} q^\text{inf}_{a'}$, where
-$q^\text{susc}_a$ is the \emph{susceptibility} of stratum $a$, \ie how vulnerable to infection individuals in stratum $a$ are; and
-$q^\text{inf}_{a'}$ is the \emph{transmissibility} of stratum $a'$, \ie how likely individuals in stratum $a$ are to pass on an infection.
-% Then $\beta^\text{susc}_i$ is the relative risk of an individual in stratum $i$ being infected, relative to an individual in stratum $a_0$.
-These measures include both biological differences, \eg due to differences in immune systems, or behavioural, \eg if infants are less hygienic than adults.
-
-%Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
-%We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
-
-Previous studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
-Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for the youngest stratum, and $q^\text{susc}_{a} = 1$ for the remaining strata.
-
-\subsection{Data}
-
-I use the same CIS data as in \cref{E-backcalc}, again considering each region independently.
-This model is stratified only by region and age group, so the data are aggregated to these levels.
-Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole $[0, 11)$ age group.
-
-As well as the motivation given previously, independent regions allows heterogeneity in the parameters between regions, which could arise from a range of socioeconomic factors.
-Furthermore, the assumption of homogeneous mixing within age groups is more plausible for regions than the whole of England.
-By modelling each region independently, I assume that the epidemics in each region do not interact.
-Clearly, this is not true as travel between regions of England is common and unrestricted.
-However, for a large epidemic, the non-interaction is a good approximation~\autocite{birrellRealtimea}.
-
-\subsection{Full model} \label{SEIR:sec:full-model}
+\subsubsection{Model equations and solution} \label{SEIR:sec:full-model}
 
 \begin{figure}
 \makebox[\textwidth][c]{
@@ -632,7 +340,7 @@ The transmission model follows \textcite{birrellRealtime}.
 It is a SEIR model with two latent and two infectious states.
 The population is stratified by age, using a time-varying matrix $\matr{\beta}(t)$ to describe the transmission between strata and how these change over time.
 
-To form whole of England estimates, each region is modelled independently with the results, as in \cref{E-backcalc}.
+To form whole of England estimates, each region is modelled independently with the results aggregated, as in \cref{E-backcalc}.
 
 
 
@@ -656,13 +364,13 @@ The system of differential equations for each region is below.
     \frac{d\vec{p_3}(t)}{dt} &= p_x \kappa_{X1} \vec{p_2}(t) - \kappa_{X2} \vec{p_3}(t).
 \end{align}
 
-\subsection{Solving the systems of ODEs} \label{SEIR:sec:solving-ODEs}
+\subsubsection{Solving the systems of ODEs} \label{SEIR:sec:solving-ODEs}
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
 That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$
 
 The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likelihood}), can be calculated as $\bar{p}_{kat} = \frac{1}{2} ( p_{kat} + p_{ka,t+1/2} )$.
 
-\subsection{Priors} \label{SEIR:sec:priors}
+\subsubsection{Priors} \label{SEIR:sec:priors}
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
 The parameters governing the duration of positivity ($\kappa$s) were explained previously (see \cref{SEIR:table:ec-params}).
@@ -710,7 +418,7 @@ The remaining priors had weakly informative priors.
 \end{table}
 \end{landscape}
 
-\subsection{Inference} \label{SEIR:sec:MCMC}
+\subsubsection{Inference} \label{SEIR:sec:MCMC}
 
 I use an adaptive random-walk Metropolis-Hastings algorithm (previously discussed in \cref{E-inc-prev:sec:MCMC}).
 The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
@@ -789,7 +497,7 @@ From the system of ODEs and the knowledge that all the compartments are growing 
     \vec{p_3} &= \vec{p_2} \frac{p_x \kappa_{X1}}{\psi + \kappa_{X2}}.
 \end{align}
 
-\section{Simulation study} \label{SEIR:sec:sim-study}
+\subsection{Simulation study} \label{SEIR:sec:sim-study}
 
 I ran a simulation study to check that the inference procedure (\cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
 I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
@@ -797,7 +505,7 @@ I used the more informative prior for the simulation study to ensure that the si
 The weakly informative prior, used for the main analysis, allows a wide range of epidemics including some that are shrinking at the start of the time period.
 Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
 
-All fixed values, including $\matr{\kappa}$, used the values from the main analysis.
+All fixed values, including $\matr{\kappa}$, used the previously described in this section.
 This means that the simulations created realistic incidence and prevalence curves (see \cref{SEIR:fig:sim-data}).
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
@@ -860,7 +568,7 @@ The lack of identifiability for $\vec{\pi}$ aligns with previous work showing th
     \label{SEIR:fig:true-vs-posterior}
 \end{figure}
 
-\section{Application to CIS data} \label{SEIR:sec:application}
+\subsection{Application to CIS data} \label{SEIR:sec:application}
 
 Overall the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
 There are a few features of the data which are not captured by the model.
@@ -945,9 +653,7 @@ The attack rate is highest in the $[11, 16)$ age group in the North West at 50\%
     \label{SEIR:fig:attack-rates}
 \end{figure}
 
-\todo[inline]{add comparison to backcalculation once I have those results}
-
-\section{Discussion} \label{SEIR:sec:discussion}
+\subsection{Discussion} \label{SEIR:sec:discussion}
 
 The results in this chapter show the feasibility of fitting a mechanistic model using only data on prevalence.
 If the distributions for length-of-stay in each compartment are known, then all other model parameters can  be estimated.
@@ -1015,6 +721,11 @@ Mechanistic models require explicit representation of this immunity\todo{cite so
     \item Shows that there is a lot of information in the data which could be exploited by a suitably flexible mechanistic model. Such a model would be useful for policy-decisions because it could infer where transmission is occurring (\eg in schools or workplaces) and how this changes over time.
     \item The narrower credible intervals in this chapter are a realisation of the standard bias-variance tradeoff. By making stronger assumptions regarding how transmission occurs, the variance is reduced. However, if these assumptions are incorrect (which is almost certainly the case), bias occurs.
 \end{itemize}
+
+
+\section{Comparison of results}
+
+\todo[inline]{add comparison to backcalculation once I have those results}
 
 \section{Conclusion}
 

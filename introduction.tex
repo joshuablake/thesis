@@ -65,6 +65,46 @@ Therefore, the latter is negligible and again two processes need to be considere
     \item Mathematical details in \cref{E-inc-prev}
 \end{itemize}
 
+\subsection{Mechanistic models}
+
+In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
+Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-back-calc:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
+Individuals are giving the model's state and parameters a biological and/or epidemiological interpretation.
+% Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
+In particular, this allows changes in transmission to be decomposed into the contributing factors, \eg the number of contacts per day or the probability of transmission upon contact.
+The ability to estimate the contribution of each of these factors can inform public health policy.
+Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
+A scenario here is the effect of a proposed intervention (or lack thereof), introduced into the model by modifying the relevant parameters.
+The mechanistic model can then be simulated forward in time to understand the intervention's effects.
+All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
+However, they make stronger assumptions about the disease and population behaviour than statistical models.
+
+The literature on mechanistic models is vast, having been developed for over a century.
+The model in \cref{SEIR:sec:SIR} was first formulated by \textcite{kermackContribution}.
+However, the earliest mechanistic model to be formulated mathematically was probably \textcite{rossMalariaA}'s model of malaria transmission~\autocite{lesslerMechanistic}.
+These early contributions led to important insights for public health.
+\Textcite{rossMalariaA} showed that, if mosquitoes were controlled but not eliminated, malaria could be controlled.
+\Textcite{kermackContribution} explained the observation that epidemics ended before all individuals were infected due to a population-level build-up of immunity known as \emph{herd immunity}.
+
+A full review of this literature is beyond the scope of this thesis.
+In this chapter, I will discuss only the background relevant to the application.
+For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
+
+I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{SEIR:sec:transmission-generic}).
+% This framework is then applied to SARS-CoV-2 in \cref{SEIR:sec:transmission-application}.
+It describes the \emph{transmission model}, corresponding to the infection process.
+The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
+The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
+These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{SEIR:sec:inference-implementation}).
+This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
+I then use a simulation study to check this recovers the parameters successfully (\cref{SEIR:sec:sim-study}).
+Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{SEIR:sec:application}).
+Finally, I discuss the results, limitations, and extensions of this work (\cref{SEIR:sec:discussion}).
+
+Notation in this chapter differs from the rest of this thesis.
+I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
+In particular, upper or lower case no longer signifies whether a variable is random or not, but this is clear from the context.
+
 \subsection{Duration} \label{inc-prev:sec:duration}
 
 Two approaches are commonly used to estimate durations: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
