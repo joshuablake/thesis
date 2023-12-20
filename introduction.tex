@@ -57,7 +57,7 @@ Therefore, two processes needed to be considered in the context of HIV/AIDS: inf
 
 For SARS-CoV-2, measurements of prevalence are noisy because they are based on population sampling.
 The sampling is described as the observation process.
-The observation process noise is much larger than the noise of the prevalence process (see \cref{inc-prev:sec:observation-process}).
+The observation process noise is much larger than the noise of the prevalence process (see \cref{E-inc-prev:sec:observation-process}).
 Therefore, the latter is negligible and again two processes need to be considered: infection and observation.
 
 \begin{itemize}
@@ -68,7 +68,7 @@ Therefore, the latter is negligible and again two processes need to be considere
 \subsection{Mechanistic models}
 
 In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
-Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-back-calc:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
+Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-in-prev:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
 Individuals are giving the model's state and parameters a biological and/or epidemiological interpretation.
 % Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
 In particular, this allows changes in transmission to be decomposed into the contributing factors, \eg the number of contacts per day or the probability of transmission upon contact.
@@ -80,7 +80,7 @@ All of these properties make mechanistic models a useful tool for understanding 
 However, they make stronger assumptions about the disease and population behaviour than statistical models.
 
 The literature on mechanistic models is vast, having been developed for over a century.
-The model in \cref{SEIR:sec:SIR} was first formulated by \textcite{kermackContribution}.
+The model in \cref{E-SEIR:sec:SIR} was first formulated by \textcite{kermackContribution}.
 However, the earliest mechanistic model to be formulated mathematically was probably \textcite{rossMalariaA}'s model of malaria transmission~\autocite{lesslerMechanistic}.
 These early contributions led to important insights for public health.
 \Textcite{rossMalariaA} showed that, if mosquitoes were controlled but not eliminated, malaria could be controlled.
@@ -90,16 +90,16 @@ A full review of this literature is beyond the scope of this thesis.
 In this chapter, I will discuss only the background relevant to the application.
 For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
 
-I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{SEIR:sec:transmission-generic}).
-% This framework is then applied to SARS-CoV-2 in \cref{SEIR:sec:transmission-application}.
+I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{E-SEIR:sec:transmission-generic}).
+% This framework is then applied to SARS-CoV-2 in \cref{E-SEIR:sec:transmission-application}.
 It describes the \emph{transmission model}, corresponding to the infection process.
 The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
-The \emph{observation model}, introduced in \cref{SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
-These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{SEIR:sec:inference-implementation}).
+The \emph{observation model}, introduced in \cref{E-SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
+These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{E-SEIR:sec:inference-implementation}).
 This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
-I then use a simulation study to check this recovers the parameters successfully (\cref{SEIR:sec:sim-study}).
-Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{SEIR:sec:application}).
-Finally, I discuss the results, limitations, and extensions of this work (\cref{SEIR:sec:discussion}).
+I then use a simulation study to check this recovers the parameters successfully (\cref{E-SEIR:sec:sim-study}).
+Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{E-SEIR:sec:application}).
+Finally, I discuss the results, limitations, and extensions of this work (\cref{E-SEIR:sec:discussion}).
 
 Notation in this chapter differs from the rest of this thesis.
 I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
