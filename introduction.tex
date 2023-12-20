@@ -11,6 +11,16 @@
     \item Expected future pandemics, methods should be reusable
 \end{itemize}
 
+- Natural history of SARS-CoV-2 infection
+	- Stylised graphic of phases: infection, pre-infection positive, infectious positive, post-infectious positive, negative
+	- How it spreads
+- Why is incidence and prevalence estimation challenging?
+	- Asymptomatic infection
+	- Ascertainment bias
+- How do we estimate prevalence
+	- CIS and REACT
+- Issues with current incidence estimation
+
 \section{SARS-CoV-2 real-time surveillance}
 
 \begin{itemize}
@@ -86,6 +96,7 @@ Modelling a biomarker uses more information per observation, but requires strong
 \subsection{Methodological contributions}
 
 \begin{itemize}
+    \item Theory justifying the use of deterministic backcalculation in this setting. Already used in practice but without understanding when the approximation is good. In particular: all that is required is that the proportion of the population sampled is small, not that the prevalence or incidence is sufficiently large.
     \item Double interval censoring with arbitrary truncation and false negatives
     \item Combining ATACCC and CIS duration estimates
     \item SEIR model using only prevalence surveys
