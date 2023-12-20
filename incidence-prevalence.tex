@@ -78,6 +78,10 @@ In the context of a disease, the point process can be discretised into the incid
 A counting process has \emph{independent increments} if the number of events in disjoint intervals are independent conditional on the intensity~\autocite[244]{yanDistribution}.
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
 
+\todo[inline]{Make sure this section is coherent: a bunch of stuff from the SEIR chapter has been copied and pasted in}
+
+\subsection{Poisson processes}
+
 A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites[e.g., in the context of HIV:][]{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
 A Poisson process is a point process with independent increments, and the property that $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the infection process at time $r$~\autocites[244]{yanDistribution}.
 A time-homogenous Poisson process is the special case where $\nu(r)$ is constant.
