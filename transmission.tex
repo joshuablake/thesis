@@ -7,6 +7,31 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
+In this chapter, I use the estimate of the duration of PCR positivity from \cref{E-imperf-test} to estimate the transmission of SARS-CoV-2 in England.
+This estimation is based on the CIS data (see \cref{transmission:sec:data} for further details).
+Estimating transmission is the ultimate aim of this thesis.
+
+I take two approaches.
+The theoretical advantages of each approach were discussed in \cref{E-inc-prev:sec:infection-process}.
+First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
+Then, in \cref{SEIR}, I use a mechanistic compartmental model, extending the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
+Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
+
+\section{Data} \label{transmission:sec:data}
+
+Throughout this chapter, the CIS data will be stratified into the regions of England and the following age groups.
+\begin{enumerate}
+    \item $[0, 11)$: children of pre-school and primary school age.
+    \item $[11, 16)$: children of compulsory secondary-school age.
+    \item $[16, 25)$: adolescents and young adults who may remain in formal education.
+    \item $[25, 50)$: younger working age adults.
+    \item $[50, 70)$: older working age adults.
+    \item $[70, \infty)$: elderly.
+\end{enumerate}
+These groupings align closely with those previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
+\todo{Contrast with age groupings used in previous chapter}
+
+
 \section{Backcalculation} \label{backcalc}
 
 Now that I have estimated the duration of PCR positivity, I can estimate the incidence of SARS-CoV-2.
@@ -32,11 +57,11 @@ I fit a similar model to estimate prevalence, then transform the posterior distr
 Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
 
 The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence can naturally be expressed as a generalised linear model (GLM).
-A natural formulation for either incidence proportion or prevalence in a stratum $i$ is $\logit(\pi_i) = g(t)$, where $\pi_i$ is the incidence proportion or prevalence in stratum $i$ and $g$ is a function of time, penalised towards being linear.
+A natural formulation for either incidence proportion or prevalence in a stratum $i$ is $\logit(\pi_i) = g_i(t)$, where $\pi_i$ is the incidence proportion or prevalence in stratum $i$ and $g$ is a function of time, penalised towards being linear.
 This is a GLM with a logit link function.
 The logit transformation serves two purposes.
 First, it ensures that the incidence proportion or prevalence is between 0 and 1.
-Second, at low values of incidence or prevalence, linear growth is approximately exponential which is the natural assumption for an epidemic and has been shown to improve estimates of prevalence\todo{cite REACT paper on this, and check the exact meaning of "improve"}.
+Second, at low values of incidence or prevalence, linear growth is approximately exponential which is what mechanistic models predict, and has been shown to improve estimates of prevalence\todo{cite REACT paper on this, and check the exact meaning of "improve"}.
 However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM because a non-linear transformation is required to obtain prevalence from the logit of incidence proportion (the relationship on the natural scale is linear, as derived in \cref{E-inc-prev:sec:prevalence-process}).
 Using a GLM is computationally useful due to the large number of pre-existing packages available for computing the posterior distribution, or its approximation, efficiently.
 Previously, when fitting to prevalence over long periods and including all appropriate covariates to correct for non-response bias, the model was too computationally expensive to fit using MCMC; instead, an implementation of the model using the Integrated Nested Laplace Approximation (INLA) algorithm was used~\citePersonalComms{Koen Pouwels}.
@@ -47,10 +72,6 @@ The likelihood is a beta-binomial distribution, a generalisation of the binomial
 The overdispersion allows for household clustering\todo{ref beta-binomial as a model for clustering} and any other overdispersion in the data\todo{ref that epi data is often overdispersed}. 
 Finally, the model was fit independently for each region, implicitly adding interactions between region and all other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
-
-I used age groupings:\todo{insert age groupings}.
-These align with previous work on the CIS\todo{cite CIS reports}.
-They are based on school ages (primary, compulsory secondary, and post-compulsory secondary) for children to capture that school opening and closing may have a large effect on transmission.
 
 Having fit the prevalence model, I draw 10,000\todo{check number} prevalence trajectories in each stratum from the approximate posterior distribution of the model.
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
@@ -76,21 +97,14 @@ The population numbers for each stratum are provided by the Office for National 
 
 \subsection{Discussion} \label{backcalc:sec:discussion}
 
-\section{Mechanistic modelling}
+\section{Mechanistic modelling} \label{SEIR}
 
-{\color{red} After introducing the observational model in generic terms above (section 8.2) I would see a reorganisation of the section 8.3 as follows:   
-\begin{itemize}
-    \item 8.3 (currently  titled Implementation) CIS-based transmission model (see comments on lines 484-486) 
-\item 8.3.1 WAIFW matrix
-\item 8.3.2 Full model (perhaps another title..model structure?) 
-\item 8.3.3 Observational model (currently section 8.2) include here the "Solving the system of ODEs" (currently in section 8.3.4)
-\item 8.3.4 Priors 
-\item 8.3.5 Inference 
-\item 8.4 Simulation study
-\end{itemize}
-}
+As discussed in \cref{E-inc-prev:sec:infection-process}, there are various advantages to using a mechanistic model to estimate transmission.
+This section uses a mechanistic model (introduced in \cref{E-SEIR:sec:mechanistic-models}) to estimate the transmission of SARS-CoV-2 in England.
 
-\todo[inline]{Redo this intro, with some high-level comments taken from the full model section (eg following Birrell et al.)}
+The transmission part of the model follows \textcite{birrellRealtime}.
+A novel approach (\cref{SEIR:sec:observation}) links the transmission to the data.
+In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, it includes both the prevalence process and the observation process (as defined in \cref{E-inc-prev}).
 
 \subsection{Methods}
 
@@ -106,18 +120,7 @@ However, for a large epidemic, the non-interaction is a good approximation~\auto
 
 \subsubsection{WAIFW matrix}
 
-A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{SEIR:sec:structured-populations}).
-I use the following age-based strata, which align closely with the age groupings previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
-\todo{Contrast with age groupings used in previous chapter}
-\begin{enumerate}
-    \item $[0, 11)$: children of pre-school and primary school age.
-    \item $[11, 16)$: children of compulsory secondary-school age.
-    \item $[16, 25)$: adolescents and young adults who may remain in formal education.
-    \item $[25, 50)$: younger working age adults.
-    \item $[50, 70)$: older working age adults.
-    \item $[70, \infty)$: elderly.
-\end{enumerate}
-
+A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{E-SEIR:sec:structured-populations}).
 I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, with the decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.
 This separates contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probabilities $q_{aa'}$, assumed constant; a region-wide effect for time $\beta(t)$; and the population of the stratum, $N_{a'}$.
 
@@ -178,14 +181,14 @@ Therefore, this section  explains the model I propose for fitting to the CIS pre
 % The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
 One approach would be to convolve the incidence based on the transmission model with the PCR duration distribution.
 Here incidence is calculated from the ODE solution and then related to the data as explained in \cref{E-inc-prev}.
-However, this approach is computationally expensive because of the need to calculate the convolution in \cref{E-inc-prev:eq:EPt }.
+However, this approach is computationally expensive because of the need to calculate the convolution in \cref{E-inc-prev:eq:EPt}.
 
 A much more efficient option is to approximate this convolution by adding compartments to the ODEs.
 This approach also allows the infected, pre-positive compartment, which I denote $p_0$, to be represented.
 $p_0$ increases at the same rate as individuals flow into $e_1$.
 These individuals then transition into a set of compartment with their transition rates chosen to match the duration of positivity estimates in \cref{E-imperf-test}, $p_1, \dots, p_l$.
 These compartments do not have a biological interpretation, unlike the other compartments in the system, but are purely a mathematical tool so that the time spent in these compartments matches the duration distribution.
-This is the same idea behind having multiple exposed or latent compartments (introduced in \cref{SEIR:sec:non-exponential}).
+This is the same idea behind having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}).
 
 Deciding $l$ and the length of time each individual spends in each compartment is the most challenging part of formulating the observation model.
 The class of distributions which can be represented as a series of compartments are known as \emph{phase-type} distributions.
@@ -332,17 +335,9 @@ In this parameterisation (detailed in \cref{E-distributions}) at $\rho=0$ the be
   \label{SEIR:fig:full-model}
 \end{figure}
 
-The full model combines the elements discussed in this chapter up until now.
-The transmission model follows \textcite{birrellRealtime}.
-It is a SEIR model with two latent and two infectious states.
-The population is stratified by age, using a time-varying matrix $\matr{\beta}(t)$ to describe the transmission between strata and how these change over time.
-
+The remaining model structure follow \textcite{birrellRealtime}.
+The transmission model is a SEIR model with two latent and two infectious states.
 To form whole of England estimates, each region is modelled independently with the results aggregated, as in \cref{E-backcalc}.
-
-
-
-The observation model is novel, relating the latent transmission described by the model to the CIS data.
-It uses the phase-type model to represent the duration distribution of PCR positivity explained in \cref{SEIR:sec:observation}.
 
 A diagram of the model for a single stratum is shown in figure \cref{SEIR:fig:full-model}.
 The system of differential equations for each region is below.
@@ -361,7 +356,6 @@ The system of differential equations for each region is below.
     \frac{d\vec{p_3}(t)}{dt} &= p_x \kappa_{X1} \vec{p_2}(t) - \kappa_{X2} \vec{p_3}(t).
 \end{align}
 
-\subsubsection{Solving the systems of ODEs} \label{SEIR:sec:solving-ODEs}
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
 That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$
 
@@ -415,7 +409,7 @@ The remaining priors had weakly informative priors.
 \end{table}
 \end{landscape}
 
-\subsubsection{Inference} \label{SEIR:sec:MCMC}
+\subsubsection{Inference} \label{SEIR:sec:inference}
 
 I use an adaptive random-walk Metropolis-Hastings algorithm (previously discussed in \cref{E-inc-prev:sec:MCMC}).
 The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
@@ -458,7 +452,7 @@ This was further thinned to 2,000 samples when calculating posterior predictive 
 Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
 Rather than directly inferring $\beta_1$, I infer the initial growth rate of the epidemic.
 In addition, I use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
-Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{SEIR:sec:SIR}).
+Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}).
 
 During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
 This follows directly from the ODEs where $\vec{s}$ is constant. 
@@ -468,7 +462,7 @@ If this is the initial exponential phase, when $\vec{s} \approx 1$, then the bas
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
 \end{align}
 
-Furthermore, $\R$ is a function of $\matr{\beta}$, and hence $\beta_1$ (as explained in \cref{SEIR:sec:structured-populations}).
+Furthermore, $\R$ is a function of $\matr{\beta}$, and hence $\beta_1$ (as explained in \cref{E-SEIR:sec:structured-populations}).
 Combining these expressions, the model can be parameterised by using $\psi$ in place of $\beta_1$.
 The following procedure gives $\beta_1$ in terms of $\psi$.
 First, calculate $\R$ from $\psi$ using \cref{SEIR:eq:rtoR}; denote this $\hat{R}$.
@@ -496,13 +490,13 @@ From the system of ODEs and the knowledge that all the compartments are growing 
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
 
-I ran a simulation study to check that the inference procedure (\cref{SEIR:sec:inference-implementation}) was working correctly and that the model was identifiable.
+I ran a simulation study to check that the inference procedure (\cref{SEIR:sec:inference}) was working correctly and that the model was identifiable.
 I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
 I used the more informative prior for the simulation study to ensure that the simulations were realistic.
 The weakly informative prior, used for the main analysis, allows a wide range of epidemics including some that are shrinking at the start of the time period.
 Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
 
-All fixed values, including $\matr{\kappa}$, used the previously described in this section.
+All other aspects of the simulation model, including $\matr{\kappa}$, are as previously described in this section.
 This means that the simulations created realistic incidence and prevalence curves (see \cref{SEIR:fig:sim-data}).
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
@@ -548,6 +542,8 @@ This is similar when considering coverage of the derived quantities incidence an
     \label{SEIR:fig:sim-inc-prev}
 \end{figure}
 
+
+\todo[inline]{What happened to the following paragraph? It doesn't make sense currently!}
 In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully recovered; the other parameters are only partially so: their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
 The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
 This suggests that these parameters are not practically identifiable in this setting.
@@ -714,7 +710,7 @@ Mechanistic models require explicit representation of this immunity\todo{cite so
 \end{itemize}
 
 
-\section{Comparison of results}
+\section{Comparison of results} \label{transmission:sec:comparison}
 
 \todo[inline]{add comparison to backcalculation once I have those results}
 
