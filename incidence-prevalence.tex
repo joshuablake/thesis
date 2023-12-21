@@ -89,7 +89,6 @@ It makes no direct assumptions on the underlying biological or epidemiological p
 Afterwards, in \cref{SEIR}, I introduce \emph{mechanistic models}.
 Mechanistic models explicitly describe the population and transmission between individuals.
 They vary greatly in their details and realism~\autocite{murilloMultiscale}.
-\todo[inline]{Make sure this section is coherent: a bunch of stuff from the SEIR chapter has been copied and pasted in}
 
 \subsection{Poisson processes} \label{inc-prev:sec:poisson-process}
 
@@ -103,7 +102,6 @@ Formally, $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r)
 The other defining property of a Poisson process is that it has \emph{independent increments}.
 A counting process has independent increments if the number of events in disjoint intervals are independent conditional on the intensity~\autocite[244]{yanDistribution}.
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
-\todo{check if this should be $<$ or $\leq$}
 In the context of a Poisson process, the independent increment property implies that, conditional on $\nu(r)$, the number of infections in disjoint intervals are independent.
 Hence, $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
 
@@ -183,7 +181,7 @@ Deterministic models are defined by the state vector $\vec{x}(t)$ being a determ
 %The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
 %There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
 
-Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters\todo{REF stochastic models}.
+Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters\todo{Cite stochastic models}.
 Stochastic models are most commonly specified in discrete time, using a Markov assumption.
 A common simplification is to use discrete time and a Markov assumption; \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$~\autocite{birrellEvidence}.
 This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
@@ -239,7 +237,7 @@ There are a wealth of introductory texts on stochastic models, I recommend \text
   \label{SEIR:fig:SIR}
 \end{figure}
 
-The simplest compartmental model for a disease which confers immunity is the (SIR) model\todo{ref for SIR being simplest} (depicted in \cref{SEIR:fig:SIR}).
+The simplest compartmental model for a disease which confers immunity is the (SIR) model\todo{cite SIR being simplest} (depicted in \cref{SEIR:fig:SIR}).
 The name SIR derives from the structure of the model.
 In particular, the model divides the population (assumed closed, an assumption discussed later) into one of three compartments: susceptible, infectious, or recovered.
 % The state of the system is the proportion of the population in each compartment.
@@ -401,12 +399,9 @@ The reproduction number in terms of the parameters is unchanged by this extensio
   \label{SEIR:fig:SEIR}
 \end{figure}
 
-The SIR model assumes that individuals are immediately infectious upon infection.
-This is unrealistic for most diseases, as there is a period between an individual being infected and them being infectious, known as the \emph{latent period}.
-\todo{I will probably end up defining the latent period in the intro, so should just ref that}
+The SIR model assumes that individuals are immediately infectious upon infection, neglecting the latent period (see \cref{E-biology-data:sec:natural-history}).
 Ignoring the latent period will again overestimate the reproduction number~\autocite{wearingAppropriate}.
-
-The SIR model can be extended to include a latent period by adding a latent compartment~\autocite[41]{keelingModeling}, also known as an \emph{exposed} compartment.
+The SIR model can be extended by adding a latent compartment~\autocite[41]{keelingModeling}, also known as an \emph{exposed} compartment.
 This forms the susceptible-exposed-infectious-recovered (SEIR) model, shown in \cref{SEIR:fig:SEIR}.
 
 Similar to the infectious period, the latent period can be modelled as a gamma distribution by adding multiple latent compartments.
@@ -725,7 +720,7 @@ The ideal proposal distribution is the posterior of interest, however, this is i
 One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:inference}.
 
 MCMC using a Normal proposal distribution can be inefficient.
-In particular, it often fails to propose moves into the tails of the posterior distribution\todo{any suggested refs for this (Paul?) - we've discussed this lots but I've never read it anywhere}.
+In particular, it often poorly explores the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
 \emph{Hamiltonian Monte Carlo} (HMC)~\autocites{nealMCMC}{nealImproved}{duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
 HMC simulates a physical system travelling through the posterior space with momentum.
 The momentum increases in the direction the posterior density increases, using the gradient.
@@ -736,8 +731,8 @@ The Metropolis-Hastings algorithm is then used to accept or reject the proposed 
 The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the number of leapfrog steps to take in the Hamiltonian dynamics.
 NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
 I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
-Stan implements \emph{automatic differentiation}\todo{ref automatic diff} to calculate the gradient of the posterior density without any user input.
-Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known.
+Stan implements \emph{automatic differentiation} to calculate the gradient of the posterior density without any user input.
+Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
 
 Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}~\autocite[72]{lunnBUGS}.
