@@ -10,7 +10,7 @@
 
 \Cref{E-inc-prev} showed that the duration of PCR positivity is a key parameter for estimating the incidence of SARS-CoV-2 infections.
 The aim of this chapter is to estimate the duration of PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
-I model a biomarker, the log viral load, over the course of an infection.\todo{make sure log viral load and Ct values are introduced in chapter 2}
+I model a biomarker, the log viral load, over the course of an infection.
 From this model, I derive the distribution of the duration of PCR positivity.
 
 First, I will explain how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature (\cref{ATACCC:sec:background}).
@@ -61,7 +61,6 @@ The model of \textcite{hakkiOnset} has two components: a latent viral load model
 The viral load model produces a deterministic trajectory for the viral load of an individual, a function of the model parameters.
 The observation model then describes how the PCR testing process produces noisy observations of this viral load.
 The observation model includes the possibility of false positive and negatives, and the limit of detection of the PCR test.
-\todo{Make sure limit of detection is introduced previously when I first talk about PCR}
 % The limit of detection means that viral loads below a certain threshold are not detected by the PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
@@ -89,7 +88,7 @@ $\tau_{\max,i}$ is inferred independently for each individual because the time f
 
 PCR tests are noisy observations of the viral load.
 A positive PCR test has a Ct value.
-Ct values are linearly related to viral load (see\todo{make sure relationship between Ct values and viral load is introduced previously}).
+Ct values are linearly related to viral load (see \cref{E-biology-data:sec:PCR})
 A negative PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
 Positive PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 

@@ -521,8 +521,7 @@ I constructed a confidence interval for the coverage using the Pearson-Klopper m
 
 The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
 There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow.
-It is well-known that random walk MCMC, as used here, can poorly explore the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
-\todo{cite issues with random-walk MCMC exploring space}
+This is a common issue with random walk MCMC (see \cref{E-inc-prev:sec:MCMC}).
 This is similar when considering coverage of the derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
     \includegraphics{SEIR/sim/coverage}
