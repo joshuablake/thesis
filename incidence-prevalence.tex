@@ -722,7 +722,7 @@ The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further detail
 The proposal distribution $q$ is most commonly a (possibly multivariate) Normal distribution centred on $\psi$; this scheme is used in \cref{E-SEIR}.
 Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC.
 The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
-One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:MCMC}.
+One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:inference}.
 
 MCMC using a Normal proposal distribution can be inefficient.
 In particular, it often fails to propose moves into the tails of the posterior distribution\todo{any suggested refs for this (Paul?) - we've discussed this lots but I've never read it anywhere}.

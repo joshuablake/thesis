@@ -65,7 +65,7 @@ The observation model includes the possibility of false positive and negatives, 
 % The limit of detection means that viral loads below a certain threshold are not detected by the PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-backcalc:sec:MCMC}).
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-inc-prev:sec:MCMC}).
 The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
 This leads to the following model for the viral load at time $t$, $v_i(t)$, in individual $i$ is shown in \cref{ATACCC:fig:viral-load-model} and given by:
@@ -218,10 +218,10 @@ To calculate the discrete version of this distribution, $F_D$, a Monte Carlo int
 \end{align}
 where $\I$ is the indicator function.
 Here, $D_i$ is drawn conditional on the population-level parameters $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
-Equivalent forms of $F_D$, such as the survival and hazard functions, can be calculated using the relations in \cref{E-backcalc:sec:definitions}.
+Equivalent forms of $F_D$, such as the survival and hazard functions, can be calculated using the relations in \cref{E-inc-prev:sec:definitions}.
 I found 100,000 draws produced stable estimates of the tail of $F_D$.
 
-\section{Results} \label{ATACCC:sec:results-discussion}
+\section{Results} \label{ATACCC:sec:results}
 
 
 The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
@@ -283,7 +283,7 @@ This leads to a shorter duration of PCR positivity in the vaccinated group.
 The negative rate, $\rho$, is estimated to be quite low, 5.3\% (95\% CrI: 3.7--7.3\%).
 
 The $F_D$ estimates for the two groups are in \cref{ATACCC:fig:duration}.
-In \cref{ATACCC:sec:results-discussion}, the two models gave very similar results.
+In \cref{ATACCC:sec:results}, the two models gave very similar results.
 Therefore, I show results only from the modified model (which had better convergence).
 \begin{figure}
   \centering \includegraphics{ATACCC/duration}

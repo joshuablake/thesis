@@ -90,20 +90,16 @@ A full review of this literature is beyond the scope of this thesis.
 In this chapter, I will discuss only the background relevant to the application.
 For further details I recommend the tutorial paper \textcite{kretzschmarMathematical} or the textbook \textcite{keelingModeling}.
 
-I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{E-SEIR:sec:transmission-generic}).
-% This framework is then applied to SARS-CoV-2 in \cref{E-SEIR:sec:transmission-application}.
-It describes the \emph{transmission model}, corresponding to the infection process.
-The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
-The \emph{observation model}, introduced in \cref{E-SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
-These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{E-SEIR:sec:inference-implementation}).
-This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
-I then use a simulation study to check this recovers the parameters successfully (\cref{E-SEIR:sec:sim-study}).
-Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{E-SEIR:sec:application}).
-Finally, I discuss the results, limitations, and extensions of this work (\cref{E-SEIR:sec:discussion}).
-
-Notation in this chapter differs from the rest of this thesis.
-I adopt conventions and notation familiar to the infectious disease modelling field, although the field's notation is not consistent between sources.
-In particular, upper or lower case no longer signifies whether a variable is random or not, but this is clear from the context.
+% I start this chapter by introducing a generic framework for mechanistic modelling of infectious diseases (\cref{E-SEIR:sec:transmission-generic}).
+% % This framework is then applied to SARS-CoV-2 in \cref{E-SEIR:sec:transmission-application}.
+% It describes the \emph{transmission model}, corresponding to the infection process.
+% The transmission model needs to be linked to observations; in this chapter, that will be the CIS prevalence data.
+% The \emph{observation model}, introduced in \cref{E-SEIR:sec:observation}, is this link; it incorporates both the prevalence process and the observation process.
+% These two components form the mathematical model, which I then fit to data, requiring specification of an inference process, parameterisation, and priors (\cref{E-SEIR:sec:inference-implementation}).
+% This final formulation uses the transmission model from \textcite{birrellRealtime}, but a novel observation model.
+% I then use a simulation study to check this recovers the parameters successfully (\cref{E-SEIR:sec:sim-study}).
+% Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{E-SEIR:sec:application}).
+% Finally, I discuss the results, limitations, and extensions of this work (\cref{E-SEIR:sec:discussion}).
 
 \subsection{Duration} \label{inc-prev:sec:duration}
 

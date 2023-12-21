@@ -545,7 +545,7 @@ Individual $i$'s duration of positivity, $D_i$, is then an independent draw from
 Simulation was performed in R~4.2.0~\autocite{R-4-2-0} using tidyverse~2.0.0~\autocite{tidyverse} and targets~1.1.3~\autocite{targetsPackage}.
 
 Inference was implemented in Stan via RStan~2.21.8~\autocite{rstan2-21-8} using default settings.
-Convergence was assessed using Rhat and ESS as described in \cref{E-ATACCC:sec:convergence}\todo{add ref to place explaining diagnostics}, and all runs checked for divergent transitions.
+Convergence was assessed using Rhat and ESS as described in \cref{E-inc-prev:sec:MCMC}, and all runs checked for divergent transitions.
 
 The prior on the total number of infections was centred on the true value with a dispersion parameter of 1.
 This meant that the prior was very diffuse.
@@ -612,7 +612,7 @@ A particular application would be estimation in the early stages of an epidemic 
 Here, little would be known about the pathogen, but gathering information with robust estimates of uncertainty is important to inform the response.
 
 I have assumed constant and independent incidence (a priori).
-Prevalence in the CIS data was approximately constant over the period of interest (see \cref{E-intro:fig:prevalence}).
+Prevalence in the CIS data was approximately constant over the period of interest (see\todo{ref prev constant over period}).
 A sensitivity analysis, where an epidemic in exponential growth or decline was simulated (not shown), showed minimal impact on survival estimates.
 An incorrect assumption of constant incidence can lead to biased estimates~\autocite{degruttolaAnalysis}.
 Therefore, the assumption could be important in other contexts, especially if the incidence is changing rapidly.
