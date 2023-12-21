@@ -68,7 +68,7 @@ Therefore, the latter is negligible and again two processes need to be considere
 \subsection{Mechanistic models}
 
 In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
-Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-in-prev:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
+Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-inc-prev:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
 Individuals are giving the model's state and parameters a biological and/or epidemiological interpretation.
 % Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
 In particular, this allows changes in transmission to be decomposed into the contributing factors, \eg the number of contacts per day or the probability of transmission upon contact.
@@ -123,6 +123,15 @@ Modelling a biomarker uses more information per observation, but requires strong
     \item Inform future study design
     \item Provide methodology
 \end{itemize}
+
+The code for the analyses in this thesis is available online.
+An index to the various repositories is available at\todo{insert GitHub link}.
+Almost all code, excluding dependencies, was written from scratch for these analyses.
+The exception is the Markov chain Monte Carlo sampler used in \cref{E-SEIR}, which was created by Sanmitra Ghosh for the article \textcite{ghoshApproximate}.
+
+The ATACCC data used is found in the same location.
+CIS data can only be accessed by accredited researchers within the Office for National Statistic's Secure Research Service\todo{insert details of applying}.
+Where possible, aggregated, non-disclosive versions of the dataset are available alongside the code.
 
 \subsection{Epidemiological contributions}
 
