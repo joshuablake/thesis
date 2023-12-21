@@ -29,8 +29,6 @@ Throughout this chapter, the CIS data will be stratified into the regions of Eng
     \item $[70, \infty)$: elderly.
 \end{enumerate}
 These groupings align closely with those previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
-\todo{Contrast with age groupings used in previous chapter}
-
 
 \section{Backcalculation} \label{backcalc}
 
@@ -106,6 +104,8 @@ The transmission part of the model follows \textcite{birrellRealtime}.
 A novel approach (\cref{SEIR:sec:observation}) links the transmission to the data.
 In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, it includes both the prevalence process and the observation process (as defined in \cref{E-inc-prev}).
 
+This section uses the same notation as \cref{E-SEIR:sec:mechanistic-models}, following the infectious disease modelling literature rather than the statistical conventions used elsewhere in this thesis.
+
 \subsection{Methods}
 
 I use the same CIS data as in \cref{E-backcalc}, again considering each region independently.
@@ -139,7 +139,7 @@ For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplement
 
 Some behavioural changes (\eg mask wearing) impact transmission.
 However, these are not captured by the contact survey.
-To allow for these changes and the uncertainty produced in formulating $\matr{\kaapa}(t)$, I follow \textcite{birrellRealtime} in placing a random walk prior on $\log\beta(t)$  on the weekly timescale:
+To allow for these changes and the uncertainty produced in formulating $\matr{\kappa}(t)$, I follow \textcite{birrellRealtime} in placing a random walk prior on $\log\beta(t)$  on the weekly timescale:
 \begin{align}
     \beta(t) &= \beta_{\tilde{w}(t)} \\
     \log\beta_{w+1} &= \log\beta_w + \sigma_\epsilon \epsilon_w \\
@@ -520,7 +520,8 @@ The coverage for each parameter should equal the nominal probability (\eg the co
 I constructed a confidence interval for the coverage using the Pearson-Klopper method implemented in the binom package~\autocite{binom1-1}.
 
 The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
-There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow; this is a common problem when using random-walk MCMC.
+There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow.
+It is well-known that random walk MCMC, as used here, can poorly explore the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
 \todo{cite issues with random-walk MCMC exploring space}
 This is similar when considering coverage of the derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
@@ -547,10 +548,10 @@ This is similar when considering coverage of the derived quantities incidence an
 In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully recovered; the other parameters are only partially so: their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
 The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
 This suggests that these parameters are not practically identifiable in this setting.
-The posteriors align very closely with the priors (not shown) which reinforces this finding.
+The posteriors align very closely with the priors (not shown\todo{consider showing prior/posterior plots}) which reinforces this finding.
 The lack of identifiability for $\vec{\pi}$ aligns with previous work showing this parameter is structurally unidentifiable, \ie not identifiable even in the limit of infinite data~\autocite{dankwaStructural}.
 \begin{figure}
-    \includegraphics{SEIR/sim/true_vs_posterior}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/sim/true_vs_posterior}}
     \caption[True vs posterior parameter values]{%
         True vs posterior median parameter values for each parameter in each simulation.
         The black line shows the line $y = x$ which the dots would lie on if the parameter is fully recovered.
