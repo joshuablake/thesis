@@ -731,7 +731,7 @@ The Metropolis-Hastings algorithm is then used to accept or reject the proposed 
 The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the number of leapfrog steps to take in the Hamiltonian dynamics.
 NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
 I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
-Stan implements \emph{automatic differentiation} to calculate the gradient of the posterior density without any user input.
+Stan implements \emph{automatic differentiation}\todo{cite automatic diff} to calculate the gradient of the posterior density without any user input.
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
 
