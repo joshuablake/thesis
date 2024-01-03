@@ -80,10 +80,15 @@ This happens quickly for realistic values of the parameters.
 Therefore, the log viral load is approximately piecewise linear (see \cref{ATACCC:fig:viral-load-model} for a representative viral load trajectory).
 $\vec{\phi}_i = (v_{\max,i}, a_i, b_i)^T$ are the random effects for individual $i$.
 $\tau_{\max,i}$ is inferred independently for each individual because the time from first test to peak is not a biological concept shared between individuals.
-\begin{figure}
+\begin{figure}[tbhp]
   \centering \includegraphics{ATACCC/typical_trajectory}
-  \caption[Example viral load model trajectory.]{Example viral load trajectory produced by \textcite{hakkiOnset}'s viral load model, using realistic parameter values. The increase in log viral load is approximately linear with a gradient of $a_i$, here 5. The decrease is also linear, with gradient $-b_i$, here -1.4. The peak is at time $\tau_{\max,i}$, here 0, and log viral load $\log v_{\max,i}$, here = 15. The smoothing (lack of linearity) near the peak is visible. \label{ATACCC:fig:viral-load-model}}
-  \todo[inline]{Add a few lines to example plot showing the effect of different parameters, move parameters to key}
+  \caption[Example viral load model trajectory.]{%
+    Example viral load trajectory produced by \textcite{hakkiOnset}'s viral load model, using realistic parameter values.
+    The increase and decrease in log viral load are approximately linear with a gradient of $a_i$ and $b_i$ respectively.
+    The peak is at time $\tau_{\max,i} = 0$ and log viral load $\log v_{\max,i}$.
+    The subscripts are omitted in the key for clarity.
+    The smoothing (lack of linearity) near the peak is visible. \label{ATACCC:fig:viral-load-model}
+  }
 \end{figure}
 
 PCR tests are noisy observations of the viral load.
