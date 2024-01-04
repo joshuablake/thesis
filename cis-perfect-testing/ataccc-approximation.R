@@ -57,7 +57,7 @@ p_surv = tbl_priors |>
     standard_plot_theming()
 ggsave(
     filename = here::here(
-        "cis-perfect-testing/ataccc-approximation-survival.png"
+        "cis-perfect-testing/ataccc-approximation-survival.pdf"
     ),
     plot = p_surv,
     width = 15,
@@ -84,7 +84,7 @@ p_hazard = tbl_priors |>
 
 ggsave(
     filename = here::here(
-        "cis-perfect-testing/ataccc-approximation-hazard.png"
+        "cis-perfect-testing/ataccc-approximation-hazard.pdf"
     ),
     plot = p_hazard,
     width = 15,

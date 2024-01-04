@@ -36,7 +36,7 @@ p_constant_sensitivity = tbl_posteriors |>
     geom_line(aes(time, S), data = truth) +
     theme_survival_time_series()
 ggsave(
-    filename = here::here("cis-imperfect-testing/sim-constant-sensitivity.png"),
+    filename = here::here("cis-imperfect-testing/sim-constant-sensitivity.pdf"),
     plot = p_constant_sensitivity,
     width = 15,
     height = 9,
@@ -57,7 +57,7 @@ p_misspecified_sensitivity = tbl_posteriors |>
         fill = expression(p[sens])
     )
 ggsave(
-    filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.png"),
+    filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.pdf"),
     plot = p_misspecified_sensitivity,
     width = 15,
     height = 9,
@@ -78,7 +78,7 @@ p_variable_sensitivity = tbl_posteriors |>
         fill = expression(p[sens])
     )
 ggsave(
-    filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.png"),
+    filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.pdf"),
     plot = p_variable_sensitivity,
     width = 15,
     height = 9,
@@ -102,7 +102,7 @@ ggsave(
 #     filter(n > 1)
 
 # ggsave(
-#     filename = here::here("cis-imperfect-testing/sim-all.png"),
+#     filename = here::here("cis-imperfect-testing/sim-all.pdf"),
 #     width = 15,
 #     height = 50,
 #     units = "cm",

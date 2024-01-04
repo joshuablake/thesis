@@ -74,7 +74,7 @@ p_55 = posterior_predictive |>
   theme_trajectory()
   
 ggsave(
-  filename = "ATACCC/fit_individual_55.png",
+  filename = "ATACCC/fit_individual_55.pdf",
   plot = p_55,
   width = 15,
   height = 9,
@@ -95,7 +95,7 @@ p_fits = posterior_summary |>
   facet_wrap(~i, ncol = 6) +
   theme_trajectory()
 ggsave(
-    filename = here::here("ATACCC/fits.png"),
+    filename = here::here("ATACCC/fits.pdf"),
     plot = p_fits,
     height = 20,
     width = 15,

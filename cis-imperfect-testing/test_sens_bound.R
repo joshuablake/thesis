@@ -40,7 +40,7 @@ p_bound = bound_data |>
     )
 
 ggsave(
-    filename = here::here("cis-imperfect-testing/test-sens-bound.png"),
+    filename = here::here("cis-imperfect-testing/test-sens-bound.pdf"),
     plot = p_bound,
     width = 15,
     height = 9,

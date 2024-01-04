@@ -28,7 +28,7 @@ p_prevalence = inputs |>
     do_plot("Prevalence")
 
 ggsave(
-    filename = here::here("SEIR/sim/data.png"),
+    filename = here::here("SEIR/sim/data.pdf"),
     plot = p_incidence / p_prevalence,
     width = 20,
     height = 25,

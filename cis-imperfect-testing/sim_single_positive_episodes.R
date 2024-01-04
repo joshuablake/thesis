@@ -30,7 +30,7 @@ p_single_pos = sims |>
     )
 
 ggsave(
-    filename = here::here("cis-imperfect-testing/sim-single-positive-episodes.png"),
+    filename = here::here("cis-imperfect-testing/sim-single-positive-episodes.pdf"),
     plot = p_single_pos,
     width = 15,
     height = 9,

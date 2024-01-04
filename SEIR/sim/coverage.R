@@ -103,7 +103,7 @@ p_true_vs_posterior = posterior_intervals |>
         y = "True value"
     )
 ggsave(
-    filename = here::here("SEIR/sim/true_vs_posterior.png"),
+    filename = here::here("SEIR/sim/true_vs_posterior.pdf"),
     plot = p_true_vs_posterior,
     width = 20,
     height = 15,
@@ -137,7 +137,7 @@ posterior_samples |>
     facet_wrap(~parameter, scales = "free")
 
 # ggsave(
-#     filename = here::here("SEIR/sim/summary.png"),
+#     filename = here::here("SEIR/sim/summary.pdf"),
 #     plot = p_coverage + p_true_vs_posterior,
 #     width = 20,
 #     height = 15,

@@ -25,7 +25,7 @@ plot = ataccc_posterior |>
   )
 
 ggsave(
-  filename = "cis-perfect-testing/input-duration-dists.png",
+  filename = "cis-perfect-testing/input-duration-dists.pdf",
   plot = plot,
   width = 15,
   height = 9,

@@ -69,7 +69,7 @@ p_combined = p_incidence / p_prevalence +
         legend.position = "bottom",
     )
 ggsave(
-    filename = "SEIR/sim/predictive_coverage.png",
+    filename = "SEIR/sim/predictive_coverage.pdf",
     plot = p_combined,
     width = 15,
     height = 15

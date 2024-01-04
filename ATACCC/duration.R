@@ -36,7 +36,7 @@ p_durations = bind_rows(
     theme_survival_time_series () +
     coord_cartesian(xlim = c(0, 40))
 ggsave(
-    filename = here::here("ATACCC/duration.png"),
+    filename = here::here("ATACCC/duration.pdf"),
     plot = p_durations,
     width = 15,
     height = 9,

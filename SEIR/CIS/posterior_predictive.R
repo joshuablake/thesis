@@ -103,7 +103,7 @@ create_prev_plot = function(age_groups, label) {
 
     ggsave(
         filename = here::here(
-            glue::glue("SEIR/CIS/prev_{label}.png")
+            glue::glue("SEIR/CIS/prev_{label}.pdf")
         ),
         plot = plot,
         width = 15,
@@ -140,7 +140,7 @@ p_incidence = prediction_intervals |>
     theme(legend.position = "bottom")
 ggsave(
     filename = here::here(
-        glue::glue("SEIR/CIS/incidence.png")
+        glue::glue("SEIR/CIS/incidence.pdf")
     ),
     plot = p_incidence,
     width = 15,
@@ -172,7 +172,7 @@ p_peak = peak_days |>
         colour = "Age group"
     )
 ggsave(
-    filename = here::here("SEIR/CIS/p_peak.png"),
+    filename = here::here("SEIR/CIS/p_peak.pdf"),
     plot = p_peak,
     width = 15,
     height = 10,

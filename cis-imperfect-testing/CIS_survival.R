@@ -70,7 +70,7 @@ p_perfect = posterior_draws |>
     ) +
     coord_cartesian(xlim = c(0, 45))
 ggsave(
-    filename = here::here("cis-imperfect-testing/CIS_perfect.png"),
+    filename = here::here("cis-imperfect-testing/CIS_perfect.pdf"),
     plot = p_perfect,
     width = 15,
     height = 9,
@@ -101,7 +101,7 @@ p_final = posterior_draws |>
         colour = ""
     )
 ggsave(
-    filename = here::here("cis-imperfect-testing/CIS_final.png"),
+    filename = here::here("cis-imperfect-testing/CIS_final.pdf"),
     plot = p_final,
     width = 15,
     height = 9,
@@ -175,7 +175,7 @@ sens_curves = sens_draws |>
     labs(colour = expression(p[sens]), fill = expression(p[sens]))
 
 ggsave(
-    filename = here::here("cis-imperfect-testing/CIS_vary.png"),
+    filename = here::here("cis-imperfect-testing/CIS_vary.pdf"),
     plot = (r_medians + r_day_50 + r_curves) / (sens_medians + sens_day_50 + sens_curves) +
         plot_annotation(tag_levels = "A") &
         theme(

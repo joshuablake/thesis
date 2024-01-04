@@ -38,7 +38,7 @@ p_typical_trajectory = ggplot(trajectories, aes(x, y, colour = label)) +
   ) +
   standard_plot_theming()
 ggsave(
-  filename = "ATACCC/typical_trajectory.png",
+  filename = "ATACCC/typical_trajectory.pdf",
   plot = p_typical_trajectory,
   width = 15,
   height = 9,

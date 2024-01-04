@@ -74,7 +74,7 @@ p_censor = tibble(
   )) %>% 
   mutate(individual = 1) %>% 
   plot_testing_schedule()
-ggsave("cis-perfect-testing/double-interval-censor.png", width = 6, height = 1.5, dpi = 300, unit = "in")
+ggsave("cis-perfect-testing/double-interval-censor.pdf", width = 6, height = 1.5, dpi = 300, unit = "in")
 
 p_truncation = expand_grid(
   time = c((0:3) * 7, (1:3) * 28),
@@ -87,4 +87,4 @@ p_truncation = expand_grid(
     1, 43, "recovered",
   )) %>% 
   plot_testing_schedule()
-ggsave("cis-perfect-testing/truncation.png", width = 6, height = 2, dpi = 300, unit = "in")
+ggsave("cis-perfect-testing/truncation.pdf", width = 6, height = 2, dpi = 300, unit = "in")

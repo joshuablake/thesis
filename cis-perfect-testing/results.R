@@ -53,7 +53,7 @@ surv_plot = surv_nat_plot + surv_log_plot + plot_layout(guides = "collect") &
     theme(legend.position = "bottom")
 
 ggsave(
-    filename = here::here("cis-perfect-testing/survival-results.png"),
+    filename = here::here("cis-perfect-testing/survival-results.pdf"),
     plot = surv_plot,
     width = 15,
     height = 9,
@@ -71,7 +71,7 @@ hazard_plot = tbl_posteriors |>
     theme_survival_time_series() +
     ylab("λ(t)")
 ggsave(
-    filename = here::here("cis-perfect-testing/hazard-results.png"),
+    filename = here::here("cis-perfect-testing/hazard-results.pdf"),
     plot = hazard_plot,
     width = 15,
     height = 9,
@@ -86,7 +86,7 @@ hazard_pairs = tbl_samples |>
     select(!.draw) |>
     GGally::ggpairs()
 ggsave(
-    filename = here::here("cis-perfect-testing/hazard-pairs-results.png"),
+    filename = here::here("cis-perfect-testing/hazard-pairs-results.pdf"),
     plot = hazard_pairs,
     width = 15,
     height = 15,

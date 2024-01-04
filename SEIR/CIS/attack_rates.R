@@ -35,7 +35,7 @@ p_attack_rate = ggplot(attack_rate, aes(x = age, y = occupancy, colour = age)) +
     scale_x_discrete(breaks = c()) +
     coord_cartesian(y = c(0, NA))
 ggsave(
-    filename = here::here("SEIR/CIS/attack_rates.png"),
+    filename = here::here("SEIR/CIS/attack_rates.pdf"),
     plot = p_attack_rate,
     width = 5,
     height = 5

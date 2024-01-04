@@ -91,7 +91,7 @@ p_flat_dens = beta_plot_dens(flat_params, flat_params) +
 p_flat_surv = beta_plot_surv(flat_params, flat_params, prior_len = 15)
 p_flat = p_flat_dens + p_flat_surv
 ggsave(
-  filename = "cis-perfect-testing/flat-prior.png",
+  filename = "cis-perfect-testing/flat-prior.pdf",
   plot = p_flat,
   width = 15,
   height = 9,
@@ -105,7 +105,7 @@ p_vague_surv = beta_plot_surv(0.1, 1.9, prior_len = 30) +
   theme(legend.position = "none")
 p_vague = p_vague_dens + p_vague_surv
 ggsave(
-  filename = "cis-perfect-testing/vague-prior.png",
+  filename = "cis-perfect-testing/vague-prior.pdf",
   plot = p_vague,
   width = 15,
   height = 9,
@@ -208,7 +208,7 @@ rw2_hazard = random_walks_df2 |>
       data = ataccc_posterior
     )
 ggsave(
-  filename = "cis-perfect-testing/rw2-prior.png",
+  filename = "cis-perfect-testing/rw2-prior.pdf",
   plot = rw2_surv_plot,
   width = 15,
   height = 9,
@@ -227,7 +227,7 @@ p_kt = ggplot() +
     y = expression(k[t])
   )
 ggsave(
-  filename = "cis-perfect-testing/kt-prior.png",
+  filename = "cis-perfect-testing/kt-prior.pdf",
   plot = p_kt,
   width = 15,
   height = 9,
