@@ -199,8 +199,7 @@ Hence, their duration of PCR positivity, in continuous time, is $d_i = \tau_{1,i
 At $\tau_{0,i}$ and $\tau_{1,i}$, the approximation as exponential growth (described in \cref{ATACCC:sec:hakki}) is good.
 Therefore, set $\log v(\tau)$ and one of the exponential terms to 0 in \cref{ATACCC:eq:viral-load}.
 When $v_\text{lod} = 0$, as it does here, this gives the following expressions:
-$$
-\begin{aligned}
+\begin{align}
 \tau_{0,i}
 &= \tau_{\max,i} - \frac{1}{a_i} \left(\log v_{\max,i} + \log(a_i + b_i) - \log b_i \right) \\
 \tau_{1,i}
@@ -208,22 +207,42 @@ $$
 d_i
 &= \tau_{1,i} - \tau_{0,i}  \\
 &= \frac{1}{a_i b_i} \left( (a_i + b_i) (\log v_{\max,i} + \log(a_i + b_i)) - a_i \log a_i - b_i \log b_i \right).
-\end{aligned}
-$$
-Note that $d_i$ does not depend on $\tau_{\max,i}$, only $\phi_i$.
+\label{ATACCC:eq:di}
+\end{align}
 
-\todo[inline]{insert a better explanation of $F_D$'s posterior}
-For later use, a discretised version is preferred (as described in \cref{E-inc-prev}).
-To calculate the discrete version of this distribution, $F_D$, a Monte Carlo integration is used with the following relation.
+From \cref{ATACCC:eq:di}, we can see that $d_i$ depends only on $i$'s random effects vector $\vec{\phi}_i$.
+Therefore, the distribution of $d_i$ across the population is determined by the $\vec{phi}_i$'s mean, $\vec{\mu}_\phi$, and covariance matrix, $\matr{\Sigma}_\phi$.
+Hence, the uncertainty in the posterior distribution of the discretised duration cumulative distribution function, $F_D(d) = \prob(D_i \leq d + 0.5)$ originate from the uncertainty in $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
+
+For a known $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$, $F_D$ is equal to the following expression.
 \begin{align}
   F_D(d)
   &= \prob(D_i \leq d + 0.5) \\
-  &= \E_{D_i}(\I(D_i \leq d + 0.5)) 
+  &= \E_{D_i}(\I(D_i \leq d + 0.5))
+  \label{ATACCC:eq:FDintegral}
 \end{align}
 where $\I$ is the indicator function.
-Here, $D_i$ is drawn conditional on the population-level parameters $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
+The integral in \cref{ATACCC:eq:FDintegral} can be approximated using Monte Carlo integration (see \cref{ATACCC:alg:MonteCarlo}).
 Equivalent forms of $F_D$, such as the survival and hazard functions, can be calculated using the relations in \cref{E-inc-prev:sec:definitions}.
-I found 100,000 draws produced stable estimates of the tail of $F_D$.
+
+\begin{algorithm}
+\For{$i = 1, \dots, M$}{
+  \For{$j = 1, \dots, M$}{
+    Sample an individual-level random effects vector $\vec{\phi}_{i,j} \dist \LN(\vec{\mu}_{\phi,g}, \matr{\Sigma}_\phi)$ \;
+    Calculate $d_{i,j}$ using \cref{ATACCC:eq:di} \;
+  }
+  \For{$d = 1, \dots, \dmax$}{
+    Set $F_D^{(i)}(d) = \frac{1}{M} \sum_{j=1}^M \I(d_{i,j} \leq d + 0.5)$ \;
+  }
+}
+  \caption{%
+  Algorithm to calculate the Monte Carlo integral in \cref{ATACCC:eq:FDintegral}, producing the posterior distribution of $F_D(d)$ for group $g$.
+  The posterior distribution is represented as a sample $F_D^{(1)}, \dots, F_D^{(N)}$.
+  $\vec{\mu}_\phi^{(i)}$ and $\matr{\Sigma}_\phi^{(i)}$ denote the $i$th posterior sample of $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$ respectively, taken from the MCMC output.
+  $M$ is the number of individuals to draw, I found $M = 100,000$ produced stable estimates of the tail of $F_D(d)$ if $\dmax = 45$.
+ }
+ \label{ATACCC:alg:MonteCarlo}
+\end{algorithm}
 
 \section{Results} \label{ATACCC:sec:results}
 
