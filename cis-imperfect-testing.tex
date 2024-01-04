@@ -25,9 +25,8 @@ Finally, I discuss the results and further work in \cref{imperf-test:sec:discuss
 Applying the method of \cref{E-perf-test} to CIS data gives implausible estimates of the duration distribution (see \cref{imperf-test:fig:problem-cis-estimates}).
 In particular, it estimated a much shorter duration of positivity than in \cref{E-ATACCC}, despite those estimates being much more reliable over the first 2--3 weeks.
 \begin{figure}
-  \centering %\includegraphic{}
-  \todo[inline]{Figure showing estimates without false negatives}
-  \caption[Estimating survival using CIS data assuming perfect testing]{Estimating the survival function using CIS data and the model of \cref{E-perf-test} gives implausibly short estimates. \label{imperf-test:fig:problem-cis-estimates}}
+  \centering \includegraphics{cis-imperfect-testing/CIS_perfect}
+  \caption[Estimating survival using CIS data assuming perfect testing]{Estimates of the survival function using CIS data alongside the ATACCC-based estimates of \cref{E-perf-test}. CIS-based is implausibly short over the first 14 days. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
 Comparing the simulated and CIS data suggests that this is due to the high frequency of single positive episodes in the CIS data.
@@ -275,18 +274,19 @@ The qualitative increase in long episodes is robust to the choice of prior for $
 However, the survival proportion over the first 4 weeks is sensitive to these choices.
 The estimate using a test sensitivity of 0.8 and $\NBc(\numprint{25132}, \numprint{22047})$ give a median survival time most similar to that of \cref{E-ATACCC}.
 \begin{figure}
-  \todo[inline]{Insert fig showing final estimate and comparison to ATACCC}
+  \centering \includegraphics{cis-imperfect-testing/CIS_final}
   \caption{Duration estimates using CIS and ATACCC data}
   \label{imperf-test:fig:cis-estimates}
 \end{figure}
 \begin{figure}
-  \todo[inline]{
-    Insert figs showing, for different assumption:
-    proportion of individuals still positive at day 30 or 50 (tail),
-    overall survival curve, and
-    median survival time (in comparison to ATACCC).
+  \vspace{-2.5cm}
+  \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/CIS_vary}}
+  \caption{%
+    Sensitivity of CIS estimates to: (A-C) the value of $r$ in the prior for $\ntot$ and (D-F) $\psens$.
+    A and D: median survival time, in comparison to the ATACCC-based estimate of \cref{E-ATACCC}.
+    B and E: survival at day 50, $S_\theta(50)$.
+    C and F: full survival curves out to day 100.
   }
-  \caption{Sensitivity of CIS estimates to assumptions}
   \label{imperf-test:fig:cis-sensitivity}
 \end{figure}
 
