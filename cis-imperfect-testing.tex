@@ -292,9 +292,14 @@ The estimate using a test sensitivity of 0.8 and $\NBc(\numprint{25132}, \numpri
 
 The assumption that the estimates are most sensitive to is the strength of the prior on $\ntot$.
 A very weak, almost uninformative, prior on this quantity causes the posterior estimate to be much higher than the estimate from \textcite{birrellRTM2}.
-When increasing the prior's strength, the posterior estimate moves towards the prior smoothly, as expected (see\todo{figure showing $r$ vs $\ntot$}).
+When increasing the prior's strength, the posterior estimate moves towards the prior smoothly, as expected (see \cref{imperf-test:fig:ntot}).
 Taking a prior from \textcite{birrellRTM2} means that the posterior survival is close to the \cref{E-ATACCC} estimate in the region where that estimate is reliable.
 This justifies the use of this prior.
+\begin{figure}
+  \centering \includegraphics{cis-imperfect-testing/CIS_ntot}
+  \caption{How the posterior estimate of $\ntot$ changes with the value of $r$ in the prior on $\ntot$.}
+  \label{imperf-test:fig:ntot}
+\end{figure}
 
 \section{Discussion} \label{imperf-test:sec:discussion}
 

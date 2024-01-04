@@ -4,7 +4,7 @@ INTRODUCTION_DEPS = introduction.tex
 BIOLOGY_DATA_DEPS = biology-data.tex
 INC_PREV_DEPS = incidence-prevalence.tex inc-prev/contact_matrices.png
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.png ATACCC/compare_hakki_modified.png ATACCC/mean_trajectories.png ATACCC/duration.png ATACCC/fits.png ATACCC/fit_individual_55.png
-IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.png cis-imperfect-testing/sim-single-positive-episodes.png cis-imperfect-testing/sim-constant-sensitivity.png cis-imperfect-testing/sim-misspecified-sensitivity.png cis-imperfect-testing/sim-variable-sensitivity.png cis-imperfect-testing/CIS_perfect.png cis-imperfect-testing/CIS_final.png cis-imperfect-testing/CIS_vary.png
+IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.png cis-imperfect-testing/sim-single-positive-episodes.png cis-imperfect-testing/sim-constant-sensitivity.png cis-imperfect-testing/sim-misspecified-sensitivity.png cis-imperfect-testing/sim-variable-sensitivity.png cis-imperfect-testing/CIS_perfect.png cis-imperfect-testing/CIS_final.png cis-imperfect-testing/CIS_vary.png cis-imperfect-testing/CIS_ntot.pdf
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.png cis-perfect-testing/double-interval-censor.png cis-perfect-testing/truncation.png cis-perfect-testing/flat-prior.png cis-perfect-testing/kt-prior.png cis-perfect-testing/rw2-prior.png cis-perfect-testing/vague-prior.png cis-perfect-testing/survival-results.png cis-perfect-testing/hazard-results.png cis-perfect-testing/ataccc-approximation-survival.png cis-perfect-testing/ataccc-approximation-hazard.png cis-perfect-testing/input-duration-dists.png
 TRANSMISSION_DEPS = transmission.tex SEIR/sim/data.png SEIR/sim/predictive_coverage.png SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.png SEIR/CIS/prev_young.png SEIR/CIS/prev_old.png SEIR/CIS/incidence.png SEIR/CIS/p_peak.png SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.png
 DISTRIBUTIONS_DEPS = distributions.tex
@@ -80,6 +80,9 @@ cis-imperfect-testing/sim-constant-sensitivity.png cis-imperfect-testing/sim-mis
 	Rscript $<
 
 cis-imperfect-testing/CIS_perfect.png cis-imperfect-testing/CIS_final.png cis-imperfect-testing/CIS_vary.png: cis-imperfect-testing/CIS_survival.R utils.R cis-imperfect-testing/STATS17701/draws.rds ATACCC-distributions/posterior_samples.rds
+	Rscript $<
+
+cis-imperfect-testing/CIS_ntot.pdf: cis-imperfect-testing/CIS_ntot.R utils.R cis-imperfect-testing/STATS18744/means.rds
 	Rscript $<
 
 #####################################################
