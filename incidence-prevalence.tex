@@ -332,10 +332,9 @@ A few properties and assumptions of the SIR model are worth noting.
   \label{SEIR:fig:SIR-gamma}
 \end{figure}
 
-The basic SIR model implies that the distribution of the time spent in the infectious compartment is exponential~\autocite[96]{keelingModeling}.
-\todo{Expand on what ``exponential" means here, possibly as a mean-field approximation. See papers by Lloyd.}
+The basic SIR model is the deterministic approximation of a stochastic model where the duration of time in the infectious compartment is exponentially distributed~\autocite[96]{keelingModeling}.
 This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocites{lloydRealistic}{wearingAppropriate}.
-A standard extension to the SIR model is to allow the infectious period to follow a gamma distribution~\autocite[94]{keelingModeling}.
+A standard extension to the SIR model is to instead assume a gamma distribution~\autocite[94]{keelingModeling}{andersonSpread}.
 This is done by adding multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
 The system can now be written as follows:
 \begin{align}
@@ -347,6 +346,7 @@ The system can now be written as follows:
 \frac{dr(t)}{dt} &= n\gamma i_n(t)
 \end{align}
 where $n$ is the number of infectious compartments, and redefining $\lambda(t) = \beta \sum_{j=1}^n i_j(t)$.
+The additional compartments added do not, in general, correspond to any biological feature or have a biological interpretation; they are purely a mathematical device to modify the distribution of time between becoming and ceasing to be infectious~\autocite{lloydRealistic}.
 In this model the infectious period is distributed $\GamDist(n, n\gamma)$, a realistic model for a variety of diseases~\autocite{wearingAppropriate}.
 This parameterisation is chosen to give $1/\gamma$ as the mean infectious period (further details on the Gamma distribution are in \cref{E-distributions}).
 A gamma distribution with the first parameter equal to 1 is an exponential distribution, in which case this model collapses to the basic SIR model in \cref{SEIR:sec:SIR}.
