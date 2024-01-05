@@ -514,9 +514,9 @@ In particular, the October half-term school holiday is visible, especially in th
 % Furthermore, the combination of the posteriors across all simulations should recover the prior.
 
 To check the performance of the inference procedure, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter and simulation.
-I define coverage as the proportion of simulations where the true value of the parameter in that simulation was within the credible interval.
-This procedure is a simplified version of simulation-based calibration~\autocites{cookValidation}{taltsValidating}.
-The coverage for each parameter should equal the nominal probability (\eg the coverage should be 50\% for the 50\% credible intervals).
+Define coverage as the proportion of simulations where the true value of the parameter in that simulation was within the credible interval.
+As the parameters are drawn from the prior, if the inference is performed correctly then the coverage for each parameter should equal the nominal probability (\eg the coverage should be 50\% for the 50\% credible intervals)~\autocite{cookValidation}.
+This check is related to, although simpler than, simulation-based calibration~\autocite{taltsValidating}.
 I constructed a confidence interval for the coverage using the Pearson-Klopper method implemented in the binom package~\autocite{binom1-1}.
 
 The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
