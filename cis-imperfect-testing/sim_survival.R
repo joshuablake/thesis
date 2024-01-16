@@ -6,6 +6,36 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
+base_plot = function(df, colour_curves_by, colour_key = NULL) {
+    p = df |>
+        mutate(
+            sensitivity.model = factor(sensitivity.model),
+            facet_label = latex2exp::TeX(glue::glue(
+                "({LETTERS[dense_rank(sensitivity.model)]})\\ $p_{{sens}} = {sensitivity.model}"
+            ), output = "character")
+        ) |>
+        ggplot() +
+        ggdist::geom_lineribbon(
+            aes(
+                time, S, ymin = S.lower, ymax = S.upper,
+                fill = {{ colour_curves_by }}, colour = {{ colour_curves_by }}
+            ),
+            linewidth = 1, alpha = 0.3
+        ) +
+        facet_wrap(~facet_label, labeller = label_parsed) +
+        geom_line(aes(time, S), data = truth, alpha = 0.5) +
+        theme_survival_time_series()
+
+    if (!is.null(colour_key)) {
+        p = p +
+            labs(
+                colour = colour_key,
+                fill = colour_key
+            )
+    }
+    return(p)
+}
+
 tbl_posteriors = readRDS(here::here("cisRuns-output/all_posteriors.rds")) |>
     filter(
         .width == 0.95, # Credible intervals are narrow anyway so only show 95%
@@ -30,11 +60,7 @@ truth = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
 
 p_constant_sensitivity = tbl_posteriors |>
     filter(sensitivity.simulation == sensitivity.model, sensitivity.simulation < 1) |>
-    ggplot() +
-    ggdist::geom_lineribbon(aes(time, S, ymin = S.lower, ymax = S.upper, fill = survival_prior, colour = survival_prior), linewidth = 1, alpha = 0.3) +
-    facet_wrap(~ sensitivity.model) +
-    geom_line(aes(time, S), data = truth) +
-    theme_survival_time_series()
+    base_plot(survival_prior)
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-constant-sensitivity.pdf"),
     plot = p_constant_sensitivity,
@@ -46,16 +72,7 @@ ggsave(
 
 p_misspecified_sensitivity = tbl_posteriors |>
     filter(sensitivity.simulation == 0.8, survival_prior == "Combination") |>
-    mutate(sensitivity.model = factor(sensitivity.model)) |>
-    ggplot() +
-    ggdist::geom_lineribbon(aes(time, S, ymin = S.lower, ymax = S.upper, fill = sensitivity.model, colour = sensitivity.model), linewidth = 1, alpha = 0.3) +
-    facet_wrap(~ sensitivity.model) +
-    geom_line(aes(time, S), data = truth, alpha = 0.5) +
-    theme_survival_time_series() +
-    labs(
-        colour = expression(p[sens]),
-        fill = expression(p[sens])
-    )
+    base_plot(sensitivity.model, colour_key = expression(p[sens]))
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.pdf"),
     plot = p_misspecified_sensitivity,
@@ -67,16 +84,7 @@ ggsave(
 
 p_variable_sensitivity = tbl_posteriors |>
     filter(is.na(sensitivity.simulation), survival_prior == "Combination") |>
-    mutate(sensitivity.model = factor(sensitivity.model)) |>
-    ggplot() +
-    ggdist::geom_lineribbon(aes(time, S, ymin = S.lower, ymax = S.upper, fill = sensitivity.model, colour = sensitivity.model), linewidth = 1, alpha = 0.3) +
-    facet_wrap(~ sensitivity.model) +
-    geom_line(aes(time, S), data = truth, alpha = 0.5) +
-    theme_survival_time_series() +
-    labs(
-        colour = expression(p[sens]),
-        fill = expression(p[sens])
-    )
+    base_plot(sensitivity.model, colour_key = expression(p[sens]))
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.pdf"),
     plot = p_variable_sensitivity,
