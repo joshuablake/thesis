@@ -149,9 +149,12 @@ SEIR/sim/true_vs_posterior.pdf SEIR/sim/coverage.pdf: SEIR/sim/coverage.R utils.
 SEIR/sim/data.pdf: SEIR/sim/data.R utils.R SEIR/utils.R SEIR/sim/sim_output.csv
 	Rscript $<
 
-backcalc/outputs/%:
-	mkdir -p backcalc/outputs
-	rsync -aq bsu:/home/joshuab/COVID/ons-incidence/final_backcalc/outputs/ backcalc/outputs/
+transmission/??.pdf: transmission/incidence.R utils.R transmission/outputs/deconv.rds transmission/outputs/groups.csv transmission/outputs/poststrat.csv
+	Rscript $<
+
+transmission/outputs/%:
+	mkdir -p transmission/outputs
+	rsync -aq bsu:/home/joshuab/COVID/ons-incidence/final_backcalc/outputs/ transmission/outputs/
 
 #####################################################
 ## DISTRIBUTIONS CHAPTER

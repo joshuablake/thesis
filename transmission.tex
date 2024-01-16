@@ -7,14 +7,13 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-In this chapter, I use the estimate of the duration of PCR positivity from \cref{E-imperf-test} to estimate the transmission of SARS-CoV-2 in England.
+In this chapter, I use the preferred estimate of the duration of PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
 This estimation is based on the CIS data (see \cref{transmission:sec:data} for further details).
 Estimating transmission is the ultimate aim of this thesis.
 
-I take two approaches.
-The theoretical advantages of each approach were discussed in \cref{E-inc-prev:sec:infection-process}.
+I take two approaches; the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
 First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
-Then, in \cref{SEIR}, I use a mechanistic compartmental model, extending the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
+Then, in \cref{SEIR}, I use a mechanistic compartmental model, an implementation of the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 
 \section{Data} \label{transmission:sec:data}
@@ -47,7 +46,6 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 
 \subsection{Methods} \label{backcalc:sec:methods}
 
-\todo[inline]{make sure to proofread this section due to merge conflicts}
 As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
 However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-inc-prev:sec:prevalence-process}).
 Therefore, I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
@@ -77,18 +75,32 @@ Previously, when fitting to prevalence over long periods and including all appro
 Instead, an implementation of the model using the Integrated Nested Laplace Approximation (INLA) algorithm was used.
 
 I modified a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
-\todo[inline]{Describe the model precisely, see eg RTM paper 2}
-% The model included fixed effects for age group\todo{check the model I used}.
-% The likelihood is a beta-binomial distribution, a generalisation of the binomial distribution allowing for overdispersion (see \cref{E-distributions}).
-% The overdispersion allows for household clustering\todo{ref beta-binomial as a model for clustering} and any other overdispersion in the data\todo{ref that epi data is often overdispersed}. 
-Finally, the model was fit independently for each region, implicitly adding interactions between region and all other variables.
+First, a Gaussian Markov Random Field (GMRF) logistic regression model is used to estimate the prevalence in each stratum.
+For a day $t$, age group $a$, ethnicity $e$, and sex $s$ assume that:
+\begin{align}
+    \logit(p_{taes}) &= \beta + \beta_s + \beta_{w(e)} + u_a + v_e + w_t + l_{a,t} \\
+    y_{taes} &\dist \BB(n_{taes}, p_{taes}, \rho)
+\end{align}
+The terms are as follows.
+\begin{itemize}
+    \item $\beta$ is a global intercept term with the prior $\beta \dist \N(0, 1/0.001^2)$.
+    \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females. $\beta_{w(e)}$ is a fixed effect for white or non-white ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to white ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-white ethnic groups).% $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
+    \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior\todo{cite PC prior} with a 10\% probability of being greater than 1.
+    \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
+    \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{at} \dist \N(0, \sigma_l^2)$.
+    \item The likelihood is a beta-binomial model (defined in \cref{E-distributions}), an overdispersed binomial. Overdispersion allows for household clustering\todo{cite beta-binomial as a model for clustering} and other overdispersion in the data, which is common in epidemiological data\todo{cite that epi data is often overdispersed}. 
+\end{itemize}
+All parameters have priors using the default specified in INLA, except where stated above.
+For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
+
+The model was fit separately and independently for each region, implicitly adding interactions between region and all other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
 
 Having fit the prevalence model, I draw 10,000\todo{check number} prevalence trajectories in each stratum from the approximate posterior distribution of the model.
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:prevalence-process} justifies.
 Therefore, \cref{E-inc-prev:eq:EPt} implies that $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix of the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
-The matrix $\matr{S}$ preserves the relationship between incidence and prevalence.
+The matrix $\matr{S}$ is defined to maintain the relationship between incidence and prevalence in \cref{E-inc-prev:eq:EPt}.
 This gives a lower-triangular of the following form:
 \begin{align}
     (\matr{S})_{i,j} = \begin{cases}
@@ -101,13 +113,72 @@ Forward substitution is numerically stable unless the diagonal elements are clos
 Here, the diagonal is $S(1) = 1$ and hence the matrix is well-conditioned.
 \todo{I explained this more clearly in my first-year report, look that up!}
 
+\todo{Insert constant incidence assumption methodology}
+
+Model misspecification means that the procedure described could produce negative incidence.
+For any stratum and day $t$, this occurs if the difference between $P_t$ and $P_{t+1}$ is too large based on the number of recoveries that occur on day $t$ based on the incidence up to day $t$ and the duration distribution.
+
+There are two places where this misspecification could occur.
+The first is the survival matrix, $\matr{S}$.
+This is assumed known but \cref{E-imperf-test} showed that it is sensitive to assumptions made.
+The second is the model used to estimate prevalence.
+
+A prior constraining incidence to be non-negative and then fit directly to the data could be used but, as previously discussed, this would no longer be a GLM and could not be fit within the R-INLA framework.
+Hence, an alternative inference methodology would be required.
+MCMC is likely too computationally expensive.
+Other approaches, such as a Laplace approximation or variational inference, could be considered.
+For this analysis, I replaced any value of incidence estimated to be negative with 0.
+
 The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
-For each posterior draw and day\todo{introduce discrete time in days earlier}, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
+For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
 The population numbers for each stratum are provided by the Office for National Statistics.
 
-\subsection{Results} \label{backcalc:sec:results}
+\subsection{Results and discussion} \label{backcalc:sec:results}
 
-\subsection{Discussion} \label{backcalc:sec:discussion}
+A slow increase in incidence occurs over the autumn 2020 period, peaking in late November in most regions (see \cref{transmission:fig:backcalc-regions}).
+An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
+All regions then decrease during November, coinciding with the national lockdown.
+A rise then occurs, although starting at different times in different regions.
+This could be due to the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country\todo{cite Alpha variant}.
+This leads to a second peak in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
+\begin{figure}
+    \todo[inline]{Four-panel regions figure}
+    \capton[Incidence estimated using backcalculation by region]{%
+        Incidence proportion for all of England (A) and its component regions.
+        Regions are split into broad groupings of three regions each: Northern (B), Midlands (C), and Southern (D).
+        Yorkshire and the Humber is labelled as Yorkshire for brevity.
+    }
+    \label{transmission:fig:backcalc-regions}
+\end{figure}
+
+The incidence proportion was highest among the 11--15 and 16--25 age groups (see \cref{transmission:fig:backcalc-ages}).
+Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale).
+This is the pattern predicted by an age-stratified transmission model (see \cref{E-SEIR:sec:structured-populations}), if behavioural changes are independent of age group, and there is negligible impact of immunity.
+The 16--25 age group decreases faster during November.
+There are many plausible explanations for this effect.
+The higher incidence in this age group prior to November means that this could be an immunity effect.
+Alternatively, it could be a consequence of schools remaining open in the November lockdown, which has a small effect on 16--25 as they interact less with school-age children than other age groups.
+Many other explanations are possible, and further work is required to determine causality.
+\begin{figure}
+    \todo[inline]{age groups figure}
+    \capton[Incidence estimated using backcalculation by age group]{%
+        Incidence proportion for each age group, on both natural and log scales.
+    }
+    \label{transmission:fig:backcalc-ages}
+\end{figure}
+
+An edge effect where a rapid rise is seen between day 1 and 2 is visible (see \cref{transmission:fig:start-effect}).
+This is due to the incorrect assumption that incidence is constant in the past.
+Changing this assumption (\eg to exponential growth) modifies the estimated value on the first day, but the rest of the series is insensitive to this change (not shown).
+Therefore, the first day's estimate is unreliable, and has been excluded from all other plots.
+However, the rest of the series is robust to this assumption and hence reliable.
+\begin{figure}
+    \todo[inline]{start effect figure}
+    \capton[Edge effects in backcalculation method]{%
+        First seven days of incidence proportion estimate for the whole of England, highlighting the edge effect.
+    }
+    \label{transmission:fig:start-effect}
+\end{figure}
 
 \section{Mechanistic modelling} \label{SEIR}
 
@@ -295,7 +366,7 @@ The parameter estimates are in \cref{SEIR:table:ec-params}.
 \end{table}
 % end table of ec params
 
-The modelled proportion of individuals that are PCR positive in the are linked to the data using a Beta-Binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
+The modelled proportion of individuals that are PCR positive in the are linked to the data using a beta-binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
 If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \sum_{k=1}^l \bar{p}_{kat}, \rho)
