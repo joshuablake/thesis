@@ -79,7 +79,7 @@ As previously, tests in individuals without ongoing infection episodes are alway
 
 I modified the simulation study from \cref{E-perf-test:sec:simulation-study} to include the possibility of false negatives.
 More single positive episodes are seen at lower values of $\psens$, with a value between 60\% and 80\% reproducing the number of single positive episodes observed in the CIS data (see \cref{imperf-test:fig:sim-single-pos}).
-In \cref{E-ATACCC}, I estimated that $\psens$ ($1-\rho$ in \cref{E-ATACCC}'s parameterisation) is 95\% (95\% CrI: 96\%--93\%).
+In \cref{E-ATACCC}, I estimated that $\psens$ ($1-\rho$ in \cref{E-ATACCC}'s parameterisation) is 95\% (95\% CrI: 93--96\%).
 The daily testing in the ATACCC study, used for the \cref{E-ATACCC} estimates, means this is a reliable estimate during the period for which the individuals are followed-up.
 The requirement for a much lower value of $\psens$ in the simulation study suggests this model of false negatives is inadequate.
 
@@ -198,7 +198,7 @@ Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 False negatives add additional mechanisms by which episode $i$ could be undetected, in addition to those considered when deriving $p_{iu}$ in \cref{E-perf-test:eq:piu}.
 Specifically, episode $i$ could be undetected if the first test after the $b_i$, episode $i$'s start day, is a false negative and then there are no subsequent positive tests.
 
-This false negative would occur on day $b_i + \tau_{\sched_i}(b_i)$ (see\todo{ref where this was derived}).
+This false negative would occur on day $b_i + \tau_{\sched_i}(b_i)$ (see \cref{E-perf-test:sec:model}).
 A false negative occurring requires that the episode has not yet ended but a negative still occurs.
 The episode has not yet ended at the time of the test if $e_i = b_i + d_i - 1$ is after the test, that is $d_i > \tau_{\sched_i}(b_i)$.
 Conditional on the episode having not yet ended, the test result is negative with probability $1 - \psens$.
@@ -311,7 +311,7 @@ Therefore, I will apply this model to the real CIS data in the next section.
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
 In this section I apply the model described in this chapter to the CIS episodes dataset I described in \cref{E-perf-test:sec:approach}.
-This is the infection episodes with start dates between and\todo{check dataset inclusion criteria}.
+This is the 4,800 infection episodes that were first detected between 10th Oct 2020 and 6th Dec 2020 inclusive, with negatives bounding the start and end time of the episode.
 
 Unlike in the simulation studies, an uninformative prior on $\ntot$ led to implausible estimates of the duration distribution.
 The uninformative prior led to high posterior estimates of $\ntot$, and hence an implausibly large number of episodes with durations of less than five days.
