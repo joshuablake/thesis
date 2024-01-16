@@ -133,8 +133,37 @@
 \usepackage{subfiles} % Best loaded last in the preamble
 \addbibresource{references.bib}
 \addbibresource{refs-custom.bib}
-\externaldocument[E-]{\subfix{thesis}}
-\externaldocument[E-]{\subfix{output}}
+
+%----Helper code for dealing with external references----
+% (by cyberSingularity at http://tex.stackexchange.com/a/69832/226)
+
+\usepackage{xr}
+\makeatletter
+
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+\typeout{(#1)}% latexmk will find this if $recorder=0
+% however, in that case, it will ignore #1 if it is a .aux or 
+% .pdf file etc and it exists! If it doesn't exist, it will appear 
+% in the list of dependents regardless)
+%
+% Write the following if you want it to appear in \listfiles 
+% --- although not really necessary and latexmk doesn't use this
+%
+\@addtofilelist{#1}
+%
+% latexmk will find this message if #1 doesn't exist (yet)
+\IfFileExists{#1}{}{\typeout{No file #1.}}
+}\makeatother
+
+\newcommand*{\myexternaldocument}[1]{%
+\externaldocument[E-]{\subfix{#1}}%
+\addFileDependency{#1.aux}%
+\addFileDependency{#1.tex}%
+}
+%------------End of helper code--------------
+
+% put all the external documents here!
+\myexternaldocument{thesis}
 
 \abstract{%
     \todo[inline]{Write Abstract}

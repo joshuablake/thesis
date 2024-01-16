@@ -47,9 +47,9 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 
 \subsection{Methods} \label{backcalc:sec:methods}
 
+\todo[inline]{make sure to proofread this section due to merge conflicts}
 As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
 However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-inc-prev:sec:prevalence-process}).
-
 Therefore, I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
 The previous method was multilevel regression and poststratification (MRP)\todo{cite MRP}.
 Here, a Bayesian multilevel logistic regression model is first fit to predict PCR positivity from demographic covariates.
@@ -115,13 +115,13 @@ As discussed in \cref{E-inc-prev:sec:infection-process}, there are various advan
 This section uses a mechanistic model (introduced in \cref{E-SEIR:sec:mechanistic-models}) to estimate the transmission of SARS-CoV-2 in England.
 
 The transmission part of the model follows \textcite{birrellRealtime}.
-A novel approach (\cref{SEIR:sec:observation}) links the transmission to the data.
+A novel approach (\cref{SEIR:sec:observation}) links the transmission model to the data.
 In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, it includes both the prevalence process and the observation process (as defined in \cref{E-inc-prev}).
 
 This section uses the same notation as \cref{E-SEIR:sec:mechanistic-models}, following the infectious disease modelling literature rather than the statistical conventions used elsewhere in this thesis.
 
 \subsection{Methods}
-
+\todo[inline]{refer to where quantities are defined}
 I use the same CIS data as in \cref{E-backcalc}, again considering each region independently.
 The model will be stratified only by region and age group, so the data are aggregated to these levels.
 Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole $[0, 11)$ age group.
@@ -177,19 +177,19 @@ These measures include both biological differences, \eg due to differences in im
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
-Previous studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
+Studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
 Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for the youngest stratum, and $q^\text{susc}_{a} = 1$ for the remaining strata.
 $q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
 
 \subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
 
-The transmission model represents the infection process (introduced in \cref{E-inc-prev:sec:infection-process}.
+The transmission model represents the infection process (introduced in \cref{E-inc-prev:sec:infection-process}).
 A variety of different approaches can be taken to link a transmission model to observations.
 In the context of CIS, this requires representing the prevalence and observation processes (introduced in \cref{E-inc-prev:sec:prevalence-process,E-inc-prev:sec:observation-process} respectively)
 The method to do so is known as the observation model.
 The formulation of this model is heavily dependent on the data available.
 This means that there is a wide variety of models used.
-Therefore, this section  explains the model I propose for fitting to the CIS prevalence data.
+This section  explains the model I propose for fitting to the CIS prevalence data.
 
 % Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
 % The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
@@ -200,7 +200,7 @@ However, this approach is computationally expensive because of the need to calcu
 A much more efficient option is to approximate this convolution by adding compartments to the ODEs.
 This approach also allows the infected, pre-positive compartment, which I denote $p_0$, to be represented.
 $p_0$ increases at the same rate as individuals flow into $e_1$.
-These individuals then transition into a set of compartment with their transition rates chosen to match the duration of positivity estimates in \cref{E-imperf-test}, $p_1, \dots, p_l$.
+These individuals then transition into a set of compartment with their transition rates, $p_1, \dots, p_l$, chosen to match the duration of positivity estimates in \cref{E-imperf-test}.
 These compartments do not have a biological interpretation, unlike the other compartments in the system, but are purely a mathematical tool so that the time spent in these compartments matches the duration distribution.
 This is the same idea behind having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}).
 
@@ -295,7 +295,7 @@ The parameter estimates are in \cref{SEIR:table:ec-params}.
 \end{table}
 % end table of ec params
 
-The modelled proportion of individuals that are PCR positive in the can then be linked to the data using a Beta-Binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
+The modelled proportion of individuals that are PCR positive in the are linked to the data using a Beta-Binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
 If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \sum_{k=1}^l \bar{p}_{kat}, \rho)
@@ -379,7 +379,7 @@ The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likel
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
 The parameters governing the duration of positivity ($\kappa$s) were explained previously (see \cref{SEIR:table:ec-params}).
-The initial conditions and transition rate parameters are unindentifiable in a SEIR model~\autocite{dankwaStructural}, therefore I used assumed values or strongly informative priors on them.
+The initial conditions and transition rate parameters are unindentifiable in a SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors are used for them.
 $\sigma_\epsilon$ and $\rho$ are given priors that penalise model complexity.
 The prior on $\sigma_\epsilon$ is a penalised complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
 The prior on $\rho$ favours a null model of a binomial likelihood.
