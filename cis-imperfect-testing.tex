@@ -78,11 +78,10 @@ If $\psens = 1$, this recovers the previous model without false negatives.
 As previously, tests in individuals without ongoing infection episodes are always negative.
 
 I modified the simulation study from \cref{E-perf-test:sec:simulation-study} to include the possibility of false negatives.
-More single positive episodes are seen at lower values of $\psens$ (see \cref{imperf-test:fig:sim-single-pos}).
-A value between 60\% and 80\% for $\psens$ reproduces the number of single positive episodes observed within the CIS data.
-In \cref{E-ATACCC}, I estimated that the rate of false negatives is\todo{add what the ATACCC false negative rate is}.
-The daily testing in the ATACCC study, used for the \cref{E-ATACCC} estimates, should provide a reliable estimate of the false negative rate during the period for which the individuals are followed-up\todo{rephrase this sentence, currently unclear}.
-The requirement for a much lower value of $\psens$ suggests this model of false negatives is inadequate.
+More single positive episodes are seen at lower values of $\psens$, with a value between 60\% and 80\% reproducing the number of single positive episodes observed in the CIS data (see \cref{imperf-test:fig:sim-single-pos}).
+In \cref{E-ATACCC}, I estimated that $\psens$ ($1-\rho$ in \cref{E-ATACCC}'s parameterisation) is 95\% (95\% CrI: 96\%--93\%).
+The daily testing in the ATACCC study, used for the \cref{E-ATACCC} estimates, means this is a reliable estimate during the period for which the individuals are followed-up.
+The requirement for a much lower value of $\psens$ in the simulation study suggests this model of false negatives is inadequate.
 
 More plausibly, the rate of false negatives varies over the course of an episode.
 False negatives are more likely to occur when the viral load of an individual is low, because there is less virus in their body to be sampled.
