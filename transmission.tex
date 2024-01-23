@@ -142,8 +142,8 @@ A rise then occurs, although starting at different times in different regions.
 This could be due to the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country\todo{cite Alpha variant}.
 This leads to a second peak in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
-    \todo[inline]{Four-panel regions figure}
-    \capton[Incidence estimated using backcalculation by region]{%
+    \includegraphics{transmission/backcalc-regions}
+    \caption[Incidence estimated using backcalculation by region]{%
         Incidence proportion for all of England (A) and its component regions.
         Regions are split into broad groupings of three regions each: Northern (B), Midlands (C), and Southern (D).
         Yorkshire and the Humber is labelled as Yorkshire for brevity.
@@ -160,8 +160,8 @@ The higher incidence in this age group prior to November means that this could b
 Alternatively, it could be a consequence of schools remaining open in the November lockdown, which has a small effect on 16--25 as they interact less with school-age children than other age groups.
 Many other explanations are possible, and further work is required to determine causality.
 \begin{figure}
-    \todo[inline]{age groups figure}
-    \capton[Incidence estimated using backcalculation by age group]{%
+    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{transmission/backcalc-ages}}
+    \caption[Incidence estimated using backcalculation by age group]{%
         Incidence proportion for each age group, on both natural and log scales.
     }
     \label{transmission:fig:backcalc-ages}
@@ -173,11 +173,11 @@ Changing this assumption (\eg to exponential growth) modifies the estimated valu
 Therefore, the first day's estimate is unreliable, and has been excluded from all other plots.
 However, the rest of the series is robust to this assumption and hence reliable.
 \begin{figure}
-    \todo[inline]{start effect figure}
-    \capton[Edge effects in backcalculation method]{%
+    \centering \includegraphics{transmission/backcalc-start-effect}
+    \caption[Edge effects in backcalculation method]{%
         First seven days of incidence proportion estimate for the whole of England, highlighting the edge effect.
     }
-    \label{transmission:fig:start-effect}
+    \label{transmission:fig:backcalc-start-effect}
 \end{figure}
 
 \section{Mechanistic modelling} \label{SEIR}
