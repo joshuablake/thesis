@@ -454,7 +454,7 @@ The initial conditions and transition rate parameters are unindentifiable in a S
 $\sigma_\epsilon$ and $\rho$ are given priors that penalise model complexity.
 The prior on $\sigma_\epsilon$ is a penalised complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
 The prior on $\rho$ favours a null model of a binomial likelihood.
-The remaining priors had weakly informative priors.
+The remaining parameters had weakly informative priors.
 
 \begin{landscape}
 \begin{table}
@@ -633,7 +633,7 @@ The ability to identify $q_c$ is an advantage of using data which includes measu
 
 For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value (see \cref{SEIR:fig:true-vs-posterior}).
 This suggests that these parameters are not practically identifiable in this setting.
-The posteriors align very closely with the priors (not shown\todo{consider showing prior/posterior plots}) which reinforces this finding.
+The posteriors align very closely with the priors (not shown) which reinforces this finding.
 The lack of identifiability for $\vec{\pi}$ aligns with previous work showing this parameter is structurally unidentifiable, \ie not identifiable even in the limit of infinite data~\autocite{dankwaStructural}.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics{SEIR/sim/true_vs_posterior}}
@@ -741,10 +741,12 @@ This includes the age distribution of the infections and the susceptibility of c
 The parameters $\beta_w$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
 Many factors contribute to the pattern in the $\beta_w$ values, which have a minima near the start of December.
 While this analysis cannot establish causation, several hypotheses can be identified that are worth further investigation.
-The decreases in $\beta_w$ over the autumn could be due to increased caution(\eg masking or stricter adherence to social distancing) and/or interventions short of a lockdown as cases and deaths increased~\autocite{jarvisEffect}, or the impact of local measures in the highest transmission areas~\autocite{scottCovid19}.
-Local measures are not well captured by $\matr{\kappa}$ because the matrix was for the whole of England.
-Allowing each region to have its own $\matr{\kappa}$ may capture the effect of local measures more accurately.
-The increases in $\beta_w$ in December coincide with the rise of the Alpha variant~\autocite{lythgoeLineage}, known to be more transmissible~\autocite{daviesEstimated}.
+
+The decreases in $\beta_w$ over the autumn could be due to increased caution (\eg masking or stricter adherence to social distancing) as cases and deaths increased~\autocite{jarvisEffect} and/or interventions not captured by $\matr{\kappa}$ such as the impact of local measures in the highest transmission areas~\autocite{scottCovid19}.
+Local measures are not well captured by $\matr{\kappa}$ because the matrix averages behaviour across the whole of England.
+Allowing each region to have its own $\matr{\kappa}$ may capture the effect of local measures more accurately, although their targeted nature may require more granular methods.
+
+The increases in $\beta_w$ in December coincide with the rise of the Alpha variant~\autocite{lythgoeLineage}, known to be more transmissible~\autocite[e.g.][]{daviesEstimated}.
 A multiple variant model might be able to capture this rise more accurately.
 Such a model would stratify positive tests in the CIS by pre-Alpha or Alpha variant.
 Then, each variant would be explicitly included in the model to fit to this data.
@@ -757,18 +759,21 @@ The current model could be more flexible with regards to the age distribution of
 This would better exploit one of the strengths of the CIS: the availability of data  on all age groups.
 In some regions, there appears to be a trade-off between the 11--16s and 16--25s, with the model misfitting in opposite directions (see \cref{SEIR:fig:prev-young}).
 This implies that the data would allow identification of a more flexible age-based model.
-Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $\beta_c$.
-More parameters could capture the age distribution more accurately.
-There are various ways to increase the model's flexibility, including introducing additional susceptibility or infectiousness parameters, or by allowing these parameters to vary over time.
-It is plausible that these distributions changed over time in a way not captured by $\matr{\kappa}$, for example due to the introduction and relaxation of control measures within schools.
+
+Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $q_c$.
+Increasing the number of parameters in $\matr{\beta}$ would be the simplest approach to increase the model's flexibility.
+
+The only time-changing part of $\matr{\beta}$ that varies between ages is $\matr{\kappa}$.
+It is plausible that this would not capture all behavioural changes.
+For example, the introduction and relaxation of control measures within schools.
 $\matr{\kappa}$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
 Similarly, there is evidence that $q_c$ is different for Alpha and pre-Alpha variants~\autocite{zhuRole}, which could again motivate these changing over time.
 
-The weekly patterns in incidence are another limitation of the current parameterisation.
+The weekly patterns in incidence are a limitation of the current parameterisation.
 The random walk and contact matrices both vary only on the weekly timescale.
 A daily random walk could provide more flexibility here.
 However, this would greatly increase the number of parameters.
-An alternative would be a smoothly-varying function or an approximation of a random walk such as that proposed by \textcite{ghoshApproximate}.
+An alternative would be a smoothly-varying function or an approximation of a random walk, such as that proposed by \textcite{ghoshApproximate}.
 
 This discussion makes clear that the results are limited by the number of parameters, currently limited by the inference algorithm.
 \todo{Rephrase this sentence}
@@ -791,22 +796,11 @@ If it is shown that $\beta(t)$ decreases, this implies that for a given contact 
 Such decreases might be beneficial as it allows society to operate in a more normal manner without increasing transmission.
 Breaking the trade-off between transmission and activity is desirable because it reduces the disease burden without burdesome restrictions on individuals day-to-day lives.
 
-Comparing the regional incidence estimates between the two models in this chapter.
-
-Example of bias---variance trade-off.
-
-Demonstrated by fitting to the North East.
-Quality of fit in SEIR model is variable between different age groups.
-This is because the model is not flexible enough to capture the true age distribution of infections.
-
-\begin{itemize}
-    \item Results here disagree with previous chapter's results.
-    \item The model in previous chapter is more flexible than here, showing the limitations discussed above. Previous chapter fits better.
-    \item The previous chapter's modelling benefits from being able to use flexible approximate inference methods that scale to many parameters, including random effects. Here, I am limited by the inference procedure. MCMC was unable to scale to the full model used in the previous chapter, which has a computationally cheaper likelihood as it is a GLM, not requiring solving an ODE.
-    \item Shows that there is a lot of information in the data which could be exploited by a suitably flexible mechanistic model. Such a model would be useful for policy-decisions because it could infer where transmission is occurring (\eg in schools or workplaces) and how this changes over time.
-    \item The narrower credible intervals in this chapter are a realisation of the standard bias-variance tradeoff. By making stronger assumptions regarding how transmission occurs, the variance is reduced. However, if these assumptions are incorrect (which is almost certainly the case), bias occurs.
-\end{itemize}
-
+\Cref{transmission:fig:compare-regions} compares the regional incidence estimates between the two models in this chapter.
+Generally the estimates agree, with the SEIR model having much narrower credible intervals.
+The largest discrepancy is that the backcalculation model estimates a second peak in mid January in several regions (most clearly in London, North West, and the East of England).
+However, even here, the credible intervals overlap except in London.
+This is a specific case of a larger pattern: the SEIR model produces smoother estimates of incidence than the backcalculation model.
 \begin{figure}
     \centering \includegraphics{transmission/compare-regions}
     \caption[Comparing each models estimate of regional incidence.]{%
@@ -817,6 +811,21 @@ This is because the model is not flexible enough to capture the true age distrib
     \label{transmission:fig:compare-regions}
 \end{figure}
 
+These patterns can be interpreted as an instance of the common bias---variance trade-off.
+The SEIR model imposes stronger assumptions about the epidemic dynamics.
+The assumptions reduces the variance of the estimates, including making them smoother, but if the assumptions are incorrect, bias is introduced.
+This trade-off based on the strength of assumptions is well-known to apply in the backcalulcation context~\autocite[e.g.][section 8.3]{brookmeyerBackcalculation}.
+The SEIR model can be viewed as a backcalulation method where the transmisson part of the model is a smoothing method.
+
+The backcalculation method benefits from being able to be implemented in a fast, approximate inference package (R-INLA) that easily scales to many parameters, including random effects.
+Therefore, it is far more flexible and can easily include time-varying effects, ethnicity, etc.
+The SEIR model is limited by the inference procedure and the requirement to sovle an ODE to evaluate the likelihood.
+To incorporate a more flexible model, and reduce its bias, a more efficient inference procedure would be required.
+
+Many of these issues are clearly demonstrated by the estimates for the North East (see \cref{transmission:fig:compare-NE}).
+I previously observed the quality of the SEIR model's fit is variable between different age groups (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
+This is because the model is not flexible enough to capture the true age distribution of infections.
+The overestimation of prevalence in the 11--16 age group and underestimation in the 16--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
 \begin{figure}
     \centering \includegraphics{transmission/compare-NE}
     \caption[Comparing each models estimate of North East incidence by age.]{%
@@ -826,6 +835,8 @@ This is because the model is not flexible enough to capture the true age distrib
     }
     \label{transmission:fig:compare-NE}
 \end{figure}
+
+
 \section{Conclusion}
 
 \todo[inline]{write conclusion and add to discussion once comparison with backcalculation is made}
