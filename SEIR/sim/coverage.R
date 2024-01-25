@@ -23,16 +23,16 @@ source(here::here("SEIR/utils.R"))
 posterior_samples = readr::read_csv(
     here::here("SEIR/sim/posteriors_combined.csv")
 )
-posterior_samples |>
-    filter(parameter == "psir", iteration > 500e3) |>
-    ggplot(aes(iteration, value)) +
-    geom_line() +
-    facet_wrap(~ sim, scales = "free_y")
+# posterior_samples |>
+#     filter(parameter == "psir", iteration > 500e3) |>
+#     ggplot(aes(iteration, value)) +
+#     geom_line() +
+#     facet_wrap(~ sim, scales = "free_y")
 posterior_intervals = posterior_samples |>
     filter(iteration > 500e3) |>
     group_by(sim, parameter) |>
     median_qi(value, .width = c(0.5, 0.75, 0.95))
-true_params =  readr::read_csv(
+true_params = readr::read_csv(
     here::here("SEIR/sim/true_vals.csv")
 ) |>
     rename(parameter = param)
@@ -112,29 +112,29 @@ ggsave(
 )
 
 # Figure for combined posterior
-posterior_samples |>
-    filter(!stringr::str_detect(parameter, "beta"), iteration > 500e3) |>
-    # calculate bias by joining with true values
-    ggplot() +
-    geom_histogram(aes(value, after_stat(density), colour = "Combined posterior", fill = "Combined posterior"), bins = 100) +
-    geom_density(aes(true, colour = "Prior"), data = filter(true_params, !stringr::str_detect(parameter, "beta"))) +
-    facet_wrap(~parameter, scales = "free")
-    geom_abline(slope = 1, intercept = 0) +
-    geom_smooth(method = "lm", formula = y ~ x) +
-    standard_plot_theming() +
-    geom_point() +
-    labs(
-        x = "Posterior median",
-        y = "True value"
-    )
+# posterior_samples |>
+#     filter(!stringr::str_detect(parameter, "beta"), iteration > 500e3) |>
+#     # calculate bias by joining with true values
+#     ggplot() +
+#     geom_histogram(aes(value, after_stat(density), colour = "Combined posterior", fill = "Combined posterior"), bins = 100) +
+#     geom_density(aes(true, colour = "Prior"), data = filter(true_params, !stringr::str_detect(parameter, "beta"))) +
+#     facet_wrap(~parameter, scales = "free") +
+#     geom_abline(slope = 1, intercept = 0) +
+#     geom_smooth(method = "lm", formula = y ~ x) +
+#     standard_plot_theming() +
+#     geom_point() +
+#     labs(
+#         x = "Posterior median",
+#         y = "True value"
+#     )
 
-posterior_samples |>
-    filter(!stringr::str_detect(parameter, "beta"), iteration > 500e3) |>
-    ggplot() +
-    standard_plot_theming() +
-    geom_density(aes(value, after_stat(density), group = sim), alpha = 0.1) +
-    geom_density(aes(true, colour = "Prior"), data = filter(true_params, !stringr::str_detect(parameter, "beta"))) +
-    facet_wrap(~parameter, scales = "free")
+# posterior_samples |>
+#     filter(!stringr::str_detect(parameter, "beta"), iteration > 500e3) |>
+#     ggplot() +
+#     standard_plot_theming() +
+#     geom_density(aes(value, after_stat(density), group = sim), alpha = 0.1) +
+#     geom_density(aes(true, colour = "Prior"), data = filter(true_params, !stringr::str_detect(parameter, "beta"))) +
+#     facet_wrap(~parameter, scales = "free")
 
 # ggsave(
 #     filename = here::here("SEIR/sim/summary.pdf"),

@@ -122,13 +122,13 @@ transmission.pdf: $(TRANSMISSION_DEPS) $(SHARED_DEPS)
 #SEIR/CIS/%.pdf: SEIR/CIS.R utils.R SEIR/CIS_results.csv SEIR/CIS_predictive.csv:
 #	Rscript $<
 
-SEIR/CIS/attack_rates.pdf: SEIR/CIS/attack_rates.R utils.R SEIR/utils.R SEIR/CIS/final_state.csv
+SEIR/CIS/attack_rates.pdf: SEIR/CIS/attack_rates.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/final_state.csv
 	Rscript $<
 
-SEIR/CIS/beta_walk.pdf: SEIR/CIS/random_walk.R utils.R SEIR/utils.R SEIR/CIS/params.csv
+SEIR/CIS/beta_walk.pdf: SEIR/CIS/random_walk.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/params.csv
 	Rscript $<
 
-SEIR/CIS/p_peak.pdf SEIR/CIS/incidence.pdf SEIR/CIS/prev_young.pdf SEIR/CIS/prev_old.pdf: SEIR/CIS/posterior_predictive.R utils.R SEIR/utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
+SEIR/CIS/p_peak.pdf SEIR/CIS/incidence.pdf SEIR/CIS/prev_young.pdf SEIR/CIS/prev_old.pdf: SEIR/CIS/posterior_predictive.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
 	Rscript $<
 
 SEIR/CIS/params.csv SEIR/CIS/predictive.csv SEIR/CIS/final_state.csv:
@@ -146,7 +146,7 @@ SEIR/sim/predictive_coverage.pdf: SEIR/sim/predictive_check.R utils.R SEIR/sim/s
 SEIR/sim/true_vs_posterior.pdf SEIR/sim/coverage.pdf: SEIR/sim/coverage.R utils.R SEIR/sim/posteriors_combined.csv SEIR/sim/true_vals.csv
 	Rscript $<
 
-SEIR/sim/data.pdf: SEIR/sim/data.R utils.R SEIR/utils.R SEIR/sim/sim_output.csv
+SEIR/sim/data.pdf: SEIR/sim/data.R utils.R transmission/utils.R SEIR/utils.R SEIR/sim/sim_output.csv
 	Rscript $<
 
 transmission/backcalc-regions.pdf: transmission/backcalc-regions.R transmission/outputs/region_incidence.rds utils.R

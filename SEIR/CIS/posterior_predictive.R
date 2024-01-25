@@ -15,18 +15,19 @@ predictions = readr::read_csv(here::here("SEIR/CIS/predictive.csv")) |>
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
-        age = str_replace(age, fixed("+"), "Inf"),
-        region = region_labels(region)
+        age = normalise_age_groups(age),
+        region = normalise_region_names(region)
     ) |>
     select(!c(chain, iteration))
 
 # Read data
 data = readr::read_csv(here::here("SEIR/CIS/data.csv")) |>
+    filter(!region %in% c("Wales", "Scotland", "Northern_Ireland")) |>
     mutate(
         obs_prevalence = obs_positives / num_tests,
         age = str_replace(age, fixed("("), "[") |>
             str_replace(fixed("]"), ")"),
-        region = region_labels(region),
+        region = normalise_region_names(region),
     ) |>
     rename(day = date) |>
     filter(
@@ -43,7 +44,7 @@ prediction_intervals = predictions |>
 thetas = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
     filter(parameter == "theta") |>
     transmute(
-        region = region_labels(region),
+        region = normalise_region_names(region),
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         theta = exp(value)

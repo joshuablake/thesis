@@ -11,7 +11,7 @@ final_states = readr::read_csv(here::here("SEIR/CIS/final_state.csv")) |>
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
-        region = region_labels(region),
+        region = normalise_region_names(region),
     ) |>
     select(!c(chain, iteration)) |>
     filter(.iteration >= 500e3)

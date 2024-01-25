@@ -1,3 +1,5 @@
+source(here::here("transmission", "utils.R"))
+
 # Plot labels
 label_lookup = function(label) {
     dplyr::case_match(
@@ -27,7 +29,25 @@ parameter_labeller = structure(function (labels) {
     )
 }, class = c("function", "labeller"))
 
-region_labels = function(label) {
-    stringr::str_replace_all(label, "_", " ") |>
-        stringr::str_replace_all(" England", "")
+# Load SEIR predictive
+load_seir_predictive = function() {
+    readr::read_csv(
+        here::here("SEIR/CIS/predictive.csv"),
+        col_types = readr::cols(
+            region = readr::col_character(),
+            chain = readr::col_integer(),
+            iteration = readr::col_integer(),
+            age = readr::col_character(),
+            incidence = readr::col_double(),
+            prevalence = readr::col_double()
+        )
+    ) |>
+        dplyr::mutate(
+            .chain = factor(chain + 1),
+            .iteration = iteration + 1,
+            .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
+            age = normalise_age_groups(age),
+            region = normalise_region_names(region)
+        ) |>
+        dplyr::select(!c(chain, iteration))
 }

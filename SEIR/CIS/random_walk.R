@@ -18,7 +18,7 @@ posterior = readr::read_csv(here::here("SEIR/CIS/params.csv")) |>
         regex = "^([^\\[]+)(\\[[0-9]+\\])?$"
     ) |>
     transmute(
-        region = region_labels(region),
+        region = normalise_region_names(region),
         .chain = factor(chain + 1),
         .iteration = iteration + 1,
         .draw = max(.iteration) * (as.integer(.chain) - 1) + .iteration,
