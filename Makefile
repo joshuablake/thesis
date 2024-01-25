@@ -1,7 +1,7 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
 SHARED_DEPS = thesis.tex references.bib refs-custom.bib cam-thesis.cls latex.out/thesis.aux FORCE
 INTRODUCTION_DEPS = introduction.tex
-BIOLOGY_DATA_DEPS = biology-data.tex
+BIOLOGY_DATA_DEPS = biology-data.tex biology-data/natural-history.png
 INC_PREV_DEPS = incidence-prevalence.tex inc-prev/contact_matrices.png
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.pdf ATACCC/compare_hakki_modified.pdf ATACCC/mean_trajectories.pdf ATACCC/duration.pdf ATACCC/fits.pdf ATACCC/fit_individual_55.pdf
 IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.pdf cis-imperfect-testing/sim-single-positive-episodes.pdf cis-imperfect-testing/sim-constant-sensitivity.pdf cis-imperfect-testing/sim-misspecified-sensitivity.pdf cis-imperfect-testing/sim-variable-sensitivity.pdf cis-imperfect-testing/CIS_perfect.pdf cis-imperfect-testing/CIS_final.pdf cis-imperfect-testing/CIS_vary.pdf cis-imperfect-testing/CIS_ntot.pdf
