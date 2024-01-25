@@ -9,7 +9,7 @@ label_letters = as_labeller(function(labels, base_labeller = label_value) {
     glue::glue("({LETTERS[seq_along(labels)]}) {base_labeller(labels)}")
 })
 
-p_region = readRDS(file.path(output_dir, "region_incidence.rds")) |>
+p_region = readRDS(file.path(output_dir, "region.rds")) |>
     filter(daynr > 1) |>
     mutate(
         panel = case_match(
@@ -26,7 +26,7 @@ p_region = readRDS(file.path(output_dir, "region_incidence.rds")) |>
             "South West" ~ "South",
         ),
     ) |>
-    ggplot(aes(date, val, colour = region, fill = region)) +
+    ggplot(aes(date, incidence, colour = region, fill = region)) +
     stat_lineribbon(alpha = 0.3, .width = 0.95) +
     facet_wrap(~panel, labeller = label_letters) +
     scale_y_continuous(labels = scales::label_percent()) +

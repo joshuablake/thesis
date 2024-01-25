@@ -6,9 +6,9 @@ library(tidyr)
 source(here::here("utils.R"))
 
 output_dir = here::here("transmission/outputs")
-p_age_base = readRDS(file.path(output_dir, "age_incidence.rds")) |>
+p_age_base = readRDS(file.path(output_dir, "age.rds")) |>
     filter(daynr > 1) |>
-    ggplot(aes(date, val, colour = age_group, fill = age_group)) +
+    ggplot(aes(date, incidence, colour = age_group, fill = age_group)) +
     stat_lineribbon(alpha = 0.3, .width = 0.95) +
     labs(
         x = "Date",

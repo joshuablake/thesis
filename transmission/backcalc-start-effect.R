@@ -5,9 +5,9 @@ library(tidyr)
 source(here::here("utils.R"))
 
 output_dir = here::here("transmission/outputs")
-p_start_effect = readRDS(file.path(output_dir, "region_incidence.rds")) |>
+p_start_effect = readRDS(file.path(output_dir, "region.rds")) |>
     filter(daynr <= 20, region == "England") |>
-    ggplot(aes(date, val)) +
+    ggplot(aes(date, incidence)) +
     stat_lineribbon(alpha = 0.8, .width = 0.95) +
     scale_y_continuous(labels = scales::label_percent()) +
     scale_fill_brewer() +

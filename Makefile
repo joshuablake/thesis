@@ -149,18 +149,18 @@ SEIR/sim/true_vs_posterior.pdf SEIR/sim/coverage.pdf: SEIR/sim/coverage.R utils.
 SEIR/sim/data.pdf: SEIR/sim/data.R utils.R transmission/utils.R SEIR/utils.R SEIR/sim/sim_output.csv
 	Rscript $<
 
-transmission/backcalc-regions.pdf: transmission/backcalc-regions.R transmission/outputs/region_incidence.rds utils.R
+transmission/backcalc-regions.pdf: transmission/backcalc-regions.R transmission/outputs/region.rds utils.R
 	Rscript $<
 
-transmission/backcalc-ages.pdf: transmission/backcalc-ages.R transmission/outputs/age_incidence.rds utils.R
+transmission/backcalc-ages.pdf: transmission/backcalc-ages.R transmission/outputs/age.rds utils.R
 	Rscript $<
 
-transmission/backcalc-start-effect.pdf: transmission/backcalc-start-effect.R transmission/outputs/region_incidence.rds utils.R
+transmission/backcalc-start-effect.pdf: transmission/backcalc-start-effect.R transmission/outputs/region.rds utils.R
 	Rscript $<
 
 transmission/outputs/%:
 	mkdir -p transmission/outputs
-	rsync -aq hpc:/home/jbb50/PhD_work/final_backcalc/for_thesis/ transmission/outputs/
+	rsync -aq --delete hpc:/home/jbb50/PhD_work/final_backcalc/for_thesis/ transmission/outputs/
 
 #####################################################
 ## DISTRIBUTIONS CHAPTER
