@@ -803,6 +803,25 @@ Breaking the trade-off between transmission and activity is desirable because it
     \item The narrower credible intervals in this chapter are a realisation of the standard bias-variance tradeoff. By making stronger assumptions regarding how transmission occurs, the variance is reduced. However, if these assumptions are incorrect (which is almost certainly the case), bias occurs.
 \end{itemize}
 
+\begin{figure}
+    \centering \includegraphics{transmission/compare-regions}
+    \caption[Comparing each models estimate of regional incidence.]{%
+        Incidence proportion in England and each region estimated by the two models discussed in this chapter.
+        Posterior median and 95\% CrI shown.
+        For the SEIR model, newly PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+    }
+    \label{transmission:fig:compare-regions}
+\end{figure}
+
+\begin{figure}
+    \centering \includegraphics{transmission/compare-NE}
+    \caption[Comparing each models estimate of North East incidence by age.]{%
+        Incidence proportion in each age group in the North East estimated by the two models discussed in this chapter.
+        Posterior median and 95\% CrI shown.
+        For the SEIR model, newly PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+    }
+    \label{transmission:fig:compare-NE}
+\end{figure}
 \section{Conclusion}
 
 \todo[inline]{write conclusion and add to discussion once comparison with backcalculation is made}
