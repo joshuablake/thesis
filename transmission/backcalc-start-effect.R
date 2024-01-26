@@ -9,7 +9,7 @@ p_start_effect = readRDS(file.path(output_dir, "region.rds")) |>
     filter(daynr <= 20, region == "England") |>
     ggplot(aes(date, incidence)) +
     stat_lineribbon(alpha = 0.8, .width = 0.95) +
-    scale_y_continuous(labels = scales::label_percent()) +
+    scale_y_continuous(labels = scales::label_percent(), limits = c(0, NA)) +
     scale_fill_brewer() +
     labs(
         x = "Date",
