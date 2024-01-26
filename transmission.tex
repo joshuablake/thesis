@@ -13,7 +13,7 @@ Estimating transmission is the ultimate aim of this thesis.
 
 I take two approaches.
 The theoretical advantages of each approach were discussed in \cref{E-inc-prev:sec:infection-process}.
-First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
+First, in \cref{backcalc}, I use a back-calculation approach, based on \cref{E-inc-prev:eq:EPt}.
 Then, in \cref{SEIR}, I use a mechanistic compartmental model, extending the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 
@@ -40,7 +40,7 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 
 \todo[inline]{
     I should discuss the literature on estimating incidence based on SARS-CoV-2 prevalence data.
-    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}.
+    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}. Also Toffe.
     However, I think this goes better in the introduction, framing the whole thesis because it is important in understanding the motivation for the whole work.
     At the same place, I could review the literature on mechanistic models using REACT and CIS.
 }
@@ -50,12 +50,12 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 \todo[inline]{make sure to proofread this section due to merge conflicts}
 As discussed in\todo{ref section}, a major issue with the CIS is non-response bias.
 However, a deterministic relation between true prevalence and incidence is a good approximation (see \cref{E-inc-prev:sec:prevalence-process}).
-Therefore, I extend the methodology previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
+Therefore, I extend the methodology previously previously used to estimate prevalence from the CIS data, corrected for non-response bias, to estimate incidence\todo{cite Koen's stuff}.
 The previous method was multilevel regression and poststratification (MRP)\todo{cite MRP}.
 Here, a Bayesian multilevel logistic regression model is first fit to predict PCR positivity from demographic covariates.
 Then, the posterior distribution is used to predict the prevalence in each stratum.
 Finally, the prevalence is poststratified to the CIS target population and subpopulations of interest.
-I follow this same process, except I transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before poststratifying.
+I follow this same process, except I transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
 % I fit a modification model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
 % Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
 
@@ -88,7 +88,7 @@ Having fit the prevalence model, I draw 10,000\todo{check number} prevalence tra
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:prevalence-process} justifies.
 Therefore, \cref{E-inc-prev:eq:EPt} implies that $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix of the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
-The matrix $\matr{S}$ preserves the relationship between incidence and prevalence.
+The matrix $\matr{S}$needs to bebased on preserves the relationship between incidence and prevalence.
 This gives a lower-triangular of the following form:
 \begin{align}
     (\matr{S})_{i,j} = \begin{cases}
@@ -177,7 +177,7 @@ These measures include both biological differences, \eg due to differences in im
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
-Studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
+Studies of pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
 Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for the youngest stratum, and $q^\text{susc}_{a} = 1$ for the remaining strata.
 $q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
 
