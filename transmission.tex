@@ -43,7 +43,7 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 
 \todo[inline]{
     I should discuss the literature on estimating incidence based on SARS-CoV-2 prevalence data.
-    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}.
+    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}. Also Toffe.
     However, I think this goes better in the introduction, framing the whole thesis because it is important in understanding the motivation for the whole work.
     At the same place, I could review the literature on mechanistic models using REACT and CIS.
 }
@@ -256,8 +256,9 @@ These measures include both biological differences, \eg due to differences in im
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
-Studies for pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
+Studies of pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
 Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for 0--11 year olds, and $q^\text{susc}_{a} = 1$ for the remaining strata.
+$q_c$ can be interpreted as the relative probability that a child is infected (compared to an adult), given contact with an infectious individual.
 $q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
 
 \subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
