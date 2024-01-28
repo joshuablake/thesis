@@ -18,6 +18,11 @@ First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-in
 Then, in \cref{SEIR}, I use a mechanistic compartmental model, an implementation of the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 
+\todo[inline]{
+    Lit review to go in introduction chapter, framing the whole thesis because it is important in understanding the motivation for the whole work.
+    Would include \textcites{mccabeCISincidence}{abbottCISincidence} on backcalculation. Also Toffe?
+    As well as the literature on mechanistic models using REACT and CIS I have previously circulated.
+}
 \section{Data} \label{transmission:sec:data}
 
 \todo[inline]{Consider moving all of this section into chapter 2, where CIS is introduced}
@@ -33,7 +38,8 @@ Throughout this chapter, the CIS data will be stratified into the regions of Eng
 \end{enumerate}
 These groupings align closely with those previously used for analysis of the CIS data~\autocites[e.g.:][]{houseInferring}{walkerTracking}.
 
-I use the period from the expansion of the CIS, starting 31st August 2020, until there was significant vaccination rollout\todo{insert date}.
+I use the period from the expansion of the CIS, starting Mon 31st August 2020 until Sun 24th Jan 2021 (inclusive).
+This period is chosen because there were very few positives in CIS in summer 2020 due to low prevalence and a smaller sample size, and ends when vaccination crossed 10\% of England's population.
 
 \section{Backcalculation} \label{backcalc}
 
@@ -41,12 +47,6 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 % First, I explain the method I will apply (\cref{backcalc:sec:methods}) and then present the results (\cref{backcalc:sec:results}).
 % I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{backcalc:sec:conclustion}.
 
-\todo[inline]{
-    I should discuss the literature on estimating incidence based on SARS-CoV-2 prevalence data.
-    In particular: \textcites{mccabeCISincidence}{abbottCISincidence}. Also Toffe.
-    However, I think this goes better in the introduction, framing the whole thesis because it is important in understanding the motivation for the whole work.
-    At the same place, I could review the literature on mechanistic models using REACT and CIS.
-}
 
 \subsection{Methods} \label{backcalc:sec:methods}
 
@@ -69,7 +69,8 @@ If $g$ is chosen appropriately, this is a GLM with a logit link function.
 The logit transformation serves two purposes.
 First, it ensures that the incidence proportion or prevalence is between 0 and 1.
 Second, at low values of incidence or prevalence, linear growth of $\logit(\pi_i)$ implies approximately exponential in $\pi_i$~\autocite[see discussion in][and references therein]{ealesAppropriately}.
-Approximately exponential growth is what mechanistic models predict, and penalising towards exponential growth has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+Penalising towards exponential growth is a natural formulation because it is what mechanistic models predict over short periods of time.
+Furthermore, it has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
 
 However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM.
 The relationship between incidence and prevalence is linear, as derived in \cref{E-inc-prev:sec:prevalence-process}.
@@ -119,7 +120,13 @@ Forward substitution is numerically stable unless the diagonal elements are clos
 Here, the diagonal is $S(1) = 1$ and hence the matrix is well-conditioned.
 \todo{I explained this more clearly in my first-year report, look that up!}
 
-\todo{Insert constant incidence assumption methodology}
+For $\vec{P} = \matr{S} \vec{I}$ to have a unique solution, $\vec{I}$ and $\vec{P}$ need the same dimension.
+However, I am using a period of prevalence which starts after the first infections.
+These prior infections will still contribute to the prevalence.
+I assume that the incidence up to and including the first day of prevalence data, at $t = 1$, is constant at $I_0$.
+Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_0 = P_1 / \sum_{i=1}^{\dmax} S(i)$.
+For day $t$, the contribution of the incidence for $t < 1$ can be calculated as $P'_t = I_0 \sum_{i=t+1}^{\dmax} S(i)$.
+Subtracting $\vec{P'}$ from $\vec{P}$ before applying the forward solving procedure accounts for the contribution of the incidence prior to the first day of prevalence data.
 
 Model misspecification means that the procedure described could produce negative incidence.
 For any stratum and day $t$, this occurs if the if the prevalence reduces between day $t$ and $t+1$ more than the number of recoveries on day $t$, based on the incidence up until day $t$ and the survival function.
@@ -136,7 +143,7 @@ Hence, an alternative inference methodology, or simpler model (\eg containing fe
 For this analysis, I replaced any value of incidence estimated to be negative with 0.
 
 The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
-I draw 500\todo{check number of samples} samples from the approximate posterior distribution estimated.
+For this, I first draw 500 samples from the approximate posterior distribution estimated.
 For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
 The population numbers for each stratum are provided by the Office for National Statistics.
 
@@ -216,7 +223,7 @@ A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{E-SEI
 I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, decomposition $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.\todo{remind readers what these quantities are here}
 This separates contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probability upon contact between age groups $a$ and $a'$, $q_{aa'}$, assumed constant; a region-wide effect for time, $\beta(t)$; and the population of the stratum, $N_{a'}$.
 
-I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using pre-existing methodology~\autocites{vanleeuwenTime}{vanleeuwenAugmenting}.
+I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcites{vanleeuwenTime}{vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
 % These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
 This method takes pre-pandemic baseline estimates of: $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
@@ -271,7 +278,7 @@ In the context of CIS, this requires representing the prevalence and observation
 The method to do so is known as the observation model.
 The formulation of this model is heavily dependent on the data available.
 This means that there is a wide variety of models used.
-This section  explains the model I propose for fitting to the CIS prevalence data.
+This section  explains the novel modelling approach I propose for fitting to the CIS prevalence data.
 
 % Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
 % The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
@@ -349,12 +356,12 @@ Hence, the overall distribution is known as a Erlang-Coxian distribution.
 \label{SEIR:fig:EC}
 \end{figure}
 
-\Textcite{osogamiClosed} define $P$ as well-matching an arbitrary distribution $G$ if $P$ and $G$ have the same first three moments.
-They then prove that EC distributions have the following properties:
+\Textcite{osogamiClosed} define a phase-type distribution $P$ as well representing an arbitrary distribution $G$ if $P$ and $G$ have the same first three moments.
+They then prove that EC distributions have the following properties.
 \begin{itemize}
-    \item If there exists a phase-type distribution $P'$ that well-matches $G$ then there exists an EC distribution $P$ that well-matches $G$.
-    \item The parameters of $P$ are available in closed form, which \textcite{osogamiClosed} give.
-    \item The number of phases used by the $P$ calculated by these expressions is at most one more than the minimum across all well-matching $P'$.
+    \item Let $\set{W}$ be the set of all phase-types distributions that well represent $G$ and $w$ be the minimum number of phases of any member of $\set{W}$. If $\set{W}$ is non-empty, then there exists a $l$-phase EC distribution $P' \in \set{W}$.
+    \item Furthermore, at least one such $P'$ has $l \leq w + 1$. Fewer phases is generally beneficial as it reduces the time and space complexity of working with the distribution.
+    \item The parameters of a $P'$ with $l \leq w + 1$ can be found using a closed-form expression (given by \textcite{osogamiClosed}). This is beneficial because finding arbitrary members of $\set{W}$ is a hard problem.
 \end{itemize}
 
 A total of five parameters are required to specify a $l$-phase EC distribution.
