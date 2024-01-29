@@ -10,12 +10,14 @@
 \todo[inline]{Rewrite the intro: eg see Dani's Overleaf comments}
 
 In this chapter, I use the preferred estimate of the duration of PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
-This estimation is based on the CIS data (see \cref{transmission:sec:data} for further details).
-Estimating transmission is the ultimate aim of this thesis.
+This estimation is based only on the CIS data (see \cref{transmission:sec:data} for further details).
+I will show that this data is sufficient to estimate the parameters of the transmission process, suggesting surveys of this type are sufficient for surveillance of an epidemic.
 
 I take two approaches; the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
 First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
+This approach enables estimation of incidence within (sub)populations of England.
 Then, in \cref{SEIR}, I use a mechanistic compartmental model, an implementation of the model introduced in \cref{E-SEIR:sec:mechanistic-models}.
+In addition to estimating incidence, this approach also estimates the components of transmission, \eg whether changes can be explained by changes in contact rates.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 
 \todo[inline]{
@@ -25,7 +27,7 @@ Finally, in \cref{transmission:sec:comparison}, I compare the results of the two
 }
 \section{Data} \label{transmission:sec:data}
 
-\todo[inline]{Consider moving all of this section into chapter 2, where CIS is introduced}
+\todo[inline]{Consider moving all of this section into chapter 2, where CIS is introduced, and spell it out a bit more in that context}
 
 Throughout this chapter, the CIS data will be stratified into the regions of England and the following age groups.
 \begin{enumerate}
@@ -56,7 +58,7 @@ Therefore, I extend the methodology previously used to estimate prevalence to es
 
 In MRP, a Bayesian multilevel logistic regression model is first fit to predict PCR positivity from demographic covariates.
 Then, the posterior distribution is used to predict the prevalence in each stratum.
-Finally, the prevalence is poststratified to the CIS target population and subpopulations of interest.
+Finally, the prevalence is poststratified (as explained later) to the CIS target population and subpopulations of interest.
 I modify this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before poststratifying.
 % I fit a modification model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
 % Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
