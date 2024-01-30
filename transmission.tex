@@ -43,6 +43,12 @@ These groupings align closely with those previously used for analysis of the CIS
 I use the period from the expansion of the CIS, starting Mon 31st August 2020 until Sun 24th Jan 2021 (inclusive).
 This period is chosen because there were very few positives in CIS in summer 2020 due to low prevalence and a smaller sample size, and ends when vaccination crossed 10\% of England's population.
 
+I will model the test results as overdispersed relative to a binomial model.
+Overdispersion allows for household clustering\todo{cite beta-binomial as a model for clustering} and other overdispersion in the data, which is common in epidemiological data\todo{cite that epi data is often overdispersed}. 
+The parameterisation of the beta-binomial that I use (detailed in \cref{E-distributions}) has an overdispersion parameter $\rho$, regarded as a nuisance parameter in this context.
+$\rho=0$ means the beta-binomial coincides with the binomial distribution.
+As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
+
 \section{Backcalculation} \label{backcalc}
 
 In this section, I will apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
@@ -63,18 +69,21 @@ I modify this process by transforming the posterior distribution of prevalence i
 % I fit a modification model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
 % Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
 
-\todo[inline]{Think about the framing of this paragraph, maybe talk about being linear in its parameters and pre-existing software packages.}
-The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence with appropriate prior (or penalisation) can be expressed as a generalised linear model (GLM)\todo{maybe cite backcalculation as a GLM}.
-Either incidence proportion or prevalence, $\pi_i$ in a stratum $i$ can be expressed as $\logit(\pi_i) = g(i, t)$, where is a function of the stratum and time, penalised towards being linear in time.
+\todo[inline]{I am struggling the framing of these paragraphs. Maybe talk about being linear in its parameters and pre-existing software packages and not mention GLMs?}
+The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence with appropriate prior (or penalisation) can be expressed as a generalised linear model (GLM)\todo{maybe cite backcalculation as a GLM} or Gaussian Markov Random Field (GMRF).
+Standard, efficient, and widely-used software can then be applied for inference.
+
+To use a GLM or GMRF, express incidence proportion or prevalence in a stratum $i$ on day $t$, $\pi_{it}$, as $\logit(\pi_{it}) = g(i, t)$, where is a function of the stratum and time, penalised towards being linear in time.
 If $g$ is chosen appropriately, this is a GLM with a logit link function.
 
 The logit transformation serves two purposes.
 First, it ensures that the incidence proportion or prevalence is between 0 and 1.
-Second, at low values of incidence or prevalence, linear growth of $\logit(\pi_i)$ implies approximately exponential in $\pi_i$~\autocite[see discussion in][and references therein]{ealesAppropriately}.
-Penalising towards exponential growth is a natural formulation because it is what mechanistic models predict over short periods of time.
-Furthermore, it has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+Second, at low values of incidence or prevalence, linear growth of $\logit(\pi_{it})$ over time implies approximately exponential growth of $\pi_{it}$~\autocite[see discussion in][and references therein]{ealesAppropriately}.
+Penalising towards exponential growth is a natural formulation because mechanistic models predict expoential growth over short periods of time.
+Furthermore, such penalisation has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
 
-However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not a GLM.
+However, if the incidence proportion is expressed as a GLM in this way, the prevalence is not expressible as a GLM.
+Specifically, the prevalence (or an element-wise transformation of it) is no longer linear in the model parameters.
 The relationship between incidence and prevalence is linear, as derived in \cref{E-inc-prev:sec:prevalence-process}.
 Therefore, the relationship between the logit of incidence proportion and prevalence is non-linear.
 
@@ -97,7 +106,7 @@ The terms are as follows.
     \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior\todo{cite PC prior} with a 10\% probability of being greater than 1.
     \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
     \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{at} \dist \N(0, \sigma_l^2)$.
-    \item The likelihood is a beta-binomial model (defined in \cref{E-distributions}), an overdispersed binomial. Overdispersion allows for household clustering\todo{cite beta-binomial as a model for clustering} and other overdispersion in the data, which is common in epidemiological data\todo{cite that epi data is often overdispersed}. 
+    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. The likelihood is a beta-binomial model (see discussion in \cref{transmission:sec:data}). an overdispersed binomial. 
 \end{itemize}
 All parameters have the default R-INLA priors, except where stated above.
 For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
@@ -107,8 +116,10 @@ This step assumes that the estimates for each region can be considered independe
 
 Having fit the prevalence model, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
-I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:prevalence-process} justifies, that is $P_t = \E(P_t \mid Z)$.
+I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is $P_t = \E(P_t \mid \vec{Z})$.
 \Cref{E-inc-prev:eq:EPt}, considered across different values of $t$, can be written as $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix formed from the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
+Dividing each side by the total number of individuals in each stratum transforms number of prevalent individuals to prevalence and incidence to incidence proportion.
+
 The matrix $\matr{S}$ is defined to maintain the relationship between incidence and prevalence.
 This gives a lower-triangular of the following form:
 \begin{align}
@@ -118,8 +129,8 @@ This gives a lower-triangular of the following form:
     \end{cases}
 \end{align}
 $\matr{S}$ is lower-triangular, hence to solve for $\vec{P}$ I use forward-substitution~\autocite{cormenMatrix}.
-Forward substitution is numerically stable unless the diagonal elements, here $S(1)$, are small relative to the off-diagonal elements, here $S(i)$ for $i > 0$~\autocite[section 8.2]{highamAccuracy}.
-Here, the diagonal is $S(1) = 1$ and hence the matrix the solution is numerically stable.
+% Forward substitution is numerically stable unless the diagonal elements, here $S(1)$, are small relative to the off-diagonal elements, here $S(i)$ for $i > 0$~\autocite[section 8.2]{highamAccuracy}.
+% Here, the diagonal is $S(1) = 1$ and hence the matrix the solution is numerically stable.
 
 For $\vec{P} = \matr{S} \vec{I}$ to have a unique solution, $\vec{I}$ and $\vec{P}$ need the same dimension.
 However, I am using a period of prevalence which starts after the first infections.
@@ -130,13 +141,15 @@ For day $t$, the contribution of the incidence for $t < 1$ can be calculated as 
 Subtracting $\vec{P'}$ from $\vec{P}$ before applying the forward solving procedure accounts for the contribution of the incidence prior to the first day of prevalence data.
 
 Model misspecification means that the procedure described could produce negative incidence.
-For any stratum and day $t$, this occurs if the if the prevalence reduces between day $t$ and $t+1$ more than the number of recoveries on day $t$, based on the incidence up until day $t$ and the survival function.
+\todo{This paragraph might be too terse.}
+For any stratum and day $t$, this occurs if the prevalence reduces between day $t$ and $t+1$ more than the number of recoveries on day $t$, based on the incidence up until day $t$ and the survival function.
 
 There are two places where this misspecification could occur.
 The first is the survival matrix, $\matr{S}$.
 For example, \cref{E-imperf-test} showed that it is sensitive to assumptions made.
-The second is the model used to estimate prevalence, for example the form of the smoothing used.
+The second is the specification of the statistical model used to estimate prevalence, for example the form of the smoothing used.
 
+\todo[inline]{Maybe relate following paragraph to the GLM discussion at the start of the section - its basically the same point}
 A prior constraining incidence to be non-negative and then fit directly to the data could be used, but this could no longer be fit within the R-INLA framework.
 Hence, an alternative inference methodology, or simpler model (\eg containing fewer random effects), would be required.
 % MCMC is likely too computationally expensive.
@@ -152,10 +165,10 @@ The population numbers for each stratum are provided by the Office for National 
 
 A slow increase in incidence is estimated to occur over the autumn 2020 period, peaking in late November in most regions (see \cref{transmission:fig:backcalc-regions}).
 An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
-All regions then decrease during November, coinciding with the national lockdown.
+All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5th Nov 2020~\autocite{ifgTimeline}.
 
 During November, incidence starts rising, although starting at different times in different regions.
-This could be due to the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocites{walkerTracking}{daviesEstimated}{lythgoeLineage}.
+The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocites{walkerTracking}{daviesEstimated}{lythgoeLineage}.
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
     \includegraphics{transmission/backcalc-regions}
@@ -169,7 +182,7 @@ A second peak occurs in late December or early January in all regions; this seco
 
 The incidence proportion was highest among the 11--15 and 16--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
 Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale).
-This is the pattern predicted by an age-stratified transmission model (see \cref{E-SEIR:sec:structured-populations}), if behavioural changes are independent of age group, and there is negligible impact of immunity.
+This is the pattern predicted by an age-stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}), if behavioural changes are independent of age group, and there is negligible impact of immunity.
 The incidence proportion in the 16--25 age group decreases faster than other age groups during November.
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
@@ -199,7 +212,7 @@ However, the rest of the series is robust to this assumption and hence reliable.
 \section{Mechanistic modelling} \label{SEIR}
 
 There are various advantages to using a mechanistic model to estimate transmission (see \cref{E-inc-prev:sec:infection-process}).
-This section uses a mechanistic model (introduced in \cref{E-SEIR:sec:mechanistic-models}) to estimate the transmission of SARS-CoV-2 in England.
+This section applies the mechanistic modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models} to estimate the transmission of SARS-CoV-2 in England.
 
 The transmission part of the model follows \textcite{birrellRealtime}.
 A novel approach (\cref{SEIR:sec:observation}) links the transmission model to the data.
@@ -228,7 +241,7 @@ This separates contact patterns, $\kappa_{aa'}$, which can vary over time; trans
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcites{vanleeuwenTime}{vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
 % These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
-This method takes pre-pandemic baseline estimates of: $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
+This method starts with pre-pandemic baseline estimates of: $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
 POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on each contact's age and location (home, work, school, leisure, transport, or other).
 UKTUS asked a representative sample of the UK population about how much time they spent doing various activities (\eg shopping and spending time at home) each day.
 \Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
@@ -285,10 +298,10 @@ This section  explains the novel modelling approach I propose for fitting to the
 % Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
 % The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
 One approach would be to convolve the incidence based on the transmission model with the PCR duration distribution.
-Here, the daily incidence proportion for each stratum is by solving the system of ODEs governing the transmission model, and then prevalence calculated as in \cref{backcalc}.
-However, this approach is computationally expensive because of the need to calculate the convolution in \cref{E-inc-prev:eq:EPt}.
+Here, the daily incidence proportion for each stratum is by solving the system of ODEs governing the transmission model, and then prevalence calculated as using \cref{E-inc-prev:eq:EPt}.
+However, this approach is computationally expensive, likely prohibitively so if performed within a MCMC loop.
 
-A computationally cheaper option is to approximate this convolution by adding compartments to the ODEs.
+A computationally cheaper option, which I will take, is to approximate this convolution by adding compartments to the ODEs.
 This approach allows a infected, pre-positive compartment, which I denote $p_0$, to be included simply.
 $p_0$ increases at the same rate as individuals flow into $e_1$.
 These individuals then transition into a set of compartment with their transition rates, $p_1, \dots, p_l$, chosen to match the duration of positivity estimates in \cref{E-imperf-test}.
@@ -317,10 +330,10 @@ EC distributions are convenient because they are flexible enough to approximate 
 % A $l$-phase EC distribution is the sum of a $(l-2)$-phase gamma distribution and a two-phase acyclic, arbitrary phase-type distribution.
 An EC distribution $P$ can be defined as the sum of three random variables: $K$, $X_1$, and $X_2$.
 It is shown schematically in \cref{SEIR:fig:EC}.
-Here, $K \dist \GamDist(l-2, \kappa_Y)$, $X_1 \dist \Exponential(\kappa_{X1})$ and $X_2$ is a mixture distribution taking the value 0 with probability $1-p_x$ or otherwise (\ie with probability $p_x$) distributed $\Exponential(\kappa_{X2})$.
+Here, $K \dist \GamDist(l-2, \omega_Y)$, $X_1 \dist \Exponential(\omega_{X1})$ and $X_2$ is a mixture distribution taking the value 0 with probability $1-p_x$ or otherwise (\ie with probability $p_x$) distributed $\Exponential(\omega_{X2})$.
 % The time between entering the 1st state and the $l+1$th state, the absorbing state, is the duration.
 These distributions contain five parameters.
-Three are positive reals, $\kappa_Y$, $\kappa_{X1}$, and $\kappa_{X2}$; one is a probability, $p_x$, in the interval $[0, 1]$; and one is a positive integer, $l$.
+Three are positive reals, $\omega_Y$, $\omega_{X1}$, and $\omega_{X2}$; one is a probability, $p_x$, in the interval $[0, 1]$; and one is a positive integer, $l$.
 
 The name Erlang-Coxian comes from the two distributions that make up the EC distribution.
 Gamma distributions with integer first parameters (as $K$ has) are also known as Erlang distributions.
@@ -345,16 +358,16 @@ Hence, the overall distribution is known as a Erlang-Coxian distribution.
     \node[state, right of=lm1] (l) {$l$};
     \node[state, right of=l, align=center] (absorbing) {absorbing\\state};
 
-    \path (1) edge node {$\kappa_Y$} (2)
-          (2) edge node {$\kappa_Y$} (dots)
-          (dots) edge node {$\kappa_Y$} (lm2)
-          (lm2) edge node {$\kappa_Y$} (lm1)
-          (lm1) edge node {$p_x \kappa_{X1}$} (l)
-                edge [out=-45,in=-135] node[below] {$(1 - p_x) \kappa_{X1}$} (absorbing)
-          (l) edge node {$\kappa_{X2}$} (absorbing);
+    \path (1) edge node {$\omega_Y$} (2)
+          (2) edge node {$\omega_Y$} (dots)
+          (dots) edge node {$\omega_Y$} (lm2)
+          (lm2) edge node {$\omega_Y$} (lm1)
+          (lm1) edge node {$p_x \omega_{X1}$} (l)
+                edge [out=-45,in=-135] node[below] {$(1 - p_x) \omega_{X1}$} (absorbing)
+          (l) edge node {$\omega_{X2}$} (absorbing);
 \end{tikzpicture}
 }
-\caption[A $l$ phase EC distribution.]{Representation of an EC distribution as a series of compartments. The distribution is the time from entering state 1 and entering the absorbing state. The time between entering state 1 and state $l-2$ is distributed $K \dist \GamDist(l-2, \kappa_Y)$, also known as an Erlang distribution. The time between entering state $l-2$ and the absorbing state has a Coxian distribution (see the main text for details).}
+\caption[A $l$ phase EC distribution.]{Representation of an EC distribution as a series of compartments. The distribution is the time from entering state 1 and entering the absorbing state. The time between entering state 1 and state $l-2$ is distributed $K \dist \GamDist(l-2, \omega_Y)$, also known as an Erlang distribution. The time between entering state $l-2$ and the absorbing state has a Coxian distribution (see the main text for details).}
 \label{SEIR:fig:EC}
 \end{figure}
 
@@ -369,18 +382,18 @@ They then prove that EC distributions have the following properties.
 A total of five parameters are required to specify a $l$-phase EC distribution.
 \begin{itemize}
     \item $l$, the number of phases.
-    \item $\kappa_Y$, the rate parameter of the Erlang distribution.
-    \item $\kappa_{X1}$, the rate parameter of the first state after the Erlang distribution.
-    \item $\kappa_{X2}$, the rate parameter of the second state after the Erlang distribution.
+    \item $\omega_Y$, the rate parameter of the Erlang distribution.
+    \item $\omega_{X1}$, the rate parameter of the first state after the Erlang distribution.
+    \item $\omega_{X2}$, the rate parameter of the second state after the Erlang distribution.
     \item $p_x$, the probability of moving from the end state of the Erlang distribution to the second (as opposed to directly to the absorbing state).
 \end{itemize}
 
-I use the mapfit package~\autocite{mapfit} to compute $P$ for the posterior mean of the distribution estimated in \cref{E-imperf-test}.
-The resulting parameters for the EC distribution are in \cref{SEIR:table:ec-params}.
+The mapfit package~\autocite{mapfit} implements the expressions to calculate the EC distribution parameters given a distribution's first three moments.
+Applying the package to the posterior mean of the distribution estimated in \cref{E-imperf-test} gives the parameter estimates in \cref{SEIR:table:ec-params}.
 \begin{table}
     \centering
     \begin{tabular}{c c c c c}
-        $l$ & $\kappa_Y$ & $\kappa_{X1}$ & $\kappa_{X2}$ & $p_x$ \\
+        $l$ & $\omega_Y$ & $\omega_{X1}$ & $\omega_{X2}$ & $p_x$ \\
         3 & 0.0820 & 0.126 & 0.0223 & 0.00973  \\
     \end{tabular}
     \caption{Parameter estimates for the EC distribution approximating the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
@@ -388,15 +401,13 @@ The resulting parameters for the EC distribution are in \cref{SEIR:table:ec-para
 \end{table}
 % end table of ec params
 
-I link the modelled proportion of individuals that are PCR positive to the data using a beta-binomial likelihood (see\todo{ref section on clustering} for the issues with using a binomial likelihood).
+I link the modelled proportion of individuals that are PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{transmission:sec:data}).
 If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \sum_{k=1}^l \bar{p}_{kat}, \rho)
     \label{SEIR:eq:likelihood}
 \end{align}
 where $\bar{p}_{kat} = \int_{t}^{t+1} p_{ka}(s) ds$ is the mean occupancy in compartment $p_k$ and strata $a$ over day $t$ and $\rho$ is a nuisance parameter controlling the overdispersion of the beta-binomial distribution.
-In this parameterisation (detailed in \cref{E-distributions}), $\rho=0$ means the beta-binomial coincides with the binomial distribution.
-As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
 \subsubsection{Model equations and solution} \label{SEIR:sec:full-model}
 
@@ -430,11 +441,11 @@ As $\rho \to \infty$, the distribution tends towards the uniform distribution on
     \node[state, right=of P3, draw=none] (P4) {};
 
     \path  (S) edge node {$\lambda$} (P0)
-          (P0) edge node {$\kappa_0$} (P1)
-          (P1) edge node {$\kappa_Y$} (P2)
-          (P2) edge node {$p_x \kappa_{X1}$} (P3)
-               edge [out=-45,in=-135] node[below] {$(1 - p_x) \kappa_{X1}$} (P4)
-          (P3) edge node {$\kappa_{X2}$} (P4);
+          (P0) edge node {$\omega_0$} (P1)
+          (P1) edge node {$\omega_Y$} (P2)
+          (P2) edge node {$p_x \omega_{X1}$} (P3)
+               edge [out=-45,in=-135] node[below] {$(1 - p_x) \omega_{X1}$} (P4)
+          (P3) edge node {$\omega_{X2}$} (P4);
     
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
 \end{tikzpicture}
@@ -445,7 +456,7 @@ As $\rho \to \infty$, the distribution tends towards the uniform distribution on
 
 The remaining details of the transmission model structure follow \textcite{birrellRealtime}.
 The transmission model is a SEIR model with two latent and two infectious states.
-To form whole of England estimates, each region is modelled independently with the results aggregated, as in \cref{E-backcalc}.
+To form whole of England estimates, each region is modelled independently with the results aggregated, using the poststratification methodology explained in \cref{E-backcalc}.
 
 A diagram of the model for a single stratum is shown in figure \cref{SEIR:fig:full-model}.
 The full system of differential equations for each region is below.
@@ -458,10 +469,10 @@ The full system of differential equations for each region is below.
     \frac{d\vec{i_1}(t)}{dt} &= 2\sigma \vec{e_2}(t) - 2\gamma \vec{i_1}(t) \\
     \frac{d\vec{i_2}(t)}{dt} &= 2\gamma \vec{i_1}(t) - 2\gamma \vec{i_2}(t) \\
     \frac{d\vec{r}(t)}{dt} &= 2\gamma \vec{i_2}(t) \\
-    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \kappa_0 \vec{p_0}(t) \\
-    \frac{d\vec{p_1}(t)}{dt} &= \kappa_0 \vec{p_0}(t) - \kappa_Y \vec{p_1}(t) \\
-    \frac{d\vec{p_2}(t)}{dt} &= \kappa_Y \vec{p_1}(t) - \kappa_{X1} \vec{p_2}(t) \\
-    \frac{d\vec{p_3}(t)}{dt} &= p_x \kappa_{X1} \vec{p_2}(t) - \kappa_{X2} \vec{p_3}(t).
+    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
+    \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_Y \vec{p_1}(t) \\
+    \frac{d\vec{p_2}(t)}{dt} &= \omega_Y \vec{p_1}(t) - \omega_{X1} \vec{p_2}(t) \\
+    \frac{d\vec{p_3}(t)}{dt} &= p_x \omega_{X1} \vec{p_2}(t) - \omega_{X2} \vec{p_3}(t).
 \end{align}
 
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
@@ -472,7 +483,7 @@ The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likel
 \subsubsection{Priors} \label{SEIR:sec:priors}
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
-The parameters governing the duration of positivity ($\kappa$s) were explained previously (see \cref{SEIR:table:ec-params}).
+The parameters governing the duration of positivity ($\omega$s) were explained previously (see \cref{SEIR:table:ec-params}).
 The initial conditions and transition rate parameters are unindentifiable in a SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors are used for them.
 $\sigma_\epsilon$ and $\rho$ are given priors that penalise model complexity.
 The prior on $\sigma_\epsilon$ is a penalised complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
@@ -571,30 +582,31 @@ If this is the initial exponential phase, when $\vec{s} \approx 1$, then the bas
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
 \end{align}
 
-Furthermore, $\R$ is a function of $\matr{\beta}(0)$, and hence $\beta_1$ (as explained in \cref{E-SEIR:sec:structured-populations}).
-Combining these expressions, the model can be parameterised by using $\psi$ in place of $\beta_1$.
-The following procedure gives $\beta_1$ in terms of $\psi$.
-First, calculate $\R$ from $\psi$ using \cref{SEIR:eq:rtoR}; denote this $\hat{R}$.
-Then calculate $R^* = D(\matr{\beta}(0)) / \gamma$ when $\beta_1=1$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
-Multiplying a matrix by a scalar multiplies its dominant eigenvalue by that same scalar, therefore, setting $\beta_1 = \hat{R} / R^*$ gives means that $\R$ at time 0 is $\hat{R}$, as desired.
+$\R$ can also be expressed a function of $\matr{\beta}(0)$, and hence $\beta_1$ (as explained in \cref{E-SEIR:sec:structured-populations}).
+Combining these expressions, the model can be parameterised by using $\psi$ in place of $\beta_1$ by using the following procedure.
+Start by calculating $\R$ from $\psi$ using \cref{SEIR:eq:rtoR}; denote this $\hat{R}$.
+$\hat{R}$ is the $\R$ that the current value of $\psi$ implies.
+Hence, $\beta_1$ should be set such that $\matr{\beta}(0)$ implies $\R = \hat{R}$.
+To do so, define $R^*$ as $\R$ $\beta_1 = 1$.
+Using the results of \cref{E-SEIR:sec:structured-populations}, $R^* = D(\matr{\beta}(0)) / \gamma$, computed using $\beta_1=1$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
+Finally, set $\beta_1 = \hat{R} / R^*$; as multiplying a matrix by a scalar also multiplies its dominant eigenvalue by that same scalar, this means that $\R$ at time 0 is $\hat{R}$, as desired.
 
 To form a parsimonious parameterisation of the initial state, first focus on the initial proportion of the population that is in the infectious compartments.
-Recall that in the exponential growth phase, the relative proportion of each strata that is infectious is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
+Recall, from \cref{E-SEIR:sec:structured-populations}, that in the exponential growth phase, the relative proportion of each stratum that is infectious is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
 Introduce a model parameter $i^+$, the proportion of the population in the $i$ states at time 0 in the strata with the highest proportion infectious.
-Then, $\vec{i_0} = \vec{i_1} + \vec{i_2} = \frac{i^+}{\max \vec{d}} \vec{d}$.
-Now introduce an additional vector of parameters, $\vec{\pi}$, where $\pi_a$ is the proportion of strata $i$ without immunity at time 0, hence, $\vec{r} = 1 - \vec{\pi}$.
+Define the total number of infectious individuals at time 0 as $\vec{i_0} = \vec{i_1} + \vec{i_2} = \frac{i^+}{\max \vec{d}} \vec{d}$.
 
-From the system of ODEs and the knowledge that all the compartments are growing exponentially at rate $\psi$, one can derive the following for the initial state of the compartments:
+From the system of ODEs, the knowledge that all the compartments are growing exponentially at rate $\psi$, and the parameters $\vec{\pi}$ (where $\pi_a$ is the proportion of strata $i$ without immunity at time 0, hence, $\vec{r} = 1 - \vec{\pi}$) one can derive the following for the initial state of the compartments:
 \begin{align}
     \vec{i_1} &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1} \\
     \vec{i_2} &= \vec{i_0} - \vec{i_1} \\
     \vec{e_2} &= \vec{i_1} \frac{\psi + 2\gamma}{2\sigma} \\
     \vec{e_1} &= \vec{e_2} \frac{\psi + 2\sigma}{2\sigma} \\
     \vec{s} &= \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2} \\
-    \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \kappa_0} \\
-    \vec{p_1} &= \vec{p_0} \frac{\kappa_0}{\psi + \kappa_Y} \\
-    \vec{p_2} &= \vec{p_1} \frac{\kappa_Y}{\psi + \kappa_{X1}} \\
-    \vec{p_3} &= \vec{p_2} \frac{p_x \kappa_{X1}}{\psi + \kappa_{X2}}.
+    \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \omega_0} \\
+    \vec{p_1} &= \vec{p_0} \frac{\omega_0}{\psi + \omega_Y} \\
+    \vec{p_2} &= \vec{p_1} \frac{\omega_Y}{\psi + \omega_{X1}} \\
+    \vec{p_3} &= \vec{p_2} \frac{p_x \omega_{X1}}{\psi + \omega_{X2}}.
 \end{align}
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
