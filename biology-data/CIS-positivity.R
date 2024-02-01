@@ -34,23 +34,23 @@ corrected_model = readRDS(
     group_by(date) |>
     mean_qi(prevalence)
 
+counts_to_plot = raw_counts |>
+    filter(
+        num_tests > 100,
+        between(date, min(corrected_model$date), max(corrected_model$date))
+    )
 
 plot_positivity = ggplot() +
     geom_point(
         aes(date, mean),
-        data = raw_counts |> filter(num_tests > 100)
+        data = counts_to_plot
     ) +
     geom_ribbon(
         aes(date, prevalence, ymin = .lower, ymax = .upper),
         data = corrected_model,
         alpha = 0.5
     ) +
-    scale_y_continuous(
-        labels = scales::percent_format(accuracy = 1),
-    ) +
-    coord_cartesian(
-        c(min(corrected_model$date), max(corrected_model$date))
-    ) +
+    scale_y_continuous(labels = scales::label_percent()) +
     labs(
         x = "Date",
         y = "Prevalence"
