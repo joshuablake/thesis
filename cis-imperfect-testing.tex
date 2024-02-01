@@ -56,7 +56,7 @@ This means the result cannot simply be extended to the CIS, but still reinforces
 % Discussion and interrogation of the data led me to
 I hypothesised that the reason for the unexpectedly high number of single positive episodes (compared to simulation) was the presence of false negative results.
 There are several strands of evidence supporting this hypothesis.
-First, it is well known that PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); I explicitly include them in the viral load model of \cref{E-ATACCC}.
+First, it is well known that RT-PCR testing can return false negatives  (see \cref{E-biology-data:sec:PCR}); I explicitly include them in the viral load model of \cref{E-ATACCC}.
 Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that they occur within the CIS.
 Furthermore, in \cref{imperf-test:sec:simulate}, I expanded the simulation study of \cref{E-perf-test:sec:simulation-study} to include false negatives (see  for more details).
 This reproduced the CIS data more faithfully and exhibited the same issues when estimating the duration distribution (see \cref{imperf-test:fig:sim-single-pos}).
@@ -404,11 +404,11 @@ Additionally, some simulations exploring the results of changing incidence sugge
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
 
-In this chapter, I developed and applied novel methodology to estimate the duration distribution of PCR-positivity using information from two studies: ATACCC and CIS.
+In this chapter, I developed and applied novel methodology to estimate the duration distribution of RT-PCR-positivity using information from two studies: ATACCC and CIS.
 Assuming a test sensitivity of 0.8 and an informative prior on the number of infections, provided the preferred estimates.
 
-These estimates are the first estimates of the duration of PCR-positivity, including the distribution tails, estimated from general population data.
-This feature of the distribution is important for understanding the proportion of prevalence attributable to long infections and interpreting PCR test results.
+These estimates are the first estimates of the duration of RT-PCR-positivity, including the distribution tails, estimated from general population data.
+This feature of the distribution is important for understanding the proportion of prevalence attributable to long infections and interpreting RT-PCR test results.
 \todo{possibly cut some of this text?}
 Producing these estimates required applying previous survival analysis frameworks in the novel context of the CIS.
 The framework needed further modification to account for the presence of false negatives, done in this chapter.

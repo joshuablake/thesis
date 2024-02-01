@@ -9,7 +9,7 @@
 
 \todo[inline]{Rewrite the intro: eg see Dani's Overleaf comments}
 
-In this chapter, I use the preferred estimate of the duration of PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
+In this chapter, I use the preferred estimate of the duration of RT-PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
 This estimation is based only on the CIS data (see \cref{transmission:sec:data} for further details).
 I will show that this data is sufficient to estimate the parameters of the transmission process, suggesting surveys of this type are sufficient for surveillance of an epidemic.
 
@@ -62,7 +62,7 @@ A deterministic relationship between true prevalence an incidence is a good appr
 A well-established methodology, using multilevel regression and poststratification (MRP)\todo{cite MRP}, has already been developed for estimating prevalence from the CIS data\todo{cite Koen's stuff}.
 Therefore, I extend the methodology previously used to estimate prevalence to estimate incidence.
 
-In MRP, a Bayesian multilevel logistic regression model is first fit to predict PCR positivity from demographic covariates.
+In MRP, a Bayesian multilevel logistic regression model is first fit to predict RT-PCR positivity from demographic covariates.
 Then, the posterior distribution is used to predict the prevalence in each stratum.
 Finally, the prevalence is poststratified (as explained later) to the CIS target population and subpopulations of interest.
 I modify this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before poststratifying.
@@ -295,9 +295,9 @@ The formulation of this model is heavily dependent on the data available.
 This means that there is a wide variety of models used.
 This section  explains the novel modelling approach I propose for fitting to the CIS prevalence data.
 
-% Here, I extend the system of ODEs to include compartments representing PCR positive individuals.
-% The proportion of PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are PCR positive as the mean of the Beta distribution.
-One approach would be to convolve the incidence based on the transmission model with the PCR duration distribution.
+% Here, I extend the system of ODEs to include compartments representing RT-PCR positive individuals.
+% The proportion of RT-PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are RT-PCR positive as the mean of the Beta distribution.
+One approach would be to convolve the incidence based on the transmission model with the RT-PCR duration distribution.
 Here, the daily incidence proportion for each stratum is by solving the system of ODEs governing the transmission model, and then prevalence calculated as using \cref{E-inc-prev:eq:EPt}.
 However, this approach is computationally expensive, likely prohibitively so if performed within a MCMC loop.
 
@@ -401,7 +401,7 @@ Applying the package to the posterior mean of the distribution estimated in \cre
 \end{table}
 % end table of ec params
 
-I link the modelled proportion of individuals that are PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{transmission:sec:data}).
+I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{transmission:sec:data}).
 If on each day $t$, each strata $i$ is observed to have $y_{it}$ positives out of $n_{it}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \sum_{k=1}^l \bar{p}_{kat}, \rho)
@@ -450,7 +450,7 @@ where $\bar{p}_{kat} = \int_{t}^{t+1} p_{ka}(s) ds$ is the mean occupancy in com
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
 \end{tikzpicture}
 }
-  \caption[SEIR model]{SEIR model used for the analysis in this section. The shaded box represents PCR-positive individuals. Shown for a single stratum.}
+  \caption[SEIR model]{SEIR model used for the analysis in this section. The shaded box represents RT-PCR-positive individuals. Shown for a single stratum.}
   \label{SEIR:fig:full-model}
 \end{figure}
 
@@ -740,7 +740,7 @@ For example, in the North East region, the 11--16 age group has its prevalence o
     \captionsetup{width=0.8\paperwidth}
     \captionof{figure}[SEIR prevalence goodness-of-fit (younger ages)]{%
         Goodness-of-fit to prevalence data by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
-        The central ribbon and line shows the posterior median and 95\% CrI estimate for the proportion of the relevant strata PCR positive on each day.
+        The central ribbon and line shows the posterior median and 95\% CrI estimate for the proportion of the relevant strata RT-PCR positive on each day.
         The lighter outer ribbon is the 95\% posterior predictive interval for the proportion of test results that are positive each week.
         The dots show the observed prevalence in CIS, aggregated by week.
         For a well-calibrated model, 95\% of the dots would be within the outer ribbon.
@@ -839,7 +839,7 @@ This is a specific case of a larger pattern: the SEIR model produces smoother es
     \caption[Comparing each models estimate of regional incidence.]{%
         Incidence proportion in England and each region estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
-        For the SEIR model, newly PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
     }
     \label{transmission:fig:compare-regions}
 \end{figure}
@@ -864,7 +864,7 @@ The overestimation of prevalence in the 11--16 age group and underestimation in 
     \caption[Comparing each models estimate of North East incidence by age.]{%
         Incidence proportion in each age group in the North East estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
-        For the SEIR model, newly PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
     }
     \label{transmission:fig:compare-NE}
 \end{figure}

@@ -8,15 +8,15 @@
 \chapter{Estimating duration using biomarkers} \label{ATACCC}
 
 
-\Cref{E-inc-prev} showed that the duration of PCR positivity is a key parameter for estimating the incidence of SARS-CoV-2 infections.
-The aim of this chapter is to estimate the duration of PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
+\Cref{E-inc-prev} showed that the duration of RT-PCR positivity is a key parameter for estimating the incidence of SARS-CoV-2 infections.
+The aim of this chapter is to estimate the duration of RT-PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
 I model a biomarker, the log viral load, over the course of an infection.
-From this model, I derive the distribution of the duration of PCR positivity.
+From this model, I derive the distribution of the duration of RT-PCR positivity.
 
 First, I will explain how biomarkers are typically modelled, both for SARS-CoV-2 and historically in the biostatistical literature (\cref{ATACCC:sec:background}).
 Next, I describe the model of \textcite{hakkiOnset} in detail, which applies these methods to the ATACCC data (\cref{ATACCC:sec:hakki}) and before modifying its observation model to improve the inference (\cref{ATACCC:sec:observation-modification}).
 This modification is based on an earlier analysis using a preliminary version of the dataset, described in \cref{ATACCC:sec:original-analysis}.
-Finally, I convert the model and parameter estimates of the biomarker's trajectory to a duration of PCR positivity (\cref{ATACCC:sec:duration}).
+Finally, I convert the model and parameter estimates of the biomarker's trajectory to a duration of RT-PCR positivity (\cref{ATACCC:sec:duration}).
 I will refine this estimate in future chapters before its use in estimating transmission.
 
 \section{Background} \label{ATACCC:sec:background}
@@ -59,9 +59,9 @@ In the Bayesian context, random effect models are often referred to as hierarchi
 
 The model of \textcite{hakkiOnset} has two components: a latent viral load model and an observation model.
 The viral load model produces a deterministic trajectory for the viral load of an individual, a function of the model parameters.
-The observation model then describes how the PCR testing process produces noisy observations of this viral load.
-The observation model includes the possibility of false positive and negatives, and the limit of detection of the PCR test.
-% The limit of detection means that viral loads below a certain threshold are not detected by the PCR test.
+The observation model then describes how the RT-PCR testing process produces noisy observations of this viral load.
+The observation model includes the possibility of false positive and negatives, and the limit of detection of the RT-PCR test.
+% The limit of detection means that viral loads below a certain threshold are not detected by the RT-PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
 Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-inc-prev:sec:MCMC}).
@@ -91,11 +91,11 @@ $\tau_{\max,i}$ is inferred independently for each individual because the time f
   }
 \end{figure}
 
-PCR tests are noisy observations of the viral load.
-A positive PCR test has a Ct value.
+RT-PCR tests are noisy observations of the viral load.
+A positive RT-PCR test has a Ct value.
 Ct values are linearly related to viral load (see \cref{E-biology-data:sec:PCR})
-A negative PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
-Positive PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
+A negative RT-PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
+Positive RT-PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 
 The noisy observations are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v)$.
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
@@ -190,11 +190,11 @@ For all other parameters, I kept the priors the same as \textcite{hakkiOnset}, i
 
 \section{Deriving duration from the parameters} \label{ATACCC:sec:duration}
 
-The ultimate aim of this chapter is to produce an estimate of the distribution for the duration of PCR positivity.
+The ultimate aim of this chapter is to produce an estimate of the distribution for the duration of RT-PCR positivity.
 So far, only the viral load trajectories have been considered; \textcite{hakkiOnset} does not consider this duration either.
 The time that individual $i$ are first and last positive are the two values of $\tau$ such that $\log v_i(\tau) = v_\text{lod}$.
 Denote these times as $\tau_{0,i}$ and $\tau_{1,i}$.
-Hence, their duration of PCR positivity, in continuous time, is $d_i = \tau_{1,i} - \tau_{0,i}$.
+Hence, their duration of RT-PCR positivity, in continuous time, is $d_i = \tau_{1,i} - \tau_{0,i}$.
 
 At $\tau_{0,i}$ and $\tau_{1,i}$, the approximation as exponential growth (described in \cref{ATACCC:sec:hakki}) is good.
 Therefore, set $\log v(\tau)$ and one of the exponential terms to 0 in \cref{ATACCC:eq:viral-load}.
@@ -261,7 +261,7 @@ However, it would complicate the model, be unlikely to change the estimates of t
   \vspace{-3cm}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{ATACCC/fits}}
   \captionsetup{width=0.8\paperwidth}
-  \captionof{figure}[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for each individual, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value. \label{ATACCC:fig:goodness-of-fits}}
+  \captionof{figure}[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for each individual, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative RT-PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value. \label{ATACCC:fig:goodness-of-fits}}
 \end{figure}
 
 For individual-level parameters, both models had convergence issues in places (Rhat > 1.4 and ESS < 20).
@@ -286,7 +286,7 @@ As the estimates are similar and the modified model converges better, I use the 
 
 Clear differences emerge between the vaccinated and unvaccinated groups (see \cref{ATACCC:fig:median-trajectories} and \cref{ATACCC:table:population-estimates}).
 The rates of viral load increase at similar rates in the two groups, the vaccinated group have higher peak viral loads and clear the virus faster.
-This leads to a shorter duration of PCR positivity in the vaccinated group.
+This leads to a shorter duration of RT-PCR positivity in the vaccinated group.
 \begin{figure}
   \centering \includegraphics{ATACCC/mean_trajectories}
   \caption[Median viral load trajectories]{Trajectory (posterior median and 95\% CrI) using the median parameter values, $\exp \vec{\mu}_{\phi,g}$, excluding the within-population variation. These assume $\tau_{\max,i}=0$, however modifying this simply translates the trajectories left or right. \label{ATACCC:fig:median-trajectories}}
@@ -310,15 +310,15 @@ In \cref{ATACCC:sec:results}, the two models gave very similar results.
 Therefore, I show results only from the modified model (which had better convergence).
 \begin{figure}
   \centering \includegraphics{ATACCC/duration}
-  \caption[Duration of PCR positivity.]{Estimated distribution (survival function) of duration of PCR positivity for the two populations. The vaccinated population have shorter durations of PCR positivity.  \label{ATACCC:fig:duration}}
+  \caption[Duration of RT-PCR positivity.]{Estimated distribution (survival function) of duration of RT-PCR positivity for the two populations. The vaccinated population have shorter durations of RT-PCR positivity.  \label{ATACCC:fig:duration}}
 \end{figure}
 
-The vaccinated population have shorter durations of PCR positivity than the unvaccinated population (see \cref{ATACCC:fig:duration}).
-The median duration of PCR positivity for the vaccinated population is 13 days (95\% CrI: 11--16 days), but it is 16 days (95\% CrI: 14--19 days) for the unvaccinated population.
+The vaccinated population have shorter durations of RT-PCR positivity than the unvaccinated population (see \cref{ATACCC:fig:duration}).
+The median duration of RT-PCR positivity for the vaccinated population is 13 days (95\% CrI: 11--16 days), but it is 16 days (95\% CrI: 14--19 days) for the unvaccinated population.
 
 \section{Discussion}
 
-This chapter has estimated the distribution of PCR positive duration based on the viral load data from the ATACCC study.
+This chapter has estimated the distribution of RT-PCR positive duration based on the viral load data from the ATACCC study.
 
 Different estimates were produced for vaccinated and unvaccinated individuals in the study.
 However, there are many differences between individuals in these two groups.

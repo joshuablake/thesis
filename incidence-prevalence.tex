@@ -10,7 +10,7 @@
 %\todo[inline]{This chapter is pretty short. Not sure if this matters or it needs to merged with another chapter? For example, one background chapter split into epi/biology and stats.}
 
 This chapter defines incidence and prevalence, and the relationship between these quantities.
-In the course of explaining this relationship, it will become clear that the duration of PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
+In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
 
 I start by defining these terms in \cref{inc-prev:sec:definitions}.
 I then move on to explaining the three processes that are involved: the \emph{infection process}, the \emph{prevalence process} and the \emph{observation process}.
@@ -46,7 +46,7 @@ Despite this issue, it remains the single most important quantity for informing 
 
 \emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
 What it means to have a disease can vary by context (see\todo{ref section discussing what it means to have covid}).
-Here, an individual is defined to have SARS-CoV-2 on day $t$ if, had they been swabbed on day $t$, that swab would return a positive PCR test.
+Here, an individual is defined to have SARS-CoV-2 on day $t$ if, had they been swabbed on day $t$, that swab would return a positive RT-PCR test.
 I refer to these individuals as \emph{prevalent} individuals.
 I assume that an individual's prevalent status cannot change over the course of a day.
 Therefore, prevalence is constant over any single day $t$.
@@ -611,8 +611,8 @@ Numerical methods for solving systems of this form, that is solving for $\vec{Z}
 However, these algorithms can be unstable, meaning that numerical errors are large.
 This is a particular issue if $S(1)$ is small.
 Since, by definition, $S(1)=1$ here, this is not an issue in this context.
-%However, if instead of estimating the incidence of PCR positives, the aim was to estimate the incidence of infections, then $S(1)$ would be small and this would be an issue.
-%While this quantity is more epidemiologically relevant, the time from infection to PCR positivity is short and, for now, I will neglect the difference.
+%However, if instead of estimating the incidence of RT-PCR positives, the aim was to estimate the incidence of infections, then $S(1)$ would be small and this would be an issue.
+%While this quantity is more epidemiologically relevant, the time from infection to RT-PCR positivity is short and, for now, I will neglect the difference.
 
 The variance in \cref{inc-prev:eq:boundVPt} is upper bounded by \cref{inc-prev:eq:EPt}, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
 \Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to modelling the prevalence process.
@@ -771,9 +771,9 @@ Various techniques have been proposed for computing the effective sample size, I
 \section{Conclusion} \label{inc-prev:sec:conclusion}
 
 Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the objective of this thesis.
-This chapter has shown that the key quantity relating these quantities is the distribution of the duration of PCR positivity.
+This chapter has shown that the key quantity relating these quantities is the distribution of the duration of RT-PCR positivity.
 However, no estimates of this quantity in the general population exist.
-Therefore, I now turn to estimating the duration of PCR positivity.
+Therefore, I now turn to estimating the duration of RT-PCR positivity.
 
 \ifSubfilesClassLoaded{
   \listoftodos
