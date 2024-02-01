@@ -107,7 +107,7 @@ In the context of a Poisson process, the independent increment property implies 
 Hence, $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
 
 The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
-The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic~\autocites{beckerDependent}{brookmeyerMethod}.
+The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic~\autocite{beckerDependent,brookmeyerMethod}.
 
 Two features of a Poisson process are violated for epidemics.
 Epidemics commonly exhibit \emph{overdispersion} and have feedback loops~\autocite{beckerDependent}.
@@ -119,7 +119,7 @@ Therefore, an overdispersed epidemic modelled as a Poisson process will be less 
 % A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
 % A super-spreading event is an event where many more people than average are infected.
 % That is, $Z_t >> \E(Z_t)$ for some $t$ during which a super-spreading event occurs.
-% Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autocites{endoEstimating}{adamClustering}{mccloskeySARS}.
+% Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autocite{endoEstimating,adamClustering}{mccloskeySARS}.
 % An infamous example of a SARS-CoV-2 super-spreading event was the Skagit County choir practice in March 2020~\autocite{hamnerHigh}.
 % One infected individual is thought to have infected at least 32 further individuals during a single choir practice.
 % For comparison, the average individual infected around three others in the early stages of the pandemic~\autocite{pellisChallenges}. 
@@ -127,7 +127,7 @@ Therefore, an overdispersed epidemic modelled as a Poisson process will be less 
 % Note that the expected number of events has not changed, but the variance has increased (see \cref{E-distributions} for details of parameterisations and moments).
 % %The negative binomial tends to Poisson as $k\to\infty$.
 % Generally, $k<1$ is considered as significant levels of overdispersion.
-% Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, and may be decreased by some interventions including lockdowns~\autocites{quiltyReconstructing}{quiltyUnderstanding}.
+% Estimates for SARS-CoV-2 indicate $k \approx 0.1$~\autocite{endoEstimating}, and may be decreased by some interventions including lockdowns~\autocite{quiltyReconstructing,quiltyUnderstanding}.
 % If $K(s) - K(t)$ has a negative binomial distribution, then its standard deviation scales on the order of the mean.
 % If it is Poisson distributed, then the standard deviation is on the order of the square root of the mean.
 % A particular implication of this is that the coefficient of variation (the standard deviation divided by the mean) tends to zero for a Poisson process, but tends to a constant for a negative binomial process.
@@ -334,7 +334,7 @@ A few properties and assumptions of the SIR model are worth noting.
 \end{figure}
 
 The basic SIR model is the deterministic approximation of a stochastic model where the duration of time in the infectious compartment is exponentially distributed~\autocite[96]{keelingModeling}.
-This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocites{lloydRealistic}{wearingAppropriate}.
+This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocite{lloydRealistic,wearingAppropriate}.
 A standard extension to the SIR model is to instead assume a gamma distribution~\autocite[94]{keelingModeling}{andersonSpread}.
 This is done by adding multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
 The system can now be written as follows:
@@ -477,7 +477,7 @@ The basic reproduction number is then defined as $\R = D(\matr{\beta}) / \gamma$
 This $\R$ keeps the same interpretation as in the homogeneous case, \ie the average number of secondary infections caused by a single infection in a fully susceptible population, where the average is taken over the distribution implied by the dominant eigenvector.
 The important threshold that exponential growth occurs iff $\R > 1$ remains.
 
-Age-based contact patterns are important for the transmission dynamics of respiratory diseases~\autocites{birrellBayesian}{jacksonEffects}.
+Age-based contact patterns are important for the transmission dynamics of respiratory diseases~\autocite{birrellBayesian,jacksonEffects}.
 Respiratory diseases can be spread by conversational contacts, which show very clear age patterns (see \cref{SEIR:fig:age-contacts}).
 In particular, the contacts are \emph{associative} (contacts are more likely between individuals of similar ages) and younger age groups have more contacts; this will tend to concentrate the epidemic in these younger age groups~\autocite[67]{keelingModeling}.
 \begin{figure}
@@ -724,7 +724,7 @@ One alternative is \emph{adaptive} algorithms which tune the proposal distributi
 
 MCMC using a Normal proposal distribution can be inefficient.
 In particular, it often poorly explores the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
-\emph{Hamiltonian Monte Carlo} (HMC)~\autocites{nealMCMC}{nealImproved}{duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
+\emph{Hamiltonian Monte Carlo} (HMC)~\autocite{nealMCMC,nealImproved,duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
 HMC simulates a physical system travelling through the posterior space with momentum.
 The momentum increases in the direction the posterior density increases, using the gradient.
 \todo{add something about leapfrog steps}

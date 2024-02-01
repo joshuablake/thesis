@@ -128,7 +128,7 @@ Therefore, the CIS data is \emph{double interval censored}.
 
 Few studies look at the combination of both double interval censoring and undetected (or truncated) events
 This is especially true within the human biostatistical literature.
-The literature does include theoretical frameworks which include the double censored and truncated case~\autocites{turnbullEmpirical}{dempsterMaximum}.
+The literature does include theoretical frameworks which include the double censored and truncated case~\autocite{turnbullEmpirical,dempsterMaximum}.
 The frameworks have only been applied when the terminating event was either uncensored or right censored~\autocite{sunEmpirical,bacchettiNonparametric}.
 These studies \autocite[and elsewhere, e.g.:][]{shenNonparametric} take a conditional likelihood approach.
 They condition on the truncation (a selection effect) and the period where the initiating event occurs.
@@ -152,7 +152,7 @@ Alternatively, the prior can favour a smoothly changing hazard.
 I explore priors in section 1.4.
 These prior structures overcome issues caused by the undetected episodes ~\autocite{caoBias}.
 
-Bayesian methods been used for nest survival before~\autocites{heBayesiana}{heBayesian}{caoModeling}, augmenting the data with the unobserved times of infection.
+Bayesian methods been used for nest survival before~\autocite{heBayesiana,heBayesian,caoModeling}, augmenting the data with the unobserved times of infection.
 The augmentation creates a parameter per detected infection.
 This increases the dimensionality of the problem greatly, making it computationally infeasible here.
 I develop a novel Bayesian framework without explicit data augmentation.
@@ -163,7 +163,7 @@ This method scales to the large number of episodes present in CIS.
 
 In this section, I develop a model accounting for double interval censoring and undetected episodes.
 This approach extends the framework of \textcite{heiseyModelling} to include individuals without detected episodes.
-This framework is itself based long-standing methodology~\autocites{dempsterMaximum}{turnbullEmpirical}.
+This framework is itself based long-standing methodology~\autocite{dempsterMaximum,turnbullEmpirical}.
 I augment the data set with the full number of episodes, including those that are undetected.
 
 Integrating over the number of missed episodes is analytically tractable.
@@ -462,7 +462,7 @@ The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazar
 \end{figure}
 
 Having approximated the estimate as a multivariate normal, I add additional uncertainty using a discrete Beta process.
-The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocites{ibrahimBayesian}{sunStatisticala}.
+The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocite{ibrahimBayesian,sunStatisticala}.
 It is:
 \begin{align}
   \lambda_t &\sim \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
@@ -601,7 +601,7 @@ More flexible smoothers, such as a Gaussian Process for additional flexibility a
 
 Various extensions could be worth exploring.
 Most importantly, covariates (\eg age, immunity from vaccination and/or previous infection, or variant) could be included.
-Immunity in particular affects the duration substantially, although age and variant may also make a contribution~\autocites{hakkiOnset}{russellWithinhost}.
+Immunity in particular affects the duration substantially, although age and variant may also make a contribution~\autocite{hakkiOnset,russellWithinhost}.
 Covariates can be included with a variety of models, the simplest being a proportional hazards model.
 A major challenge here is that the calculation of $p_t$ is greatly complicated, because it is no longer linear in the survival function.
 

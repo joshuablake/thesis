@@ -168,7 +168,7 @@ An exception is the North East and East of England regions (see \cref{transmissi
 All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5th Nov 2020~\autocite{ifgTimeline}.
 
 During November, incidence starts rising, although starting at different times in different regions.
-The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocites{walkerTracking}{daviesEstimated}{lythgoeLineage}.
+The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocite{walkerTracking,daviesEstimated,lythgoeLineage}.
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
     \includegraphics{transmission/backcalc-regions}
@@ -239,7 +239,7 @@ I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, decomp
 This separates contact patterns, $\kappa_{aa'}$, which can vary over time; transmission probability upon contact between age groups $a$ and $a'$, $q_{aa'}$, assumed constant; a region-wide effect for time, $\beta(t)$; and the population of the stratum, $N_{a'}$.
 
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcites{vanleeuwenTime}{vanleeuwenAugmenting}.
-%; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocites{vanleeuwenTime}{birrellRealtime}.
+%; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocite{vanleeuwenTime,birrellRealtime}.
 % These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
 This method starts with pre-pandemic baseline estimates of: $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
 POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on each contact's age and location (home, work, school, leisure, transport, or other).
@@ -278,7 +278,7 @@ These measures include both biological differences, \eg due to differences in im
 %Now, we assume that $\beta_{ij} = \beta(t) \beta_{ij}$ where $\beta(t)$ is a non-strata-specific, time-varying component representing precautions taken by the population, for example masking; and $\beta_{ij}$ represents a constant probability of transmission from an infectious individual in strata $j$ to a susceptible individual in strata $i$ given contact, which could, for instance, be affected by differential susceptibility to infection for different age-groups.
 %We arbitrarily choose one $\beta_{ij}$ to be equal to 1 for identifiability and hence the other $\beta_{ij}$ values are relative to this reference class.
 
-Studies of pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocites{chenRole}{vinerTransmission}.
+Studies of pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocite{chenRole,vinerTransmission}.
 Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for 0--11 year olds, and $q^\text{susc}_{a} = 1$ for the remaining strata.
 $q_c$ can be interpreted as the relative probability that a child is infected (compared to an adult), given contact with an infectious individual.
 $q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
@@ -577,7 +577,7 @@ Both of these rely on an assumption that the epidemic is in a steady-state expon
 During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
 This follows directly from the ODEs if $\vec{s}$ is constant. 
 The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\phi$ should be more computationally efficient.
-If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocites{birrellBayesian}{wearingAppropriate}:
+If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
 \begin{align}
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
 \end{align}
