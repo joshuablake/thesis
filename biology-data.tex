@@ -18,11 +18,9 @@
 
 SARS-CoV-2 is a beta coronavirus that emerged in late 2019.
 It is closely related to previous coronaviruses that have caused outbreaks in humans, SARS-CoV and MERS-CoV.
-\todo{Cite and check how SARS-CoV-2 is related to SARS-CoV and MERS-CoV, and other human coronaviruses.}
 
 Coronaviruses are RNA (Ribonucleic acid) viruses.
 RNA viruses use RNA, rather than DNA, as their genetic material.
-\todo{why is being a RNA virus important?}
 
 \section{Natural history of the disease} \label{biology-data:sec:natural-history}
 
@@ -75,7 +73,7 @@ RNA viruses use RNA, rather than DNA, as their genetic material.
   \label{biology-data:fig:natural-history}
 \end{figure}
 
-An individual infected with SARS-CoV-2 goes through several stages (see \cref{biology-data:fig:natural-history}).
+An individual infected with SARS-CoV-2 goes through several disease stages (see \cref{biology-data:fig:natural-history}).
 \todo{Find citations for disease stages.}
 First, they are exposed to the virus and become infected.
 At this initial stage they are not infectious (cannot spread the disease to others), do not have symptoms, and will not test positive on a PCR test.
@@ -88,12 +86,13 @@ Finally, the individual will test negative on a PCR test.
 I will refer to individuals between the time they start testing positive on a PCR test and the time they stop testing positive on a PCR test as \emph{detectable}.
 It is not possible to directly observe whether an individual is detectable or not due to noise in the PCR test (see \cref{biology-data:sec:PCR}).
 However, viewing the number of RNA genome copies in an individual as a latent process this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the PCR test.
+While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
 
 The time for each of these stages depends on various features of host and virus characteristics.
 In this thesis, I focus on pre-Alpha variants of SARS-CoV-2 in unvaccinated individuals.
 The time from infection to infectiousness is known as the \emph{latent period} and is typically around\todo{cite latent period}.
 The time from infection to experiencing symptoms is known as the \emph{incubation period} and is typically around\todo{cite incubation period}.
-The latent period is undefined for asymptomatic individuals, around\todo{cite proportion asymptomatic} of those infected.
+The incubation period is undefined for asymptomatic individuals, around\todo{cite proportion asymptomatic} of those infected.
 
 The above description gives three possible ways to define an individual who is infected with SARS-CoV-2: based on their PCR test result, whether they are infectious, or whether they are symptomatic.
 In this thesis, I adopt a definition of infection based on PCR test results.
@@ -101,7 +100,7 @@ This is because it coincides with the data collected on the studies I use (see \
 
 A host's \emph{viral load}, the quantity of viral particles in a host, is the underlying biological process determining many of these changes~\autocite{puhachSARSCoV2}.
 Any host's viral load is determined by the interaction of many biological processes, most prominently the virus's replication increasing the viral load and the host's immune response reducing the viral load~\autocite{keVivo}.
-Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining host cells, known as \emph{target cells}, to infect~\autocite{keVivo}.
+Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining host cells, known as \emph{target cells}, to infect.
 The host's immune system can slow this process by various mechanisms; the most relevant for SARS-CoV-2 is by making some target cells less susceptible to infection.
 A host's immune response is triggered by the viral load, and becomes stronger as the viral load increases.
 A high viral load is associated with being more infectious, more likely to test positive on a PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
@@ -121,7 +120,7 @@ A high viral load is associated with being more infectious, more likely to test 
 PCR (Polymerase Chain Reaction) is a procedure that produces millions to billions of copies of a specific segment of DNA (Deoxyribonucleic acid) from a single copy~\autocite{smithPCR,garibyanPCR}.
 This is known as \emph{amplifying} the DNA.
 PCR has many uses within the biological sciences; Mark R.\ Hughes, deputy director of the Human Genome Project, has claimed it is the most important scientific technology of the last hundred years~\autocite{powledgePCR}.
-It is central to the work in this thesis because it can detect the presence of SARS-CoV-2 in a sample taken from a human, most commonly a nose and/or throat swab.
+It is central to the work in this thesis because it can be used to detect the presence of SARS-CoV-2 in a sample taken from a human, most commonly a nose and/or throat swab.
 
 SARS-CoV-2 is an RNA virus, but PCR amplifies DNA.
 Therefore, before the PCR process can be used to detect SARS-CoV-2, the RNA must be converted to DNA.
@@ -156,32 +155,28 @@ Therefore, the Ct value is proportional to the negative log of the amount of DNA
 The amount of cDNA produced by reverse transcription is proportional to the amount of RNA present in the original sample.
 Therefore, when testing for SARS-CoV-2, the Ct value is proportional to the negative log of the amount of SARS-CoV-2 RNA present in the original sample.
 
+\todo[inline]{%
+  Rewrite this section on imperfect testing.
+  Including analytical sensitivity: the minimum number of copies of the target RNA material in the sample that the test can detect, measured using the 
+}
 Like any diagnostic test, PCR tests are not perfect.
 False positives and false negatives can occur.
-The \emph{specificity} of a test is the probability of a negative test result given that the individual is not infected.
-The \emph{sensitivity} of a test is the probability of a positive test result given that the individual is infected.
+These can be quantified in a number of ways.
 
-False positives are very rare for PCR tests.
+The \emph{analytical sensitivity} of the test is the minimum number of copies of the target RNA material in the sample that the test can detect, typically expressed as the \emph{limit of detection}~\autocite{bustinMIQE}.
+The limit of detection is the lowest concentration of the target RNA material that can be reliably detected using the procedure.
+This is different to the \emph{clinical sensitivity} of the test, the ability of the test to detect a detectable individual (being detectable is defined in \cref{biology-data:sec:natural-history}).
+Clinical sensitivity can be affected by a large variety of preanalytical factors, such as sample collection (\ie the swabbing process) and sample transportation~\autocite{lippiPotential}.
+Clinical sensitivity is of primary interest in this thesis.
+I will quantify it as the \emph{test sensitivity} (strictly the clinical test sensitivity), the probability of a positive test result for a detectable individual.
+A negative result for a detectable individual is a \emph{false negative}.
+
+The \emph{analytical specificity} of the test is the ability of the test to distinguish between the intended target rather than other, non-specific RNA (or DNA) sequences present in the sample~\autocite{bustinMIQE}.
+As with sensitivity, this is different to the \emph{clinical specificity} of the test, the ability of the test to distinguish between detectable and undetectable individuals.
+A positive result for an undetectable individual is a \emph{false positive}.
+False positives are very rare for SARS-CoV-2 RT-PCR tests.
 In summer 2020, the CIS performed X PCR tests and found only Y positives, lower-bounding the test specificity at.
 \todo{Insert actual numbers of CIS bounding specificity.}
-
-False negatives are more common.
-Early estimates of the sensitivity of PCR tests were around X\%; I produce estimates in \cref{E-ATACCC}.
-False negatives could occur for a variety of reasons, most commonly that an individual swabs themselves poorly and hence the concentration of virus on the swab is too low to be detected by the PCR process.
-Plausibly, a variety of other reasons could also lead to a false negative such as logistical issues or mislabelling of samples.
-\todo{Cite reasons false negative results occur.}
-
-The minimum amount of virus required to be detected by a PCR test is known as the \emph{limit of detection}.
-\todo{Cite limit of detection and explain a bit more about it.}
-
-Viral loads are infrequently measured exactly.
-The most common form of data obtained is cycle threshold (Ct) values from real-time quantitative  reverse-transcriptase polymerase chain reaction (PCR) tests.
-The Ct value is proportional to the negative log of the viral load which is convenient when modelling log viral load as a piecewise linear function, since Ct values themselves are piecewise linear under this assumption.
-When a host's viral load is too low (below the limit of detection of the PCR test), no Ct value is available and hence viral load can be considered censored at the limit of detection.
-
-Ct values cannot be transformed into viral loads (expressed in units such as the number of viral RNA copies per swab) without additional information~\autocite{dahdouhCt,puhachSARSCoV2}.
-Ct values are test-specific, and can even vary between different batches of the same test.
-Testing a series of samples with known viral loads allows the relationship between Ct and viral load to be estimated for a specific setup.
 
 RT-PCR enables the detection of SARS-CoV-2 viral RNA in a sample.
 However, this does not necessarily mean that the virus is viable (\ie able to reproduce)~\autocite{puhachSARSCoV2}.
@@ -202,7 +197,7 @@ In particular, the sparse sampling means that the vast majority of detected infe
 
 \subsection{Assessment of Transmission and Contagiousness of COVID-19 in Contacts}
 
-The ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
+The ATACCC study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
 Contacts were invited to participate if they were 5 years or older and  could be reached within 5 days of the index case's symptom onset date.
 ATACCC was formed of two waves: ATACCC1 enrolled 393 contacts between 13th Sep 2020 and 31st Mar 2021 (when pre-Alpha and Alpha variants were circulating) and ATACCC2 enrolled 345 contacts between 24th May 2021 and 228th Oct 2021 (when the Delta variant was circulating).
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
@@ -238,6 +233,7 @@ The response rate was lower, with only 12\% of households agreeing to participat
 These rates of response raise the possibility of non-response bias.
 In particular, some demographic groups, such as young adults and individuals of non-white ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
 To correct for this, various methods have been used to adjust the estimates of prevalence.
+These methods typically also employed some borrowing of information across time because of the low number of daily positives, especially among any specific subpopulation (\eg age group or region).
 I explain the preferred method, MRP (multilevel regression and post-stratification), in \cref{E-backcalc:sec:methods}.
 
 In this thesis, I focus on the period from August 2020 until January 2021.
