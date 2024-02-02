@@ -12,6 +12,8 @@
 
 \chapter{SARS-CoV-2: biology and data} \label{biology-data}
 
+\todo[inline]{I should maybe swap 2.1 and 2.2 order. I like the current order because natural history feels more basic and introductory, but it does reference a bunch of stuff about PCR testing so it might be easier to follow the other way round.}
+
 \todo[inline]{Rewrite chapter 2 intro after writing thesis intro because it will be clearer how to divide content.}
 
 SARS-CoV-2 is a beta coronavirus that emerged in late 2019.
@@ -25,9 +27,51 @@ RNA viruses use RNA, rather than DNA, as their genetic material.
 \section{Natural history of the disease} \label{biology-data:sec:natural-history}
 
 \begin{figure}
+  \makebox[\textwidth][c]{
+  \begin{tikzpicture}[
+      node distance = 4cm,
+      on grid,
+      auto,
+      ->,>=stealth',
+      every state/.style={draw,rectangle,align=center},
+      ]
+
+      \node[state] (pre) {PCR negative \\ Not infectious};
+      \node[state, right of=pre] (pos) {PCR positive \\ Not infectious};
+      \node[state, right of=pos] (infectious) {PCR positive \\ Infectious};
+      \node[state, right of=infectious] (not-infectious) {PCR positive \\ Not infectious};
+      \node[state, right of=not-infectious] (neg) {PCR negative \\ Not infectious};
+
+      \node[draw=none, below=2cm of pre] (infected) {} ;
+      \node[draw=none, below=2cm of neg] (recovered) {} ;
+
+      \node[above=2cm of pre] (titleA) {(A)};
+      \node[below=1cm of infected] (titleB) {(B)};
+
+      % \draw (0,-2) -- node {Infected} (pre);
+      % \draw (not-infectious) -- (0,-2);
+
+      \path (infected) edge node {Infected} (pre)
+          (pre) edge (pos)
+            (pos) edge (infectious)
+            (infectious) edge (not-infectious)
+            (not-infectious) edge (neg)
+            (neg) edge (recovered);
+    
+    % Detectable
+    \node[below = 1cm of infectious] (detect-label) {Detectable};
+    \node[draw, thick, inner sep=0.3cm, fit=(pos) (infectious) (not-infectious) (detect-label), fill=blue!10,opacity=0.2] (detect-box) {};
+  \end{tikzpicture}
+  }
   \centering\includegraphics[width=\textwidth]{biology-data/natural-history}
-  \caption[Natural history of SARS-CoV-2.]{Natural history of SARS-CoV-2. Reproduced from \textcite{puhachSARSCoV2} with permission.}
-  \todo[inline]{Define the acronyms and terminology in the figure.}
+  \caption[Natural history of SARS-CoV-2.]{%
+    Natural history of SARS-CoV-2.
+    (A) A simplified state-based model, which I generally use in this thesis.
+    Shading represents states where the individual is detectable by a PCR test.
+    (B) A full model of the natural history, including continuous processes (Reproduced from \textcite{puhachSARSCoV2} with permission; durations are based on averages, there is a large amount of individual variation).
+    PCR positive refers to the main diagnostic test used in this thesis, and detect RNA genomes (see \cref{biology-data:sec:PCR} for more details).
+    Ag-RDT (antigen rapid diagnostic test) tests are lateral flow tests, which detect infectious virus rather than RNA, and are not used in this thesis.
+  }
   \label{biology-data:fig:natural-history}
 \end{figure}
 
@@ -37,9 +81,13 @@ First, they are exposed to the virus and become infected.
 At this initial stage they are not infectious (cannot spread the disease to others), do not have symptoms, and will not test positive on a PCR test.
 After a few days, they will start testing positive on a PCR test; this is normally prior to being infectious or having symptoms.
 Next, the individual becomes infectious; normally, this occurs prior to symptom onset for those who experience symptoms.
-Recovery from symptoms occurs after a few days, around individual is no longer infectious.
+Recovery from symptoms occurs after a few days, around the time the individual is no longer infectious.
 Finally, the individual will test negative on a PCR test.
-\todo{Talk about PCR testing detecting RNA material even with no viable virus.}
+
+\todo[inline]{Maybe move the following paragraph because it is referencing forward a bunch of concepts not yet introduced properly, or if sections 2.1 and 2.2 are swapped it starts making sense.}
+I will refer to individuals between the time they start testing positive on a PCR test and the time they stop testing positive on a PCR test as \emph{detectable}.
+It is not possible to directly observe whether an individual is detectable or not due to noise in the PCR test (see \cref{biology-data:sec:PCR}).
+However, viewing the number of RNA genome copies in an individual as a latent process this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the PCR test.
 
 The time for each of these stages depends on various features of host and virus characteristics.
 In this thesis, I focus on pre-Alpha variants of SARS-CoV-2 in unvaccinated individuals.
@@ -51,7 +99,13 @@ The above description gives three possible ways to define an individual who is i
 In this thesis, I adopt a definition of infection based on PCR test results.
 This is because it coincides with the data collected on the studies I use (see \cref{biology-data:sec:studies}).
 
-\todo[inline]{Add something about viral load being the process underlying these processes.}
+A host's \emph{viral load}, the quantity of viral particles in a host, is the underlying biological process determining many of these changes~\autocite{puhachSARSCoV2}.
+Any host's viral load is determined by the interaction of many biological processes, most prominently the virus's replication increasing the viral load and the host's immune response reducing the viral load~\autocite{keVivo}.
+Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining host cells, known as \emph{target cells}, to infect~\autocite{keVivo}.
+The host's immune system can slow this process by various mechanisms; the most relevant for SARS-CoV-2 is by making some target cells less susceptible to infection.
+A host's immune response is triggered by the viral load, and becomes stronger as the viral load increases.
+A high viral load is associated with being more infectious, more likely to test positive on a PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
+
 
 % Possible summaries
 % \begin{enumerate}
@@ -92,7 +146,7 @@ Quantitative real-time PCR (or RT-PCR) gives a measurement of the amount of the 
 After each PCR cycle, the amount of target DNA is measured and compared to a pre-derived standard.
 Once the measured amount of DNA exceeds the standard, the target DNA is said to be detected.
 The number of cycles required to reach detection is known as the \emph{cycle threshold} (Ct) value.
-Quantitative real-time PCR have a number of other practical advantages over previous PCR techniques (\eg speed); see \textcites{yangPCRdiagnostics}{valasekPower} for more details.
+Quantitative real-time PCR have a number of other practical advantages over previous PCR techniques (\eg speed); see \textcite{yangPCRdiagnostics,valasekPower} for more details.
 All RT-PCR tests I consider in this thesis are quantitative real-time RT-PCR tests, and produce Ct values.
 
 The Ct value decreases as the amount of DNA present in the original sample increases.
@@ -124,19 +178,45 @@ Viral loads are infrequently measured exactly.
 The most common form of data obtained is cycle threshold (Ct) values from real-time quantitative  reverse-transcriptase polymerase chain reaction (PCR) tests.
 The Ct value is proportional to the negative log of the viral load which is convenient when modelling log viral load as a piecewise linear function, since Ct values themselves are piecewise linear under this assumption.
 When a host's viral load is too low (below the limit of detection of the PCR test), no Ct value is available and hence viral load can be considered censored at the limit of detection.
-The relationship between Ct and viral load is noisy and can vary based on many factors including quality of swab obtained, primers used (even between batches), and the PCR system set-up~\autocites{dahdouhCt,hanRTPCR}.
+
+Ct values cannot be transformed into viral loads (expressed in units such as the number of viral RNA copies per swab) without additional information~\autocite{dahdouhCt,puhachSARSCoV2}.
+Ct values are test-specific, and can even vary between different batches of the same test.
+Testing a series of samples with known viral loads allows the relationship between Ct and viral load to be estimated for a specific setup.
 
 RT-PCR enables the detection of SARS-CoV-2 viral RNA in a sample.
 However, this does not necessarily mean that the virus is viable (\ie able to reproduce)~\autocite{puhachSARSCoV2}.
-High viral loads (low Ct values) are more likely to be viable, but more sophisticated tests are required to determine viability~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
+High viral loads (low Ct values) are more likely to be viable, but more sophisticated tests are required to determine viability.
+The gold standard procedure is attempting to grow and recover viral material from a sample, a process known as \emph{cell culturing}~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
 
-\todo[inline]{Include the idea of being "detectable"? Check if/where/how I've used this concept in current version of text.}
 
 \section{Studies used in this thesis} \label{biology-data:sec:studies}
 
+In this thesis, I make use of data from two studies which recruited participants from the general population in the UK.
+Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
+Therefore, the results from these studies are more generalisable to the entire UK population.
+The first study, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) performed daily testing of a small number of individuals with limited follow-up.
+The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, for but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
+The second study, the CIS (Coronavirus (COVID-19) Infection Survey), performed weekly or monthly testing of a large number of individuals with long follow-up.
+The large sample size and long follow-up allows for reliable estimates of the tails of the distributions of the quantities of interest, but the results are limited because the sparse sampling means that the viral load dynamics cannot be estimated.
+In particular, the sparse sampling means that the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
+
 \subsection{Assessment of Transmission and Contagiousness of COVID-19 in Contacts}
 
+The ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
+Contacts were invited to participate if they were 5 years or older and  could be reached within 5 days of the index case's symptom onset date.
+ATACCC was formed of two waves: ATACCC1 enrolled 393 contacts between 13th Sep 2020 and 31st Mar 2021 (when pre-Alpha and Alpha variants were circulating) and ATACCC2 enrolled 345 contacts between 24th May 2021 and 228th Oct 2021 (when the Delta variant was circulating).
+Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
+For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve.
+Other data such as demography and symptoms was also collected.
+For further details see \textcite{singanayagamDuration,hakkiOnset}.
+
+\Textcite{hakkiOnset} analyse the viral load of the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
+For 115 contacts with at least one positive RT-PCR test, the growth phase of viral load was not captured; these contacts were excluded from this analysis to ensure all individuals viral load trajectories could be identified.
+More details on this analysis and my extensions to it can be found in \cref{E-ATACCC}.
+
 \subsection{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
+
+\todo[inline]{Do I need to distinguish between estimates of positivity and prevalence?}
 
 The CIS was setup in April 2020 to provide gold-standard measurements of the prevalence of SARS-CoV-2 in the community.
 It is a longitudinal study with a representative sample of private households, this excludes settings such as care homes and student halls.
@@ -155,13 +235,16 @@ Around 50\% of households agreed to participate, with around 90\% of eligible in
 After July 2020, addresses were also randomly sampled from a database of all UK addresses held by the ONS.
 The response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (383,732 in total) contributed multiple swabs to the survey.
 
+These rates of response raise the possibility of non-response bias.
+In particular, some demographic groups, such as young adults and individuals of non-white ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
+To correct for this, various methods have been used to adjust the estimates of prevalence.
+I explain the preferred method, MRP (multilevel regression and post-stratification), in \cref{E-backcalc:sec:methods}.
+
 In this thesis, I focus on the period from August 2020 until January 2021.
 During the start of this period, the recruitment rate of CIS was expanded (see \cref{biology-data:fig:CIS-recruitment}(A)).
 Following this, the recruitment then decreases and stabilises, as does the rate of swabs taken (see \cref{biology-data:fig:CIS-recruitment}(B)).
 The recruitment pattern was chosen to hit targets regarding the fortnightly number of swabs.
 Because the testing becomes less frequent after the first 4 weeks, some continuous recruitment is needed to maintain the number of swabs, as well as to replace participants who drop out.
-
-\todo[inline]{Discuss non-response bias}
 
 \begin{figure}
   \centering \includegraphics{biology-data/CIS-recruitment}
