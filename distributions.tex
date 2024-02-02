@@ -15,7 +15,7 @@ Lognormal & $\LN(\mu, \sigma^2)$ & $\mu$ (mean of the logarithm)\newline $\sigma
 Gamma & $\GamDist(\alpha, \beta)$ & $\alpha > 0$ (shape) \newline $\beta > 0$ (rate) & $\frac{\alpha}{\beta}$ & $\frac{\alpha}{\beta^2}$ & $\frac{\beta^\alpha}{\Gamma(\alpha)\theta}x^{\alpha-1}e^{-\beta x}$ \\
 Beta & $\BetaDist(\alpha, \beta)$ & $\alpha > 0$ (shape)\newline $\beta > 0$ (shape) & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$ \\
 Exponential & $\Exponential(\lambda)$ & $\lambda$ (rate) & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ & $\lambda e^{-\lambda x}$ \\
-LKJ* & $\LKJ(\eta)$ & $\eta > 0$ (shape) & $\matr{I}$ (identity matrix) & N/A & $\det(\matr{x})^{\eta-1}$ \\
+LKJ* & $\LKJ(\eta)$ & $\eta > 0$ (shape) & $\matr{I}$ (identity matrix) & N/A & $C \det(\matr{x})^{\eta-1}$ \\
 \end{tabular}
 
 * The LKJ distribution~\autocite{lewandowskiGenerating} has support over positive definite symmetric matrices $\matr{x}$.
