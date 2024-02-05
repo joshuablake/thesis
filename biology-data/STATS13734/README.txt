@@ -1,0 +1,1 @@
+These outputs have been provided as management information for operational planning purposes. They are provisional estimates circulated before public release. This management information should not be shared widely and should only be used for operational planning purposes. This information is not to be used publicly and ahead of being released publicly by ONS.
