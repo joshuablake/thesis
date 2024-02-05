@@ -182,3 +182,9 @@ transmission/outputs/%:
 
 distributions.pdf: $(DISTRIBUTIONS_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
+
+#####################################################
+## FOR APPROVAL - CIS
+
+cis.pdf: cis.tex biology-data/STATS13734/data_viz.pdf $(SHARED_DEPS)
+	$(LATEX_CMD)

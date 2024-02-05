@@ -304,3 +304,7 @@ TSWLatexianTemp*
 cis-imperfect-testing/STATS17701/
 cis-imperfect-testing/STATS18596/
 transmission/outputs/
+
+## Files for SRS extraction request
+cis.tex
+CIS-intro-extraction/
