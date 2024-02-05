@@ -31,10 +31,10 @@ introduction.pdf: $(INTRODUCTION_DEPS) $(SHARED_DEPS)
 #####################################################
 ## BIOLOGY DATA CHAPTER
 
-biology-data/CIS-technical-data.xslx:
+biology-data/CIS-technical-data.xlsx:
 	wget -qO$@ https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/datasets/covid19infectionsurveytechnicaldata/2022/previous/v6/20220211covid19infectionsurveydatasetstechnical.xlsx
 
-biology-data/CIS-recruitment.pdf: biology-data/CIS-recruitment.R utils.R biology-data/CIS-technical-data.xslx
+biology-data/CIS-recruitment.pdf: biology-data/CIS-recruitment.R utils.R biology-data/CIS-technical-data.xlsx
 	Rscript $<
 
 biology-data/CIS-positivity.pdf biology-data/CIS-num-tests.pdf: biology-data/CIS-positivity.R utils.R transmission/outputs/region.rds SEIR/CIS/data.csv

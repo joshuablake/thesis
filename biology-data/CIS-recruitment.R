@@ -6,7 +6,7 @@ library(patchwork)
 source(here::here("utils.R"))
 
 swabs = readxl::read_excel(
-    here::here("biology-data", "CIS-technical-data.xslx"),
+    here::here("biology-data", "CIS-technical-data.xlsx"),
     sheet = "2f",
     range = "A5:E656",
     col_types = c(
