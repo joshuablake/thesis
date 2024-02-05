@@ -88,18 +88,6 @@ High viral loads (low Ct values) are more likely to be viable, but more sophisti
 The gold standard procedure is attempting to grow and recover viral material from a sample, a process known as \emph{cell culturing}~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
 Further details on cell culturing are beyond the scope of this thesis.
 
-
-\section{Studies used in this thesis} \label{biology-data:sec:studies}
-
-In this thesis, I make use of data from two studies which recruited participants from the general population in the UK.
-Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
-Therefore, the results from these studies are more generalisable to the entire UK population.
-The first study, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) performed daily testing of a small number of individuals with limited follow-up.
-The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
-The second study, the CIS (Coronavirus (COVID-19) Infection Survey), performed weekly or monthly testing of a large number of individuals with long follow-up.
-The large sample size and long follow-up allows for reliable estimates of the tails of the distributions of the quantities of interest, but the results are limited because the sparse sampling means that the viral load dynamics cannot be estimated.
-In particular, the sparse sampling means that the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
-
 \section{Natural history of the disease} \label{biology-data:sec:natural-history}
 
 \begin{figure}
@@ -192,6 +180,23 @@ However, viewing the number of RNA genome copies in an individual as a latent pr
 While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
 
 
+
+\section{Studies used in this thesis} \label{biology-data:sec:studies}
+
+In this thesis, I use data from two studies which recruited participants from the general population in the UK.
+Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
+Therefore, the results from these studies are more generalisable to the entire UK population.
+
+\todo[inline]{Some of this might be moved into the introductory chapter motivating each part of the thesis.}
+
+The first study, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts), performed daily testing of a small number of individuals with short follow-up.
+The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
+
+The second study, the CIS (Coronavirus (COVID-19) Infection Survey), performed weekly or monthly testing of a large number of individuals with long follow-up.
+The large sample size and long follow-up allows for reliable estimates of the tails of the distributions of the quantities of interest.
+However, the results are limited because the sparse sampling which means that the viral load dynamics cannot be estimated.
+In particular, the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
+
 \subsection{Assessment of Transmission and Contagiousness of COVID-19 in Contacts}
 
 The ATACCC study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
@@ -265,7 +270,7 @@ Because the testing becomes less frequent after the first 4 weeks, some continuo
 The \emph{positivity rate} is the proportion of people in a given population that (if they were tested) would test positive for SARS-CoV-2 at a defined point in time; in this context test means an RT-PCR test~\autocite{cisMethodsONS}.
 A notable feature of this definition is that it explicitly does not correct for false positive or negative results.
 Generally, the point in time of interest is a specific day, although it has also been applied to a week~\autocite{cisMethodsONS,pouwelsMRPvaccination,pouwelsCommunity}.
-Larger time periods (\ie weeks instead of days) allow more granular estimates on other variables, most notably geographic area.
+Larger time periods (\ie weeks instead of days) allow more granular estimates in other dimensions, most commonly geography.
 
 If the CIS was truly a random sample, an unbiased estimator of the positivity rate would be the proportion of positive tests in the sample; I refer to this as the uncorrected positivity rate.
 However, in practice, two issues arise with this.
@@ -279,8 +284,8 @@ To address the low number of positives, MRP uses a hierarchical Bayesian model t
 I explain the details of this model, and how I use it for estimating incidence in \cref{E-backcalc:sec:methods}
 
 The outputs of this model compared to the raw positivity rate are shown in \cref{biology-data:fig:CIS-positivity}.
-Both show similar trends
-The MRP estimate tends to increase the estimated positivity rate, compared to uncorrected positivity rate, because underrepresented groups tend to have higher positivity.
+Both show similar trends.
+The MRP estimate most often increases the estimated positivity rate, compared to uncorrected positivity rate, because the underrepresented demographic groups tended to have higher positivity rates.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{biology-data/CIS-positivity}
@@ -292,7 +297,7 @@ The MRP estimate tends to increase the estimated positivity rate, compared to un
   \label{biology-data:fig:CIS-positivity}
 \end{figure}
 
-Interpreting positivity, or prevalence, directly is difficult because it is a delayed and smoothed measure of incidence (see \cref{inc-prev:sec:prevalence-process}).
+Interpreting positivity, or prevalence, directly is difficult because it is a delayed and smoothed measure of incidence (see \cref{E-inc-prev:sec:prevalence-process}).
 The major aim of this thesis is the ability to produce estimates of incidence, which can be interpreted in terms of population behaviour.
 
 As well as estimating the positivity rate for the whole of England (and the devolved nations), the CIS also estimates the positivity rate for various subpopulations, in particular geographic areas and age groups.
@@ -319,11 +324,12 @@ As $\rho \to \infty$, the distribution tends towards the uniform distribution on
 
 Positive test results need to be grouped into \emph{infection episodes}.
 An infection episode is a series of positive tests that originate from a single transmission event.
-I use a method developed throughout the pandemic, and published within \textcite{weiRisk}; see that publication for full justification of the criteria.
-Denote the time of a positive test by $t$, the number of consecutive negative tests prior to $t$ by $n$, and the time of the first positive test in the same individual by $t_p$ ($t_p = -\infty$ if there is no previous positive test in the same individual).
-The test at $t$, in the pre-Omicron era (prior to December 2021), is defined as the start of a new infection episode if any of the following apply.
+I use a heuristic-based algorithm developed throughout the pandemic, and published within \textcite{weiRisk}; see that publication for full justification of the criteria.
+
+The algorithm determines whether a new positive tests, at time $t$, is part of the previous infection episode in the same individual, where that previous infection episode had its first positive test at $t_p$.
+If the individual has no previous positive tests, the new positive test is always the start of a new infection episode.
+Otherwise, the test at $t$, in the pre-Omicron era (prior to December 2021), is defined as the start of a new infection episode if any of the following apply.
 \begin{enumerate}
-  \item $t_p = -\infty$.
   \item $n \geq 1$ and $t - t_p > 120$.
   \item $n \geq 2$ and $t - t_p > 90$.
   \item $n \geq 3$ and $t - t_p > 60$.
@@ -333,10 +339,9 @@ The test at $t$, in the pre-Omicron era (prior to December 2021), is defined as 
 
 A negative between two positive tests, when those positives are classed as part of the same infection episode, is known as an \emph{intermittent negative}.
 Intermittent negatives are the clearest example of a false negative.
-An intermittent negative is when an individual tests negative but tested positive previously and subsequently.
-Intermittent negatives are stripped out when creating the dataset used for all duration analyses in this chapter, but demonstrate that false negatives do occur.
+I will generally consider that intermittent negatives are uninformative on the duration of detectability, and hence exclude them from several analyses.
 
-A sample of 500 randomly selected infection episodes (selected from the episodes used in the analyses in this thesis) have their test results.
+A sample of 500 randomly selected infection episodes (selected from the episodes used in the analyses in this thesis) have their test results shown in \cref{biology-data:fig:episodes}.
 As can be seen, the number of tests within an episode, their length, and other characteristics vary greatly.
 \begin{figure}
   \thisfloatpagestyle{empty}
@@ -349,6 +354,7 @@ As can be seen, the number of tests within an episode, their length, and other c
 
     This figure has been provided as management information for operational planning purposes. They are provisional estimates circulated before public release. This management information should not be shared widely and should only be used for operational planning purposes. This information is not to be used publicly and ahead of being released publicly by ONS.
   }
+  \label{biology-data:fig:episodes}
 \end{figure}
   \todo{Work out what to do with this figure....}
 
