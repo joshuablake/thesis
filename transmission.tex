@@ -7,7 +7,7 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-\todo[inline]{Rewrite the intro: eg see Dani's Overleaf comments}
+\todo[inline]{Intro probably needs rewriting, with novelty claims and a bit more context. Revisit once intro chapters written.}
 
 In this chapter, I use the preferred estimate of the duration of RT-PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
 This estimation is based only on the CIS data (see \cref{transmission:sec:data} for further details).
@@ -27,7 +27,7 @@ Finally, in \cref{transmission:sec:comparison}, I compare the results of the two
 }
 \section{Data} \label{transmission:sec:data}
 
-\todo[inline]{Consider moving all of this section into chapter 2, where CIS is introduced, and spell it out a bit more in that context}
+\todo[inline]{This is now mostly in chapter 2, double-check there's nothing missed
 
 Throughout this chapter, the CIS data will be stratified into the regions of England and the following age groups.
 \begin{enumerate}
@@ -68,6 +68,16 @@ Finally, the prevalence is poststratified (as explained later) to the CIS target
 I modify this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before poststratifying.
 % I fit a modification model to estimate prevalence, then transform the posterior distribution of prevalence in each stratum to a posterior distribution of incidence.
 % Finally, I poststratify the posterior distribution of incidence to the CIS target population and subpopulations of interest.
+
+The deterministic relationship between incidence proportion and prevalence means that either can be inferred, with the other then calculated.
+Denote the quantity to be inferred at time $t$ is strata $i$ as $\pi_{it}$.
+Note that for any $i$ and $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
+The statistical model used for inference, including the borrowing of information, should have the following properties.
+\begin{itemize}
+    \item The smoothing model should penalise towards exponential growth.
+        Penalising towards exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
+        Furthermore, such penalisation has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+\end{itemize}
 
 \todo[inline]{I am struggling the framing of these paragraphs. Maybe talk about being linear in its parameters and pre-existing software packages and not mention GLMs?}
 The advantage of fitting a multilevel regression model on prevalence, rather than incidence, is that prevalence with appropriate prior (or penalisation) can be expressed as a generalised linear model (GLM)\todo{maybe cite backcalculation as a GLM} or Gaussian Markov Random Field (GMRF).
@@ -111,7 +121,7 @@ The terms are as follows.
 All parameters have the default R-INLA priors, except where stated above.
 For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
 
-The model was fit separately and independently for each region, implicitly adding all interactions between region and the other variables.
+The model was fitted separately and independently for each region, implicitly adding all interactions between region and the other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
 
 Having fit the prevalence model, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
@@ -146,7 +156,7 @@ For any stratum and day $t$, this occurs if the prevalence reduces between day $
 
 There are two places where this misspecification could occur.
 The first is the survival matrix, $\matr{S}$.
-For example, \cref{E-imperf-test} showed that it is sensitive to assumptions made.
+For example, \cref{E-imperf-test} showed that it is sensitive to assumptions made, such as the assumed $\psens$ and ....
 The second is the specification of the statistical model used to estimate prevalence, for example the form of the smoothing used.
 
 \todo[inline]{Maybe relate following paragraph to the GLM discussion at the start of the section - its basically the same point}
@@ -182,7 +192,7 @@ A second peak occurs in late December or early January in all regions; this seco
 
 The incidence proportion was highest among the 11--15 and 16--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
 Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale).
-This is the pattern predicted by an age-stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}), if behavioural changes are independent of age group, and there is negligible impact of immunity.
+The distribution of infections among age groups remaining constant over short periods of time is the pattern predicted by standard age-stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) in equilibrium, if behavioural changes are independent of age group, and there is negligible impact of immunity.
 The incidence proportion in the 16--25 age group decreases faster than other age groups during November.
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
@@ -215,7 +225,7 @@ There are various advantages to using a mechanistic model to estimate transmissi
 This section applies the mechanistic modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models} to estimate the transmission of SARS-CoV-2 in England.
 
 The transmission part of the model follows \textcite{birrellRealtime}.
-A novel approach (\cref{SEIR:sec:observation}) links the transmission model to the data.
+A novel approach (\cref{SEIR:sec:observation}) links the transmission model to prevalence data (here from the CIS, but the approach is generalisable).
 In the mechanistic modelling literature, this part of the model is referred to as the observation model; however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
 
 This section uses the same notation as \cref{E-SEIR:sec:mechanistic-models}, following the infectious disease modelling literature rather than the statistical conventions used elsewhere in this thesis.
@@ -576,7 +586,7 @@ Both of these rely on an assumption that the epidemic is in a steady-state expon
 
 During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
 This follows directly from the ODEs if $\vec{s}$ is constant. 
-The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\phi$ should be more computationally efficient.
+The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\psi$ should be more computationally efficient.
 If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
 \begin{align}
     \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
@@ -655,6 +665,7 @@ This is similar when considering coverage of the derived quantities incidence an
 \begin{figure}
     \thisfloatpagestyle{empty}
     \vspace{-3cm}
+    \todo[inline]{Add (A) incidence to the top panel and (B) prevalence to the bottom panel}
     \makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}}
     \caption[Coverage of simulation study (derived quantities)]{%
         Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for incidence (top) and prevalence (bottom); see text for full definition.
@@ -795,7 +806,7 @@ Then, each variant would be explicitly included in the model to fit to this data
 
 These hypotheses for the mechanism causing changes in $\beta_w$ are correlated across the country.
 This can explain that similar patterns emerge for $\beta_w$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these being estimated independently (\ie there is no model structure which favours correlated values).
-These correlations could be exploited to improve the precision of estimates with a more complex model which borrows information across regions.
+These correlations could be exploited to improve the precision of estimates with a more complex model which borrows information across regions, \eg a hierarchical model.
 
 The current model could be more flexible with regards to the age distribution of infections.
 This would better exploit one of the strengths of the CIS: the availability of data  on all age groups.

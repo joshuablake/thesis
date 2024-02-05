@@ -132,6 +132,8 @@ Through consideration of \cref{imperf-test:fig:bounding-cis-sensitivity}, and th
 \end{equation}
 where $t$ is the number of days since infection.
 Therefore, this model consists of a linear decline in test sensitivity, before a constant minimum point.
+
+This could be incorporated into the simulation study be generating test results at ...
 Adapting the simulation study to incorporate this test sensitivity is much more similar to the data (see purple histogram in \cref{imperf-test:fig:sim-single-pos}).
 This model does not require low test sensitivities early in the infection, maintaining compatibility with the results in \cref{E-ATACCC}.
 
@@ -170,7 +172,7 @@ It is a false negative if and only if the episode ends after the test, \ie $e_i 
 I proceed by considering whether this is the case, and considering the case with $b_i$ known; $b_i$ will later be integrated out.
 
 First, if $e_i \leq r_i^{(e)}$, meaning that the test at $r_i^{(e)}+1$ is a true negative and the end of the episode is interval-censored as in the previous chapter.
-In this case, the test at $r_i^{(e)}$ is a true negative, as are all other tests not in $\sched'_i$.
+In this case, the test at $r_i^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_i$.
 These occur with probability 1, by the assumption of no false positives.
 The tests in $\sched_i'$ are either true positives or false negatives.
 \begin{align}
@@ -206,6 +208,8 @@ p_{ia}'
 \label{imperf-test:eq:pia-prime}
 \end{align}
 Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
+
+Constant terms => proprtional to simpler thing
 
 \subsection{Modifying \texorpdfstring{$p_{iu}$}{piu}} \label{imperf-test:sec:modifying-p_iu}
 
@@ -273,7 +277,7 @@ I simulate datasets under four conditions: a constant $\psens$ of 0.6, 0.8, or 1
 The simulation is otherwise unchanged from that in \cref{E-perf-test:sec:simulation-study}.
 The number of single positive episodes in each of these conditions, compared to the number observed in the CIS data, is shown in \cref{imperf-test:fig:sim-single-pos}.
 
-For each simulated dataset, I estimate the survival function using the model proposed in \cref{imperf-test:sec:modelling} and assuming $\psens$ equals 0.6, 0.8, or 1.0.
+For each simulated dataset, I estimate the survival function using the likelihood proposed in \cref{imperf-test:sec:modelling} and assuming $\psens$ equals 0.6, 0.8, or 1.0.
 If the dataset was simulated using a constant $\psens$, and that value of $\psens$ matches the value assumed during inference, I refer to $\psens$ as being correctly specified; otherwise I refer to it as misspecified.
 However, there is still some misspecification of the model to false negatives owing to the simplifying assumptions made.
 The amount that the simplifying assumptions are violated increases as $\psens$ decreases.
@@ -323,7 +327,7 @@ Therefore, I will apply this model to the real CIS data in the next section.
   \caption[Simulation study results with varying test sensitivity]{%
     Posterior (median and 95\% credible interval) of the survival time for the simulation study with a variable test sensitivity.
     Each panel shows the results of performing inference with a different assumed value for the test sensitivity.
-    The posterior estimate using a model with a constant test sensitivity of 0.8 (middle panel) is similar to the true value (black line).
+    The posterior estimate using a model with a constant test sensitivity of 0.8 (B) is similar to the true value (black line).
   }
   \label{imperf-test:fig:variable-test-sensitivity}
 \end{figure}
