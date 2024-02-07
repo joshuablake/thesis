@@ -10,7 +10,7 @@
 \todo[inline]{Intro probably needs rewriting, with novelty claims and a bit more context. Revisit once intro chapters written.}
 
 In this chapter, I use the preferred estimate of the duration of RT-PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to estimate the transmission of SARS-CoV-2 in England.
-This estimation is based only on the CIS data (see \cref{transmission:sec:data} for further details).
+This estimation is based only on the CIS data (as shown in \cref{E-biology-data:sec:positivity} for further details).
 I will show that this data is sufficient to estimate the parameters of the transmission process, suggesting surveys of this type are sufficient for surveillance of an epidemic.
 
 I take two approaches; the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
@@ -27,7 +27,7 @@ Finally, in \cref{transmission:sec:comparison}, I compare the results of the two
 }
 \section{Data} \label{transmission:sec:data}
 
-\todo[inline]{This is now mostly in chapter 2, double-check there's nothing missed
+\todo[inline]{This is now in \cref{E-biology-data:sec:posivity})}
 
 Throughout this chapter, the CIS data will be stratified into the regions of England and the following age groups.
 \begin{enumerate}
@@ -72,11 +72,18 @@ I modify this process by transforming the posterior distribution of prevalence i
 The deterministic relationship between incidence proportion and prevalence means that either can be inferred, with the other then calculated.
 Denote the quantity to be inferred at time $t$ is strata $i$ as $\pi_{it}$.
 Note that for any $i$ and $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
-The statistical model used for inference, including the borrowing of information, should have the following properties.
+The statistical model and inference procedure, including the borrowing of information, should have the following properties.
 \begin{itemize}
     \item The smoothing model should penalise towards exponential growth.
         Penalising towards exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
         Furthermore, such penalisation has previously been shown to improve estimates of prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+    \item Limit estimates to epidemiologically and biologically plausible values.
+        That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
+        While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a single time unit (day) which is not biologically plausible.
+    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:positivity}).
+    \item Computationally efficient.
+        The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see\todo{ref section on SRS computational limitations}).
+        In particular, MCMC should be avoided because incorporating sufficient covariates to account for all groups led to a model that was too computationally expensive~\citePersonalComms{Koen Pouwels}.
 \end{itemize}
 
 \todo[inline]{I am struggling the framing of these paragraphs. Maybe talk about being linear in its parameters and pre-existing software packages and not mention GLMs?}
