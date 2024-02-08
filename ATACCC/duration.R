@@ -43,3 +43,21 @@ ggsave(
     units = "cm",
     dpi = 300
 )
+
+bind_rows(
+    posterior_draws |>
+        mutate(Group = "Unvaccinated"),
+    posterior_draws2 |>
+        mutate(Group = "Vaccinated")
+) |>
+    summarise(
+        median = time[min(which(F >= 0.5))],
+        .by = c(.draw, Group),
+    ) |>
+    pivot_wider(
+        names_from = Group,
+        values_from = median,
+        id_cols = .draw
+    ) |>
+    mutate(vaccinated_shorter = Vaccinated < Unvaccinated) |>
+    summarise(p_vaccinated_shorter_median = mean(vaccinated_shorter))
