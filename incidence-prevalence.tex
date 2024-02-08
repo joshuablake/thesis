@@ -79,7 +79,7 @@ It is a \emph{point} or \emph{counting} process, where each infection is an even
 
 A point process is a random function of continuous time $K(t)$.
 $K(t)$ must take non-negative integer values and be monotonically increasing in $t$.
-The interpretation of $K(t)$ is the number of events, here infections, that have occurred in the interval $(-\infty, t]$~\autocites[244]{yanDistribution}.
+The interpretation of $K(t)$ is the number of events, here infections, that have occurred in the interval $(-\infty, t]$~\autocite[244]{yanDistribution}.
 In the context of a disease, the point process can be discretised into the incidence on day $t$ as $Z_t = K(t) - K(t-1)$, where $t$ is an integer.
 I will explain two approaches to modelling the infection process.
 
@@ -93,12 +93,12 @@ They vary greatly in their details and realism~\autocite{murilloMultiscale}.
 
 \subsection{Poisson processes} \label{inc-prev:sec:poisson-process}
 
-A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocites[e.g., in the context of HIV,][]{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
+A commonly-used point process for infectious disease epidemiology is the time-inhomogenous Poisson process~\autocite[e.g., in the context of HIV,][]{brookmeyerMethod}{paganoHIV}{rosenbergBackcalculation}{brookmeyerBackcalculation}.
 % A time-homogenous Poisson process is the special case where $\nu(r)$ is constant.
 Extensions to this model, which I do not consider here, have incorporated covariates, such as geography or age~\autocite[e.g.][]{diggleModeling}.
 
 The first defining property of a Poisson process is that the counts are Poisson distributed.
-Formally, $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the infection process at time $r$~\autocites[244]{yanDistribution}.
+Formally, $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the infection process at time $r$~\autocite[244]{yanDistribution}.
 
 The other defining property of a Poisson process is that it has \emph{independent increments}.
 A counting process has independent increments if the number of events in disjoint intervals are independent conditional on the intensity~\autocite[244]{yanDistribution}.

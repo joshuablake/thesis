@@ -33,7 +33,7 @@ It is central to the work in this thesis because it can be used to detect the pr
 SARS-CoV-2 is an RNA virus, but PCR amplifies DNA.
 Therefore, before the PCR process can be used to detect SARS-CoV-2, the RNA must be converted to DNA.
 This process is known as \emph{reverse transcription}.
-In reverse transcription, a naturally-occurring enzyme known as reverse transcriptase generates cDNA (complementary DNA) from the RNA in the sample~\autocites{valasekPower}.
+In reverse transcription, a naturally-occurring enzyme known as reverse transcriptase generates cDNA (complementary DNA) from the RNA in the sample~\autocite{valasekPower}.
 Any sequence of cDNA has a one-to-one correspondence with a sequence of RNA.
 The cDNA can then be used in the standard PCR process.
 
@@ -63,6 +63,13 @@ The logarithm is because the process is geometric, and hence the number of DNA c
 Therefore, the Ct value is proportional to the negative log of the amount of DNA present in the original sample.
 The amount of cDNA produced by reverse transcription is proportional to the amount of RNA present in the original sample.
 Therefore, when testing for SARS-CoV-2, the Ct value is proportional to the negative log of the amount of SARS-CoV-2 RNA present in the original sample.
+
+\todo[inline]{Discuss noise in Ct values (batch effects, swabbing process, etc.) see commented-out text below}
+% The noise arises from a variety of sources, including the sampling/swabbing process and batch effects in the RT-PCR process~\autocite{hanRTPCR}.
+% A positive RT-PCR test has a Ct value.
+% Ct values are linearly related to viral load (see \cref{E-biology-data:sec:PCR})
+% A negative RT-PCR test signals either the viral load is too low to be detected, \ie below the limit of detection, or the test is a false negative.
+% Positive RT-PCR tests, especially those with low viral loads, could be false positives, for example caused by contamination.
 
 Like any diagnostic test, PCR tests are not perfect.
 False positives and false negatives can occur.
@@ -204,7 +211,7 @@ Contacts were invited to participate if they were 5 years or older and  could be
 ATACCC was formed of two waves: ATACCC1 enrolled 393 contacts between 13th Sep 2020 and 31st Mar 2021 (when pre-Alpha and Alpha variants were circulating) and ATACCC2 enrolled 345 contacts between 24th May 2021 and 228th Oct 2021 (when the Delta variant was circulating).
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
 For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve.
-Other data such as demography and symptoms was also collected.
+Other data such as demography and symptoms was also collected, although I do not use this information.
 For further details see \textcite{singanayagamDuration,hakkiOnset}.
 
 \Textcite{hakkiOnset} analyse the viral load of the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
