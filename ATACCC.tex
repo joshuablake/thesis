@@ -151,12 +151,12 @@ Inference settings were the same as \textcite{hakkiOnset}, which included 8 chai
 \begin{tabular}{l c l l}
     Parameter description & Symbol & Distribution \\
     \hline \\
-    Mean max viral load & $\mu_{v_\text{max}, g}$ & $\N(15, 15^2)$ \\
+    Mean max log viral load & $\mu_{v_\text{max}, g}$ & $\N(15, 15^2)$ \\
     Standard deviation of max log viral load & $\sigma_{v_\text{max}}$ & $\N_+(0, 10^2)$ \\
-    Mean rate of viral load increase & $\mu_{a, g}$ & $\N(1.25, 0.75^2)$ \\
-    Standard deviation of rate of viral load increase & $\sigma_{a}$ & $\N_+(0, 1)$ \\
-    Mean rate of viral load decrease & $\mu_{b, g}$ & $\N(0.5, 1.4^2)$ \\
-    Standard deviation of rate of viral load decrease & $\sigma_{b}$ & $\N_+(0, 1)$ \\
+    Mean rate of log viral load increase & $\mu_{a, g}$ & $\N(1.25, 0.75^2)$ \\
+    Standard deviation of rate of log viral load increase & $\sigma_{a}$ & $\N_+(0, 1)$ \\
+    Mean rate of log viral load decrease & $\mu_{b, g}$ & $\N(0.5, 1.4^2)$ \\
+    Standard deviation of rate of log viral load decrease & $\sigma_{b}$ & $\N_+(0, 1)$ \\
     Correlation of viral load parameters & $\matr{C}_\phi$ & $\LKJ(1)$ \\
     Negative log of rate of test failure & $-\log \rho$ & $\N(3, 0.5)$ \\
     Mean log viral load for test failures & $x_0$ & $\N(0, 3^2)$ \\
@@ -165,7 +165,6 @@ Inference settings were the same as \textcite{hakkiOnset}, which included 8 chai
     Time from first test to peak & $\tau_{\max,i}$ & $\N(5,5)$
 \end{tabular}
 \caption[Viral load model priors]{Priors for each parameter, taken from \textcite{hakkiOnset}. $\N_+$ indicates a normal distribution truncated to the non-negative reals. Details of the distributions, including their parameterisations, are in \cref{E-distributions}. The elements of $\vec{\mu}_{\phi,g}$ and $\vec{\sigma}_\phi$ have independent priors placed on them, as specified in the first lines of the table. Priors are the same for all $g$ and $i$. \label{ATACCC:table:hakki-priors}}
-\todo[inline]{Check if the $\mu$ parameter priors are on the mean of log parameters or mean of parameters}
 \end{table}
 
 \section{Modifying the Hakki observation model} \label{ATACCC:sec:observation-modification}
