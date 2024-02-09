@@ -229,16 +229,16 @@ However, the rest of the series is robust to this assumption and hence reliable.
 
 \section{Mechanistic modelling} \label{SEIR}
 
-There are various advantages to using a mechanistic model to estimate transmission (see \cref{E-inc-prev:sec:infection-process}).
-This section applies the mechanistic modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models} to estimate the transmission of SARS-CoV-2 in England.
+In this section, I apply the general mechanistic transmission modelling framework from \cref{E-SEIR} to the CIS prevalence data.
+The application of this framework follows \textcite{birrellRealtime}, with the most substantial context-specific work in parameterising the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
+A novel approach (\cref{SEIR:sec:observation}) links this transmission model to the CIS prevalence data; the approach is generalisable to other studies collecting representative prevalence data, \eg REACT.
+In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
+Having specified the full model (\cref{SEIR:sec:methods-application}), I conducted a simulation study to validate the inference process and identifiability (\cref{SEIR:sec:sim-study}), before applying the model to the CIS data (\cref{SEIR:sec:application}).
+In \cref{SEIR:sec:discussion}, I discuss the results; in \cref{transmission:sec:comparison} I compare the results to those in the previous section.
 
-The transmission part of the model follows \textcite{birrellRealtime}.
-A novel approach (\cref{SEIR:sec:observation}) links the transmission model to prevalence data (here from the CIS, but the approach is generalisable).
-In the mechanistic modelling literature, this part of the model is referred to as the observation model; however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
+In common with \cref{E-SEIR:sec:mechanistic-models}, the notation in this section differs slightly from the rest of the thesis.
 
-This section uses the same notation as \cref{E-SEIR:sec:mechanistic-models}, following the infectious disease modelling literature rather than the statistical conventions used elsewhere in this thesis.
-
-\subsection{Methods}
+\subsection{Methods} \label{SEIR:sec:methods-application}
 
 % The model will be stratified only by region and age group, so the data are aggregated to these levels.
 % Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole $[0, 11)$ age group.
@@ -250,16 +250,16 @@ By modelling each region independently, I assume that the epidemics in each regi
 Clearly, this is not realistic as travel between regions of England is common and unrestricted.
 However, for a large epidemic, the non-interaction is a good approximation~\autocite{birrellRealtimea}.
 
-\subsubsection{WAIFW matrix}
+\subsubsection{WAIFW matrix} \label{SEIR:sec:WAIFW-application}
 
 A parsimonious model is needed to parameterise the WAIFW matrix (see \cref{E-SEIR:sec:structured-populations}).
-I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, decomposing the rate of transmission from individuals in age group $a'$ to susceptible individuals in age group $a$ as $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.
-This separates contact patterns, $\kappa_{aa'}$, which can vary over time; probabilities of transmission upon contact between age groups $a$ and $a'$, $q_{aa'}$, assumed constant; a region-wide effect for time, $\beta(t)$; and the population of the stratum, $N_{a'}$.
+I follow the WAIFW matrix parameterisation of \textcite{birrellRealtime}, decomposing the rate of transmission from infectious individuals in age group $a'$ to susceptible individuals in age group $a$ as $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'} N_{a'}$.
+This separates contact patterns, $\kappa_{aa'}(t)$, which can vary over time; probabilities of transmission upon contact between age groups $a$ and $a'$, $q_{aa'}$, assumed constant; a region-wide effect for time, $\beta(t)$; and the population of the stratum, $N_{a'}$.
 
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcite{vanleeuwenTime,vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocite{vanleeuwenTime,birrellRealtime}.
 % These start with estimates of contact in each setting, based on \textcite{vanleeuwenAugmenting}.
-This method starts with pre-pandemic baseline estimates of: $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
+This method starts with pre-pandemic baseline estimates of $\kappa_{aa'}$ from the POLYMOD study~\autocite{mossongSocial}, and time use from the UK Time Use Survey (UKTUS)~\autocite{UKTUS}.
 POLYMOD asked a representative sample of the UK population about the contacts they make each day, including information on each contact's age and location (home, work, school, leisure, transport, or other).
 UKTUS asked a representative sample of the UK population about how much time they spent doing various activities (\eg shopping and spending time at home) each day.
 \Textcite{vanleeuwenAugmenting} combined these two datasets to estimate the rate of contacts between age groups during each activity.
@@ -299,30 +299,25 @@ These measures include both biological differences, \eg due to differences in im
 Studies of pre-Alpha SARS-CoV-2 suggest that all individuals have similar infectiousness but that pre-adolescent children are less susceptible than adults~\autocite{chenRole,vinerTransmission}.
 Therefore, I set $q^\text{inf}_{a'} = 1$ for all $a'$, $q^\text{susc}_{a} = q_c$ for 0--11 year olds, and $q^\text{susc}_{a} = 1$ for the remaining strata.
 $q_c$ can be interpreted as the relative probability that a child is infected (compared to an adult), given contact with an infectious individual.
-$q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
+%$q_c$ is then estimated, although using an informative prior (see \cref{SEIR:sec:priors}).
 
 \subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
 
-\todo[inline]{consider if this paragraph is too repetitive}
 
-The transmission model represents the infection process (introduced in \cref{E-inc-prev:sec:infection-process}).
-A variety of different approaches can be taken to link a transmission model to observations.
-In the context of CIS, this requires representing the prevalence and observation processes (introduced in \cref{E-inc-prev:sec:prevalence-process,E-inc-prev:sec:observation-process} respectively).
-The method to do so is known as the observation model.
-The formulation of this model is heavily dependent on the data available.
-This means that there is a wide variety of models used.
-This section  explains the novel modelling approach I propose for fitting to the CIS prevalence data.
+This section  explains the novel observation model approach I propose for fitting to the CIS prevalence data.
+This will link the model in the previous section to the CIS prevalence data.
 
 % Here, I extend the system of ODEs to include compartments representing RT-PCR positive individuals.
 % The proportion of RT-PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are RT-PCR positive as the mean of the Beta distribution.
 One approach would be to convolve the incidence based on the transmission model with the RT-PCR duration distribution.
-Here, the daily incidence proportion for each stratum is by solving the system of ODEs governing the transmission model, and then prevalence calculated using \cref{E-inc-prev:eq:EPt}.
+Here, the daily incidence proportion for each stratum derived by solving the system of ODEs governing the transmission model, and then prevalence calculated using \cref{E-inc-prev:eq:EPt}.
 However, this approach is computationally expensive, likely prohibitively so if performed within a MCMC loop.
 
 A computationally cheaper option, which I will take, is to approximate this convolution by adding compartments to the ODEs.
-This approach allows a infected, pre-positive compartment, which I denote $p_0$, to be included simply.
+This approach allows an infected, pre-positive compartment, which I denote $p_0$, to be included.
 $p_0$ increases at the same rate as individuals flow into $e_1$.
 These individuals then transition into a set of compartments with transition rates, $p_1, \dots, p_l$, chosen to match the duration of positivity estimates in \cref{E-imperf-test}.
+This will lead to the model in FIGURE - with transition rates etc etc
 The new compartments do not have a biological interpretation; the same idea is behind having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}).
 
 Deciding $l$ and the length of time each individual spends in each compartment is the most challenging part of formulating the observation model.
@@ -346,17 +341,17 @@ EC distributions are convenient because they are flexible enough to approximate 
 % I use the method of \textcite{osogamiClosed} to determine $l$ and the transition rates between the compartments.
 
 % A $l$-phase EC distribution is the sum of a $(l-2)$-phase gamma distribution and a two-phase acyclic, arbitrary phase-type distribution.
-An EC distribution $P$ can be defined as the sum of three random variables: $K$, $X_1$, and $X_2$.
+An $l$-phase EC distribution $P$ can be defined as the sum of three random variables: $K$, $X_1$, and $X_2$.
 It is shown schematically in \cref{SEIR:fig:EC}.
 Here, $K \dist \GamDist(l-2, \omega_Y)$, $X_1 \dist \Exponential(\omega_{X1})$ and $X_2$ is a mixture distribution taking the value 0 with probability $1-p_x$ or otherwise (\ie with probability $p_x$) distributed $\Exponential(\omega_{X2})$.
 % The time between entering the 1st state and the $l+1$th state, the absorbing state, is the duration.
 These distributions contain five parameters.
 Three are positive reals, $\omega_Y$, $\omega_{X1}$, and $\omega_{X2}$; one is a probability, $p_x$, in the interval $[0, 1]$; and one is a positive integer, $l$.
 
-The name Erlang-Coxian comes from the two distributions that make up the EC distribution.
-Gamma distributions with integer first parameters (as $K$ has) are also known as Erlang distributions.
-The distribution $X_1 + X_2$ is a special case of the Coxian distribution.
-Hence, the overall distribution is known as a Erlang-Coxian distribution.
+% The name Erlang-Coxian comes from the two distributions that make up the EC distribution.
+% Gamma distributions with integer first parameters (as $K$ has) are also known as Erlang distributions.
+% The distribution $X_1 + X_2$ is a special case of the Coxian distribution.
+% Hence, the overall distribution is known as a Erlang-Coxian distribution.
 
 \begin{figure}
 \makebox[\textwidth][c]{
