@@ -326,24 +326,13 @@ These individuals then transition into a set of compartments, $p_1, \dots, p_l$,
 I will choose $l$ and the transition rates such that combined length of stay (\ie time from entry in $p_1$ until exit from $p_l$) approximates the duration of positivity distribution estimated in \cref{E-imperf-test}.
 This idea extends the technique of having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}), and is commonly used to enforce correct durations in compartmental models\todo{cite phase-type distributions in compartmental models}.
 
-\Textcite{osogamiClosed} provide a method to construct the compartments, implemented in the mapfit R package~\autocite{mapfit} implements the expressions to calculate the EC distribution parameters given a distribution's first three moments.
+\Textcite{osogamiClosed} provide a method to construct the compartments, implemented in the mapfit R package~\autocite{mapfit}. 
+The resulting compartmental approximation matches the original distribution up to the first three moments.
 Applying the package to the posterior mean of the distribution estimated in \cref{E-imperf-test} gives the model in \cref{SEIR:fig:full-model} with the parameter estimates in \cref{SEIR:table:ec-params} (see \cref{transmission:sec:phase-type} for details).
 \begin{table}
     \centering
     \begin{tabular}{c c c c c}
-        $l$ & $\omega_Y$ & $\omega_{X1}$ & $\omega_{X2}$ & $\pi$ \\
-        3 & 0.0820 & 0.126 & 0.0223 & 0.00973  \\
-    \end{tabular}
-    \caption{Parameter estimates for the EC distribution approximating the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
-    \label{SEIR:table:ec-params}
-\end{table}
-
-The mapfit R package~\autocite{mapfit} implements the expressions to calculate the EC distribution parameters given a distribution's first three moments.
-Applying the package to the posterior mean of the distribution estimated in \cref{E-imperf-test} gives the parameter estimates in \cref{SEIR:table:ec-params}.
-\begin{table}
-    \centering
-    \begin{tabular}{c c c c c}
-        $l$ & $\omega_Y$ & $\omega_{X1}$ & $\omega_{X2}$ & $\pi$ \\
+        $l$ & $\omega_1$ & $\omega_{2}$ & $\omega_{3}$ & $\pi$ \\
         3 & 0.0820 & 0.126 & 0.0223 & 0.00973  \\
     \end{tabular}
     \caption{Parameter estimates for the EC distribution approximating the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
@@ -351,7 +340,7 @@ Applying the package to the posterior mean of the distribution estimated in \cre
 \end{table}
 % end table of ec params
 
-I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{transmission:sec:data}).
+I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{E-biology-data:sec:positivity}).
 If on each day $t$, each strata $i$ is observed to have $y_{at}$ positives out of $n_{at}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \bar{p}_{at}, \rho)
@@ -393,10 +382,10 @@ Denoting the proportion of stratum $a$ in state $p_k$ as $p_{ka}(\tau)$, then $\
 
     \path  (S) edge node {$\lambda$} (P0)
           (P0) edge node {$\omega_0$} (P1)
-          (P1) edge node {$\omega_Y$} (P2)
-          (P2) edge node {$\pi \omega_{X1}$} (P3)
-               edge [out=-45,in=-135] node[below] {$(1 - \pi) \omega_{X1}$} (P4)
-          (P3) edge node {$\omega_{X2}$} (P4);
+          (P1) edge node {$\omega_1$} (P2)
+          (P2) edge node {$\pi \omega_{2}$} (P3)
+               edge [out=-45,in=-135] node[below] {$(1 - \pi) \omega_{2}$} (P4)
+          (P3) edge node {$\omega_{3}$} (P4);
     
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
 \end{tikzpicture}
@@ -421,9 +410,9 @@ The full system of differential equations for each region is below.
     \frac{d\vec{i_2}(t)}{dt} &= 2\gamma \vec{i_1}(t) - 2\gamma \vec{i_2}(t) \\
     \frac{d\vec{r}(t)}{dt} &= 2\gamma \vec{i_2}(t) \\
     \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
-    \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_Y \vec{p_1}(t) \\
-    \frac{d\vec{p_2}(t)}{dt} &= \omega_Y \vec{p_1}(t) - \omega_{X1} \vec{p_2}(t) \\
-    \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{X1} \vec{p_2}(t) - \omega_{X2} \vec{p_3}(t)
+    \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
+    \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
+    \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t)
 \end{align}
 where $\circ$ indicates element-wise multiplication.
 
@@ -556,9 +545,9 @@ From the system of ODEs, the knowledge that all the compartments are growing exp
     \vec{e_1} &= \vec{e_2} \frac{\psi + 2\sigma}{2\sigma} \\
     \vec{s} &= \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2} \\
     \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \omega_0} \\
-    \vec{p_1} &= \vec{p_0} \frac{\omega_0}{\psi + \omega_Y} \\
-    \vec{p_2} &= \vec{p_1} \frac{\omega_Y}{\psi + \omega_{X1}} \\
-    \vec{p_3} &= \vec{p_2} \frac{\pi \omega_{X1}}{\psi + \omega_{X2}}.
+    \vec{p_1} &= \vec{p_0} \frac{\omega_0}{\psi + \omega_1} \\
+    \vec{p_2} &= \vec{p_1} \frac{\omega_1}{\psi + \omega_{2}} \\
+    \vec{p_3} &= \vec{p_2} \frac{\pi \omega_{2}}{\psi + \omega_{3}}.
 \end{align}
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
