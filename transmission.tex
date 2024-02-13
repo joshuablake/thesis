@@ -203,8 +203,9 @@ A slow increase in incidence is estimated to occur over the autumn 2020 period, 
 An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
 All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5th Nov 2020~\autocite{ifgTimeline}.
 
-During November, incidence starts rising, with regional heterogeneity in the timing of when this occurs.
+During November, incidence starts rising, with regional heterogeneity in the timing of when this occurs (see \cref{transmission:fig:backcalc-regions}).
 The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocite{walkerTracking,daviesEstimated,lythgoeLineage}.
+There is weak evidence that when incidence starts increasing is correlated with when the Alpha variant's spread (see \cref{transmission:fig:backcalc-alpha}).
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
     \includegraphics{transmission/backcalc-regions}
@@ -214,6 +215,14 @@ A second peak occurs in late December or early January in all regions; this seco
         Yorkshire and the Humber is labelled as Yorkshire for brevity.
     }
     \label{transmission:fig:backcalc-regions}
+\end{figure}
+\begin{figure}
+    \includegraphics{transmission/backcalc-alpha}
+    \caption[Correlation of the emergence of Alpha and minimum incidence.]{%
+        x-axis: time that S-gene target failure, a marker of the Alpha variant, is estimated to start increasing from baseline by region among CIS test results; from \textcite[table S3]{walkerTracking}.
+        y-axis: posterior median and 95\% CrI of the date of minimum incidence in November or early December in each region.
+        Linear regression line shown.
+    }
 \end{figure}
 
 The incidence proportion was highest among the 11--15 and 16--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
