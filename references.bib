@@ -1604,6 +1604,22 @@
   version = {1.0.0}
 }
 
+@online{martinoINLAtutorial,
+  title = {Integrated {{Nested Laplace Approximations}} ({{INLA}})},
+  author = {Martino, Sara and Riebler, Andrea},
+  date = {2019-07-02},
+  eprint = {1907.01248},
+  eprinttype = {arxiv},
+  eprintclass = {stat},
+  url = {http://arxiv.org/abs/1907.01248},
+  urldate = {2024-02-13},
+  abstract = {This is a short description and basic introduction to the Integrated nested Laplace approximations (INLA) approach. INLA is a deterministic paradigm for Bayesian inference in latent Gaussian models (LGMs) introduced in Rue et al. 27 . INLA relies on a combination of analytical approximations and efficient numerical integration schemes to achieve highly accurate deterministic approximations to posterior quantities of interest. The main benefit of using INLA instead of Markov chain Monte Carlo (MCMC) techniques for LGMs is computational; INLA is fast even for large, complex models. Moreover, being a deterministic algorithm, INLA does not suffer from slow convergence and poor mixing. INLA is implemented in the R package R-INLA, which represents a user-friendly and versatile tool for doing Bayesian inference. R-INLA returns posterior marginals for all model parameters and the corresponding posterior summary information. Model choice criteria as well as predictive diagnostics are directly available. Here, we outline the theory behind INLA, present the R-INLA package and describe new developments of combining INLA with MCMC for models that are not possible to fit with R-INLA.},
+  langid = {english},
+  pubstate = {preprint},
+  keywords = {Statistics - Computation},
+  file = {C:\Users\Joshua\Documents\paper_pdfs\Martino_Riebler_2019_Integrated Nested Laplace Approximations (INLA).pdf}
+}
+
 @article{mcaloonIncubation,
   title = {Incubation Period of {{COVID-19}}: A Rapid Systematic Review and Meta-Analysis of Observational Research},
   shorttitle = {Incubation Period of {{COVID-19}}},
@@ -2102,6 +2118,14 @@
   file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Rhodes_House_2013_The rate of convergence to early asymptotic behaviour in age-structured.pdf;C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Rhodes_House_2013_The rate of convergence to early asymptotic behaviour in age-structured2.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\H2RYW2KZ\\S0040580913000208.html}
 }
 
+@software{RINLA,
+  title = {R-{{INLA}}},
+  author = {Rue, Håvard and Lindgren, Finn and Krainski, Elias Teixeira and Martino, Sara and Bakka, Haakon and Simpson, Daniel and Riebler, Andrea and Fuglstad, Geir-Arne and Modrak, Martin and Chiuchiolo, Cristian},
+  date = {2019},
+  url = {https://www.r-inla.org},
+  abstract = {Full Bayesian analysis of latent Gaussian models using Integrated Nested Laplace Approximations. It is a front-end to the inla-program.}
+}
+
 @article{rosenbergBackcalculation,
   title = {Backcalculation of Flexible Linear Models of the Human Immunodeficiency Virus Infection Curve},
   author = {Rosenberg, Philip S. and Gail, Mitchell H.},
@@ -2173,6 +2197,21 @@
   date = {2023},
   url = {https://mc-stan.org/},
   version = {2.21.8}
+}
+
+@article{rueINLA,
+  title = {Approximate {{Bayesian Inference}} for {{Latent Gaussian}} Models by Using {{Integrated Nested Laplace Approximations}}},
+  author = {Rue, Håvard and Martino, Sara and Chopin, Nicolas},
+  date = {2009-04-01},
+  journaltitle = {Journal of the Royal Statistical Society Series B: Statistical Methodology},
+  shortjournal = {Journal of the Royal Statistical Society Series B: Statistical Methodology},
+  volume = {71},
+  number = {2},
+  pages = {319--392},
+  issn = {1369-7412},
+  doi = {10.1111/j.1467-9868.2008.00700.x},
+  abstract = {Structured additive regression models are perhaps the most commonly used class of models in statistical applications. It includes, among others, (generalized) linear models, (generalized) additive models, smoothing spline models, state space models, semiparametric regression, spatial and spatiotemporal models, log-Gaussian Cox processes and geostatistical and geoadditive models. We consider approximate Bayesian inference in a popular subset of structured additive regression models, latent Gaussian models, where the latent field is Gaussian, controlled by a few hyperparameters and with non-Gaussian response variables. The posterior marginals are not available in closed form owing to the non-Gaussian response variables. For such models, Markov chain Monte Carlo methods can be implemented, but they are not without problems, in terms of both convergence and computational time. In some practical applications, the extent of these problems is such that Markov chain Monte Carlo sampling is simply not an appropriate tool for routine analysis. We show that, by using an integrated nested Laplace approximation and its simplified version, we can directly compute very accurate approximations to the posterior marginals. The main benefit of these approximations is computational: where Markov chain Monte Carlo algorithms need hours or days to run, our approximations provide more precise estimates in seconds or minutes. Another advantage with our approach is its generality, which makes it possible to perform Bayesian analysis in an automatic, streamlined way, and to compute model comparison criteria and various predictive measures so that models can be compared and the model under study can be challenged.},
+  file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Rue et al_2009_Approximate Bayesian Inference for Latent Gaussian models by using Integrated.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\NFVQ6KX9\\7092907.html}
 }
 
 @article{russellWithinhost,
