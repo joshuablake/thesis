@@ -341,7 +341,7 @@ This will link the model in the previous section to the CIS prevalence data.
 % Here, I extend the system of ODEs to include compartments representing RT-PCR positive individuals.
 % The proportion of RT-PCR positive individuals in each strata is then linked to the CIS using a Beta-Binomial likelihood, with the modelled proportion that are RT-PCR positive as the mean of the Beta distribution.
 One approach would be to convolve the incidence based on the transmission model with the RT-PCR duration distribution.
-Here, the daily incidence proportion for each stratum derived by solving the system of ODEs governing the transmission model, and then prevalence calculated using \cref{E-inc-prev:eq:EPt}.
+Here, the daily incidence proportion for each stratum derived by solving the system of ODEs governing the transmission model (see \cref{E-SEIR:sec:SIR}), and then prevalence calculated using \cref{E-inc-prev:eq:EPt}.
 However, this approach is computationally expensive, likely prohibitively so if performed within a MCMC loop.
 
 A computationally cheaper option, which I will take, is to approximate this convolution by adding compartments to the ODEs.

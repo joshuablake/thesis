@@ -1,0 +1,34 @@
+\documentclass[thesis.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Tables of distributions} \label{distributions}
+
+Currently split by chapter.
+Ordered Roman letters alphabetically then Greek.
+Excluding transmission model for now.
+
+From chapter 3
+
+\begin{itemize}
+    \item $B_i$ day infection episode $i$ begins
+    \item $D_i = E_i - B_i + 1$ duration of infection episode $i$. $D_i \in \{1, \dots, \dmax \}$
+    \item $\dmax$ maximum duration of infection episode
+    \item $E_i$ day infection episode $i$ ends
+    \item $f_D(d)$ probability density function of $D_i$
+    \item $F_D(d)$ cumulative density function of $D_i$
+    \item $\Npop$ population size
+    \item $n_t$ number of samples on day $t$
+    \item $P_t$ prevalent individuals, $P_t / \Npop$ prevalence
+    \item $P_{t_z,t_p}$ number of prevalent individuals at time $t_p$ who were infected at time $t_z$
+    \item $R_{t,t'}$ number of infection episodes that began at time $t$ and ended at time $t'$
+    \item $S(d)$ survival function of $D_i$
+    \item $T$ the final day of the observation period used, the first day is day 1
+    \item $X_t$ the random variable representing the number of positive tests on day $t$
+    \item $\vec{x} = (x_1, \dots, x_T)$ the vector of counts of observed positive tests on each day of the survey
+    \item $Z_t$ incidence, $Z_t / \Npop$ incidence proportion
+    \item $\lambda(d)$ hazard function of $D_i$
+\end{itemize}
+
+
+\end{document}
