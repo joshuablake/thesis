@@ -56,20 +56,31 @@ In this section, I will apply the theory introduced in \cref{E-inc-prev} to esti
 \subsection{Methods} \label{backcalc:sec:methods}
 
 In \cref{E-inc-prev:sec:observation-process}, I showed that a deterministic approximation to the relationship between true prevalence and incidence is a good approximation for estimating incidence.
-The deterministic relationship between incidence proportion and prevalence means that either can be inferred, with the other then calculated.
-Estimation of prevalence from the CIS data has been carried out through a well-established methodology, used throughout the pandemic~\autocite{pouwelsCommunity,cisMethodsONS}.
-The method is based on multilevel regression and post-stratification (MRP)\todo{cite MRP}.
-In this section, I will extend this methodology to also estimate incidence.
+This relationship between incidence proportion and prevalence means that once one is inferred, the other is calculated via a deterministic function.
+Therefore, a statistical methodology for estimating one of these quantities is required.
 
-First, I will motivate this approach, as opposed to direct estimation of incidence.
-Denote the quantity to be inferred (incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
-For any $i$ and $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
+Estimation of prevalence from the CIS data has been carried out through a well-established methodology, used throughout the pandemic~\autocite{pouwelsCommunity,cisMethodsONS}.
+The method is based on MRP, a statistical methodology developed to correct political opinion polling suffering from response bias\todo{cite MRP}.
+MRP is a two-step process.
+In this context, the first step, multilevel regression, consists of using a Bayesian multilevel logistic regression model is to predict RT-PCR test results in the sample based on demographic covariates.
+The second step, poststratification, is using the posterior distribution of the parameters is used to predict the population prevalence in each stratum.
+These are combined by taking a weighted average across the strata, where a stratum's weight is equal to its (known) population size.
+In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
+
+As in prior work, I parameterise the regression model in terms of prevalence, not incidence proportion.
+This is required to fulfil several desirable features of the model.
+Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
+The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-biology-data:sec:positivity}).
+\todo{make sure ch 2 mentions strata explicitly}
+For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
 The statistical model and inference procedure should have the following properties.
 \begin{enumerate}
-    \item The smoothing model over time should penalise towards exponential growth. Penalising towards exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time. Furthermore, such penalisation has previously been shown to improve estimates of SARS-CoV-2 prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+    \item The smoothing model over time should penalise changes from continuous exponential growth.
+        Penalising changes from continuous exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
+        Furthermore, such penalisation has previously been shown to improve estimates of SARS-CoV-2 prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
     \item Limit estimates to epidemiologically and biologically plausible values.
         That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
-        While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
+        % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
     \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:positivity}).
     \item Borrow information across the different covariates.
         The borrowing should penalise towards the distribution of incidence/prevalence across strata in the same geographic region being constant.
@@ -78,32 +89,36 @@ The statistical model and inference procedure should have the following properti
         The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see\todo{ref section on SRS computational limitations}).
 \end{enumerate}
 
-Properties 1 and 2 suggest a model of the form $\logit(\pi_{it}) = g(i, t)$, where $g$ is a function penalised towards being linear in $t$.
-The $\logit$ link function both limits $\pi_{it}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{it}$.
-Combined with property 4, the form of $g$ should be penalised towards $g(i, t) = a_0 + a_t t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified.
-However, it should be possible for sufficient information in the data to move the posterior estimate of $\pi_{it}$ away from this model.
+Properties 1 and 2 suggest a model of the form $\logit(\pi_{it}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised (\ie changes away from linear are penalised).
+The $\logit$ link function both limits $\pi_{it}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{it}$~\autocite{ealesAppropriately}.
+Combined with property 4, the form of $g$ the null model is $g(i, t) = a_0 + a_t t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified; that is, changes away from this model should be penalised.
+To add additional flexibility, 
 
-Properties 3 and 4 suggest the extension of the previously-developed MRP method.
+% Properties 3 and 4 suggest the extension of the previously-developed MRP method, used to already estimate prevalence, which already satisfies these properties.
 % This method has previously been used successfully to estimate prevalence, corrected for non-response bias, from the CIS data~\autocite{cisMethodsONS,pouwelsCommunity,pouwelsMRPvaccination}.
-In MRP, a Bayesian multilevel logistic regression model is used to predict RT-PCR test results based on demographic covariates.
-Then, the posterior distribution is used to predict the prevalence in each stratum.
-Finally, the prevalence is post-stratified to the CIS target population and sub-populations of interest.
-I propose this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
-Further details on this methodology follow.
+
 
 Properties 3 and 5 suggest the use of an approximate method for computing the posterior distribution.
-In particular, MCMC should be avoided.
-Incorporating sufficient covariates to adjust for the non-response bias over a period of more than 6--8 weeks leads to a model that was too computationally expensive~\citePersonalComms{Koen Pouwels}.
-Instead, previous MRP implementations have used the Integrated Nested Laplace Approximation (INLA)\todo{cite INLA}, implemented in R-INLA\todo{cite INLA}.
+In particular, using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
+\todo{make sure SRS computational issues are mentioned in ch 1 or 2}
+Instead, previous MRP implementations have used the Integrated Nested Laplace Approximation (INLA)~\autocite{rueINLA}, implemented in R-INLA~\autocite{RINLA}\todo{add an appendix explaining INLA}.
 
-The use of R-INLA requires that $\pi_{i,t}$ represent incidence proportion rather than prevalence.
-If $\vec{\pi}$ represented incidence proportion, then $\logit \vec{pi}$ could be linear in the model parameters, as explained previously, while satisfying the other criteria.
-However, the expected prevalence at time $t$ is linear in $\vec{\pi}$ (see \cref{E-inc-prev:eq:EPt}), and hence non-linear in $\logit \vec{pi}$.
-The expected proportion of positive tests (\ie the expectation of the data likelihood) is equal to the prevalence.
-Applying a non-linear transformation then a linear transformation in this way to form the data likelihood's expectation cannot be implemented within R-INLA's framework.
+INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models})~\autocite{rueINLAseminar,rueINLA,martinoINLAtutorial}.
+\todo{check notation here doesn't clash with other notation}
+An LGM is defined in terms of a vector of hyperparameters, $\vec{\theta}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\theta})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
+To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\theta} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\theta}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\theta}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\theta})$.
 
-I modified a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
-First, a Gaussian Markov Random Field (GMRF) logistic regression model is used to estimate the prevalence in each stratum.
+In this context, each element $\vec{y}$ corresponds to the observed RT-PCR results in one stratum on one day.
+Hence, $\eta_{j}$ must determine the distribution of $y_{j}$ (up to some hyperparameters); where $j$ can be mapped to a mapping of a stratum $i$ and day $t$.
+In practice, this means that $\eta_j$ is a one-to-one transformation of the population prevalence in stratum $i$ on day $t$.
+If $\eta_j = \logit(\pi_{it})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is a LGM.
+However, if $\pi$ is instead representing incidence proportion, then no such linear relationship between $\eta_j$ and $g$ exists.
+In particular, if $\eta_j$ is the prevalence, then $\eta_{it} = \sum_{k=-\infty}^0 \pi_{ik} S(k) = \sum_{k=-\infty}^0 \expit(g(i, k)) S(k)$.
+As $g(i, k)$ is linear in the model parameters, $\vec{x}$, then $\eta_{it}$ is not, violating the requirements of a LGM.
+Therefore, the application of the INLA approximation, while satisfying the other desirable properties, requires that the regression model predicts RT-PCR prevalence, not incidence proportion.
+
+Next, I explain the modification of the previous logistic regression model, and then how to extend the procedure to calculate incidence.
+Specifically, I modified the regression compomenet of a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
 For a day $t$, age group $a$, ethnicity $e$, and sex $s$ assume that:
 \begin{align}
     \logit(p_{taes}) &= \beta + \beta_s + \beta_{w(e)} + u_a + v_e + w_t + l_{a,t} \\
@@ -111,24 +126,26 @@ For a day $t$, age group $a$, ethnicity $e$, and sex $s$ assume that:
 \end{align}
 The terms are as follows.
 \begin{itemize}
+    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution, as discussed in \cref{transmission:sec:data}.
     \item $\beta$ is a global intercept term with the prior $\beta \dist \N(0, 1/0.001^2)$.
     \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females.
     \item $\beta_{w(e)}$ is a fixed effect for white or non-white ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to white ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-white ethnic groups).% $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
     \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior\todo{cite PC prior} with a 10\% probability of being greater than 1.
     \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
     \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
-    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. The likelihood is a beta-binomial model (see discussion in \cref{transmission:sec:data}). an overdispersed binomial. 
 \end{itemize}
 All parameters have the default R-INLA priors, except where stated above.
+\todo{include what the default priors are (maybe in the appendix)}
 For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
 
-The model was fitted separately and independently for each region, implicitly adding all interactions between region and the other variables.
+I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
 
 Having fitted the prevalence model, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
+\todo{include how R-INLA samples from the posterior in an appendix}
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
-I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the likelihood $\vec{P} \mid \vec{Z}$ is well-approximated by only considering its mean.
-\Cref{E-inc-prev:eq:EPt}, considered across different values of $t$, can be written as $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix formed from the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
+I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
+\Cref{E-inc-prev:eq:EPt}\todo{consider writing the matrix version where this is introduced in ch 3}, considered across different values of $t$, can be written as $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix formed from the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
 Dividing each side by the total number of individuals in each stratum transforms number of prevalent individuals to prevalence and incidence to incidence proportion.
 
 The matrix $\matr{S}$ is defined to maintain the relationship between incidence and prevalence.
@@ -226,6 +243,8 @@ However, the rest of the series is robust to this assumption and hence reliable.
     }
     \label{transmission:fig:backcalc-start-effect}
 \end{figure}
+
+\todo[inline]{check discussing non-INLA approximations}
 
 \section{Mechanistic modelling} \label{SEIR}
 
@@ -417,7 +436,7 @@ The full system of differential equations for each region is below.
 where $\circ$ indicates element-wise multiplication.
 
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
-That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$
+That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$.
 
 The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likelihood}), can be calculated as $\bar{p}_{at} = \frac{1}{2} \sum_{k=1}^l ( p_{kat} + p_{ka,t+1/2} )$.
 
@@ -425,8 +444,8 @@ The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likel
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
 The parameters governing the duration of positivity ($\omega$s) were explained previously (see \cref{SEIR:table:ec-params}).
-The initial conditions and transition rate parameters are unindentifiable in a SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors are used for them.
-$\sigma_\epsilon$ and $\rho$ are given priors that penalise model complexity.
+The initial conditions and transition rate parameters are unindentifiable in a SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors or fixed values are used for them.
+$\sigma_\epsilon$ and $\rho$ are given priors that favour a simpler model.
 The prior on $\sigma_\epsilon$ is a penalised complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
 The prior on $\rho$ favours a null model of a binomial likelihood.
 The remaining parameters have weakly informative priors.
@@ -448,6 +467,8 @@ The remaining parameters have weakly informative priors.
 \caption[SEIR model priors]{Priors for each parameter. For details of the distributions and their parameterisations see \cref{E-distributions}.}
 \label{SEIR:table:priors}
 \end{table}
+
+\todo[inline]{insert where the seroprevalence priors come from}
 
 \begin{table}
 \centering
@@ -562,6 +583,7 @@ All other aspects of the simulation model, including $\matr{\kappa}$, are as pre
 This means that the simulations created realistic incidence and prevalence curves (see \cref{SEIR:fig:sim-data}).
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
+    \todo[inline]{Add (A) incidence to the top panel and (B) prevalence to the bottom panel}
     \thisfloatpagestyle{empty}
     \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/sim/data}}
@@ -606,8 +628,9 @@ This is similar when considering coverage of the derived quantities incidence an
 \end{figure}
 
 
-In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully recovered; the other parameters are only partially so: their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
+In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully identified; $\pi_0$ is not identified at all; the other parameters are partially identified, their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
 The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
+\todo{is $\pi_0$ unindentified because of $q_c$ - check correlation plot}
 
 For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value (see \cref{SEIR:fig:true-vs-posterior}).
 This suggests that these parameters are not practically identifiable in this setting.
@@ -631,7 +654,7 @@ The 11--16 age group (roughly corresponding to compulsory secondary school educa
 Incidence is smooth within each week but shows discontinuities between weeks.
 This is because the parameters within $\matr{\beta}(t)$ are constant within each week.
 A constant $\matr{\beta}(t)$ would lead to exponential growth following a period of transitory dynamics, although the weekly switching may mean that these transitory dynamics never end, especially when incidence is high~\autocite{rhodesConvergence}.
-When the peak in incidence is estimated to occur varied by region, with the most common time being early January 2021 (see \cref{SEIR:fig:peak-incidence}).
+The estimated timing of the peak in incidence varies by region, with the most common time being early January 2021 (see \cref{SEIR:fig:peak-incidence}).
 \begin{figure}
     \includegraphics{SEIR/CIS/incidence}
     \caption[Posterior estimates of incidence]{%
@@ -665,6 +688,7 @@ Correlation is clear across the regions even though each region is estimated ind
 The \emph{attack rate} is the proportion of the population that have been infected at least once\todo{cite attack rate}.
 In this model it is $1 - \vec{s}$, the proportion susceptible.
 The attack rate is highest in the $[11, 16)$ age group in the North West at 68\% (95\% CrI: 66\%--70\%) (see \cref{SEIR:fig:attack-rates}).
+\todo{insert increase in attack rate over period}
 \begin{figure}
     \includegraphics{SEIR/CIS/attack_rates}
     \caption{Posterior median and 95\% CrI of the attack rate in each region and age group.}
@@ -673,6 +697,7 @@ The attack rate is highest in the $[11, 16)$ age group in the North West at 68\%
 \end{figure}
 
 Overall the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
+\todo{move one or some of the goodness-of-fit plots into an appendix - maybe by region?}
 There are a few features of the data which are not captured by the model and the posterior estimate appears to be a compromise with the prevalence too low in one age group and too high in another.
 For example, in the North East region, the 11--16 age group has its prevalence overestimated in October but the 16--25 age group has its prevalence underestimated.
 \begin{figure}
