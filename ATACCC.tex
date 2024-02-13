@@ -7,9 +7,8 @@
 
 \chapter{Estimating duration using biomarkers} \label{ATACCC}
 
-
 \Cref{E-inc-prev} showed that the duration of RT-PCR positivity is a key parameter for estimating the incidence of SARS-CoV-2 infections.
-The aim of this chapter is to estimate the duration of RT-PCR positivity using the viral load data from the ATACCC study (described in\todo{ref section describing ATACCC}).
+The aim of this chapter is to estimate the duration of RT-PCR positivity using the viral load data from the ATACCC study (introduced in \cref{E-biology-data:sec:ataccc}).
 I model a biomarker, the log viral load, over the course of an infection.
 From this model, I derive the distribution of the duration of RT-PCR positivity.
 
@@ -34,6 +33,7 @@ A few example applications are: CD4 counts following HIV infection~\autocite{lan
 
 In these models, the function's parameters are clearly related to features of the biomarker's trajectory, such as the time from first detection to peak viral load, and the viral load at the peak.
 The piecewise linear model is the most common in the context of SARS-CoV-2 viral load~\autocite{clearyUsing,kisslerViral,larremoreTest}
+\todo{work out why Kissler citation is displaying weird}
 In this context, the piecewise linear model is applied to the log of the viral load.
 Hence, the log of the viral load increases linearly, peaks instantaneously, and then decreases linearly; more flexible functions have also been suggested~\autocite{quiltyQuarantine}.
 
@@ -92,15 +92,14 @@ This time is based on logistical and behavioural factors such as delays in the N
     The increase and decrease in log viral load are approximately linear with a gradient of $a_i$ and $b_i$ respectively.
     The peak is at time $\tau_{\max,i} = 0$ and log viral load $\log v_{\max,i}$.
     The subscripts are omitted in the key for clarity.
-    The smoothing (lack of linearity) near the peak is visible. \label{ATACCC:fig:viral-load-model}
   }
+  \label{ATACCC:fig:viral-load-model}
 \end{figure}
 
-RT-PCR tests are noisy observations of the viral load (see \cref{E-biology-data:sec:PCR}).
-The noisy observations are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
+The noisy observations of viral log load from RT-PCR testing are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
-Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$ where $x_0$ and $\sigma_0^2$ are parameters to be estimated.
+Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$.
 These readings are censored in the same way as true readings.
 A censored test failure represents a false negative, otherwise the test failure represents a false positive.
 \textcite{hakkiOnset} uses a prior for $x_0$ centred on $\vlod$, which encodes a prior belief that false negatives and false positives occur with equal probability.
@@ -127,7 +126,7 @@ The second group is vaccinated and all were infected by the Delta variant.
 My focus is on the first group since they best correspond to the infections in the time period used throughout this thesis.
 
 Biological plausibility requires constraining $\vec{\phi}_i$ to positive real values.
-Each $\vec{\phi}_i$ is modelled as a log-normal random effects by using the hierarchical prior $\phi_i \dist \LN(\vec{\mu}_{\phi,g(i)}, \matr{\Sigma}_\phi)$ where $g(i)$ is the group of individual $i$.
+Each $\vec{\phi}_i$ is modelled as a log-normal random effects by using the hierarchical prior $\vec{\phi}_i \dist \LN(\vec{\mu}_{\phi,g(i)}, \matr{\Sigma}_\phi)$ where $g(i)$ is the group of individual $i$.
 $\vec{\mu}_{\phi,g} = (\mu_{v_{\max},g}, \mu_{a,g}, \mu_{b,g})^T$ is a vector of the population means of the log-parameters.
 As the random effects have a log-normal, rather than normal, distribution $\exp(\vec{\mu}_{\phi,g})$ is the population median of the parameter value but not the mean.
 The covariance matrix $\matr{\Sigma}_\phi$ controls the variability of the population and allows for the parameters to be correlated.
@@ -138,7 +137,7 @@ This can be expressed as follows.
   \vec{\eta}_i &\dist \N(\vec{0}, \matr{C}_\phi) \\
   \log \vec{\phi}_i &= \vec{\mu}_\phi + \vec{\sigma}_\phi \circ \vec{\eta}_i
 \end{align}
-where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the parameters, $\matr{C}_\phi$ is a correlation matrix, and $\circ$ is element-wise multiplication.
+where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the parameters, and $\matr{C}_\phi$ is a correlation matrix.
 These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
 % Correlation matrices have diagonal elements all 1, therefore this reparameterisation has the same number of parameters as the original model.
 
@@ -174,9 +173,9 @@ In particular, the Rhat values, traceplots, and effective sample size for the pa
 
 Based on the fit to the data achieved when implementing an earlier version of the model (see \cref{ATACCC:sec:original-analysis}), I hypothesised that the cause of this was overcomplicating the model for test failures.
 Specifically, the model excluding false positives explains the data well (the results in \cref{fig:paper:duration,ATACCC:fig:goodness-of-fits} do not allow false negatives but fit the data well).
-Therefore, the model for test failures can be simplified to only false negatives.
+Therefore, I simplified the model for test failures to only false negatives.
 % These false negatives could represent a variety of scenarios, such as poor swabbing technique.
-Formally, the model can be expressed by replacing \cref{ATACCC:eq:hakki-likelihood} with the following.
+Formally, I replaced \cref{ATACCC:eq:hakki-likelihood} with the following.
 \begin{align}
 p(y_{i,t} \mid \cdot) &= \begin{cases}
     (1 - \rho) f_N(y_{i,t} \mid \log v_i(t), \sigma_v^2) & \text{if $y_{i,t} > v_\text{lod}$}\\
@@ -194,6 +193,8 @@ The priors are the same as \textcite{hakkiOnset}, including the prior on $\rho$,
 
 The ultimate aim of this chapter is to produce an estimate of the distribution for the duration of RT-PCR positivity.
 So far, only the viral load trajectories have been considered; \textcite{hakkiOnset} does not consider duration.
+In this section, I derive an expression for an infection episode's duration, $d_i$, in terms of $\vec{\phi}_i$.
+
 The time that individual $i$ is first and last positive are the two values of $t$ such that $\log v_i(t) = v_\text{lod}$.
 Denote these times as $\tau_{0,i}$ and $\tau_{1,i}$.
 Hence, individual $i$'s duration of RT-PCR positivity, in continuous time, is $d_i = \tau_{1,i} - \tau_{0,i}$.
@@ -253,7 +254,7 @@ The simplified model I proposed in \cref{ATACCC:sec:observation-modification} so
 
 The two models give very similar estimates for the population-level parameters (see \cref{ATACCC:fig:compare-hakki-modified}).
 These are the main parameters of interest (as explained in \cref{ATACCC:sec:duration}), suggesting that the results are robust to the choice of model.
-As the estimates are similar and the modified model converges better, I use the modified model for the remainder of this chapter.
+As the estimates are similar and the modified model converges better, I use only the results from the modified model from now on.
 \begin{figure}
   \centering \includegraphics{ATACCC/compare_hakki_modified}
   \caption[Comparison of population-level parameters between models.]{Kernel-density smoothed posterior densities for the population mean (top), $\vec{\mu}_{\phi,1}$, and covariance matrix (bottom), $\matr{\Sigma}_\phi$, for both the \textcite{hakkiOnset} model (described in \cref{ATACCC:sec:hakki}) and the model with a modified observation model to improve convergence (described in \cref{ATACCC:sec:observation-modification}). Mean only shown for the unvaccinated group, the primary group of interest. The groups share the covariance matrix. These parameters, which are the primary ones of interest (see \cref{ATACCC:sec:duration}), have very similar estimates between the models. \label{ATACCC:fig:compare-hakki-modified}}
@@ -319,20 +320,21 @@ However, there are many differences between individuals in these two groups.
 For example, the vaccinated individuals are likely to be older and/or have co-morbidities because the roll-out of the vaccine in the UK prioritised these groups~\autocite{naoCovidVaccination}.
 They were also infected by different variants because the vaccinated individuals were infected later.
 All these factors could change the viral dynamics~\autocite{russellWithinhost,kisslerDynamicsVaccines} and hence the duration.
+\todo{work out why Kissler citation is displaying weird}
 Therefore, the relationships shown here cannot be considered causal, or even generalisable to contexts where these other confounders are not present.
-Despite these confounders, the result is in agreement with previous work showing that the Alpha and Delta variants of concern (compared to pre-Alpha variants) and being vaccinated are all associated with shorter durations of RT-PCR positivity, although the vaccination affect is larger~\autocite{kisslerDynamicsVaccines}.
+Despite these confounders, the result is in agreement with previous work showing that the Alpha and Delta variants of concern (compared to pre-Alpha variants) and being vaccinated are all associated with shorter durations of RT-PCR positivity, although the vaccination effect is larger~\autocite{kisslerDynamicsVaccines}.
 
 A strength of the ATACCC data is that the sample is drawn from the general population.
 This is unlike most estimates (see\todo{ref section reviewing lit on duration}) which are from hospitalised patients or healthcare workers.
 This means that, notwithstanding the issues highlighted in the previous paragraph, the estimates are likely to be generalisable to the general population.
 
-In the ATACCC study, individuals were tested for at most 20 days.
-Yet, the estimates here sill have 33\% (95\% CrI: 21--46\%) of individuals positive at 20 days following infection.
-The remainder of the estimate for $f_D$, such as that almost all (>99\%) of individuals recover before day 50, is driven by the assumed form of the viral load trajectory.
-
 Individuals 55 and 57 appear to have far noisier measurements than the other individuals (see \cref{ATACCC:fig:goodness-of-fits}), suggesting that the observation noise might vary between individuals.
 Including a random effect on $\sigma_v$ could capture this affect.
 However, it would complicate the model, be unlikely to change the estimates of the parameters of interest, and may not be identifiable.
+
+In the ATACCC study, individuals were tested for at most 20 days.
+Yet, the estimates here sill have 33\% (95\% CrI: 21--46\%) of individuals positive at 20 days following infection.
+The remainder of the estimate for $f_D$, such as that almost all (>99\%) of individuals recover before day 50, is driven by the assumed form of the viral load trajectory.
 
 \section{Conclusion}
 

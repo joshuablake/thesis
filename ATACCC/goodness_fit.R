@@ -1,10 +1,9 @@
-library(dplyr)
+suppressMessages(library(dplyr))
 library(ggplot2)
 library(purrr)
-library(rstan)
+suppressMessages(library(rstan))
 library(patchwork)
 library(tidybayes)
-library(tidyverse)
 source(here::here("ATACCC/trajectory_functions.R"))
 source(here::here("utils.R"))
 
@@ -91,7 +90,7 @@ p_fits = posterior_summary |>
     aes(day, yrep, ymin = .lower, ymax = .upper),
     show.legend = FALSE
   ) +
-  geom_point(aes(day, y, colour = result), data = tbl_data) +
+  geom_point(aes(day, y, colour = result), size = 0.7, data = tbl_data) +
   facet_wrap(~i, ncol = 6) +
   theme_trajectory()
 ggsave(
