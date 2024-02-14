@@ -7,21 +7,28 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-\todo[inline]{Intro probably needs rewriting, with novelty claims and a bit more context. Revisit once intro chapters written.}
+\todo[inline]{%
+    Intro probably needs rewriting, with novelty claims and a bit more context.
+    Revisit once intro chapters written.
+    Question: is CIS (or similar) enough to estimate incidence / transmission?
+    
+}
 
-In this chapter, I use the preferred estimate of the duration of RT-PCR positivity (see \cref{E-imperf-test:sec:conclusion}) to investigate estimation of incidence and transmission of SARS-CoV-2 in England, solely on the basis of .
-CIS data (as shown in \cref{E-biology-data:sec:positivity} for further details).
-I will show that the CIS data is sufficient to derive such estimates, suggesting surveys of this type would be sufficient for surveillance of an epidemic.
+In this chapter, I use the estimate of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate estimation of incidence and transmission of SARS-CoV-2 in England.
+This estimation is based only on the CIS data (as shown in \cref{E-biology-data:sec:positivity} for further details).
+I will show that the CIS data is sufficient; demonstrating the value of surveys of this type for pandemic surveillance.
 
-I take two approaches, the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
-First, in \cref{backcalc}, I use a back-calculation approach, based on \cref{E-inc-prev:eq:EPt}. This approach enables estimation of incidence within (sub)populations of England. Then, in \cref{SEIR}, I use a mechanistic compartmental model, a variation of the model introduced in \cref{E-SEIR:sec:mechanistic-models}, to estimate both incidence and components of transmission, \eg and whether changes in transmission can be explained by changes in contact rates.
+I take two approaches, backcalculation and a mechanistic model, the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
+\todo{what are the advantages of each approach specifically in this context?}
+
+First, in \cref{backcalc}, I use a back-calculation approach, based on \cref{E-inc-prev:eq:EPt}.
+This approach enables estimation of incidence within (sub)populations of England.
+
+In \cref{SEIR}, I use a mechanistic compartmental model, within the modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models}.
+This approach enables estimating both incidence and components of transmission.
+Estimating transmission in addition to incidence answers important epidemiological questions, \eg whether changes in transmission can be explained by changes in contact rates.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 
-\todo[inline]{
-    Lit review to go in introduction chapter, framing the whole thesis because it is important in understanding the motivation for the whole work.
-    Would include \textcite{mccabeCISincidence,abbottCISincidence} on backcalculation. Also Taffe?
-    As well as the literature on mechanistic models using REACT and CIS I have previously circulated.
-}
 \section{Data} \label{transmission:sec:data}
 
 \todo[inline]{This is now in the final section of chapter 2.}
@@ -217,7 +224,7 @@ A second peak occurs in late December or early January in all regions; this seco
 \end{figure}
 
 The incidence proportion was highest among the 11--15 and 16--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
-Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale), meaning there was insufficient information for the posterior to overcome the prior penalisation towards this situation.
+Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale), meaning there was insufficient information in the data to overcome the prior which favoured this situation.
 The incidence proportion in the 16--25 age group decreases faster than other age groups during November.
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
@@ -249,7 +256,7 @@ However, the rest of the series is robust to this assumption and hence reliable.
 \section{Mechanistic modelling} \label{SEIR}
 
 In this section, I apply the general mechanistic transmission modelling framework from \cref{E-SEIR} to the CIS prevalence data.
-The application of this framework follows \textcite{birrellRealtime}, with the most substantial context-specific work in parameterising the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
+The application of this framework follows \textcite{birrellRealtime}, with the most substantial context-specific work\todo{maybe change ``work" to something else: I want a succinct way to say that this was the major part that needed changing from the generic framework in chapter 3} in parameterising the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
 A novel approach (\cref{SEIR:sec:observation}) links this transmission model to the CIS prevalence data; the approach is generalisable to other studies collecting representative prevalence data, \eg REACT.
 In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
 Having specified the full model (\cref{SEIR:sec:methods-application}), I conducted a simulation study to validate the inference process and identifiability (\cref{SEIR:sec:sim-study}), before applying the model to the CIS data (\cref{SEIR:sec:application}).
@@ -326,6 +333,7 @@ $q_c$ can be interpreted as the relative probability that a child is infected (c
 
 \subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
 
+\todo[inline]{Rewrite this intro paragraph}
 This section  explains the novel observation model approach I propose for fitting to the CIS prevalence data.
 This will link the model in the previous section to the CIS prevalence data.
 
