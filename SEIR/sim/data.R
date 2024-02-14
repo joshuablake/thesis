@@ -6,7 +6,7 @@ library(stringr)
 library(tidyr)
 source(here::here("utils.R"))
 
-inputs = readr::read_csv(here::here("SEIR/sim/sim_output.csv"))
+inputs = readr::read_csv(here::here("SEIR/sim/sim_output.csv"), show_col_types = FALSE)
 
 do_plot = function(base_gg, y_axis_label) {
     return(
@@ -21,11 +21,13 @@ do_plot = function(base_gg, y_axis_label) {
 
 p_incidence = inputs |>
     ggplot(aes(y = incidence)) |>
-    do_plot("Incidence")
+    do_plot("Incidence") +
+    ggtitle("(A) Incidence")
 
 p_prevalence = inputs |>
     ggplot(aes(y = prevalence)) |>
-    do_plot("Prevalence")
+    do_plot("Prevalence") +
+    ggtitle("(B) Prevalence")
 
 ggsave(
     filename = here::here("SEIR/sim/data.pdf"),

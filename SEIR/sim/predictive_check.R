@@ -1,13 +1,13 @@
-library(dplyr)
+suppressMessages(library(dplyr))
 library(ggplot2)
-library(lubridate)
+suppressMessages(library(lubridate))
 library(patchwork)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
-truth = readr::read_csv(here::here("SEIR/sim/sim_output.csv"))
-posterior_predictive = readr::read_csv(here::here("SEIR/sim/posteriors_predictive.csv"))
+truth = readr::read_csv(here::here("SEIR/sim/sim_output.csv"), show_col_types = FALSE)
+posterior_predictive = readr::read_csv(here::here("SEIR/sim/posteriors_predictive.csv"), show_col_types = FALSE)
 
 make_plot = function(x) {
     x |>
@@ -59,9 +59,11 @@ prevalence_coverage = posterior_intervals |>
     mutate(binom::binom.confint(x, n, methods = "exact"))
 
 p_incidence = incidence_coverage |>
-    make_plot()
+    make_plot() +
+    ggtitle("(A) Incidence")
 p_prevalence = prevalence_coverage |>
-    make_plot()
+    make_plot() +
+    ggtitle("(B) Prevalence")
 p_combined = p_incidence / p_prevalence +
     # Combine legends and put at bottom of plot
     plot_layout(guides = "collect") &
