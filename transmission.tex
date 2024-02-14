@@ -30,7 +30,7 @@ This approach enables estimating both incidence and components of transmission.
 Estimating transmission in addition to incidence answers important epidemiological questions, \eg whether changes in transmission can be explained by changes in contact rates.
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 I develop a novel observation model to allow the transmission model to be fit to the CIS data.
-Furthermore, fitting to just prevalence data has not previously been done in the literature (see\todo{ref lit review in intro})\todo{is using prevalence data novel or only in SARS-CoV-2 context?}.
+Furthermore, fitting to just prevalence data has not previously been done in the literature (see\todo{ref lit review in intro and copy its novelty claims}).
 
 \section{Backcalculation} \label{backcalc}
 
@@ -86,11 +86,12 @@ To add additional flexibility,
 Properties 3 and 5 suggest the use of an approximate method for computing the posterior distribution.
 In particular, using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
 Instead, previous MRP implementations have used the Integrated Nested Laplace Approximation (INLA)~\autocite{rueINLA}, implemented in R-INLA~\autocite{RINLA} (see \cref{transmission:sec:INLA}).
+theta
 
+\todo[inline]{Is it OK that $x$ and $y$ in the following two paragraphs don't align with the rest of the thesis chapter? Should I use alterantive notation - but then different to standard in the INLA papers.}
 INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models})~\autocite{rueINLAseminar,rueINLA,martinoINLAtutorial}.
-\todo{check notation here doesn't clash with other notation}
-An LGM is defined in terms of a vector of hyperparameters, $\vec{\theta}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\theta})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\theta} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\theta}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\theta}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\theta})$.
+An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
+To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
 
 In this context, each element $\vec{y}$ corresponds to the observed RT-PCR results in one stratum on one day.
 Hence, $\eta_{j}$ must determine the distribution of $y_{j}$ (up to some hyperparameters); where $j$ can be mapped to a mapping of a stratum $i$ and day $t$.
@@ -229,12 +230,15 @@ However, the rest of the series is robust to this assumption and hence reliable.
     \label{transmission:fig:backcalc-start-effect}
 \end{figure}
 
-\todo[inline]{check discussing non-INLA approximations, including how this would prevent negative incidence}
-A prior constraining incidence to be non-negative and then fit directly to the data could be used, but this could no longer be fit within the R-INLA framework.
-Hence, an alternative inference methodology, or simpler model (\eg containing fewer random effects), would be required.
-% MCMC is likely too computationally expensive.
-% Other approaches, such as a Laplace approximation or variational inference, could be considered.
-For this analysis, I replaced any value of incidence estimated to be negative with 0.
+Alternative inference techniques could allow more powerful modelling approaches, if they allowed a broader set of models than LGMs.
+In particular, the incidence proportion could be directly modelled rather than the prevalence.
+This could allow more interpretable priors to be used because the infection process is the process that corresponds to biological and behavioural processes.
+Furthermore, the incidence proportion could be restricted to be non-negative, preventing the negative incidence seen in some strata.
+
+Various alternative inference techniques could be considered.
+If the infection process is considered a Poisson process (see \cref{E-inc-prev:sec:poisson-process}), then, conditional on the process's intensity, there is independence between individuals' infection status.
+Therefore, the incidence proportion and prevalence can both be viewed as the mean of many Bernoulli variables, meaning that the Central Limit Theorem suggests they are approximately normally distributed.
+Exploiting this property could enable efficient approximations to the posterior.
 
 
 \section{Mechanistic modelling} \label{SEIR}
@@ -287,7 +291,7 @@ I assume that $q_{aa'}(t) = \beta(t) q^\text{susc}_{a} q^\text{inf}_{a'}$ where 
 These measures include both biological differences, \eg due to differences in immune systems, or behavioural, \eg if infants are less hygienic than adults.
 
 The time-varying component, $\beta(t)$, allows for behavioural changes that impact transmission but are not captured by the contact matrices (\eg mask wearing).
-I follow prior work~\autocite[e.g.][]{birrellRealtime}\todo{find other references for random walk on transmission potential} in using a random walk prior on $\log\beta(t)$  on the weekly timescale.
+I impose a random walk prior on $\log\beta(t)$ on the weekly timescale, smoothing its value over time.
 This prior encodes that behaviour changes smoothly over time.
 \begin{align}
     \beta(t) &= \beta_{\tilde{w}(t)} \\
@@ -783,7 +787,7 @@ Alternative proposal schemes, such as updating the parameters in blocks could he
 Extending the analyses carried out here to the rest of the pandemic would clearly be of interest.
 I chose the end of the period to coincide with the vaccination rollout.
 Vaccination dramatically affects the transmission dynamics by introducing some additional immunity into the population.
-Mechanistic models require explicit representation of this immunity\todo{cite something about vaccination, including new RTM paper}.
+Mechanistic models require explicit representation of this immunity.
 
 \section{Comparison of results} \label{transmission:sec:comparison}
 
@@ -803,9 +807,11 @@ This is a specific case of a larger pattern: the SEIR model produces smoother es
 \end{figure}
 
 These patterns can be interpreted as an instance of the common bias---variance trade-off.
-\todo{Comment on SEIR not fully adjusted for non-response bias}
 The SEIR model imposes stronger assumptions about the epidemic dynamics.
 The assumptions reduces the variance of the estimates, including by making them smoother, but if the assumptions are incorrect, bias is introduced.
+Furthermore, the SEIR model does not fully adjust for the non-response bias.
+In particular, it makes no adjustment for the under-representation of ethnic minority groups in the CIS.
+Adjusting for more covariates would require further stratifying the population, and finding an appropriate parameterisation of the contact matrix.
 This trade-off based on the strength of assumptions has long been known to apply in the backcalulcation context~\autocite[e.g.][section 8.3]{brookmeyerBackcalculation}.
 The SEIR model can be viewed as a backcalulation method where the transmisson part of the model is a smoothing method.
 
