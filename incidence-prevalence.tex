@@ -50,8 +50,7 @@ Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$.
 Therefore, the prevalence is $P_t/\Npop$.
 
-\todo[inline]{Add some refs about duration and survival}
-\emph{Duration}, or \emph{time-to-event}, distributions can be expressed in several equivalent ways.
+\emph{Duration}, or \emph{time-to-event}, distributions can be expressed in several equivalent ways~\autocite[17]{sunStatisticala}.
 The duration distribution I will be concerned with is the distribution of the number of days for which an individual is prevalent.
 Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$.
 \todo{check $B_i$ and $E_i$ are not defined elsewhere}
@@ -168,8 +167,7 @@ A compartmental model is named because they place every member of the population
 I will describe these models using the notation of the field, which differs in conventions from the rest of this thesis.
 In particular, upper case or lower case will no longer be used to distinguish between random variables and their realisations, which instead is clear by context.
 
-A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence}.
-\todo{Cite other papers: see Alice's thesis (chapter 3, especially 3.1), refs within Birrell, and \href{https://www.sciencedirect.com/science/article/pii/S2468042716300495}{Allen 2017}}
+A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence,dukicTracking,corbellaThesis}.
 The elements of $\vec{x}(t)$ are the latent proportion of the population (or number of individuals) in each compartment at time $t$.
 The parameters $\vec{\theta}$ determine, along with the model structure, how the state vector changes over time.
 % Inference about $\vec{x}(t)$ and $\vec{\theta}$ is requires linking to data, $\vec{y}$, via an observation model, $p(\vec{y}(t) \mid \vec{x}, \vec{\theta})$ where $\vec{x}$ denotes conditioning on $\vec{x}(t)$ for all $t$~\autocite{birrellEvidence} (see \cref{SEIR:sec:observation}).
@@ -181,7 +179,7 @@ Deterministic models are defined by the state vector $\vec{x}(t)$ being a determ
 %The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
 %There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
 
-Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters\todo{Cite stochastic models}.
+Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters~\autocite{birrellEvidence,dukicTracking,corbellaThesis,keelingModeling}.
 Stochastic models are most commonly specified in discrete time, using a Markov assumption.
 A common simplification is to use discrete time and a Markov assumption; \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$~\autocite{birrellEvidence}.
 This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
@@ -237,7 +235,7 @@ Hence, further details on stochastic models are not outside the scope this thesi
   \label{SEIR:fig:SIR}
 \end{figure}
 
-The simplest compartmental model for a disease which confers immunity is the SIR (susceptible-infectious-recovered) model\todo{cite SIR being simplest} (depicted in \cref{SEIR:fig:SIR}).
+The simplest compartmental model for a disease which confers immunity is the SIR (susceptible-infectious-recovered) model~\autocite[15]{keelingModeling}, depicted in \cref{SEIR:fig:SIR}.
 The name SIR derives from the structure of the model.
 In particular, the model divides the population (assumed closed, an assumption discussed later) into one of three compartments: susceptible, infectious, or recovered.
 % The state of the system is the proportion of the population in each compartment.
@@ -444,15 +442,14 @@ Assume any such individual comes into contact with individuals in strata $a$ at 
 % Further, assume that each contact is with an individual chosen uniformly at random from within the strata.
 % For such a randomly selected individual, the probability that they are susceptible is $s_a(t)$.
 % Each of the infectious individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
-Following the same argument as in \cref{SEIR:sec:SIR} finds that, in expectation, the infectious individual makes contact with susceptible individuals in stratum $a$ at a rate of $\kappa_{aa'} s_a(t)$ per day.
+Following the same argument as in \cref{SEIR:sec:SIR} finds that the infectious individual makes contact with susceptible individuals in stratum $a$ at a mean rate of $\kappa_{aa'} s_a(t)$ per day.
 Now assume that there is a constant probability of transmission upon contact between an infectious individual in strata $a'$ and susceptible in strata $a$ individual, $q_{aa'}$.
-Therefore, the expected rate of infections in strata $a$ caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$ per day.
-Multiplying by the number of infectious individuals in strata $a'$, $N_{a'} i_{a'}(t)$, gives $\kappa_{aa'} q_{aa'} s_a(t) N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
-The constant terms here are absorbed into the WAIFW matrix, hence $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
+Therefore, the mean rate of infections in strata $a$ per day caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$ per day.
+Multiplying by the number of infectious individuals in strata $a'$, $N_{a'} i_{a'}(t)$, and dividing by the size of strata $a$, $N_a$, gives $\kappa_{aa'} q_{aa'} s_a(t) \frac{1}{N_a} N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
+The constant terms here are absorbed into the WAIFW matrix, hence $\beta_{aa'} = \kappa_{aa'} q_{aa'} \frac{1}{N_a} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
 This gives the total force of infection on strata $a$ from all strata is, therefore, $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$ as above.
 If all $\beta_{aa'}$ are equal, then the model is equivalent to the homogeneous model (\ie without any structure).
 The rate at which individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
-\todo{Is a division by $N_a$ necessary here? Check previous notes on Overleaf including on what Edwin provides.}
 
 In practical situations, estimating all the $\beta_{aa'}$ parameters is infeasible, so some assumptions must be made to reduce the number of parameters~\autocite[176]{andersonInfectious}.
 It is infeasible because the progression of the epidemic depends on $\vec{\lambda}(t)$, which has dimension $A$, while $\matr{\beta}$ has dimension $A^2$.
@@ -597,16 +594,39 @@ The second moment is simplified by the independence.
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
-\todo[inline]{Relate the following paragarph to the similar discussion in ch 7}
 The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation.
 The equation is of the same form as the equation used for HIV/AIDS backcalculation, as well as being found in many other fields~\autocite[and references therein]{brookmeyerBackcalculation}.
-The system can be written in the form $\E(\vec{P} \mid \vec{Z}) = \matr{S} \vec{Z}$ where $\matr{S}$ is a lower-triangular matrix formed from $S$.
-Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ (non-random in this expression) for a known $\E (\vec{P} \mid \vec{Z} )$, are well-established~\autocite[e.g.:][section 8.2]{highamAccuracy}.
-However, these algorithms can be unstable, meaning that numerical errors are large.
-This is a particular issue if $S(1)$ is small.
-Since, by definition, $S(1)=1$ here, this is not an issue in this context.
+
+Considering multiple values of $t$ makes \cref{inc-prev:eq:EPt} into a system of simultaneous equations.
+The system can be written in the form $\E(\vec{P} \mid \vec{Z}) = \matr{S} \vec{Z}$ where $\matr{S}$ is a lower-triangular matrix formed from $S$:
+\begin{align}
+    (\matr{S})_{i,j} = \begin{cases}
+        S(i - j + 1) & i - \dmax - 1 \leq j \leq i \\
+        0 & \text{otherwise.}
+    \end{cases}
+\end{align}
+In \cref{E-backcalc}, I will need to solve for this system for $\vec{Z}$ given a known $\hat{P} = \E(\vec{P} \mid {Z})$.
+As $\matr{S}$ is lower-triangular, I use forward-substitution~\autocite{cormenMatrix}.
+Forward-substitution sequentially solves the $t$th element of $\vec{Z}$ ($t = 1, \dots, T$) by calculating:
+\begin{align}
+Z_t
+&= \frac{\hat{P}_t - \sum_{i=1}^{t-1} S_{ti} Z_i}{S_{tt}} \\
+&= \hat{P}_t - \sum_{i=1}^{t-1} S(t - i + 1) Z_i.
+\label{inc-prev:eq:forward-substitute}
+\end{align}
+
+% Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ (non-random in this expression) for a known $\E (\vec{P} \mid \vec{Z} )$, are well-established~\autocite[e.g.:][section 8.2]{highamAccuracy}.
+% However, these algorithms can be unstable, meaning that numerical errors are large.
+% This is a particular issue if $S(1)$ is small.
+% Since, by definition, $S(1)=1$ here, this is not an issue in this context.
 %However, if instead of estimating the incidence of RT-PCR positives, the aim was to estimate the incidence of infections, then $S(1)$ would be small and this would be an issue.
 %While this quantity is more epidemiologically relevant, the time from infection to RT-PCR positivity is short and, for now, I will neglect the difference.
+
+Unlike an inference procedure which infers the parameters simultaneously, there is no feedback loop: the value of $Z_{t}$ does not affect $Z_{t'}$ for $t' < t$.
+The second term here is the contribution of the incidence prior to day $t$ to day $t$'s prevalence.
+The remainder of the prevalence on day $t$ is therefore due to incidence on day $t$.
+% Forward substitution is numerically stable unless the diagonal elements, here $S(1)$, are small relative to the off-diagonal elements, here $S(i)$ for $i > 0$~\autocite[section 8.2]{highamAccuracy}.
+% Here, the diagonal is $S(1) = 1$ and hence the matrix the solution is numerically stable.
 
 The variance in \cref{inc-prev:eq:boundVPt} is upper bounded by \cref{inc-prev:eq:EPt}, a fact that will prove useful in \cref{inc-prev:sec:observation-process}.
 \Cref{inc-prev:eq:EPt} shows that knowledge of the survival function, $S$, is crucial to modelling the prevalence process.
@@ -721,14 +741,13 @@ In particular, it often poorly explores the tails of the posterior in finite tim
 \emph{Hamiltonian Monte Carlo} (HMC)~\autocite{nealMCMC,nealImproved,duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
 HMC simulates a physical system travelling through the posterior space with momentum.
 The momentum increases in the direction the posterior density increases, using the gradient.
-\todo{add something about leapfrog steps}
 This means that the sampler tends to propose moves with higher posterior density.
 The Metropolis-Hastings algorithm is then used to accept or reject the proposed move.
 
-The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the number of leapfrog steps to take in the Hamiltonian dynamics.
+The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the Hamiltonian dynamics hyperparameters.
 NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
 I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
-Stan implements \emph{automatic differentiation}\todo{cite automatic diff} to calculate the gradient of the posterior density without any user input.
+Stan implements \emph{automatic differentiation}~\autocite{griewankAutoDiff} to calculate the gradient of the posterior density without any user input.
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
 
@@ -764,7 +783,7 @@ Various techniques have been proposed for computing the effective sample size, I
 
 \section{Conclusion} \label{inc-prev:sec:conclusion}
 
-Robust, unbiased prevalence estimates already exist (see\todo{ref prevalence estimates}), and incidence estimates are the objective of this thesis.
+Robust, unbiased prevalence estimates already exist (\cref{E-biology-data:sec:positivity}), and incidence estimates are the objective of this thesis.
 This chapter has shown that the key quantity relating these quantities is the distribution of the duration of RT-PCR positivity.
 However, no estimates of this quantity in the general population exist\todo{ref lit review of duration}.
 Therefore, I now turn to estimating the duration of RT-PCR positivity.

@@ -128,30 +128,16 @@ This step assumes that the estimates for each region can be considered independe
 Having fitted the prevalence model, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
-\Cref{E-inc-prev:eq:EPt}, considered across different values of $t$, can be written as $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix formed from the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
-Dividing each side by the total number of individuals in each stratum transforms number of prevalent individuals to prevalence and incidence to incidence proportion.
-
-The matrix $\matr{S}$ is defined to maintain the relationship between incidence and prevalence.
-This gives a lower-triangular of the following form:
-\begin{align}
-    (\matr{S})_{i,j} = \begin{cases}
-        S(i - j + 1) & i - \dmax - 1 \leq j \leq i \\
-        0 & \text{otherwise.}
-    \end{cases}
-\end{align}
-$\matr{S}$ is lower-triangular, hence to solve for $\vec{P}$ I use forward-substitution~\autocite{cormenMatrix}.
-Forward-substitution sequentially solves the $t$th element of $\vec{Z}$ ($t = 1, \dots, T$) by calculating:
+I solve this system using forward substitution, calculating the value of $Z_t$ in \cref{E-inc-prev:eq:forward-substitute} sequentially for $t = 1, \dots, T$.
+\Cref{E-inc-prev:eq:forward-substitute} is repeated here for convenience:
 \begin{align}
 Z_t
 &= \frac{P_t - \sum_{i=1}^{t-1} S_{ti} Z_i}{S_{tt}} \\
 &= P_t - \sum_{i=1}^{t-1} S(t - i + 1) Z_i.
 \label{transmission:eq:forward-substitute}
 \end{align}
-Unlike an inference procedure which infers the parameters simultaneously, there is no feedback loop: the value of $Z_{t}$ does not affect $Z_{t'}$ for $t' < t$.
-The second term here is the contribution of the incidence prior to day $t$ to day $t$'s prevalence.
-The remainder of the prevalence on day $t$ is therefore due to incidence on day $t$.
-% Forward substitution is numerically stable unless the diagonal elements, here $S(1)$, are small relative to the off-diagonal elements, here $S(i)$ for $i > 0$~\autocite[section 8.2]{highamAccuracy}.
-% Here, the diagonal is $S(1) = 1$ and hence the matrix the solution is numerically stable.
+% \Cref{E-inc-prev:eq:EPt}, considered across different values of $t$, can be written as $\vec{P} = \matr{S} \vec{Z}$, where: $\vec{P}$ is a vector of the number of prevalent individuals at each time point in the stratum; $\matr{S}$ is a matrix formed from the survival function, as defined below; and $\vec{Z}$ is a vector of the incidence at each time point in the stratum.
+Dividing each side by the total number of individuals in each stratum transforms number of prevalent individuals to prevalence and incidence to incidence proportion.
 
 Violation of assumptions in various parts of this procedure can lead to the second term in \cref{transmission:eq:forward-substitute} to be greater than the first, giving negative incidence.
 In this case, the incidence prior to day $t$ imply that the prevalence on day $t$ is higher than that predicted by the fitted regression model for this strata/day combination.
@@ -267,10 +253,10 @@ However, except in an epidemic's early stages, the interaction between large reg
 \subsubsection{WAIFW matrix} \label{SEIR:sec:WAIFW-application}
 
 A parsimonious model is needed to parameterise the WAIFW matrix.
-In \cref{E-SEIR:sec:structured-populations}, I explained how the elements of the WAIFW matrix, $\matr{\beta}$ can be decomposed as $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'}$ where\todo{should I repeat these definitions? they already exist in ch 3}: $\kappa_{aa'}$ is the mean rate at which an individual in stratum $a'$ makes contact with individuals in stratum $a$; $q_{aa'}$ is the probability of transmission upon contact between an infectious individual in stratum $a'$ and a susceptible individual in stratum $a$; and $N_{a'}$ is the total number of individuals in stratum $a'$.
+In \cref{E-SEIR:sec:structured-populations}, I explained how the elements of the WAIFW matrix, $\matr{\beta}$ can be decomposed as $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'} / N_{a}$ where\todo{should I repeat these definitions? they already exist in ch 3}: $\kappa_{aa'}$ is the mean rate at which an individual in stratum $a'$ makes contact with individuals in stratum $a$; $q_{aa'}$ is the probability of transmission upon contact between an infectious individual in stratum $a'$ and a susceptible individual in stratum $a$; and $N_{a}$ is the total number of individuals in stratum $a$.
 For many epidemics, where the population behaviour is fairly constant over time, a constant $\matr{\beta}$ is a good approximation.
 However, in SARS-CoV-2, population behaviour changed dramatically, both spontaneously (\eg due to fear) and in response to government-imposed restrictions.
-Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \kappa_{aa'}(t) q_{aa'}(t) N_{a'}$; $N_{a'}$ is constant because the change in the total population is negligible over the length of time considered here.
+Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \kappa_{aa'}(t) q_{aa'}(t) N_{a'} / N_a$; $N_a$ and $N_{a'}$ are constant because the change in the total population is negligible over the length of time considered here.
 
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcite{vanleeuwenTime,vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocite{vanleeuwenTime,birrellRealtime}.
@@ -425,7 +411,7 @@ The full system of differential equations for each region is below.
     \frac{d\vec{i_1}(t)}{dt} &= 2\sigma \vec{e_2}(t) - 2\gamma \vec{i_1}(t) \\
     \frac{d\vec{i_2}(t)}{dt} &= 2\gamma \vec{i_1}(t) - 2\gamma \vec{i_2}(t) \\
     \frac{d\vec{r}(t)}{dt} &= 2\gamma \vec{i_2}(t) \\
-    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
+    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) \circ \vec{N} - \omega_0 \vec{p_0}(t) \\
     \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
     \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
     \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t)
