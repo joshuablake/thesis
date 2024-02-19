@@ -43,8 +43,10 @@ As discussed in\todo{ref intro}, the timing of infection events is very rarely d
 Despite this issue, it remains the single most important quantity for informing the response to an epidemic or pandemic.
 
 \emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
-Within this thesis, I define an individual as having SARS-CoV-2 on day $t$ if, had they been swabbed on day $t$, that swab would return a positive RT-PCR test.
-I refer to these individuals as \emph{prevalent} individuals.
+I refer to individuals with the disease as \emph{prevalent} individuals.
+Whether an individual is prevalent is often expensive or error-prone to measure, therefore, it will often be regarded as a latent quantity.
+Furthermore, what is meant by ``having'' a disease can depend on context; for example, it could be the presence of symptoms, the ability to transmit, or detectable status (the difference between these was discussed in \cref{E-biology-data:sec:natural-history})
+Within this thesis, I define an individual as prevalent on day $t$ if they are detectable (detectable is defined in \cref{E-biology-data:sec:detectable}).
 I assume that an individual's prevalent status cannot change over the course of a day.
 Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$.
