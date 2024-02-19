@@ -117,4 +117,4 @@ plot = ggplot() +
         legend.position = "bottom",
         legend.box = "vertical"
     )
-ggsave("cis-perfect-testing/regions_diag.pdf", width = 6, height = 5.5)
+ggsave("cis-perfect-testing/regions_diag.pdf", width = 6, height = 5.5, device = cairo_pdf)

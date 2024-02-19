@@ -76,7 +76,8 @@ ggsave(
     width = 15,
     height = 9,
     units = "cm",
-    dpi = 300
+    dpi = 300,
+    device = cairo_pdf
 )
 
 tbl_samples = readRDS(here::here("cisRuns-output/vague_perfect_hazard_posterior_samples.rds"))
