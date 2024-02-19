@@ -63,7 +63,7 @@ In the Bayesian context, random effect models are often referred to as hierarchi
 The model of \textcite{hakkiOnset} has two components: a latent viral load model and an observation model.
 The viral load model is a deterministic function of the model parameters, producing an individual's viral load trajectory.
 The observation model mathematically formalises how the RT-PCR testing process produces noisy observations of the latent viral load.
-The observation model includes the possibility of false positive and negatives, and the limit of detection of the RT-PCR test (see \cref{E-biology-data:sec:PCR}).
+The observation model includes the possibility of false positive and negatives, and the limit of detection of the RT-PCR test (\cref{E-biology-data:sec:PCR}).
 % The limit of detection means that viral loads below a certain threshold are not detected by the RT-PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
@@ -96,7 +96,7 @@ This time is based on logistical and behavioural factors such as delays in the N
   \label{ATACCC:fig:viral-load-model}
 \end{figure}
 
-The noisy observations of viral log load from RT-PCR testing are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
+The noisy RT-PCR observations of viral log load are modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
 The measurements are left-censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
 Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$.
@@ -123,7 +123,7 @@ Because $v_i$ is a deterministic transform of $\vec{\phi}_i$ and $\tau_{\max,i}$
 Individuals are split into groups based on their vaccination status.
 The first group is unvaccinated and infected with a variety of pre-Alpha, Alpha, and Delta variants.
 The second group is vaccinated and all were infected by the Delta variant.
-My focus is on the first group since they best correspond to the infections in the time period used throughout this thesis.
+My focus is on the first group since they most closely correspond to the infections in the time period used throughout this thesis.
 
 Biological plausibility requires constraining $\vec{\phi}_i$ to positive real values.
 Each $\vec{\phi}_i$ is modelled as a log-normal random effects by using the hierarchical prior $\vec{\phi}_i \dist \LN(\vec{\mu}_{\phi,g(i)}, \matr{\Sigma}_\phi)$ where $g(i)$ is the group of individual $i$.
@@ -141,8 +141,7 @@ where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the paramete
 These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
 % Correlation matrices have diagonal elements all 1, therefore this reparameterisation has the same number of parameters as the original model.
 
-\textcite{hakkiOnset} uses weakly informative priors, similar to those previously used~\autocite{singanayagamCommunity}.
-These are given in \cref{ATACCC:table:hakki-priors}.
+\textcite{hakkiOnset} uses weakly informative priors, similar to those previously used~\autocite{singanayagamCommunity}, see \cref{ATACCC:table:hakki-priors}.
 I reran \textcite{hakkiOnset}'s analysis using R~4.3.1~\autocite{R-4-3-1}.
 The inference was performed using RStan~2.32.3~\autocite{RStan-2-32-3} and Stan~2.32.2~\autocite{Stan-2-32-2}.
 Inference settings were the same as \textcite{hakkiOnset}, which included 8 chains with a total of 8000 iterations each with the first 3000 used as warm-up.
