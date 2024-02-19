@@ -7,16 +7,10 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-\todo[inline]{%
-    Revisit intro.
-    Question: is CIS (or similar) enough to estimate incidence / transmission?
-}
-
-In this chapter, I use the estimate of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate estimation of incidence and transmission of SARS-CoV-2 in England.
-This estimation is based only on the CIS data (as shown in \cref{E-biology-data:sec:positivity} for further details).
+In this chapter, I use the estimate of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-biology-data:sec:positivity}).
 I will show that the CIS data is sufficient; demonstrating the value of surveys of this type for pandemic surveillance.
 
-I take two approaches, backcalculation and a mechanistic model, the theoretical advantages of each were discussed in \cref{E-inc-prev:sec:infection-process}.
+I take two approaches, backcalculation and a mechanistic model, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
 
 First, in \cref{backcalc}, I use a back-calculation approach, based on \cref{E-inc-prev:eq:EPt}.
 This approach enables estimation of incidence within (sub)populations of England.
@@ -28,9 +22,12 @@ The scale of the CIS and desire to correct for non-response bias presents challe
 In \cref{SEIR}, I use a mechanistic compartmental model, within the modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models}.
 This approach enables estimating both incidence and components of transmission.
 Estimating transmission in addition to incidence answers important epidemiological questions, \eg whether changes in transmission can be explained by changes in contact rates.
-Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 I develop a novel observation model to allow the transmission model to be fit to the CIS data.
-Furthermore, fitting to just prevalence data has not previously been done in the literature (see\todo{ref lit review in intro and copy its novelty claims}).
+
+Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
+I show they give similar values, providing reassurance of the robustness of the results to modelling assumptions.
+Overall, there is a bias-variance trade-off between the models.
+Fitting to just prevalence data has not previously been done in the literature (see\todo{ref lit review in intro and copy its novelty claims}).
 
 \section{Backcalculation} \label{backcalc}
 
@@ -306,7 +303,6 @@ $q_c$ can be interpreted as the relative probability that a child is infected (c
 
 \subsubsection{Prevalence and observation models} \label{SEIR:sec:observation}
 
-\todo[inline]{Rewrite this intro paragraph}
 This section  explains the novel observation model approach I propose for fitting to the CIS prevalence data.
 This will link the model in the previous section to the CIS prevalence data.
 
