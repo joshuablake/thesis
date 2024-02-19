@@ -243,7 +243,7 @@ After July 2020, addresses were also randomly sampled from a database of all UK 
 The response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (383,732 in total) contributed multiple swabs to the survey.
 
 These rates of response raise the possibility of non-response bias.
-In particular, some demographic groups, such as young adults and individuals of non-white ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
+In particular, some demographic groups, such as young adults and individuals of non-White ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
 
 In this thesis, I focus on the period from Mon 31st Aug 2020 until Sun 24th Jan 2021 (inclusive).
 \todo{choice of period might be better in intro}
@@ -278,8 +278,6 @@ Because the testing becomes less frequent after the first 4 weeks, some continuo
 % \end{figure}
 
 
-\subsubsection{Positivity} \label{biology-data:sec:positivity}
-
 The main result reported by the study was what they defined as the \emph{positivity rate}, the proportion of people in a given (sub)population that (if they were tested using RT-PCR) would test positive for SARS-CoV-2 at a defined point in time~\autocite{cisMethodsONS}.
 A notable feature of this definition is that it explicitly does not correct for false positive or negative results.
 Generally, the point in time of interest is a specific day, although it has also been applied to a week~\autocite{cisMethodsONS,pouwelsMRPvaccination,pouwelsCommunity}.
@@ -287,15 +285,21 @@ Larger time periods (\ie weeks instead of days) allow more granular estimates in
 
 \subsubsection{Strata}
 
-The geographic areas I will adopt are the nine standard regions of England (International Territorial Level 1, previously Nomenclature of Territorial Units for Statistics 1); these are: North East, North West, Yorkshire and the Humber (commonly abbreviated to Yorkshire), East Midlands, West Midlands, East, London, South East, and South West~\autoref{onsRegions}.
-These are the geographic areas used throughout the major CIS analyses in England, although sometimes more granular areas were defined~\autocite[e.g.][]{pouwelsMRPvaccination,pouwelsCommunity,cisMethodsONS,houseInferring,walkerTracking}.
+In estimating positivity, I will divide the population into strata based on age group, sex, ethnicity, and geographic area.
+I will report results aggregated to geographic regions and age groups, as has been done previously.
+For the purposes of both fitting and reporting results, test results are aggregated to daily counts for each stratum.
 
 The age groups used have varied slightly for different CIS analyses~\autocite[e.g.][]{pouwelsMRPvaccination,pouwelsCommunity,cisMethodsONS,houseInferring,walkerTracking}.
 I will use the age groups: 0--10 (pre-school and primary school), 11--15 (compulsory secondary school), 16--24 (adolescents and young adults who may remain in formal education), 25--49 (younger working age adults), 50--69 (older working age adults), and 70+ (elderly).
 
-\todo[inline]{Add ethnicity and other strata used in ch 7}
+I use two levels of ethnic grouping.
+Broad groupings (White and non-White), because the White population makes up a large majority of the UK.
+I also use more granular ethnicities (Asian, Black, Mixed, White, and Other).
 
-\subsubsection{Adjustment for non-response and data sparsity}
+The geographic areas I will adopt are the nine standard regions of England (International Territorial Level 1, previously Nomenclature of Territorial Units for Statistics 1); these are: North East, North West, Yorkshire and the Humber (commonly abbreviated to Yorkshire), East Midlands, West Midlands, East, London, South East, and South West~\autocite{onsRegions}.
+These are the geographic areas used throughout the major CIS analyses in England, although sometimes more granular areas were defined~\autocite[e.g.][]{pouwelsMRPvaccination,pouwelsCommunity,cisMethodsONS,houseInferring,walkerTracking}.
+
+\subsubsection{Adjustment for non-response and data sparsity} \label{biology-data:sec:MRP}
 
 If the CIS was truly a random sample, an unbiased estimator of the positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
 However, in practice, two issues arise with this.
@@ -304,11 +308,58 @@ Second, the number of positives on any day is low, especially among any specific
 Statistical methods are used to correct for these issues.
 
 The preferred statistical method for estimating the positivity rate is MRP (multi-level regression and poststratification)~\autocite{cisMethodsONS,pouwelsCommunity}.
-The poststratification step is used to correct for non-response bias.
+MRP is a statistical methodology developed to correct political opinion polling suffering from response bias~\autocite{gelmanMRT,gelmanPoststratication,parkMRP}.
+MRP is a two-step process.
+In this context, the first step, multilevel regression, consists of using a Bayesian multilevel logistic regression model to predict RT-PCR test results in the sample based on demographic covariates.
 To address the low number of positives, MRP uses a hierarchical Bayesian model to borrow information across time and other covariates.
-I explain the details of this model, and how I use it for estimating incidence in \cref{E-backcalc:sec:methods}
+The second step, poststratification, is using the posterior distribution of the parameters is used to predict the population prevalence in each stratum.
+These are combined by taking a weighted average across the strata, where a stratum's weight is equal to its (known) population size.
+The poststratification step is used to correct for non-response bias.
 
-The outputs of this model compared to the unadjusted positivity rate are shown in \cref{biology-data:fig:CIS-positivity}.
+I modified the regression component of a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for the specific context of this thesis~\citePersonalComms{Koen Pouwels}.
+As in prior work~\autocite{pouwelsMRPvaccination}, I used INLA for inference, implemented in R-INLA (see \cref{E-transmission:sec:INLA}).
+For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is:
+\begin{align}
+    \logit(p_{taes}) &= \beta + \beta_s + \beta_{w(e)} + u_a + v_e + w_t + l_{a,t} \\
+    y_{taes} &\dist \BB(n_{taes}, p_{taes}, \rho).
+\end{align}
+The terms are as follows.
+\begin{itemize}
+    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution, as discussed in \cref{biology-data:sec:clustering}.
+    \item $\beta$ is a global intercept term with the prior $\beta \dist \N(0, 1/0.001^2)$.
+    \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females.
+    \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).% $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
+    \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior~\autocite{simpsonPenalising} with a 10\% probability of being greater than 1.
+    \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
+    \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
+\end{itemize}
+All parameters have the default R-INLA priors (see \cref{E-transmission:sec:INLA:priors}), except where stated above.
+For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
+
+I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
+This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
+
+The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
+To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
+For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the number of individuals in that stratum.
+The population numbers for each stratum are provided by the Office for National Statistics.
+
+\subsubsection{Clustering} \label{biology-data:sec:clustering}
+
+The household-based design of the CIS means that the data is clustered.
+In particular, individuals in the same household are likely to transmit to each other and hence have correlated test results.
+Other behavioural or genetic factors could also contribute to individuals in the same household being more similar than randomly selected individuals in the population.
+The positivity analyses use a beta-binomial likelihood (defined in \cref{E-distributions}) to account for this.
+
+The beta-binomial distribution is overdispersed relative to the binomial distribution.
+Overdispersion allows for household clustering and other overdispersion in the data, which is common in epidemiological data~\autocite{griffithsBBD}.
+The parameterisation of the beta-binomial that I use (detailed in \cref{E-distributions}) has an overdispersion parameter $\rho$, regarded as a nuisance parameter in this context.
+$\rho=0$ means the beta-binomial coincides with the binomial distribution.
+As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
+
+\subsubsection{Positivity results}
+
+The estimates from this model compared to the unadjusted positivity rate are shown in \cref{biology-data:fig:CIS-positivity}.
 Both show similar trends.
 The MRP estimate most often increases the estimated positivity rate, compared to uncorrected positivity rate, because the underrepresented demographic groups tended to have higher positivity rates.
 
@@ -322,21 +373,6 @@ The MRP estimate most often increases the estimated positivity rate, compared to
   \label{biology-data:fig:CIS-positivity}
 \end{figure}
 
-As well as estimating the positivity rate for the whole of England (and the devolved nations), the CIS also estimates the positivity rate for various subpopulations, in particular geographic areas and age groups.
-The exact specification of these have varied over time.
-
-\subsubsection{Clustering}
-
-The household-based design of the CIS means that the data is clustered.
-In particular, individuals in the same household are likely to transmit to each other and hence have correlated test results.
-Other behavioural or genetic factors could also contribute to individuals in the same household being more similar than randomly selected individuals in the population.
-The positivity analyses use a beta-binomial likelihood (defined in \cref{E-distributions}) to account for this.
-
-The beta-binomial distribution is overdispersed relative to the binomial distribution.
-Overdispersion allows for household clustering\todo{cite beta-binomial as a model for clustering} and other overdispersion in the data, which is common in epidemiological data\todo{cite that epi data is often overdispersed}. 
-The parameterisation of the beta-binomial that I use (detailed in \cref{E-distributions}) has an overdispersion parameter $\rho$, regarded as a nuisance parameter in this context.
-$\rho=0$ means the beta-binomial coincides with the binomial distribution.
-As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
 \subsubsection{Episodes}
 

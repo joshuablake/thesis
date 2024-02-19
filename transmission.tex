@@ -42,15 +42,12 @@ In \cref{E-inc-prev:sec:observation-process}, I showed that a deterministic appr
 This relationship between incidence proportion and prevalence means that once one is inferred, the other is calculated via a deterministic function.
 Therefore, a statistical methodology for estimating one of these quantities is required.
 
-Estimation of prevalence from the CIS data has been carried out through a well-established methodology, used throughout the pandemic~\autocite{pouwelsCommunity,cisMethodsONS}.
-The method is based on MRP, a statistical methodology developed to correct political opinion polling suffering from response bias~\autocite{gelmanMRT,gelmanPoststratication,parkMRP}.
-MRP is a two-step process.
-In this context, the first step, multilevel regression, consists of using a Bayesian multilevel logistic regression model is to predict RT-PCR test results in the sample based on demographic covariates.
-The second step, poststratification, is using the posterior distribution of the parameters is used to predict the population prevalence in each stratum.
-These are combined by taking a weighted average across the strata, where a stratum's weight is equal to its (known) population size.
+Estimation of prevalence from the CIS data was carried out using MRP throughout the pandemic (see \cref{E-biology-data:sec:MRP}).
 In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
 
-As in prior work, I parameterise the regression model in terms of prevalence, not incidence proportion.
+I keep the same logistic regression model in terms of prevalence, transforming its posterior distribution of prevalence to a posterior distribution of incidence.
+This results in a two-step process: first, the same inference process described in \cref{E-biology-data:sec:MRP} is used to estimate prevalence; second, the prevalence is transformed to incidence.
+An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
 This is required to fulfil several desirable features of the model.
 Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
 The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-biology-data:sec:positivity}).
@@ -99,30 +96,8 @@ In particular, if $\eta_j$ is the prevalence, then $\eta_{it} = \sum_{k=-\infty}
 As $g(i, k)$ is linear in the model parameters, $\vec{x}$, then $\eta_{it}$ is not, violating the requirements of a LGM.
 Therefore, the application of the INLA approximation, while satisfying the other desirable properties, requires that the regression model predicts RT-PCR prevalence, not incidence proportion.
 
-Next, I explain the modification of the previous logistic regression model, and then how to extend the procedure to calculate incidence.
-Specifically, I modified the regression compomenet of a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for this situation~\citePersonalComms{Koen Pouwels}.
-For a day $t$, age group $a$, ethnicity $e$, and sex $s$ assume that:
-\begin{align}
-    \logit(p_{taes}) &= \beta + \beta_s + \beta_{w(e)} + u_a + v_e + w_t + l_{a,t} \\
-    y_{taes} &\dist \BB(n_{taes}, p_{taes}, \rho)
-\end{align}
-The terms are as follows.
-\begin{itemize}
-    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution, as discussed in \cref{E-biology-data:sec:positivity}.
-    \item $\beta$ is a global intercept term with the prior $\beta \dist \N(0, 1/0.001^2)$.
-    \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females.
-    \item $\beta_{w(e)}$ is a fixed effect for white or non-white ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to white ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-white ethnic groups).% $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
-    \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior~\autocite{simpsonPenalising} with a 10\% probability of being greater than 1.
-    \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
-    \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
-\end{itemize}
-All parameters have the default R-INLA priors (see \cref{transmission:sec:INLA:priors}), except where stated above.
-For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
-
-I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
-This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
-
-Having fitted the prevalence model, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
+Next, I explain how I extended the MRP model introduced in \cref{E-biology-data:sec:MRP} to calculate incidence.
+I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
 I solve this system using forward substitution, calculating the value of $Z_t$ in \cref{E-inc-prev:eq:forward-substitute} sequentially for $t = 1, \dots, T$.
@@ -151,10 +126,9 @@ Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_0 = P_1 / \sum_{i=1}^{\dma
 For day $t$, the contribution of the incidence for $t < 1$ can be calculated as $P'_t = I_0 \sum_{i=t+1}^{\dmax} S(i)$.
 Subtracting $\vec{P'}$ from $\vec{P}$ before applying the forward solving procedure accounts for the contribution of the incidence prior to the first day of prevalence data.
 
-The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
-For this, I start with the 500 samples of the approximate posterior distribution of the incidence.
-For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the proportion of the population in each stratum.
-The population numbers for each stratum are provided by the Office for National Statistics.
+Once the incidence proportion in each stratum has been calculated using this procedure, I poststratify it to the CIS target population and subpopulations of interest.
+This is done using the methodology explained in \cref{E-biology-data:sec:MRP}.
+
 
 \subsection{Results and discussion} \label{backcalc:sec:results}
 
