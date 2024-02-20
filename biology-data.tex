@@ -374,7 +374,7 @@ The MRP estimate most often increases the estimated positivity rate, compared to
 \end{figure}
 
 
-\subsubsection{Episodes}
+\subsubsection{Episodes} \label{biology-data:sec:cis-episodes}
 
 Positive test results need to be grouped into \emph{infection episodes}.
 An infection episode is a series of positive tests that originate from a single transmission event.
@@ -409,11 +409,28 @@ As can be seen, the number of tests within an episode, their length, and other c
   }
 \end{figure}
 
-\todo[inline]{%
-    From chapter 7 add info on: how this is aggregated/stratified/etc, SRS computational limitations, definitions for each episode (sketched below).
-}
+The crucial features of an infection episode are the start and end times of the infection.
+Ignoring misclassified test results, latent start time of infection episode $i$, $B_i$, can be bounded as between the day after the last negative test, $l_i^{(b)}$, and the day of the first positive test, $r_i^{(b)}$.
+Similarly, the latent end time of infection episode $i$, $E_i$, can be bounded as between the day of the last positive test, $l_i^{(e)}$, and the day before the following negative test, $r_i^{(e)}$.
 
-The beginning of episode $i$ is known to occur in the interval $[l_i^{(b)}, r_i^{(b)}]$, and similarly for the end of the infection in $[l_i^{(e)}, r_i^{(e)}]$.
+\subsubsection{Computational limitations and privacy protection}
+
+For privacy reasons, the CIS data is stored in the ONS's SRS (Secure Research Service).
+The SRS is a Trusted Research Environment (TRE) that allows researchers to access sensitive data in a secure environment.
+
+Statistical disclosure controls must be applied to any data or results to be extracted from the SRS.
+Statistical disclosure control ensures that no individual can be identified from the data.
+This means that data must be aggregated to counts of at least 5, and no individual-data included.
+
+Analyses requiring more fine-grained stratification (such as that in \cref{biology-data:sec:MRP}) or linking data from the same individual over time (such as that in \cref{E-perf-test,E-imperf-test}) must be performed within the SRS.
+Therefore, computationally efficient approaches must be taken to this work.
+
+\section{Conclusion}
+
+In this chapter, I have introduced RT-PCR testing, the natural history of SARS-CoV-2, and the two studies used in this thesis.
+The next chapter will introduce the data generating processes behind infection, prevalence, and our observations of these processes.
+Then, I will apply these concept to the two studies.
+
 
 \ifSubfilesClassLoaded{
   \listoftodos
