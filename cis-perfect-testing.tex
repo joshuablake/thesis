@@ -42,10 +42,11 @@ These include a prior to combine the information in the CIS with the results of 
 Reasonable priors successfully recover the true distribution.
 However, the method must be able to account for false negatives, discussed in \cref{E-imperf-test}.
 
-\todo[inline]{make sure following paragraph makes sense in context (copy/pasted here)}
+\todo[inline]{Are the following paragraphs better here or in the intro chapter when motivating each chapter and the overall narrative of the thesis?}
 In the rest of this and the following chapter, I use survival analysis rather than the biomarker approach taken in \cref{E-ATACCC}.
-This choice is motivated by computational efficiency and limitations of the CIS's study design.
+This choice is motivated by the computational limitations of the SRS and the CIS's study design (see \cref{E-intro:sec:cis}).
 The biomarker approach is computational challenging because the number of random effects scales with the number of detected infection episodes.
+
 There are many detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
 Therefore, the biomarker approach would be computationally challenging.
 The computational challenge is compounded by the data being stored in a TRE, which has limited computational power and software.
@@ -56,7 +57,7 @@ Hence, there is no information on the viral load trajectory and the random effec
 
 \section{Problem description} \label{perf-test:sec:problem}
 
-The CIS tests each individual infrequently, either weekly or monthly (see\todo{refer to section with CIS intro}).
+The CIS tests each individual infrequently, either weekly or monthly (see \cref{E-intro:sec:cis}).
 The infrequent testing complicates analysis of the data in two ways.
 First, infection episodes can go undetected.
 Second, the infection episode start and end times are known imprecisely.
@@ -73,14 +74,13 @@ To see why this is the case, consider the undetected infection in the bottom of 
 The infection episode depicted begins at time 33 and has a 10-day duration.
 If the duration had been 24 days or more, the individual would still be detectable at their next test and detected then.
 CIS has many undetected infections.
-This is because the interval between tests in the same individual (up to 28 days, see\todo{ref section on the survey design}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
+This is because the interval between tests in the same individual (up to 28 days, see \cref{E-intro:sec:cis}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{cis-perfect-testing/truncation}}
   \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
-\subsection{Double interval censoring}
-\todo{using double interval censored before its defined}
+\subsection{Unobserved episode beginning and end times}
 
 The second complication is that the exact beginning and end times of detected infection episodes are unknown.
 The imprecision in the beginning of the infection episode arises because the only observation that an episode has started is that an individual was negative at one test, on day $l_i^{(b)}-1$ (the minus one is because the first day that the infection could have begun is the day after the negative test), and positive at the next test, on day $r_i^{(b)}$.
@@ -435,7 +435,7 @@ When constructing the prior, two aspects need consideration.
 Firstly, the model structure from \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard, which should be propagated into this analysis.
 That is, the prior used in this analysis cannot be independent across the hazards.
 Secondly, the uncertainty in the estimates from \cref{E-ATACCC} should be increased for this analysis.
-The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see\todo{reference discussion on extrapolation in ATACCC chapter}).
+The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see \cref{E-ATACCC:sec:discussion}).
 %Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
 I form the prior for the combination in two steps.
 
