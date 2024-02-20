@@ -32,8 +32,7 @@ Often, as here, they are used to model the temporal evolution of biomarkers.
 A few example applications are: CD4 counts following HIV infection~\autocite{langeHierarchical,lynchPredicting}, parasite density in blood samples following malaria treatment~\autocite{fogartyBayesian}, and measurements of cognitive decline due to Alzheimer's disease~\autocite{bealisleBayesian}.
 
 In these models, the function's parameters are clearly related to features of the biomarker's trajectory, such as the time from first detection to peak viral load, and the viral load at the peak.
-The piecewise linear model is the most common in the context of SARS-CoV-2 viral load~\autocite{clearyUsing,kisslerViral,larremoreTest}
-\todo{work out why Kissler citation is displaying weird}
+The piecewise linear model is the most common in the context of SARS-CoV-2 viral load~\autocite[e.g.][]{clearyUsing,kisslerViral,larremoreTest}
 In this context, the piecewise linear model is applied to the log of the viral load.
 Hence, the log of the viral load increases linearly, peaks instantaneously, and then decreases linearly; more flexible functions have also been suggested~\autocite{quiltyQuarantine}.
 
@@ -319,7 +318,6 @@ However, there are many differences between individuals in these two groups.
 For example, the vaccinated individuals are likely to be older and/or have co-morbidities because the roll-out of the vaccine in the UK prioritised these groups~\autocite{naoCovidVaccination}.
 They were also infected by different variants because the vaccinated individuals were infected later.
 All these factors could change the viral dynamics~\autocite{russellWithinhost,kisslerDynamicsVaccines} and hence the duration.
-\todo{work out why Kissler citation is displaying weird}
 Therefore, the relationships shown here cannot be considered causal, or even generalisable to contexts where these other confounders are not present.
 Despite these confounders, the result is in agreement with previous work showing that the Alpha and Delta variants of concern (compared to pre-Alpha variants) and being vaccinated are all associated with shorter durations of RT-PCR positivity, although the vaccination effect is larger~\autocite{kisslerDynamicsVaccines}.
 
