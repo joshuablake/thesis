@@ -7,7 +7,7 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-In this chapter, I use the estimate of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-biology-data:sec:positivity}).
+In this chapter, I use the estimate of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-intro:sec:cis}).
 I will show that the CIS data is sufficient; demonstrating the value of surveys of this type for pandemic surveillance.
 
 I take two approaches, backcalculation and a mechanistic model, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
@@ -50,7 +50,7 @@ This results in a two-step process: first, the same inference process described 
 An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
 This is required to fulfil several desirable features of the model.
 Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
-The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-biology-data:sec:positivity}).
+The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-intro:sec:cis-strata}).
 For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
 The statistical model and inference procedure should have the following properties.
 \begin{enumerate}
@@ -60,7 +60,7 @@ The statistical model and inference procedure should have the following properti
     \item Limit estimates to epidemiologically and biologically plausible values.
         That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
-    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:positivity}).
+    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:cis}).
     \item Borrow information across the different covariates.
         The borrowing should penalise towards the distribution of incidence/prevalence across strata in the same geographic region being constant.
         Standard stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) predict this, if behavioural changes are independent of strata and there is negligible impact of immunity.
@@ -312,7 +312,7 @@ Applying the package to the posterior mean of the distribution estimated in \cre
 \end{table}
 % end table of ec params
 
-I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{E-biology-data:sec:positivity}).
+I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{E-biology-data:sec:clustering}).
 If on each day $t$, each strata $i$ is observed to have $y_{at}$ positives out of $n_{at}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \bar{p}_{at}, \rho)
