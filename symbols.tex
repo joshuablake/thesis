@@ -69,6 +69,8 @@ From chapter 5
     \item $n_\sched$ the number of unique test schedules in CIS
     \item $\ntot$ the total number of infection episodes
     \item $\nnodet$ the number of undetected infection episodes
+    \item $r$ the dispersion of the prior on $\ntot$
+    \item $\sched_i$ the $i$th unique test schedule
     \item $\alpha_0$ the prior in the absence of ATACCC data
     \item $\alpha_i$ the admissible space for test schedule $i$
     \item $\beta_0$ the prior in the absence of ATACCC data
@@ -77,6 +79,7 @@ From chapter 5
     \item $\eta_i$ the number of individuals with test schedule $i$
     \item $\theta$ the survival function parameters
     \item $\lambda_t$ the hazard at time $t$
+    \item $\mu$ the mean of the prior on $\ntot$
     \item $\mu_{\epsilon_1}$ the mean of the prior on $\epsilon_1$
     \item $\mu_{\lambda_1}$ the mean of the prior on $\lambda_1$
     \item $\mu_\sigma$ the mean of the prior on $\sigma$
@@ -85,6 +88,19 @@ From chapter 5
     \item $\sigma_{\lambda_1}$ the standard deviation of the prior on $\lambda_1$
     \item $\tau_{\sched_i}(t)$ the time between $t$ and the next test for test schedule $i$
     \item $\Omega_i^C$ the undetected space for test schedule $i$
+\end{itemize}
+
+From chapter 6
+\begin{itemize}
+    \item $p_{ia}'$ the replacement for $p_{ia}$ including false negatives
+    \item $p_{iu}'$ the replacement for $p_{iu}$ including false negatives
+    \item $\psens$ test sensitivity
+    \item $r\inform$ the dispersion of the informative prior on $\ntot$
+    \item $y_i(t)$ the test result for infection episode $i$ at time $t$
+    \item $\vec{y_i}$ the test results associated with infection episode $i$
+    \item $\eta$ the additional probability of missing an infection episode due to false negatives
+    \item $\mu\inform$ the mean of the informative prior on $\ntot$
+    \item $\tau_{\sched_i}(t)$ the time between $t$ and the next but one test for test schedule $i$
 \end{itemize}
 
 \end{document}

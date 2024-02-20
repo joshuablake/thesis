@@ -13,29 +13,30 @@
 \chapter{Survival analysis with false negatives} \label{imperf-test}
 
 In \cref{E-perf-test}, a framework for analysing the CIS to produce estimates of the duration of positivity was developed.
-However, initial application of this framework produced implausibly short estimate. In this chapter I identify this issue to be the result of false negatives, a form of misclassification bias, within the CIS (\cref{imperf-test:sec:problem}).
+However, initial application of this framework produced an implausibly short estimate.
+In this chapter I identify this issue to be the result of false negatives, a form of misclassification bias, within the CIS (\cref{imperf-test:sec:problem}).
+I then propose several models of false negatives (\cref{imperf-test:sec:simulate}) and extend the model of \cref{E-perf-test} to incorporate one of them (\cref{imperf-test:sec:modelling})
+After showing through simulation that the new model recovers the true duration distribution (\cref{imperf-test:sec:sim-study-results}), I apply it to the CIS data (\cref{imperf-test:sec:application}).
+Finally, I discuss the results and further work in \cref{imperf-test:sec:discussion}.
 
 The inclusion of false negatives into survival analysis is an area of much interest, especially in the application of tests for HIV in infants~\autocite[e.g.][]{brownBayesian,balasubramanianEstimation};
 \textcite{piresIntervalMisclassify} provide a comprehensive review of approaches.
 However, including false negatives with either doubly censored or truncated data has not been addressed.
 The situation here requires both.
 
-In \cref{imperf-test:sec:modelling}, I extend the model of \cref{E-perf-test} to incorporate false negatives.
-After showing through simulation that the new model recovers the true duration distribution (\cref{imperf-test:sec:sim-study-results}), I apply it to the CIS data (\cref{imperf-test:sec:application}).
-Finally, I discuss the results and further work in \cref{imperf-test:sec:discussion}.
 
 
 \section{The problem} \label{imperf-test:sec:problem}
 
-Applying the method of \cref{E-perf-test} to CIS data estimates fewer individuals of a duration less than three weeks, compared to \cref{E-ATACCC} (see \cref{imperf-test:fig:problem-cis-estimates}).
-The \cref{E-ATACCC} estimates are more reliable over the first 2--3 weeks due to them having dense data collection here.
+Applying the method of \cref{E-perf-test} to CIS data estimates fewer episodes with a duration of less than three weeks, compared to \cref{E-ATACCC} (see \cref{imperf-test:fig:problem-cis-estimates}).
+The \cref{E-ATACCC} estimates are more reliable over the first 2--3 weeks due to them having frequent data collection here (see \cref{E-biology-data:sec:ataccc,E-ATACCC:sec:discussion}).
 This suggests an issue in the estimation using CIS data.
 \begin{figure}
   \centering \includegraphics{cis-imperfect-testing/CIS_perfect}
   \caption[Estimating survival using CIS data assuming perfect testing]{Estimates of the survival function using CIS data alongside the ATACCC-based estimates of \cref{E-perf-test}. CIS-based has more episodes ending in the first 14 days. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
-Comparing repeated data simulations using the setup of \cref{E-perf-test:sec:simulation-study} to the observed CIS data, suggests that this is due to the high frequency of single positive episodes in the CIS data (compare the histogram with $\psens=1$ and the vertical line in \cref{imperf-test:fig:sim-single-pos}).
+Comparing repeated data simulations, using the setup of \cref{E-perf-test:sec:simulation-study}, to the observed CIS data, suggests that this is due to the high frequency of single positive episodes in the CIS data (compare the histogram with $\psens=1$ and the vertical line in \cref{imperf-test:fig:sim-single-pos}).
 A single positive episode is an episode containing exactly one positive test; intuitively, these cause estimates to be shorter because the lower bound on the length of time the episode is 1 day, the shortest possible.
 Specifically, if $i$ is a single positive episode then $i$'s admissible region (as defined in \cref{E-perf-test:sec:model}) includes $b_i = e_i = r_i^{(b)} = l_i^{(e)}$.
 In this case, the beginning and end day of the episode are both equal to the day of this one positive test.
@@ -43,8 +44,8 @@ If this is true, then the duration is $d_i = e_i - b_i + 1 = 1$.
 Additionally, short episodes are very likely to be missed, which means that the design of the CIS cannot rule out many of them occurring.
 % This produced the same pattern, that is estimating too many short episodes (not shown).
 
-\Textcite{shenNonparametrica}, generalising \textcite{panNote}, studied the situation when only the terminating event is interval censored (\ie single censored data) and left truncated.
-They showed that the non-parameteric maximum likelihood estimator is inconsistent if single positive episodes are possible, and the survival function is severely biased downwards.
+\Textcite{shenNonparametrica}, generalising \textcite{panNote}, studied the situation when only the terminating event is interval censored (\ie singly censored data) and left truncated.
+They showed that the non-parameteric maximum likelihood estimator is inconsistent if single positive episodes occur, and the survival function is severely biased downwards.
 
 The CIS is a more complex setting, including double interval censoring and a complex pattern of missed episodes (see \cref{E-perf-test:sec:problem}).
 This means the result cannot simply be extended to the CIS, but still reinforces the intuition that single positive episodes are likely to be problematic.
@@ -70,20 +71,18 @@ This reproduced the CIS data more faithfully and exhibited the same issues when 
 \section{Generative model for false negatives} \label{imperf-test:sec:simulate}
 
 In this section, I introduce a probabilistic model for the generation of false negatives.
-The simplest model for false negatives is a constant probability of returning a negative test even when detectable.
-The probability of testing positive given being detectable is known as the \emph{test sensitivity}, $\psens$.
-$\psens = 1$ means that there are no false negatives, the situation previously considered.
-In \cref{E-perf-test}, the outcome of a test was deterministic: always positive if the individual being tested had an ongoing infection episode.
-Now, the outcome of such a test result is a Bernoulli random variable with a probability $\psens$ of producing a positive.
-If $\psens = 1$, this recovers the previous model without false negatives.
+The simplest model for false negatives is a constant, non-zero probability of returning a negative test when detectable.
+That is the test sensitivity, $\psens$, is less than 1.
+
+Under this model, each test result in a detectable individual is an iid Bernoulli random variable with a probability $\psens$ of producing a positive.
 As previously, tests in individuals without ongoing infection episodes are always negative.
 I modified the simulation study from \cref{E-perf-test:sec:simulation-study} to generate test results in this way.
 
 Following the modification, more single positive episodes are seen at lower values of $\psens$, with a value between 60\% and 80\% reproducing the number of single positive episodes observed in the CIS data (see \cref{imperf-test:fig:sim-single-pos}).
 This is expected: a lower $\psens$ means that multiple positive tests are less likely, and hence the probability of a single positive episode is higher.
 
-In \cref{E-ATACCC}, I estimated that $\psens$ ($1-\rho$ in \cref{E-ATACCC}'s parameterisation) is 95\% (95\% CrI: 93--96\%).
-The daily testing in the ATACCC study, used for the \cref{E-ATACCC} estimates, means this is a reliable estimate during the period for which the individuals are followed-up.
+In \cref{E-ATACCC}, I estimated that $\psens$ is 95\% (95\% CrI: 93--96\%).
+The daily testing this is based on means this is a reliable estimate during the period for which the individuals are followed-up.
 The requirement for a much lower value of $\psens$ in the simulation study here suggests this model of false negatives is inadequate.
 
 A better model would be to allow the rate of false negatives to vary over the course of an episode.
@@ -106,7 +105,7 @@ As the latent start day of the infection episode is before the first positive re
 I bound the test sensitivity on each day by assuming either all or none of the possible false negatives (group 3) are in fact false negatives.
 % In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie: the first positive test in the episode).
 This generates broad bounds, although suggest a declining test sensitivity over the course of an episode (see \cref{imperf-test:fig:bounding-cis-sensitivity}).
-Small numbers of tests mean that the series is noisy near the start and the end, such as both bounds being 0 after day 40.
+Small numbers of tests mean that the series is noisy near the start and the end, such as both bounds being 0 on some days after day 40.
 However, the general trend is clear.
 \begin{figure}
   \includegraphics{cis-imperfect-testing/test-sens-bound}
@@ -128,7 +127,7 @@ Through consideration of \cref{imperf-test:fig:bounding-cis-sensitivity}, and th
 where $t$ is the number of days since infection.
 Therefore, this model consists of a linear decline in test sensitivity, before a constant minimum point.
 
-I generate results using this model by, for each test in a detectable individual, by calculating $\psens(t-b)$, where $t$ is the day of the test and $b$ is the day the episode began.
+I simulate data under this model by, for each test in a detectable individual, calculating $\psens(t-b)$, where $t$ is the day of the test and $b$ is the day the episode began.
 The result of the test is then a Bernoulli random variable, independent of all other considerations.
 Adapting the simulation study to incorporate this test sensitivity is much more similar to the data (see purple histogram in \cref{imperf-test:fig:sim-single-pos}).
 This model does not require low test sensitivities early in the infection, maintaining compatibility with the results in \cref{E-ATACCC}.
@@ -143,11 +142,6 @@ Then, in \cref{imperf-test:sec:modifying-p_iu}, I modify $p_{iu}$, the probabili
 
 \subsection{Modifying \texorpdfstring{$p_{ia}$}{pia}} \label{imperf-test:sec:modifying-p_ia}
 
-\todo[inline]{These definitions (up until next orange box) will move to chapter 2 where episodes are introduced}
-The beginning of episode $i$ is known to occur in the interval $[l_i^{(b)}, r_i^{(b)}]$, and similarly for the end of the infection in $[l_i^{(e)}, r_i^{(e)}]$.
-
-\todo[inline]{From here, this is the section's content}
-
 I will modify $p_{ia}$ to allow the negative test following the last positive to be a false negative.
 If it is a false negative, then I will consider the episode's end right-censored.
 However, if it is a true negative, then the episode's end is interval-censored, as previously.
@@ -156,27 +150,29 @@ A mixture of these scenarios forms the episode's likelihood contribution, with t
 Similar likelihoods have previously appeared in the literature~\autocite[e.g.][eq.\ (2)]{piresIntervalMisclassify}.
 However, this prior work was for singly interval censored data; incorporating the double interval censored nature of the CIS data will involve summing over the possible episode start times.
 
+\todo[inline]{Proof-read the following paragraphs (up until cases). Also check indices: is $i$ indexing individuals, episodes, or schedules?}
 I start by finding the tests that need consideration.
-For tractability, assume that the negative test bounding the start of the episode, on day $l_i^{(b)}-1$, is a true negative.
-This assumption is reasonable because, since a positive test follows at $r_i^{(b)}$, the negative at $l_i^{(b)}-1$ is likely early in the infection and the test sensitivity is high early in an infection.
-Therefore, this is a test in a period with high test sensitivity \ie unlikely to be a false negative.
 For tractability and simplicity, I consider only tests between the negative tests providing an upper bound on the length of the episode.
 By definition (see\todo{insert where these are defined in chapter 2}), these are the tests between $l_i^{(b)} - 1$ and $r_i^{(e)} + 1$ inclusive.
 They are a subset of $\sched_i$, the set of test times for the individual in which episode $i$ occurs.
-The test at $l_i^{(b)} - 1$ is assumed to be a true negative, occurring with probability 1, and hence does not contribute to the likelihood.
+
+For tractability, assume that the negative test bounding the start of the episode, on day $l_i^{(b)}-1$, is a true negative.
+This assumption is reasonable because, since a positive test follows at $r_i^{(b)}$, the negative at $l_i^{(b)}-1$ is likely early in the infection and the test sensitivity is high early in an infection.
+Therefore, this is unlikely to be a false negative because, if the individual was detectable at this time, they are in a period with high test sensitivity.
+This true negative, occurs with probability 1, and hence does not contribute to the likelihood.
 Denote the remaining tests considered as $\sched'_i = \{ t \in \sched_i \ssep r_i^{(b)} \leq t \leq r_i^{(e)} + 1 \}$, and their results by $\vec{y_i} = \{ y_i(t) \ssep t \in \sched'_i \}$ where $y_i(t) = 1$ if the test on day $t$ is positive and 0 otherwise.
+
 As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_i, l^{(e)}_i]$ because it starts and ends with a positive test.
 This includes all $t \in \sched'_i$ except $t = r_i^{(e)}+1$.
 Therefore, the test results at times in $\sched_i'$, except the test at $r_i^{(e)}+1$, are either true positives or false negatives.
 
-Now consider the negative test at $r_i^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
+Consider the negative test at $r_i^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
 It is a false negative if and only if the episode ends after the test, \ie $e_i > r_i^{(e)}$.
 I proceed by considering whether this is the case, and considering the case with $b_i$ known; $b_i$ will later be integrated out.
 
 First, if $e_i \leq r_i^{(e)}$, meaning that the test at $r_i^{(e)}+1$ is a true negative and the end of the episode is interval-censored as in the previous chapter.
 % In this case, the test at $r_i^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_i$.
 The true negative occurs with probability 1, by the assumption of no false positives.
-The tests in $\sched_i'$ are either true positives or false negatives.
 \begin{align}
 &p(\vec{y_i}, e_i \leq r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
 &= p(\vec{y_i}, l_i^{(e)} \leq e_i \leq r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\ % &\text{as no false positives}
@@ -188,11 +184,10 @@ The tests in $\sched_i'$ are either true positives or false negatives.
 Second, if $e_i > r_i^{(e)}$.
 In this case, the test at $r_i^{(e)}$ is a false negative, occurring with probability $(1 - p_\text{sens})$.
 To avoid having to consider tests after $r_i^{(e)}$, which could greatly complicate the likelihood, I model this case as the episode being right-censored at $r_i^{(e)}$.
-\todo{check previous notes - I think I investigated this assumption a bit more and maybe did some sensitivity analysis}
 Taking the same approach as before:
 \begin{align}
 &p(\vec{y_i}, e_i > r_i^{(e)} | b_i, p_\text{sens}, \theta) \\
-&= p(y_i \mid e_i > r_i^{(e)}, t_i, b_i, p_\text{sens}, \theta) p(e_i > r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\
+&= p(\vec{y_i} \mid e_i > r_i^{(e)}, t_i, b_i, p_\text{sens}, \theta) p(e_i > r_i^{(e)} | t_i, b_i, p_\text{sens}, \theta) \\
 &= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1)
 \label{imperf-test:eq:ll-ei-gt-ri}
 \end{align}
@@ -204,8 +199,7 @@ p_{ia}'
 &= p(\vec{y_i} \mid p_\text{sens}, \theta) \\
 &= \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( p(\vec{y_i}, e_i \leq r_i^{(e)} \mid b_i, p_\text{sens}, \theta) + p(\vec{y_i}, e_i > r_i^{(e)} \mid b_i, p_\text{sens}, \theta) \right) p(b_i \mid p_\text{sens}, \theta).
 \intertext{Now, substitute in \cref{imperf-test:eq:ll-ei-lt-ri,imperf-test:eq:ll-ei-gt-ri}, then take out the common factor:}
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \\ & \ \times \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) + (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1) \right) \\ & \ \times p(b_i \mid p_\text{sens}, \theta).
-\intertext{This simplifies to:}
+&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \\ & \ \times \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - S_\theta(r_i^{(e)} - b_i - 1) + (1 - p_\text{sens}) S_\theta(r_i^{(e)} - b_i - 1) \right) \\ & \ \times p(b_i \mid p_\text{sens}, \theta) \\
 &= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_i(t)} (1 - p_\text{sens})^{(1 - y_i(t))} \right) \\ & \ \times \sum_{b_i = l_i^{(b)}}^{r_i^{(b)}} \left( S_\theta(l_i^{(e)} - b_i - 1) - p_\text{sens} S_\theta(r_i^{(e)} - b_i - 1) \right) p(b_i \mid p_\text{sens}, \theta).
 \label{imperf-test:eq:pia-prime}
 \end{align}
@@ -276,9 +270,9 @@ The posterior density is otherwise unchanged.
 
 Here, I modify the simulation study in \cref{E-perf-test:sec:simulation-study} to assess several features of the statistical model I proposed in the previous section.
 First, the ability to identify the survival function even with false negatives.
-Second, the impact of misspecifying $\psens$, including violating the assumption that is constant.
+Second, the impact of misspecifying $\psens$, such as the assumption that it is constant.
 Finally, the impact of the simplifying assumptions made in \cref{imperf-test:sec:modelling} for tractability.
-These assumptions are that the negative at $l^{(b)_i} - 1$ is a true negative and that there is a negligible probability of missing an episode due to two false negatives.
+These assumptions are that the negative at $l^{(b)}_i - 1$ is a true negative and that there is a negligible probability of missing an episode due to two false negatives.
 
 I simulate datasets under four conditions: a constant $\psens$ of 0.6, 0.8, or 1.0 (the latter being the same as the simulated data in \cref{E-perf-test:sec:simulation-study}), or the varying test sensitivity model proposed at the end of \cref{imperf-test:sec:simulate}.
 The simulation is otherwise unchanged from that in \cref{E-perf-test:sec:simulation-study}.
@@ -291,7 +285,8 @@ The amount that the simplifying assumptions are violated increases as $\psens$ d
 
 I use either the independent (vague) or model combination priors for the survival (described in \cref{E-perf-test:sec:parameters-priors}).
 These were shown to be the best performing priors in \cref{E-perf-test:sec:results}.
-Therefore, there are a total of 24 possible scenarios (each combination of: 4 simulated datasets, 3 values of $\psens$ in inference, and 2 priors), although not all are shown.
+Therefore, there are a total of 24 possible scenarios, although not all are shown.
+These are each combination of: 4 simulated datasets, with varying $\psens$; 3 values of $\psens$ in inference; and 2 priors for the hazard.
 
 When $\psens = 0.8$ and is correctly specified, the model recovers the true survival time well (see \cref{imperf-test:fig:constant-test-sensitivity}(B)).
 The informative prior, in comparison to the vague prior, helps to overcome the misspecification due to the simplifying assumptions, moving the estimated survival function closer to its true survival time.
@@ -307,10 +302,11 @@ This is likely caused by too large a violation of the simplifying assumptions ma
   \label{imperf-test:fig:constant-test-sensitivity}
 \end{figure}
 
+Next, I considered the consequence of $\psens$ being misspecified, using the vague prior; the better performing prior in the correctly specified case.
 If the test sensitivity is misspecified, that is the assumed value for $p_\text{sens}$ in \cref{imperf-test:eq:pit-prime,imperf-test:eq:pit-prime} is different to the value used in the simulation, then the survival time will be biased (see \cref{imperf-test:fig:misspecified-test-sensitivity}).
 If $\psens$ is misspecified and too low (see \cref{imperf-test:fig:misspecified-test-sensitivity}(A)), then the posterior estimate initially follows the true value but then separates.
 The number of episodes inferred to have truly ended by the first negative is too high, and hence the survival time is overestimated.
-This affect dominates over the opposing bias of overestimating the number of missed episodes.
+This effect dominates over the opposing bias of overestimating the number of missed episodes.
 The opposite occurs if the test sensitivity is assumed to be too high, although the posterior moves away from the truth earlier (see \cref{imperf-test:fig:misspecified-test-sensitivity}(C)).
 \begin{figure}
   % \makebox[\textwidth][c]{
@@ -319,8 +315,7 @@ The opposite occurs if the test sensitivity is assumed to be too high, although 
     Posterior (median and 95\% credible interval) of the survival time for the simulation study with a possibly misspecified test sensitivity.
     True survival time shown in black.
     All simulations use a constant test sensitivity of 0.8, but the inference procedure assumes different values, as per the key.
-    Hence, (B) is correctly specified, and the same as in \cref{imperf-test:fig:constant-test-sensitivity}, but (A) and (C) have misspecified $\psens$.
-    All results use the combination prior, due to it performing better than the vague prior in \cref{imperf-test:fig:constant-test-sensitivity}.
+    Hence, (B) is correctly specified but (A) and (C) have misspecified $\psens$.
   }
   \label{imperf-test:fig:misspecified-test-sensitivity}
 \end{figure}
@@ -355,7 +350,8 @@ Approximating this distribution as a negative binomial and scaling the mean to t
 
 With this prior, the model produces plausible estimates of the duration distribution (see \cref{imperf-test:fig:cis-estimates}).
 This estimate (blue) has more long episodes than the estimate in \cref{E-ATACCC} (red).
-The qualitative increase in long episodes is robust to the choice of prior for $\ntot$, the assumed value for $\psens$ (see \cref{imperf-test:fig:cis-sensitivity}), and the choice of prior for the hazard (see \cref{E-perf-test:sec:parameters-priors}), $\lambda$.
+
+The qualitative increase in long episodes is robust to the choice of prior for $\ntot$, the assumed value for $\psens$ (see \cref{imperf-test:fig:cis-sensitivity}), and the choice of prior for the hazards, $\lambda_t$ (see \cref{E-perf-test:sec:parameters-priors}).
 However, the survival proportion over the first 4 weeks is sensitive to these choices.
 The estimate using a test sensitivity of 0.8 and $\NBc(\mu\inform, r\inform)$ give a median survival time most similar to that of \cref{E-ATACCC}.
 \begin{figure}
@@ -377,12 +373,12 @@ The estimate using a test sensitivity of 0.8 and $\NBc(\mu\inform, r\inform)$ gi
   \todo[inline]{Optional improvement: Could highlight the "preferred" model which exists in both rows and is the one used subsequently, and/or include ATACCC in the far-right hand column}
 \end{figure}
 
-The assumption that the estimates are most sensitive to is $r$, the strength of the prior on $\ntot$.
+The the estimates are most sensitive to the choice of $r$, the strength of the prior on $\ntot$.
 A very weak, almost uninformative, prior on this quantity causes the posterior estimate to be much higher than the estimate from \textcite{birrellRTM2}.
 When increasing the prior's strength, the posterior estimate moves towards the prior smoothly, as expected (see \cref{imperf-test:fig:ntot}).
 As discussed previously, the \cref{E-ATACCC} estimates are reliable for the first 2--3 weeks, notably including the median time.
-Therefore, I choose a value of $r$ to match closely \cref{E-ATACCC}'s median estimate.
-The value $r\inform$ achieves this and is a principled choice because it is based directly on the prior work \textcite{birrellRTM2}.
+The median using $r\inform$ matched \cref{E-ATACCC}'s median estimate and is a principled choice because it is based directly on the prior work \textcite{birrellRTM2}.
+Therefore, I use this estimate in the application to the CIS data.
 \begin{figure}
   \centering \includegraphics{cis-imperfect-testing/CIS_ntot}
   \caption{How the posterior estimate of $\ntot$ changes with the value of $r$ in the prior on $\ntot$.}
@@ -399,7 +395,7 @@ However, the rest of the distribution is sensitive to this choice.
 
 An informative prior on $\ntot$ is required is for the bulk of the distribution to agree with those in \cref{E-ATACCC} and the wider literature.
 In the simulation study, the uninformative prior on $\ntot$ performed well, even when the test sensitivity was misspecified.
-A possible explanation is that the true variation in the test sensitivity is significantly different to the function in \cref{imperf-test:eq:variable-test-sensitivity}.
+A possible explanation is that the true changes in the test sensitivity is significantly different to the function in \cref{imperf-test:eq:variable-test-sensitivity}.
 In particular, the test sensitivity for long episodes may become much lower than 50\%.
 This allows many more episodes to be missed than the model assumes, and hence a higher $\ntot$ is required to explain the data.
 Furthermore, it violates assumptions made in \cref{imperf-test:sec:modelling}; this is similar to when the simulating using a too low test sensitivity.
@@ -415,8 +411,9 @@ Estimating the test sensitivity excluding intermittent negatives is not possible
 This aligns with the situation with singly interval-censored, untruncated data, when stopping at the first observed time of the terminating event (which may be misclassified) means that the test sensitivity cannot be estimated~\autocite[e.g.]{titmanMisclassify}.
 
 Estimating a time-varying $\psens$ with $S_\theta$ jointly may cause identifiability issues.
-These can be avoided by including external information (such as a prior giving the magnitude) on $\psens$, or test results from later follow-up~\autocite[and references therein]{piresIntervalMisclassify}.
-However, whether these methods are sufficient for the model to be identifiable with a time-varying $\psens$ needs further investigation.
+Previous studies have avoided issues by including external information (such as a prior giving the magnitude) on $\psens$, or test results from later follow-up~\autocite[and references therein]{piresIntervalMisclassify}.
+However, these studies use a constant $\psens$.
+Whether these methods are sufficient for the model to be identifiable with a time-varying $\psens$ needs further investigation.
 A simple parameteric form of the test sensitivity, such as that proposed by \textcite{brownBayesian}, may be sufficient to allow identifiability.
 In any case, the likelihood, especially $p_{iu}'$, would be substantially complicated by such an addition which may greatly increase the computational cost of inference.
 
@@ -431,12 +428,12 @@ Additionally, some simulations exploring the results of changing incidence sugge
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
 
-In this chapter, I developed and applied novel methodology to estimate the duration distribution of RT-PCR-positivity using information from two studies: ATACCC and CIS.
+In this chapter, I developed and applied novel methodology to estimate the duration distribution of RT-PCR positivity using information from two studies: ATACCC and CIS.
 Assuming a test sensitivity of 0.8 and an informative prior on the number of infections, provided the preferred estimates.
 
-These estimates are the first estimates of the duration of RT-PCR-positivity, including the distribution tails, estimated from general population data.
+These estimates are the first estimates of the duration of RT-PCR positivity, including the distribution tails, estimated from general population data.
 This feature of the distribution is important for understanding the proportion of prevalence attributable to long infections and interpreting RT-PCR test results.
-\todo{possibly cut some of this text?}
+
 Producing these estimates required applying previous survival analysis frameworks in the novel context of the CIS.
 The framework needed further modification to account for the presence of false negatives, done in this chapter.
 
