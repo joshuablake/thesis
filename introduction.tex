@@ -4,16 +4,40 @@
 
 \chapter{Introduction} \label{intro}
 
-\begin{itemize}
-    \item Disease burden of pandemic and ongoing burden of COVID
-    \item To mitigate its effects, need to understand incidence and transmission but cannot observe directly
-    \item Importance of surveillance objectives and concepts: incidence, transmission, basic reproduction number, effective reproduction number
-    \item Expected future pandemics, methods should be reusable
-\end{itemize}
+COVID-19 (Coronavirus Disease 2019), the disease caused by the virus SARS-CoV-2 (Severe Acute Respiratory Syndrome Coronavirus 2), is estimated to have killed around\todo{insert excess deaths estimates by Economist and/or WHO}.
+While it is tempting to consider this a rare or extreme event, history suggests otherwise (see \cref{intro:fig:pandemic-timeline}).
+\begin{figure}
+    \includegraphics[width=\textwidth]{introduction/pandemic-timeline}
+    \caption[Timeline of pandemics.]{%
+        Timeline of pandemics.
+        See \url{https://ourworldindata.org/historical-pandemics} for details and sources.
+        Licensed under \href{https://creativecommons.org/licenses/by/4.0/}{CC-BY} by Saloni Dattani, Klara Auerbach, Marwa Boukarim, and Max Roser.
+    }
+    \label{intro:fig:pandemic-timeline}
+\end{figure}
 
-% - Natural history of SARS-CoV-2 infection
-% 	- Stylised graphic of phases: infection, pre-infection positive, infectious positive, post-infectious positive, negative
-% 	- How it spreads
+Fully quantifying the burden of historical pandemics is challenging due to the absence of systematic records.
+However, our best records suggests that, over the last 400 years, they have (on average) occurred every four years with a mean death toll of 5.6 million\todo{cite Marani et al.}.
+Modelling of our current situation suggests that we should expect X deaths per year from pandemics\todo{get figures from and cite Madhov et al.}.
+
+\section{Pandemic and epidemic surveillance}
+
+\todo[inline]{Importance of pandemic surveillance, and epidemic v pandemic}
+
+No single quantity summarises the full state of an epidemic, and no single data source fully informs all quantities of interest.
+Therefore, a range of metrics and surveillance systems are required to understand the state of an epidemic and the danger of a pathogen (a pathogen is any biological agent that can cause disease).
+
+\subsection{Metrics}
+
+Various forms of \emph{reproduction number} were prominent throughout the COVID-19 pandemic\todo{cite Pellis et al. discussion paper? or maybe something they cite}.
+\todo[inline]{Define different reproduction numbers}
+
+\todo[inline]{Talk about growth rates}
+
+Growth rates and reproduction numbers only provide information on how an epidemic is changing.
+\emph{Incidence} is the primary quantity of interest for the current (or historical) magnitude of a pandemic.
+
+\todo[inline]{Insert discussion on points in following comment}
 % - Why is incidence and prevalence estimation challenging?
 % 	- Asymptomatic infection
 % 	- Ascertainment bias
@@ -21,35 +45,42 @@
 % 	- CIS and REACT
 % - Issues with current incidence estimation
 
-\section{SARS-CoV-2 real-time surveillance}
+\todo[inline]{Define transmission}
 
-\begin{itemize}
-    \item Most commonly used types of data: severe events (deaths/hospitalisations), widespread testing (pillar 2), 
-    \item Advantages of designed surveys (REACT, CIS)
-    \item Use of cohorts (ATACCC)
-    \item Statistical modelling performed during the pandemic. Discuss broadly but especially focus on those using CIS or REACT. Discuss my contribution in this context.
-\end{itemize}
+To translate any of these quantities into the burden of the disease, a measure of severity is required.
+For example, the IFR (infection fatality rate), the proportion of infected individuals who die.
+Severity does not feature in this thesis, but it is important to note that it is a key component of understanding the burden of a pandemic.\todo{maybe reword sentence}
 
-\subsection{Modelling}
+\subsection{Data sources}
 
-\begin{itemize}
-    \item SPI-M
-    \item Literature on mechanistic models using REACT and CIS I have previously circulated.
-    \item \textcite{mccabeCISincidence,abbottCISincidence} on backcalculation.
-    \item Also Taffe?
-\end{itemize}
+A wide variety of designed studies, administrative data, and other data sources have been used for pandemic and epidemic surveillance.
+In the UK SARS-CoV-2 pandemic, the most prominent were: community testing (pillar 2), the number of severe events (\eg hospital admissions or deaths), seroprevalence testing (seroprevalence is the proportion of people with antibodies to a disease, a marker of prior infection\todo{maybe define antibodies and seroprevalence / make this more succint}), and prevalence surveys (\eg REACT and CIS).\todo{add citations for data sources and spell out REACT and CIS}
 
-\subsection{Surveillance data}
-
-The first study, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts), performed daily testing of a small number of individuals with short follow-up.
-The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
+Each of these data sources have strengths and weaknesses.
+\todo[inline]{compare different data sources and why I focus on CIS}
 
 The second study, the CIS (Coronavirus (COVID-19) Infection Survey), performed weekly or monthly testing of a large number of individuals with long follow-up.
 The large sample size and long follow-up allows for reliable estimates of the tails of the distributions of the quantities of interest.
 However, the results are limited because the sparse sampling which means that the viral load dynamics cannot be estimated.
 In particular, the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
 
-\section{Historical context}
+In addition to population-level surveillance, cohort studies help understand other aspects of the pathogen.
+For example, contact tracing data can inform how likely it is for transmission to occur in different settings and/or between different groups of people.
+The ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study is an example of a cohort study in the UK SARS-CoV-2 pandemic\todo{add citation}.
+
+The first study, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts), performed daily testing of a small number of individuals with short follow-up.
+The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
+
+\begin{itemize}
+    \item Most commonly used types of data: severe events (deaths/hospitalisations), widespread testing (pillar 2), 
+    \item Advantages of designed surveys (REACT, CIS)
+    \item Use of cohorts (ATACCC)
+    \item 
+\end{itemize}
+
+\subsection{Estimating incidence and transmission}
+
+\subsubsection{Prior to SARS-CoV-2}
 
 \begin{itemize}
     \item Infectious disease epidemiology and biostatistics heavily developed in context of HIV/AIDS epidemic
@@ -57,14 +88,6 @@ In particular, the vast majority of detected infections had only one or two posi
     \item Surveillance in general (incidence)
 \end{itemize}
 
-\subsection{Surveillance}
-
-\begin{itemize}
-    \item Reproduction numbers
-    \item Incidence: almost never observed directly
-\end{itemize}
-
-\subsection{Backcalculation}
 
 \emph{Backcalculation} is the procedure for estimating incidence based on a measurement of prevalence.
 \Textcite{brookmeyerMethod} developed it in the context of HIV (human immunodeficiency virus) and AIDS (acquired immune deficiency syndrome).
@@ -91,8 +114,6 @@ Therefore, the latter is negligible and again two processes need to be considere
     \item Mathematical details in \cref{E-inc-prev}
     \item Infection process well established, what needs adapting for here (recoveries, sampling)? See first-year report.
 \end{itemize}
-
-\subsection{Mechanistic models}
 
 In this chapter, I introduce mechanistic models for estimating the transmission of SARS-CoV-2, an alternative to the statistical approach in \cref{E-backcalc}.
 Mechanistic models have a structure which make assumptions on the biological and epidemiological mechanisms behind the infection process (see \cref{E-inc-prev:sec:infection-process}), and hence the disease dynamics~\autocite{lesslerMechanistic}.
@@ -128,7 +149,20 @@ For further details I recommend the tutorial paper \textcite{kretzschmarMathemat
 % Having shown that the model can recover the parameters, I then apply it to the CIS data (\cref{E-SEIR:sec:application}).
 % Finally, I discuss the results, limitations, and extensions of this work (\cref{E-SEIR:sec:discussion}).
 
-\subsection{Duration} \label{inc-prev:sec:duration}
+\subsubsection{For SARS-CoV-2}
+
+\todo[inline]{Statistical modelling performed during the pandemic. Discuss broadly but especially focus on those using CIS or REACT. Discuss my contribution in this context.}
+
+
+\begin{itemize}
+    \item SPI-M
+    \item Literature on mechanistic models using REACT and CIS I have previously circulated.
+    \item \textcite{mccabeCISincidence,abbottCISincidence} on backcalculation.
+    \item Also Taffe?
+\end{itemize}
+
+\subsection{Estimating duration}
+
 
 Two approaches are commonly used to estimate durations: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
 For SARS-CoV-2, both approaches would be based on the results of RT-PCR testing.
@@ -146,6 +180,8 @@ Expand on this biomarker vs survival analysis comparison
     \item Literature review on estimates of length of PCR positivity (none in general pop)
 \end{itemize}
 
+\section{Bayesian inference}
+
 \section{Notational conventions}
 
 \begin{itemize}
@@ -154,8 +190,9 @@ Expand on this biomarker vs survival analysis comparison
     \item $\cdot$ denotes element-wise multiplication
 \end{itemize}
 
-
 \section{Thesis contribution}
+
+\todo[inline]{Insert contributions listed in Google Doc}
 
 \begin{itemize}
     \item Overall question: how can prevalence surveys best be used to understand incidence and transmission?
@@ -173,9 +210,9 @@ A framework for performing CIS-like simulations is available at \url{https://git
 A framework for fitting the class of models described here and in \cref{E-imperf-test} is available at \url{https://github.com/joshuablake/cisDurationModel}.
 Code utilising these frameworks to perform the analysis described in this chapter is available at \url{https://github.com/joshuablake/cisRuns}.
 
-The ATACCC data used is found in the same location.
-CIS data can only be accessed by accredited researchers within the Office for National Statistic's Secure Research Service\todo{insert details of applying to SRS}.
 Where possible, aggregated, non-disclosive versions of the dataset are available alongside the code.
+The original ATACCC data used is found in the same location.
+The original CIS data can only be accessed by accredited researchers within the Office for National Statistic's Secure Research Service\todo{insert details of applying to SRS}.
 
 \subsection{Epidemiological contributions}
 
