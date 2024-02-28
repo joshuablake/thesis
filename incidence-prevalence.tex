@@ -32,8 +32,6 @@ The observation process (\cref{inc-prev:sec:observation-process}) describes the 
 Unlike in HIV/AIDS backcalculation, the CIS has a sampling mechanism that needs to be modelled.
 This model is guided by the specific study design of the CIS.
 
-Finally, \cref{inc-prev:sec:MCMC} will introduce Markov chain Monte Carlo (MCMC), an inference technique I will make extensive use of in this thesis.
-
 \Cref{inc-prev:sec:conclusion} concludes the chapter.
 
 \section{Definitions} \label{inc-prev:sec:definitions}
@@ -292,7 +290,7 @@ A few properties and assumptions of the SIR model are worth noting.
     It is in this phase that the basic reproduction number provides a good approximation of the epidemic dynamics.
     \item The basic reproduction number for the SIR model is $\R = \beta / \gamma$~\autocite[20]{keelingModeling}.
     Intuitively, this can be thought of as the mean number of infections caused by an infectious individual per day, $\beta$, multiplied by the mean number of days for which they are infectious, $1/\gamma$.
-    \item The effective reproduction number for this model is $R_e(t) = \beta / \gamma s(t) = \R s(t)$~\autocite{pellisEstimation}.
+    \item The effective reproduction number for this model is $\Re = \beta / \gamma s(t) = \R s(t)$~\autocite{pellisEstimation}.
     $1-s(t)$ is the fraction of infections that are avoided because of the presence of immune individuals in the population.
     \item The population is assumed to be closed.
     This assumption implies several attributes.
@@ -713,80 +711,6 @@ Therefore, neglecting the correlation between $X_t$ and $X_{t'}$ is a good appro
 
 This section showed that, when using a prevalence survey such as CIS, the likelihood $p(\vec{x} \mid \vec{z})$ is very well approximated by $p(\vec{x} \mid \vec{P} = \E(\vec{P} \mid \vec{z}))$.
 
-
-\section{Markov chain Monte Carlo} \label{inc-prev:sec:MCMC}
-
-MCMC is a class of algorithms for sampling from a distribution where the normalising constant for the distribution is unknown.
-I will use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data (again, scalar or vector).
-MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid y)$ by constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution~\autocite[275]{gelmanBDA}.
-It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, \ie the target posterior.
-This section outlines some basic principles of MCMC and considerations when using it in practice.
-Any reader interested in more technical details or proofs of the results here should consult the references within this section.
-
-A common way of constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution is using the Metropolis-Hastings algorithm~\autocite{hastingsMCMC}.
-The algorithm requires a proposal distribution $q(\psi' \mid \psi)$, which proposes that the chain moves to a new state $\psi'$ from its current state $\psi$; $\pi(\psi)$, a calculation of $p(\psi \mid y)$ up to some constant.
-The proposal is then either accepted or rejected based on the \emph{acceptance ratio}, which is computed using $\pi$.
-The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further details in available in a wide-range of sources~\autocites[e.g.][]{brooksMCMCNotes}[chapter 11]{gelmanBDA}.
-\begin{algorithm}
- set $\psi^0$ to some initial value\;
- \For{$i = 1, \dots, M$}{
-  sample a proposal $\psi' \sim q(\psi' \mid \psi)$ \;
-  calculate the acceptance probability $\alpha(\psi, \psi') = \min \left( 1, \frac{\pi(\psi') q(\psi \mid \psi')}{\pi(\psi) q(\psi' \mid \psi)} \right)$ \;
-  with probability $\alpha(\psi, \psi')$ set $\psi^i$ to $\psi'$, otherwise set $\psi^i$ to $\psi^{i-1}$ \;
- }
- \caption{The Metropolis-Hastings algorithm.}
- \label{inc-prev:algorithm:MH}
-\end{algorithm}
-
-The proposal distribution $q$ is most commonly a (possibly multivariate) Normal distribution centred on $\psi$; this scheme is used in \cref{E-SEIR}.
-Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC.
-The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
-One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:inference}.
-
-MCMC using a Normal proposal distribution can be inefficient.
-In particular, it often poorly explores the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
-\emph{Hamiltonian Monte Carlo} (HMC)~\autocite{nealMCMC,nealImproved,duaneHybrid} improves the proposals by using information from the gradient of the posterior density (taken with respect to the parameters).
-HMC simulates a physical system travelling through the posterior space with momentum.
-The momentum increases in the direction the posterior density increases, using the gradient.
-This means that the sampler tends to propose moves with higher posterior density.
-The Metropolis-Hastings algorithm is then used to accept or reject the proposed move.
-
-The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the Hamiltonian dynamics hyperparameters.
-NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
-I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
-Stan implements \emph{automatic differentiation}~\autocite{griewankAutoDiff} to calculate the gradient of the posterior density without any user input.
-Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
-For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
-
-Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}~\autocite[72]{lunnBUGS}.
-
-Convergence is how quickly the Markov chain approaches the stationary distribution.
-Early draws from the Markov chain reflect the choice of the starting point, $\psi^0$, rather than the stationary distribution that the chain will eventually converge to~\autocite[282]{gelmanBDA}.
-The simplest technique for assessing convergence is graphically, using traceplots~\autocite[81]{brooksMCMCNotes}.
-Traceplots show the value of $\psi^i$ against $i$.
-If the chain has converged, then the traceplot will show a random walk around the stationary distribution.
-This can be improved by using multiple chains with different starting points~\autocite[283]{gelmanBDA}.
-If all chains have converged, then they will be in the same location.
-
-A more complex measure of convergence when running multiple MCMC chains is comparing the within-chain variance to the between-chains variance.
-The principle here is that if all chains have converged then they are sampling from the same distribution.
-Therefore, the within-chain and between-chain variances are the same~\autocite[82]{brooksMCMCNotes}.
-Various metrics quantify thiVarious metrics quantify this I will make use of the improved Rhat statistic~\autocite{vehtariRhat}.
-%The Rhat statistic is defined for a scalar parameter $\psi$.
-%Let $\psi^{(ij)}$ denote the $i$th (of $M$) sample from the $j$th chain (of $N$).
-%Let $\bar{\psi}^j$ denote the mean value of the samples of $\psi$ from the $j$th chain, $\bar{\psi}^j = \frac{1}{M} \sum_{i=1}^M \psi^{(ij)}$.
-%Let $\bar{\psi}$ denote the mean value of the samples of $\psi$ from all chains, $\bar{\psi} = \frac{1}{N} \sum_{j=1}^N \bar{\psi}^j$.
-%Then the between-chain variance is $B = \frac{M}{N-1} \sum_{j=1}^N (\bar{\psi}^j - \bar{\psi})^2$.
-%The within-chain variance is $W = \frac{1}{N} \sum_{j=1}^N \frac{1}{M-1} \sum_{i=1}^M (\psi^{(ij)} - \bar{\psi}^j)^2$.
-A Rhat of 1 means that the within-chain and between-chain variance are equal, informally that convergence is perfect, as far as can be measured by this technique.
-Various rules-of-thumb exist for what should be considered an acceptable Rhat.
-Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 or 1.05 is more appropriate~\autocite{vehtariRhat}.
-
-The stability of estimates considers the error arising from only using a finite sample of the distribution and the samples being autocorrelated.
-Autocorrelation means that estimates using the sample have higher variance than if it were an iid sample from the posterior~\autocite[286]{gelmanBDA}.
-The \emph{effective sample size} corrects for the autocorrelation.
-The effective sample size can be interpreted as the number of iid samples that would have the same variance as the MCMC sample~\autocites[286]{gelmanBDA}{vehtariRhat}.
-Various techniques have been proposed for computing the effective sample size, I will follow the approach of \textcite{vehtariRhat}, implemented in RStan~\autocite{RStan-2-32-3}.
 
 \section{Conclusion} \label{inc-prev:sec:conclusion}
 

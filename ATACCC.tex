@@ -66,7 +66,7 @@ The observation model includes the possibility of false positive and negatives, 
 % The limit of detection means that viral loads below a certain threshold are not detected by the RT-PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-inc-prev:sec:MCMC}).
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-MCMC}).
 The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
 This leads to the following model for the viral load (examples are shown in \cref{ATACCC:fig:viral-load-model}):

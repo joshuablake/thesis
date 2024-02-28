@@ -448,7 +448,7 @@ I approximated the posterior of this proportion with a beta distribution to form
 \subsubsection{Inference} \label{SEIR:sec:inference}
 
 I compute the posterior distribution using MCMC.
-Specifically, I use an adaptive random-walk Metropolis-Hastings algorithm (previously discussed in \cref{E-inc-prev:sec:MCMC}).
+Specifically, I use an adaptive random-walk Metropolis-Hastings algorithm (discussed in \cref{E-MCMC}).
 The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
 The adaption algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, with the implementation based on \textcite{ghoshApproximate}'s work.
 Proposals are accepted or rejected using the standard Metropolis-Hastings (MH) acceptance probability.
@@ -677,7 +677,7 @@ For example, in the North East region, the 11--16 age group has its prevalence o
     \label{SEIR:fig:prev-old}
 \end{figure}
 
-All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-inc-prev:sec:MCMC}).
+All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-intro:sec:MCMC}).
 The lowest Rhat was 1.01 for $\sigma_\epsilon$ in London.
 All parameters had ESS > 1000, except $\sigma_\epsilon$ and $\psi$ in London, which had ESS of 450 and 950 respectively.
 

@@ -91,6 +91,8 @@
 \newcommand{\sched}{\mathbb{T}}
 \newcommand{\rate}{\mathfrak{R}}
 \newcommand{\R}{\mathcal{R}_{0}}
+\renewcommand{\Re}{\mathcal{R}_{e}(t)}
+\newcommand{\Rc}{\mathcal{R}_{c}(t)}
 \newcommand{\vlod}{v_\text{lod}}
 \newcommand{\inform}{{_{\text{inform}}}}
 
@@ -178,9 +180,9 @@
 \setcounter{tocdepth}{1}
 
 %% REMOVE THESE FOR FINAL VERSION WITHOUT TODOS
-\usepackage{geometry}
-\setlength{\marginparwidth}{3cm}
-\geometry{margin=3.8cm}
+% \usepackage{geometry}
+% \setlength{\marginparwidth}{3cm}
+% \geometry{margin=3.8cm}
 
 \begin{document}
 
@@ -196,7 +198,7 @@
 \subfile{cis-imperfect-testing}
 \subfile{transmission}
 
-\chapter{Conclusion}
+\chapter{Conclusion} \label{conclusion}
 Household structure is not included in this model.
 The household-based design of the survey is likely to induce clustering in results, increasing the variance of the measured prevalence.
 The beta-binomial likelihood structure should capture some of this variance within each strata\todo{ref beta-binomial as a model for clustering}, but not between strata.
@@ -207,6 +209,7 @@ The beta-binomial likelihood structure should capture some of this variance with
 \appendix
 
 \subfile{distributions}
+\subfile{MCMC-appendix}
 \subfile{ATACCC-appendix-original-analysis}
 \subfile{transmission-appendix-INLA}
 \subfile{transmission-appendix-phase-type}

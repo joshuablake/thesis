@@ -80,7 +80,7 @@ This is because the interval between tests in the same individual (up to 28 days
   \caption[Undetected episodes in CIS data]{An unknown number of infection episodes in CIS are undetected. Consider the two individuals shown here: we collect identical data for them (a series of negative tests) yet the top individual was never infected and the bottom individual was. See the main text for why this is an issue. \label{perf-test:fig:truncation}}
 \end{figure}
 
-\subsection{Unobserved episode beginning and end times}
+\subsection{Unobserved episode beginning and end times} \label{perf-test:sec:interval-censoring}
 
 The second complication is that the exact beginning and end times of detected infection episodes are unknown.
 The imprecision in the beginning of the infection episode arises because the only observation that an episode has started is that an individual was negative at one test, on day $l_i^{(b)}-1$ (the minus one is because the first day that the infection could have begun is the day after the negative test), and positive at the next test, on day $r_i^{(b)}$.
