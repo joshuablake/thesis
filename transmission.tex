@@ -453,8 +453,9 @@ The proposal distribution is a multivariate normal that adapts to the covariance
 The adaption algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, with the implementation based on \textcite{ghoshApproximate}'s work.
 Proposals are accepted or rejected using the standard Metropolis-Hastings (MH) acceptance probability.
 See \cref{SEIR:MCMC-algorithm} for full details.
+
 \begin{algorithm}
- set $\vec{X_0}$ to an initial value of the parameter vector \;
+ Set $\vec{X_0}$ to an initial value of the parameter vector \;
  $\vec{\mu_0} = \vec{X_0}$ \;
  $\matr{\Sigma_0} = \text{diag}(\vec{\mu_0})$ \;
  $\lambda_0 = 1$ \;
@@ -489,9 +490,7 @@ This was further thinned to 2,000 samples when calculating posterior predictive 
 Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
 Rather than directly inferring $\beta_1$, I infer the initial growth rate of the epidemic.
 In addition, I use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
-Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}).
-
-During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
+Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}). During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
 This follows directly from the ODEs if $\vec{s}$ is constant. 
 The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\psi$ should be more computationally efficient.
 If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
