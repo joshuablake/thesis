@@ -45,10 +45,11 @@ Therefore, a statistical methodology for estimating one of these quantities is r
 Estimation of prevalence from the CIS data was carried out using MRP throughout the pandemic (see \cref{E-biology-data:sec:MRP}).
 In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
 
-I keep the same logistic regression model in terms of prevalence, transforming its posterior distribution of prevalence to a posterior distribution of incidence.
+% I keep the same logistic regression model for predicting prevalence, then transform its posterior distribution of prevalence to a posterior distribution of incidence.
 This results in a two-step process: first, the same inference process described in \cref{E-biology-data:sec:MRP} is used to estimate prevalence; second, the prevalence is transformed to incidence.
-An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
 This is required to fulfil several desirable features of the model.
+
+An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
 Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
 The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-intro:sec:cis-strata}).
 For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
@@ -62,16 +63,15 @@ The statistical model and inference procedure should have the following properti
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
     \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:cis}).
     \item Borrow information across the different covariates.
-        The borrowing should penalise towards the distribution of incidence/prevalence across strata in the same geographic region being constant.
+        The borrowing should penalise away from changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
         Standard stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) predict this, if behavioural changes are independent of strata and there is negligible impact of immunity.
     \item Be computationally efficient.
-        The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see\todo{ref section on SRS computational limitations}).
+        The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
 \end{enumerate}
 
 Properties 1 and 2 suggest a model of the form $\logit(\pi_{it}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised (\ie changes away from linear are penalised).
 The $\logit$ link function both limits $\pi_{it}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{it}$~\autocite{ealesAppropriately}.
 Combined with property 4, the form of $g$ the null model is $g(i, t) = a_0 + a_t t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified; that is, changes away from this model should be penalised.
-To add additional flexibility, 
 
 % Properties 3 and 4 suggest the extension of the previously-developed MRP method, used to already estimate prevalence, which already satisfies these properties.
 % This method has previously been used successfully to estimate prevalence, corrected for non-response bias, from the CIS data~\autocite{cisMethodsONS,pouwelsCommunity,pouwelsMRPvaccination}.
@@ -79,16 +79,15 @@ To add additional flexibility,
 
 Properties 3 and 5 suggest the use of an approximate method for computing the posterior distribution.
 In particular, using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
-Instead, previous MRP implementations have used the Integrated Nested Laplace Approximation (INLA)~\autocite{rueINLA}, implemented in R-INLA~\autocite{RINLA} (see \cref{transmission:sec:INLA}).
-theta
+Instead, previous MRP implementations used INLA (see \cref{E-biology-data:sec:MRP}).
 
 \todo[inline]{Is it OK that $x$ and $y$ in the following two paragraphs don't align with the rest of the thesis chapter? Should I use alterantive notation - but then different to standard in the INLA papers.}
-INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models})~\autocite{rueINLAseminar,rueINLA,martinoINLAtutorial}.
+INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models})~\autocite{rueINLAseminar,rueINLA,martinoINLAtutorial}; see \cref{E-transmission:sec:INLA} for further details on INLA.
 An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
 To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
 
-In this context, each element $\vec{y}$ corresponds to the observed RT-PCR results in one stratum on one day.
-Hence, $\eta_{j}$ must determine the distribution of $y_{j}$ (up to some hyperparameters); where $j$ can be mapped to a mapping of a stratum $i$ and day $t$.
+In this context, each $y_j$ corresponds to the observed RT-PCR results in one stratum on one day.
+Hence, $\eta_{j}$ must determine the distribution of $y_{j}$ (up to some hyperparameters); where $j$ uniquely identifies a stratum $i$ and day $t$.
 In practice, this means that $\eta_j$ is a one-to-one transformation of the population prevalence in stratum $i$ on day $t$.
 If $\eta_j = \logit(\pi_{it})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is a LGM.
 However, if $\pi$ is instead representing incidence proportion, then no such linear relationship between $\eta_j$ and $g$ exists.
