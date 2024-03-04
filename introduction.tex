@@ -4,8 +4,8 @@
 
 \chapter{Introduction} \label{intro}
 
-COVID-19 (coronavirus disease 2019), the disease caused by the virus SARS-CoV-2 (severe acute respiratory syndrome coronavirus 2), is estimated to have killed approximately 15 million in the acutest phase (to the end of 2021) and 30 million globally~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
-While it is tempting to consider this a rare or extreme event, history suggests otherwise (see \cref{intro:fig:pandemic-timeline}).
+COVID-19 (coronavirus disease 2019), the disease caused by the virus SARS-CoV-2 (severe acute respiratory syndrome coronavirus 2), is estimated to have killed approximately 15 million in the acutest phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
+While would be reassuring if this was a rare or extreme event, but history suggests otherwise (see \cref{intro:fig:pandemic-timeline}).
 \begin{figure}
     \includegraphics[width=\textwidth]{introduction/pandemic-timeline}
     \caption[Timeline of pandemics.]{%
@@ -140,7 +140,7 @@ In this context, backcalculation estimates the incidence of HIV infection from d
 Two processes needed to be considered in the context of HIV/AIDS: one generating infections and one relating infections to prevalence.
 % AIDS is incurable, therefore, AIDS prevalence is equivalent to cumulative incidence.
 
-The statistical framework developed in the context of HIV transmission is applicable to SARS-CoV-2.
+The statistical models used to describe HIV transmission are applicable to SARS-CoV-2.
 This infection process can be described as a Poisson process (see \cref{E-inc-prev:sec:infection-process}).
 
 Unlike HIV/AIDS, recovery from SARS-CoV-2 happens in the vast majority of infections.
@@ -178,8 +178,8 @@ Therefore, the model's state and parameters have a biological and/or epidemiolog
 % Of particular interest is that the basic reproduction number, $\R$, and the effective reproduction number, $R_e(t)$, which can both be calculated as functions of the model parameters; using \cref{E-backcalc}'s approach, additional modelling would be required to estimate these numbers.
 In particular, this allows changes in transmission to be decomposed into the contributing factors, \eg the number of contacts per day or the probability of transmission upon contact (see \cref{E-SEIR:sec:mechanistic-models}).
 The ability to estimate the contribution of each of these factors can inform public health policy.
-Furthermore, mechanistic models can be used for scenario-based modelling, which simulates the effect of interventions.
-A scenario here is the effect of a proposed intervention (or lack thereof), introduced into the model by modifying the relevant parameters.
+Furthermore, mechanistic models can be used for scenario modelling, which simulates the effect of interventions.
+A scenario is the effect of a proposed intervention (or lack thereof), simulated by modifying the relevant parameters.
 % The mechanistic model can then be simulated forward in time to understand the intervention's effects.
 % All of these properties make mechanistic models a useful tool for understanding and controlling infectious diseases.
 % However, they make stronger assumptions about the disease and population behaviour than statistical models.
@@ -200,10 +200,13 @@ In the UK, the most influential were the outputs from SPI-M\todo{cite SPI-M and 
 For example, the stages of lifting the lockdown in 2021 each had a set of modelling studies informing the government's decision\todo{cite roadmap 2021 papers}.
 
 Each week, the members of SPI-M would produce a set of estimates of the current state of the epidemic (\eg ther value of $\Re$), known as \emph{nowcasting}.
+The nowcasting estimates were based on mechanistic models.
 These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value.\todo{cite SPI-M combination}
 The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic.\todo{cite gov.uk R number}
 
-The academic groups contributing estimates used a wide variety of methodologies
+The academic groups contributing estimates used a wide variety of methodologies~\autocite{royalSocietyRnumber}.
+These can be split into two types: those based on renewal equations and those based on compartmental models.
+Renewal 
 
 \todo[inline]{Finish lit review of SPI-M methods}
 
@@ -229,6 +232,8 @@ Their methodology was similar to \textcite{abbottCISincidence}.
 
 \section{Estimating duration} \label{intro:sec:duration}
 
+\todo[inline]{Introduce estimating duration}
+
 \subsection{Methodology}
 
 Two approaches are commonly used to estimate the duration of a disease: either modelling an underlying biomarker or modelling the duration directly~\autocite{sweetingEstimating}.
@@ -246,7 +251,7 @@ This approach generally requires fewer parameters, and no random effect, reducin
 It is also easier to specify non-parameteric forms of the distribution, which is important for SARS-CoV-2 as the tail behaviour may be important.
 A more detailed review of the relevant literature is in the relevant chapters.
 % Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
-Other related approaches, such as a multi-state model~\autocite{jacksonMSM}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
+Other related approaches, such as a multi-state model~\autocite{jacksonMSM}\todo{find best reference for MSMs}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
 
 In both cases, longitudinal data is required.
 Therefore, cohort studies, where the same group of indivdiuals are followed over time, are the most appropriate study design.
@@ -263,14 +268,14 @@ Both of the studies recruited individuals from the general population, aiming to
 % For example, contact tracing data can inform how likely it is for transmission to occur in different settings and/or between different groups of people.
 The first study I use, ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts)~\autocite{singanayagamCommunity,hakkiOnset}, performed daily testing of a small number of individuals with short follow-up.
 The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
-I describe ATACCC in detail in \cref{E-biology-data:sec:ataccc} and analyse it in \cref{E-ATACCC}.
+I describe ATACCC in detail in \cref{E-biology-data:sec:ataccc} and use it to estimate duration in \cref{E-ATACCC}.
 
 The second study is the CIS, which I previously mentioned.
 In addition to estimating prevalence, the CIS followed the same individuals over a long period of time (over a year in many cases), collecting longitudinal data.
 The large sample size and long follow-up mean that the tails of the distribution of the duration of positivity can be estimated.
 However, the lack of frequent testing (at most weekly) means that the viral load dynamics cannot be estimated.
 In particular, the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
-I describe the CIS in detail in \cref{E-intro:sec:cis} and analyse it in \cref{E-perf-test,E-imperf-test}.
+I describe the CIS in detail in \cref{E-intro:sec:cis} and use it to estimate duration in \cref{E-perf-test,E-imperf-test}.
 
 
 \subsubsection{Available estimates}
@@ -288,14 +293,15 @@ The cohort in their study was drawn from healthcare workers, and hence was focus
 The situation in New Zealand, who were successfully pursuing a zero-COVID strategy at this time, means that the individuals in the study were unusual.
 For example, a third were travelers detected during their quarantine period on arrival to New Zealand, but would have had negative RT-PCR tests before their departure.
 
-
+For the purposes of this thesis, estimates applicable to the general population are required.
+Therefore, I estimate the duration of positivity from the ATACCC and CIS studies, as described above.
 
 
 \section{Bayesian inference} \label{intro:sec:Bayes}
 
-All inference in this thesis is performed within the Bayesian framework.
-Bayesian inference has several advantages relevant for this work.
-Prior information allows identifiability in situations where this would not otherwise be possible, allows for combining knowledge from multiple sources, and much prior work I build on has been performed within the Bayesian framework.
+All inference in this thesis is Bayesian.
+Bayesian inference has several relevant advantages.
+Prior information allows identifiability in situations where this would not otherwise be possible, allows for combining knowledge from multiple sources, and many previous studies I build used Bayesian inference.
 
 Analytically deriving the posterior distribution is impossible for the models in this thesis.
 Therefore, I use computational methods to sample from the posterior distribution.
@@ -354,7 +360,8 @@ This case study has several features that make it a useful case study for the ai
 First, the CIS was of sufficient size and incidence sufficiently high that there is enough data to perform the analyses.
 Second, incidence begins rising over this period, which is the period of most interest.
 In particular, an epidemic which will cause issues starts by increasing, therefore if the methods are to be applied early in a future epidemic or pandemic, they will start with an increasing period.
-The CIS began in Aril 2020, when incidence was falling due to the first lockdown in the UK.
+\todo{Rephrase this sentence}
+The CIS began in April 2020, when incidence was falling due to the first lockdown in the UK.
 Incidence remained low and fairly flat in England over summer 2020, until it began rising in mid or late August.
 \todo{cite the phases of the UK epidemic}
 Finally, the period ends before the roll-out of the vaccine, which likely affects many important aspects of the analysis.
@@ -371,7 +378,7 @@ Therefore, the code for the analyses in this thesis is available online.
 An index to the various repositories is available at\todo{insert GitHub link}.
 Two elements of the code have been structured as R packages to enable their application to future contexts.
 
-First, the framework to simulation the CIS (used in \cref{E-imperf-test:sec:simulate,E-perf-test:sec:simulation-study}) is structured as a R package.
+First, the framework to simulation the CIS (used in \cref{E-imperf-test:sec:simulate,E-perf-test:sec:simulation-study}).
 The package enables customisation of various features of the study, for example the testing regime of the participants, the sensitivity of the tests, and the duration of positivity.
 This package would be particularly useful in answering questions regarding the design of future prevalence surveys, for example, how frequently should individuals be tested, or how many individuals should be tested.
 
@@ -393,6 +400,7 @@ As its primary aim, this thesis makes several methodological contributions.
 First, in \cref{E-inc-prev:sec:observation-process}, I provide a theoretic justification for the use of deterministic backcalculation in this setting.
 A deterministic backcalculation approach was used by \textcite{abbottCISincidence} and I will use it in \cref{E-backcalc}.
 However, it assumes that the prevalence at any time is a random variable, instead modelling it as a deterministic function of the incidence.
+\todo{Rephrase this sentence}
 I show that, for all that is required for this assumption to hold is that the proportion of the population sampled is small.
 In particular, I show that there is no requirement for the prevalence or incidence to be large.
 
