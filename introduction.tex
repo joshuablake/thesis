@@ -20,8 +20,13 @@ Fully quantifying the burden of historical pandemics is challenging due to the a
 However, our best records suggests that, over the last 400 years, they have (on average) occurred every four years with a mean death toll of 5.6 million~\autocite{maraniNovelEpidemics}.
 Modern estimates suggest that we should expect over 2.5 million deaths per year from pandemics~\autocite{madhavPandemicMortality}.
 
-\todo[inline]{Maybe talk about pandemic v epidemic v outbreak terminology?}
-\todo[inline]{Need to motivate the importance of surveillance}
+All pandemics start as an \emph{outbreak}, a sudden and unexpected rise in the number of people with a disease in a local area; if this spreads over a larger geographic area (\eg a country) it becomes an \emph{epidemic}; if it spreads globally then it is a \emph{pandemic}~\autocite{grennanPandemic}.
+The precise meaning of these terms is contested, determined by usage rather than formal definitions~\autocite{morensPandemic,doshiElusive}.
+I will refer to the SARS-CoV-2 epidemic within England (or the UK), and the global impact as the pandemic.
+
+In this context, \emph{surveillance} is the ability to detect and monitor the spread of an outbreak, epidemic, or pandemic.
+Surveillance is important at every stage: early on, for detecting a new outbreak quickly and assessing its likely impact and later for monitoring the ongoing burden of the disease and the effectiveness of interventions~\autocite{whoFluSurveillance}.
+In all cases, surveillance is required to inform public health policy.
 
 \section{Surveillance metrics}
 
@@ -120,7 +125,16 @@ The use of prevalence surveys for estimating incidence and transmission is the f
 In particular, I focus on the CIS (Coronavirus (COVID-19) Infection Survey), run by the Office for National Statistics (ONS)~\autocite{CIS,cisMethodsONS}.
 The CIS was a longitudinal study, testing a large number of indidividuals weekly or monthly for SARS-CoV-2; it is described in detail in \cref{E-intro:sec:cis}.
 Early in the pandemic, a methodology was developed for using CIS data to estimate prevalence (see \cref{E-intro:sec:cis}).
-The primary aim of this thesis is to estimate incidence and transmission from this data.
+
+A second prevalence survey ran in the UK, known as REACT (REal-time Assessment of Community Transmission)~\autocite{rileyResurgence,rileyREACT}.
+REACT was a series of cross-sectional surveys, run across 19 rounds between May 2020 and March 2022.
+Each round consisted of at least 100,000 randomly-sampled individuals from the UK contributing swabs for RT-PCR testing and questionnaire data~\autocite{elliottTwin}.
+
+A major advantage of the CIS over REACT is that the CIS has daily testing of individuals, while REACT has no test results between rounds.
+This means that REACT cannot be used to estimate transmission or incidence between rounds, instead relying on model assumptions at these times.
+REACT missed the peak in late December 2020, which complicated analysis of the survey data at that time~\autocite{rileyREACTround8}.
+
+The primary aim of this thesis is to estimate incidence and transmission from the CIS data.
 
 \section{Estimating incidence and transmission} \label{intro:sec:estimating-incidence}
 
@@ -203,20 +217,45 @@ Each week, the members of SPI-M would produce a set of estimates of the current 
 The nowcasting estimates were based on mechanistic models.
 These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value~\autocite{parkCombining}.
 The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic~\autocite{govRnumber}.
-The academic groups contributing estimates used a variety of models, mostly based on either \emph{renewal equations} or \emph{compartmental models}~\autocite{royalSocietyRnumber}.
+The academic groups contributing estimates used a variety of models, mostly based on either \emph{renewal equations} or \emph{compartmental models}.
+The methods were reviewed by \textcite{royalSocietyRnumber}; see appendix 2 of that review for details of the specific implementations.
 
 The renewal equation~\autocite{fraserRenewal} for an infectious disease, in the most general form, is:
 \begin{align}
     I(t) &= \int_{0}^{t} \beta(t,\tau) I(t-\tau) d \tau
 \end{align}
 where $I(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the instantaneous probability of an individual infected $\tau$ time units ago infects an individual at time $t$.
+A scaled measure of $I(t)$ (\eg hospital admissions or community test results) allows estimating $\beta$.
+The most common implementations are the R packages EpiNow2~\autocite{EpiNow2} and EpiEstim~\autocite{EpiEstim}.
+Renewal equations do not feature in this thesis, for further information, including practical considerations, see \textcite{nashEstimating,gosticPractical}.
 
-\todo[inline]{Finish lit review of SPI-M methods}
+Compartmental models split the population into compartments, each representing a different state of the disease.
+The \emph{dynamics} of the epidemic, how it changes over time, are described by the transitions between compartments.
+Mathematically, the dynamics are described by ODEs (ordinary differential equations) or SDEs (stochastic differential equations).
+Unlike renewal equations, there are not widely-used implementations of compartmental models.
+Most of the implementations used by SPI-M-O members were in the SEIR (susceptible, exposed, infectious, recovered) framework.
+The SEIR framework, has four components (susceptible, exposed, infectious, recovered), with the population divided into these components.
+The SEIR framework is described in detail in \cref{E-SEIR:sec:mechanistic-models}.
+Compartmental models can be fit to almost any data source, and commonly incorporate multiple data sources, known as \emph{data synthesis}, a technique reviewed by \textcite{birrellEvidence}.
+Most compartmental models used by SPI-M-O were age-stratified, as differences between age groups are important for both the transmission and severity of SARS-CoV-2 (see \cref{E-SEIR:sec:structured-populations}).
 
-\begin{itemize}
-    \item SPI-M
-    \item Literature on mechanistic models using REACT and CIS I have previously circulated.
-\end{itemize}
+Several compartmental models incorporate data from SARS-CoV-2 prevalence surveys, alongside other data sources~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2}.
+These models incorporate prevalence survey data by adding additional compartments representing RT-PCR individuals, who may not be infectious (this is common, see \cref{E-biology-data}); except \textcite{nicholsonImproving} who have a more sophisticated approach (below) and \textcite{ironsEstimating}, who assume RT-PCR positivity coincides with infectiousness.
+The length of stay in these compartments (the duration of time positive) is assumed to follow a gamma distribution, with the parameters estimated from external data or having at most one free parameter.
+The proportion of the population in these compartments are then fit to the prevalence survey data using a binomial likelihood where possible, although some approaches take a Gaussian approximation.
+These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
+
+\Textcite{nicholsonImproving} have the most sophisticated use of prevalence survey data.
+They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:duration-SARS-CoV-2} for discussion of the \textcite{hellewellPCRSensitivity} study).
+Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test into their model.
+% However, they do not incorporate age-stratification into their transmission model, and primarily aim to estimate the bias of community testing in the UK rather than incidence and/or transmission.
+
+In \cref{E-SEIR}, I describe a compartmental model for SARS-CoV-2 transmission, which I fit to CIS data.
+I allow a more flexible distribution of the duration of positivity than most of the papers discussed above, incorporating the skew of the distribution.
+This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:duration-SARS-CoV-2}).
+Unlike \cref{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
+I use only data from the CIS, and show this is sufficient for estimating incidence and transmission.
+Finally, I fit directly to counts from the CIS, rather than an approximation of this data, which has not previously be done.
 
 \subsection{Other approaches}
 
