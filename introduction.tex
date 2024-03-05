@@ -196,17 +196,20 @@ The relevant background information is explained in \cref{E-SEIR:sec:mechanistic
 \subsubsection{Application to SARS-CoV-2}
 
 Many mechanistic modelling studies were conducted during the pandemic, with at least 100 articles published in the first six months of 2020 alone~\autocite{shankarSystematic}.
-In the UK, the most influential were the outputs from SPI-M\todo{cite SPI-M and its outputs - Medley paper?}.
-For example, the stages of lifting the lockdown in 2021 each had a set of modelling studies informing the government's decision\todo{cite roadmap 2021 papers}.
+In the UK, SPI-M-O (Scientific Pandemic Influenza Group on Modelling, Operational sub-group) was a sub-committee of SAGE (the Scientific Advisory Group for Emergencies), generating evidence based on modelling for policy development~\autocite{medleySPIM,govSPIMO}.
+For example, the stages of lifting the lockdown in 2021 each had a set of modelling studies informing the government's decision~\autocite{sageEvidence}.
 
-Each week, the members of SPI-M would produce a set of estimates of the current state of the epidemic (\eg ther value of $\Re$), known as \emph{nowcasting}.
+Each week, the members of SPI-M would produce a set of estimates of the current state of the epidemic (\eg the value of $\Re$), known as \emph{nowcasting}.
 The nowcasting estimates were based on mechanistic models.
-These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value.\todo{cite SPI-M combination}
-The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic.\todo{cite gov.uk R number}
+These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value~\autocite{parkCombining}.
+The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic~\autocite{govRnumber}.
+The academic groups contributing estimates used a variety of models, mostly based on either \emph{renewal equations} or \emph{compartmental models}~\autocite{royalSocietyRnumber}.
 
-The academic groups contributing estimates used a wide variety of methodologies~\autocite{royalSocietyRnumber}.
-These can be split into two types: those based on renewal equations and those based on compartmental models.
-Renewal 
+The renewal equation~\autocite{fraserRenewal} for an infectious disease, in the most general form, is:
+\begin{align}
+    I(t) &= \int_{0}^{t} \beta(t,\tau) I(t-\tau) d \tau
+\end{align}
+where $I(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the instantaneous probability of an individual infected $\tau$ time units ago infects an individual at time $t$.
 
 \todo[inline]{Finish lit review of SPI-M methods}
 
@@ -224,7 +227,7 @@ They estimate a posterior distribution of the parameters of a spline, penalising
 The growth rate is then calculated from the derivative of the spline, an analytical transformation of the parameters.
 Since, under reasonable model assumptions, there is a one-to-one correspondence between reproduction numbers and growth rates~\autocite{wallingaGI}, this also estimates $\Re$.
 
-\Textcite{colmanAscertainment} used CIS prevalence estiamtes to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
+\Textcite{colmanAscertainment} used CIS prevalence estimates to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
 Their methodology was similar to \textcite{abbottCISincidence}.
 \Textcite{colmanAscertainment} do not require a Gaussian process (or other prior) to stabilise incidence estimates because they only estimate the ascertainment rate.
 \todo[inline]{Finish writing about \textcite{colmanAscertainment}}
