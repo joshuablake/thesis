@@ -58,6 +58,10 @@ This is because, if $\vec{x} \mid \vec{y}, \vec{\theta}$ is then dominated by th
 
 \section{Drawing from the posterior} \label{transmission:sec:INLA:posterior}
 
+The joint posterior is not approximated by default.
+The function \texttt{inla.posterior.sample} can be used to draw from the joint posterior of the hyperparameters and the latent variables.
+The method is described in \textcite[section 4]{chiuchioloJoint}.
+
 \section{Default priors} \label{transmission:sec:INLA:priors}
 
 \end{document}
