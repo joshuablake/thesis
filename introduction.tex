@@ -253,7 +253,7 @@ Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test
 In \cref{E-SEIR}, I describe a compartmental model for SARS-CoV-2 transmission, which I fit to CIS data.
 I allow a more flexible distribution of the duration of positivity than most of the papers discussed above, incorporating the skew of the distribution.
 This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:duration-SARS-CoV-2}).
-Unlike \cref{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
+Unlike \textcite{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
 I use only data from the CIS, and show this is sufficient for estimating incidence and transmission.
 Finally, I fit directly to counts from the CIS, rather than an approximation of this data, which has not previously be done.
 
@@ -338,6 +338,8 @@ For example, a third were travelers detected during their quarantine period on a
 For the purposes of this thesis, estimates applicable to the general population are required.
 Therefore, I estimate the duration of positivity from the ATACCC and CIS studies, as described above.
 
+\todo[inline]{Discuss \textcite{ealesCharacterising}}
+
 
 \section{Bayesian inference} \label{intro:sec:Bayes}
 
@@ -397,15 +399,12 @@ Second, what statistical methodology can be used to estimate these quantities fr
 This thesis will focus on the second component.
 However, natural extensions of the work I undertake, will inform the first component.
 
-In order to achieve these aims, I use the SARS-CoV-2 epidemic in England from Mon 31st Aug 2020 until Sun 25th Jan 2021 as a case study.
-This case study has several features that make it a useful case study for the aims of this thesis.
-First, the CIS was of sufficient size and incidence sufficiently high that there is enough data to perform the analyses.
-Second, incidence begins rising over this period, which is the period of most interest.
-In particular, an epidemic which will cause issues starts by increasing, therefore if the methods are to be applied early in a future epidemic or pandemic, they will start with an increasing period.
-\todo{Rephrase this sentence}
+In order to achieve these aims, I use a case study, specifically the SARS-CoV-2 epidemic in England from Mon 31st Aug 2020 until Sun 25th Jan 2021.
+This case study has several features that make it useful for the aims of this thesis.
+These include that the CIS was of sufficient size and incidence sufficiently high that there is enough data to perform the analyses.
+Additionally, incidence begins rising over this period, which is the period when a surveillance system is needed to provide a warning of upcoming issues.
 The CIS began in April 2020, when incidence was falling due to the first lockdown in the UK.
 Incidence remained low and fairly flat in England over summer 2020, until it began rising in mid or late August.
-\todo{cite the phases of the UK epidemic}
 Finally, the period ends before the roll-out of the vaccine, which likely affects many important aspects of the analysis.
 In particular, the duration of positivity and the susceptibility of the population.
 Including both of these elements would require more complex modelling but include idiosyncratic features of the SARS-CoV-2 pandemic that are probably less generalisable to future diseases.
@@ -441,10 +440,9 @@ As its primary aim, this thesis makes several methodological contributions.
 
 First, in \cref{E-inc-prev:sec:observation-process}, I provide a theoretic justification for the use of deterministic backcalculation in this setting.
 A deterministic backcalculation approach was used by \textcite{abbottCISincidence} and I will use it in \cref{E-backcalc}.
-However, it assumes that the prevalence at any time is a random variable, instead modelling it as a deterministic function of the incidence.
-\todo{Rephrase this sentence}
-I show that, for all that is required for this assumption to hold is that the proportion of the population sampled is small.
-In particular, I show that there is no requirement for the prevalence or incidence to be large.
+This approach models the prevalence at any time as a deterministic function of the incidence, rather than as a random variable.
+I show that, this is a good approximation as long as the proportion of the population sampled is small.
+In particular, it does not require the prevalence or incidence to be large.
 
 Next, in \cref{E-perf-test}, I estimate the duration of RT-PCR-positivity from double censored data with arbitrary periods where infections could be missed (a generalisation of truncation).
 This is based on the CIS data.
