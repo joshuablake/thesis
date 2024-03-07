@@ -226,7 +226,7 @@ A parsimonious model is needed to parameterise the WAIFW matrix.
 In \cref{E-SEIR:sec:structured-populations}, I explained how the elements of the WAIFW matrix, $\matr{\beta}$ can be decomposed as $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'} / N_{a}$ where\todo{should I repeat these definitions? they already exist in ch 3}: $\kappa_{aa'}$ is the mean rate at which an individual in stratum $a'$ makes contact with individuals in stratum $a$; $q_{aa'}$ is the probability of transmission upon contact between an infectious individual in stratum $a'$ and a susceptible individual in stratum $a$; and $N_{a}$ is the total number of individuals in stratum $a$.
 For many epidemics, where the population behaviour is fairly constant over time, a constant $\matr{\beta}$ is a good approximation.
 However, in SARS-CoV-2, population behaviour changed dramatically, both spontaneously (\eg due to fear) and in response to government-imposed restrictions.
-Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \kappa_{aa'}(t) q_{aa'}(t) N_{a'} / N_a$; $N_a$ and $N_{a'}$ are constant because the change in the total population is negligible over the length of time considered here.
+Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'}(t) N_{a'} / N_a$; $N_a$ and $N_{a'}$ are constant because the change in the total population is negligible over the length of time considered here.
 
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcite{vanleeuwenTime,vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the COVID-19 pandemic~\autocite{vanleeuwenTime,birrellRealtime}.
@@ -371,21 +371,24 @@ To form whole of England estimates, each region is modelled independently with t
 
 A diagram of the model for a single stratum is shown in figure \cref{SEIR:fig:full-model}.
 The full system of differential equations for each region is below.
-\begin{align}
-    \label{SEIR:eq:fullODEs}
-    \vec{\lambda}(t) &= \beta(t) (\matr{\kappa}(t) \circ \matr{q}) ((\vec{i_1}(t) + \vec{i_2}(t)) \circ \vec{N}) \\
+\begin{equation}
+\begin{aligned}
+    \vec{\lambda}(t) &= \beta(t) (\matr{\kappa}(t) \circ \matr{q} \circ \matr{N}) ((\vec{i_1}(t) + \vec{i_2}(t))) \\
     \frac{d\vec{s}(t)}{dt} &= -\vec{\lambda}(t) \circ \vec{s}(t) \\
     \frac{d\vec{e_1}(t)}{dt} &= \vec{\lambda}(t) \circ \vec{s}(t) - 2\sigma \vec{e_1}(t) \\
     \frac{d\vec{e_2}(t)}{dt} &= 2\sigma \vec{e_1}(t) - 2\sigma \vec{e_2}(t) \\
     \frac{d\vec{i_1}(t)}{dt} &= 2\sigma \vec{e_2}(t) - 2\gamma \vec{i_1}(t) \\
     \frac{d\vec{i_2}(t)}{dt} &= 2\gamma \vec{i_1}(t) - 2\gamma \vec{i_2}(t) \\
     \frac{d\vec{r}(t)}{dt} &= 2\gamma \vec{i_2}(t) \\
-    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) \circ \vec{N} - \omega_0 \vec{p_0}(t) \\
+    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
     \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
     \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
     \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t)
-\end{align}
-where $\circ$ indicates element-wise multiplication.
+\end{aligned}
+\label{SEIR:eq:fullODEs}
+\end{equation}
+where $\circ$ indicates element-wise multiplication and $\matr{N}$ is a matrix with $(\matr{N})_{aa'} = N_{a'} / N_{a}$.
+See \cref{SEIR:eq:fullODEs}
 
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
 That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$.
@@ -401,6 +404,13 @@ $\sigma_\epsilon$ and $\rho$ are given priors that favour a simpler model.
 The prior on $\sigma_\epsilon$ is a penalised complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
 The prior on $\rho$ favours a null model of a binomial likelihood.
 The remaining parameters have weakly informative priors.
+
+To form the prior for $\vec{\pi}$, I used the analysis framework of \textcite{amirthalingamSeroprevalence}, applied to seroprevalence data from blood donors~\autocite{amirthalingamSeroprevalence} and a representative sample of children~\autocite{ratcliffeCommunity} in August 2020.
+This analysis uses a Bayesian framework to correct the seroprevalence data for the sensitivity and specificity of the serological tests, using an informative prior.
+\Textcite{amirthalingamSeroprevalence} formed the prior for the tests by evaluating the tests using samples which are known to be negative (taken before the pandemic) or positive (taken from an individual following a positive RT-PCR test).
+A regression model predicts the proportion of the population with prior immunity in each age group and region.
+I approximated the posterior of this proportion with a beta distribution to form the prior for the analysis in this chapter (see \cref{SEIR:table:immunity-prior}).
+
 \begin{landscape}
 \begin{table}
 \begin{tabular}{l c l l}
@@ -418,13 +428,8 @@ The remaining parameters have weakly informative priors.
 \caption[SEIR model priors]{Priors for each parameter. For details of the distributions and their parameterisations see \cref{E-distributions}.}
 \label{SEIR:table:priors}
 \end{table}
-
-To form the prior for $\vec{\pi}$, I used the analysis framework of \textcite{amirthalingamSeroprevalence}, applied to seroprevalence data from blood donors~\autocite{amirthalingamSeroprevalence} and a representative sample of children~\autocite{ratcliffeCommunity} in August 2020.
-This analysis uses a Bayesian framework to correct the seroprevalence data for the sensitivity and specificity of the serological tests, using an informative prior.
-\Textcite{amirthalingamSeroprevalence} formed the prior for the tests by evaluating the tests using samples which are known to be negative (taken before the pandemic) or positive (taken from an individual following a positive RT-PCR test).
-A regression model predicts the proportion of the population with prior immunity in each age group and region.
-I approximated the posterior of this proportion with a beta distribution to form the prior for the analysis in this chapter (see \cref{SEIR:table:immunity-prior}).
 \begin{table}
+
 \centering
 \begin{tabular}{l|lllll}
          & $[0,16)$ & $[16,25)$ & $[25,50)$ & $[50,70)$ & $[70,\infty)$ \\
@@ -477,62 +482,89 @@ See \cref{SEIR:MCMC-algorithm} for full details.
  \label{SEIR:MCMC-algorithm}
 \end{algorithm}
 
-I transformed parameters with restricted ranges for sampling, to improve efficiency.
+I transformed parameters with bounded supports to the real line to improve sampling efficiency.
 Parameters which are constrained to the positive reals ($\sigma_\epsilon$, $\rho$, and $q_c$) were sampled on the log scale.
 Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) were sampled on the logit scale.
 
-I run 4 chains for 1,000,000 iterations each.
+All results are based on four Markov chains each of length 1,000,000 iterations.
 The first 500,000 were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
 This gives 5,000 posterior samples per region.
 This was further thinned to 2,000 samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
 
 Following \textcite{birrellBayesian}, I reparameterise the model to improve identifiability.
-Rather than directly inferring $\beta_1$, I infer the initial growth rate of the epidemic.
-In addition, I use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
-Both of these rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}). During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
+I parameterise $\beta_1$ in terms of the initial growth of the epidemic.
+I also use a parsimonious parameterisation of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
+
+Both reparameterisations rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}). During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
+That is:
+\begin{equation}
+\begin{aligned}
+\frac{d\vec{e_1}(t)}{dt} = \psi \vec{e_2}(t) \\
+\frac{d\vec{e_2}(t)}{dt} = \psi \vec{e_2}(t) \\
+\frac{d\vec{i_1}(t)}{dt} = \psi \vec{i_2}(t) \\
+\frac{d\vec{i_2}(t)}{dt} = \psi \vec{i_2}(t) \\
+\frac{d\vec{p_0}(t)}{dt} = \psi \vec{p_0}(t) \\
+\frac{d\vec{p_1}(t)}{dt} = \psi \vec{p_1}(t) \\
+\frac{d\vec{p_2}(t)}{dt} = \psi \vec{p_2}(t) \\
+\frac{d\vec{p_3}(t)}{dt} = \psi \vec{p_3}(t).
+\end{aligned}
+\label{SEIR:eq:exponential-growth}
+\end{equation}
 This follows directly from the ODEs if $\vec{s}$ is constant. 
+
 The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterisation in terms of $\psi$ should be more computationally efficient.
-If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number for a SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
+If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number $\R$ for a SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
 \begin{align}
-    \R = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
+    R_{(\psi)} = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
 \end{align}
 
-$\R$ can also be expressed a function of $\matr{\beta}(0)$, and hence $\beta_1$ (as explained in \cref{E-SEIR:sec:structured-populations}).
-Combining these expressions, the model can be parameterised by using $\psi$ in place of $\beta_1$ by using the following procedure.
-Start by calculating $\R$ from $\psi$ using \cref{SEIR:eq:rtoR}; denote this $\hat{R}$.
-$\hat{R}$ is the $\R$ that the current value of $\psi$ implies.
-Hence, $\beta_1$ should be set such that $\matr{\beta}(0)$ implies $\R = \hat{R}$.
-To do so, define $R^*$ as $\R$ $\beta_1 = 1$.
-Using the results of \cref{E-SEIR:sec:structured-populations}, $R^* = D(\matr{\beta}(0)) / \gamma$, computed using $\beta_1=1$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
-Finally, set $\beta_1 = \hat{R} / R^*$; as multiplying a matrix by a scalar also multiplies its dominant eigenvalue by that same scalar, this means that $\R$ at time 0 is $\hat{R}$, as desired.
+Using the results of \cref{E-SEIR:sec:structured-populations}, $\R$ can also be written as $R_{(\beta)} = \beta_1 D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
+Hence setting $\beta_1 = R_\psi / D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ gives $R_\psi = R_\beta$.
+Using this expression, $\beta_1$ has been reparameterised in terms of $\psi$, $q_c$, and fixed quantities.
 
 To form a parsimonious parameterisation of the initial state, first focus on the initial proportion of the population that is in the infectious compartments.
 Recall, from \cref{E-SEIR:sec:structured-populations}, that in the exponential growth phase, the relative proportion of each stratum that is infectious is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
-Introduce a model parameter $i^+$, the proportion of the population in the $i$ states at time 0 in the strata with the highest proportion infectious.
-Define the total number of infectious individuals at time 0 as $\vec{i_0} = \vec{i_1} + \vec{i_2} = \frac{i^+}{\max \vec{d}} \vec{d}$.
-
-From the system of ODEs, the knowledge that all the compartments are growing exponentially at rate $\psi$, and the parameters $\vec{\pi}$ (where $\pi_a$ is the proportion of strata $i$ without immunity at time 0, hence, $\vec{r} = 1 - \vec{\pi}$) one can derive the following for the initial state of the compartments:
+Introduce a model parameter $i^+$, the proportion of the population in either of the $i$ states at time 0 in the strata with the highest proportion infectious.
+Define the total number of infectious individuals at time 0 as $\vec{i_0}$.
+Then:
 \begin{align}
-    \vec{i_1} &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1} \\
-    \vec{i_2} &= \vec{i_0} - \vec{i_1} \\
-    \vec{e_2} &= \vec{i_1} \frac{\psi + 2\gamma}{2\sigma} \\
-    \vec{e_1} &= \vec{e_2} \frac{\psi + 2\sigma}{2\sigma} \\
-    \vec{s} &= \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2} \\
-    \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \omega_0} \\
-    \vec{p_1} &= \vec{p_0} \frac{\omega_0}{\psi + \omega_1} \\
-    \vec{p_2} &= \vec{p_1} \frac{\omega_1}{\psi + \omega_{2}} \\
-    \vec{p_3} &= \vec{p_2} \frac{\pi \omega_{2}}{\psi + \omega_{3}}.
+\vec{i_0} = \vec{i_1}(0) + \vec{i_2}(0) = \frac{i^+}{\max \vec{d}} \vec{d}.
+\label{SEIR:eq:i0}
 \end{align}
+
+Equating the expressions for $d\vec{i_2}/dt$ in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth} and then setting $t=0$ to allow substituting in \cref{SEIR:eq:i0} gives:
+\begin{align}
+    \vec{i_1}(0) &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1}.
+\intertext{By definition of $\vec{i_0}$:}
+    \vec{i_2}(0) &= \vec{i_0} - \vec{i_1}(0).
+\end{align}
+
+A similar process, equating the expressions in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth}, gives the following solution for the initial state of these compartments.
+\begin{align}
+    \frac{d\vec{e_1}(t)}{dt} &= \vec{\lambda}(t) \circ \vec{s}(t) - 2\sigma \vec{e_1}(t) \\
+    \frac{d\vec{e_2}(t)}{dt} &= 2\sigma \vec{e_1}(t) - 2\sigma \vec{e_2}(t) \\
+    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
+    \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
+    \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
+    \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t).
+\end{align}
+
+The definition of $\vec{\pi}$ as the proportion of the population without initial immunity gives $\vec{r}(0) = 1 - \vec{\pi}$.
+Finally, to ensure the population proportions sum to one, $\vec{s}(0) = \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2}$.
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
 
 I ran a simulation study to check that the inference procedure (\cref{SEIR:sec:inference}) was working correctly and that the model was identifiable.
-I ran 100 simulations, with parameters drawn from the priors (see \cref{SEIR:table:priors}) except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
-I used the more informative prior for the simulation study to ensure that the simulations were realistic.
-The weakly informative prior, used for the main analysis, allows a wide range of epidemics including some that are shrinking at the start of the time period.
-Priors and population sizes were matched to the East of England region, over the same time period as the main analysis.
+I generated 100 simulated datasets representing the East of England using the following procedure.
 
-All other aspects of the simulation model, including $\matr{\kappa}$, are as previously described in this section.
+First, I drew 100 parameter sets drawn from the priors (see \cref{SEIR:table:priors}), except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
+I used this more informative prior for the simulation study to restrict the simulations to initially-growing epidemics.
+The weakly informative prior, used for the main analysis, allows a wide range of epidemics including some that are shrinking at the start of the time period.
+The prior for $\vec{\pi}$ was the same as the East of England.
+
+Next, I solved the ODE system in \cref{SEIR:eq:fullODEs} for each parameter set.
+All other aspects of the ODEs, including the data-informed contact matrices, $\matr{\kappa}$, are as previously described in this section.
+Population sizes were those of the East of England, and the time period the same as the main analysis.
 This means that the simulations created realistic incidence and prevalence curves (see \cref{SEIR:fig:sim-data}).
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
@@ -547,18 +579,23 @@ In particular, the October half-term school holiday is visible, especially in th
     \label{SEIR:fig:sim-data}
 \end{figure}
 
-% Furthermore, the combination of the posteriors across all simulations should recover the prior.
+Finally, I generated one dataset of test results for each parameter set.
+These were generated according to the likelihood, \cref{SEIR:eq:likelihood}.
+The number of daily tests was set to the mean of what CIS performed in the region over this period (1630), distributed across the population in proportion to its size.
 
-To check the performance of the inference procedure, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter and simulation.
-Define coverage as the proportion of simulations where the true value of the parameter in that simulation was within the credible interval.
-As the parameters are drawn from the prior, if the inference is performed correctly then the coverage for each parameter should equal the nominal probability (\eg the coverage should be 50\% for the 50\% credible intervals)~\autocite{cookValidation}.
+Having generated 100 datasets, I used the inference procedure in \cref{SEIR:sec:inference} to find the posterior distribution conditional on each dataset.
+Hence, I ended up with 100 parameter sets distributed according to the priors (the ``generative values"), with an associated dataset and posterior distribution for it.
+
+To check the performance of the inference procedure, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each posterior distribution.
+Define coverage for a parameter as the proportion of credible intervals for that parameter containing the generative value.
+As the parameters are drawn from the prior, if the posterior distribution is inferred correctly then the coverage for each parameter should equal the nominal probability (\eg the coverage should be 50\% for the 50\% credible intervals)~\autocite{cookValidation}.
 This check is related to, although simpler than, simulation-based calibration~\autocite{taltsValidating}.
 I constructed a confidence interval for the coverage using the Pearson-Klopper method implemented in the binom package~\autocite{binom1-1}.
 
 The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
 There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow.
 This is a common issue with random walk MCMC (see \cref{E-inc-prev:sec:MCMC}).
-This is similar when considering coverage of the derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
+The same issue arises with the coverage for derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
     \includegraphics{SEIR/sim/coverage}
     \caption[Coverage of simulation study]{%
@@ -579,7 +616,7 @@ This is similar when considering coverage of the derived quantities incidence an
 \end{figure}
 
 
-In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully identified; $\pi_0$ is not identified at all; the other parameters are partially identified, their posterior has moved away from the prior but is still regularised by it (see \cref{SEIR:fig:true-vs-posterior}).
+In this setup, the parameters $i^+$, $q_c$, and $\psi$ are fully identified; $\pi_0$ is not identified at all; the other parameters are partially identified, their posterior has moved away from the prior but there is insufficient information in the data to fully overcome the prior (see \cref{SEIR:fig:true-vs-posterior}).
 The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
 
 For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value (see \cref{SEIR:fig:true-vs-posterior}).
@@ -604,7 +641,8 @@ The 11--16 age group (roughly corresponding to compulsory secondary school educa
 Incidence is smooth within each week but shows discontinuities between weeks.
 This is because the parameters within $\matr{\beta}(t)$ are constant within each week.
 A constant $\matr{\beta}(t)$ would lead to exponential growth following a period of transitory dynamics, although the weekly switching may mean that these transitory dynamics never end, especially when incidence is high~\autocite{rhodesConvergence}.
-The estimated timing of the peak in incidence varies by region, with the most common time being early January 2021 (see \cref{SEIR:fig:peak-incidence}).
+The estimated timing of the peak in incidence varies by region, with the most common time being late December 2020 (see \cref{SEIR:fig:peak-incidence}).
+In Yorkshire and the Humber, the October peak is estimated to be greater than the winter peak; for North West there is significant probability on either being larger.
 \begin{figure}
     \includegraphics{SEIR/CIS/incidence}
     \caption[Posterior estimates of incidence]{%
@@ -636,9 +674,9 @@ Correlation is clear across the regions even though each region is estimated ind
 \end{figure}
 
 The \emph{attack rate} is the proportion of the population that have been infected at least once.
-In this model it is $1 - \vec{s}$, the proportion susceptible.
+In this model it is $1 - \vec{s}$, the proportion susceptible at the time the study ends.
 The attack rate is highest in the $[11, 16)$ age group in the North West at 68\% (95\% CrI: 66--70\%) (see \cref{SEIR:fig:attack-rates}).
-Some of these infections occurred prior to the period covered by this study; during this period 23\% (95\% CrI: 21--24\%) of the population in the North West aged 11--16 were infected.
+Some of these infections occurred prior to the period covered by this study; during the period of this study 23\% (95\% CrI: 21--24\%) of the population in the North West aged 11--16 were infected.
 \begin{figure}
     \includegraphics{SEIR/CIS/attack_rates}
     \caption{Posterior median and 95\% CrI of the attack rate in each region and age group.}
@@ -673,10 +711,11 @@ For example, in the North East region, the 11--16 age group has its prevalence o
         Goodness-of-fit prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the other age groups and details).
     }
     \label{SEIR:fig:prev-old}
+    \todo[inline]{Remake/reposition this plot so that it fits on a page.}
 \end{figure}
 
 All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-intro:sec:MCMC}).
-The lowest Rhat was 1.01 for $\sigma_\epsilon$ in London.
+The highest Rhat was 1.01 for $\sigma_\epsilon$ in London.
 All parameters had ESS > 1000, except $\sigma_\epsilon$ and $\psi$ in London, which had ESS of 450 and 950 respectively.
 
 \subsection{Discussion} \label{SEIR:sec:discussion}
@@ -692,14 +731,14 @@ This includes the age distribution of the infections and the components of trans
 Using a mechanistic model provides additional understanding, compared to the approach in \cref{E-backcalc}.
 For example, decomposing the change in transmission into changing contacts, $\matr{\kappa}(t)$, changing susceptibility $\vec{s}(t)$, and other unmeasured factors, $\beta(t)$.
 By understanding which of these components is changing, policies can be better targeted.
-If it is shown that $\beta(t)$ decreases, this implies that for a given contact rate in the population, there is less transmission.
-Such decreases might be beneficial as it allows society to operate in a more normal manner without increasing transmission.
+If it is shown that $\beta(t)$ decreases, this implies that there is less transmission for the same number of contacts.
+% Such decreases might be beneficial as it allows society to operate in a more normal manner without increasing transmission.
 % Increasing activity without increasing transmission is desirable because it enables reductions the disease burden without burdesome restrictions on individuals day-to-day lives.
 
 
 The parameters $\beta_w$ absorb all the time-varying factors not captured by Google mobility and school attendance data.
 Many factors contribute to the pattern in the $\beta_w$ values, which have a minima near the start of December.
-While this analysis cannot establish causation, several hypotheses that are worth considering.
+While this analysis cannot establish causation, several hypotheses are worth considering.
 
 The decreases in $\beta_w$ over the autumn could be due to increased caution (\eg masking or stricter adherence to social distancing) as cases and deaths increased~\autocite{jarvisEffect} and/or not captured by $\matr{\kappa}(t)$, such as the impact of local measures in the highest transmission areas~\autocite{scottCovid19}.
 Local measures are not well captured by $\matr{\kappa}(t)$ because the matrix averages behaviour across the whole of England.
@@ -722,7 +761,7 @@ This implies that the data would allow identification of a more flexible age-bas
 Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $q_c$.
 Increasing the number of parameters in $\matr{\beta}$ would be the simplest approach to increase the model's flexibility.
 
-The only time-changing part of $\matr{\beta}$ that varies between ages is $\matr{\kappa}$.
+The only component of $\matr{\beta}$ that allows age-dependent heterogeneity in the temporal changes is $\matr{\kappa}$.
 It is plausible that this would not capture all behavioural changes.
 For example, the introduction and relaxation of control measures within schools.
 $\matr{\kappa}$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
