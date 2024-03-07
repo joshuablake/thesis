@@ -17,14 +17,14 @@ While would be reassuring if this was a rare or extreme event, but history sugge
 \end{figure}
 
 Fully quantifying the burden of historical pandemics is challenging due to the absence of systematic records.
-However, our best records suggests that, over the last 400 years, they have (on average) occurred every four years with a mean death toll of 5.6 million~\autocite{maraniNovelEpidemics}.
+However, our best records suggests that, since 1600, they have (on average) occurred every four years with a mean death toll of 5.6 million~\autocite{maraniNovelEpidemics}.
 Modern estimates suggest that we should expect over 2.5 million deaths per year from pandemics~\autocite{madhavPandemicMortality}.
 
 All pandemics start as an \emph{outbreak}, a sudden and unexpected rise in the number of people with a disease in a local area; if this spreads over a larger geographic area (\eg a country) it becomes an \emph{epidemic}; if it spreads globally then it is a \emph{pandemic}~\autocite{grennanPandemic}.
-The precise meaning of these terms is contested, determined by usage rather than formal definitions~\autocite{morensPandemic,doshiElusive}.
+The precise meaning of these terms is contested, determined implicitly by their usage rather than formal definitions~\autocite{morensPandemic,doshiElusive}.
 I will refer to the SARS-CoV-2 epidemic within England (or the UK), and the global impact as the pandemic.
 
-In this context, \emph{surveillance} is the ability to detect and monitor the spread of an outbreak, epidemic, or pandemic.
+In this context, \emph{surveillance} is the ability to detect and monitor the spread of an outbreak.
 Surveillance is important at every stage: early on, for detecting a new outbreak quickly and assessing its likely impact and later for monitoring the ongoing burden of the disease and the effectiveness of interventions~\autocite{whoFluSurveillance}.
 In all cases, surveillance is required to inform public health policy.
 
@@ -146,7 +146,7 @@ Many methods for estimating incidence and transmission were developed in the con
 This ongoing pandemic has killed 40 million people, peaking at 2 million annual deaths~\autocite{unaids2023}.
 The large burden of the disease has motivated many advances in infectious disease epidemiology and biostatistics, including several which form the methodological basis of this thesis.
 
-\subsection{Backcalculation}
+\subsection{Backcalculation} \label{intro:sec:backcalc}
 
 \emph{Backcalculation} is a statistical procedure for estimating incidence based on a measurement of prevalence.
 It was proposed by \textcite{brookmeyerMethod} in the context of HIV/AIDS.
@@ -207,18 +207,7 @@ This early contribution led to an important insight for public health, showing t
 Their model has inspired much of the subsequent literature, a full review of which is beyond the scope of this thesis.
 The relevant background information is explained in \cref{E-SEIR:sec:mechanistic-models}.
 
-\subsubsection{Application to SARS-CoV-2}
-
-Many mechanistic modelling studies were conducted during the pandemic, with at least 100 articles published in the first six months of 2020 alone~\autocite{shankarSystematic}.
-In the UK, SPI-M-O (Scientific Pandemic Influenza Group on Modelling, Operational sub-group) was a sub-committee of SAGE (the Scientific Advisory Group for Emergencies), generating evidence based on modelling for policy development~\autocite{medleySPIM,govSPIMO}.
-For example, the stages of lifting the lockdown in 2021 each had a set of modelling studies informing the government's decision~\autocite{sageEvidence}.
-
-Each week, the members of SPI-M would produce a set of estimates of the current state of the epidemic (\eg the value of $\Re$), known as \emph{nowcasting}.
-The nowcasting estimates were based on mechanistic models.
-These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value~\autocite{parkCombining}.
-The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic~\autocite{govRnumber}.
-The academic groups contributing estimates used a variety of models, mostly based on either \emph{renewal equations} or \emph{compartmental models}.
-The methods were reviewed by \textcite{royalSocietyRnumber}; see appendix 2 of that review for details of the specific implementations.
+Two types of mechanistic models were prominent during the SARS-CoV-2 pandemic: those based on a \emph{renewal equation} and those with a \emph{compartmental} structure.
 
 The renewal equation~\autocite{fraserRenewal} for an infectious disease, in the most general form, is:
 \begin{align}
@@ -239,7 +228,20 @@ The SEIR framework is described in detail in \cref{E-SEIR:sec:mechanistic-models
 Compartmental models can be fit to almost any data source, and commonly incorporate multiple data sources, known as \emph{data synthesis}, a technique reviewed by \textcite{birrellEvidence}.
 Most compartmental models used by SPI-M-O were age-stratified, as differences between age groups are important for both the transmission and severity of SARS-CoV-2 (see \cref{E-SEIR:sec:structured-populations}).
 
-Several compartmental models incorporate data from SARS-CoV-2 prevalence surveys, alongside other data sources~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2}.
+\subsubsection{Application to SARS-CoV-2}
+
+Many mechanistic modelling studies were conducted during the pandemic, with at least 100 articles published in the first six months of 2020 alone~\autocite{shankarSystematic}.
+In the UK, SPI-M-O (Scientific Pandemic Influenza Group on Modelling, Operational sub-group) was a sub-committee of SAGE (the Scientific Advisory Group for Emergencies), generating evidence based on modelling for policy development~\autocite{medleySPIM,govSPIMO}.
+For example, the stages of lifting the lockdown in 2021 each had a set of modelling studies informing the government's decision~\autocite{sageEvidence}.
+
+Each week, the members of SPI-M would produce a set of estimates of the current state of the epidemic (\eg the value of $\Re$), known as \emph{nowcasting}.
+The nowcasting estimates were based on mechanistic models.
+These estimates, once any estimates unduly affected by issues (\eg data quality issues), were statistically combined into a consensus value~\autocite{parkCombining}.
+The consensus value was published on \url{gov.uk} and informed the government's response to the epidemic~\autocite{govRnumber}.
+The academic groups contributing estimates used a variety of models, reviewed by \textcite{royalSocietyRnumber}; see appendix 2 of that review for details of the specific implementations.
+
+In this thesis, I focus on the use of data from prevalence surveys.
+Several compartmental models incorporated data from SARS-CoV-2 prevalence surveys, alongside other data sources~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2}.
 These models incorporate prevalence survey data by adding additional compartments representing RT-PCR individuals, who may not be infectious (this is common, see \cref{E-biology-data}); except \textcite{nicholsonImproving} who have a more sophisticated approach (below) and \textcite{ironsEstimating}, who assume RT-PCR positivity coincides with infectiousness.
 The length of stay in these compartments (the duration of time positive) is assumed to follow a gamma distribution, with the parameters estimated from external data or having at most one free parameter.
 The proportion of the population in these compartments are then fit to the prevalence survey data using a binomial likelihood where possible, although some approaches take a Gaussian approximation.
@@ -261,20 +263,20 @@ Finally, I fit directly to counts from the CIS, rather than an approximation of 
 
 Other approaches have been taken to estimate incidence and/or transmission from the CIS data.
 
-\Textcite{mccabeCISincidence}, applying the methodology of \textcite{ealesAppropriately}, estimate $\Re$ and the epidemic's growth rate from the CIS data.
+\Textcite{mccabeCISincidence}, adapting the methodology \textcite{ealesAppropriately} developed for REACT, estimate $\Re$ and the growth rate from the CIS data.
 They estimate a posterior distribution of the parameters of a spline, penalising deviations from a constant first derivative.
 The growth rate is then calculated from the derivative of the spline, an analytical transformation of the parameters.
-Since, under reasonable model assumptions, there is a one-to-one correspondence between reproduction numbers and growth rates~\autocite{wallingaGI}, this also estimates $\Re$.
+Since, under reasonable model assumptions, there is a one-to-one correspondence between reproduction numbers and growth rates~\autocite{wallingaGI}, and they assume that the growth rate in incidence and prevalence is equal, this also estimates $\Re$.
 
 \Textcite{colmanAscertainment} used CIS prevalence estimates to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
-Their methodology was similar to \textcite{abbottCISincidence}.
-\Textcite{colmanAscertainment} do not require a Gaussian process (or other prior) to stabilise incidence estimates because they only estimate the ascertainment rate.
-\todo[inline]{Finish writing about \textcite{colmanAscertainment}}
-
+Their methodology was similar to \textcite{abbottCISincidence} (see \cref{intro:sec:backcalc}), including using estimates from \textcite{hellewellPCRSensitivity} for how the sensitivity of RT-PCR testing varies over an infection.
+Rather than using a Gaussian process, as \textcite{abbottCISincidence} do, \textcite{colmanAscertainment} provide stability by assuming the ascertainment rate is assumed to be piecewise constant.
+They do not fully propagate the uncertainty from the CIS prevalence estimates, considering only the bounds of the published 95\% confidence intervals.
 
 \section{Estimating duration} \label{intro:sec:duration}
 
-\todo[inline]{Introduce estimating duration}
+The distribution of the duration of positivity is central to the relationship between incidence and prevalence (see \cref{E-inc-prev:sec:prevalence-process}).
+Therefore, a reliable estimate of this quantity is required to achieve this thesis's aims.
 
 \subsection{Methodology}
 
@@ -293,7 +295,7 @@ This approach generally requires fewer parameters, and no random effect(s), redu
 It is also easier to specify non-parameteric forms of the distribution, which is important for SARS-CoV-2 as the tail behaviour may be important.
 A more detailed review of the relevant literature is in the relevant chapters.
 % Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
-Other related approaches, such as a multi-state model~\autocite{jacksonMSM}\todo{find best reference for MSMs}, could also be considered (multi-state models can be viewed as a generalisation of survival analysis).
+Other related approaches, such as a multi-state model (reviewed by \textcite{jacksonMSM}), could also be considered; multi-state models can be viewed as a generalisation of survival analysis.
 
 In both cases, longitudinal data is required.
 Therefore, cohort studies, where the same group of indivdiuals are followed over time, are the most appropriate study design.
@@ -335,11 +337,18 @@ The cohort in their study was drawn from healthcare workers, and hence was focus
 The situation in New Zealand, who were successfully pursuing a zero-COVID strategy at this time, means that the individuals in the study were unusual.
 For example, a third were travelers detected during their quarantine period on arrival to New Zealand, but would have had negative RT-PCR tests before their departure.
 
+\Textcite{ealesCharacterising} estimated the duration of positivity from REACT data.
+Specifically, individuals who tested positive in round 8 of REACT (6th--22nd Jan 2021) were invited to take two additional swab tests.
+Defining the time of the initial positive test at time 0, \textcite{ealesCharacterising} estimated the probability of remaining positive at each day after the initial positive test.
+They made a strong parametric assumption that the probability decreases exponentially, with a sensitivity analysis assuming a plateau before the decay.
+This assumption is necessary because they had at most 17 days of follow-up, and hence could not estimate the tail of the distribution.
+Overall, they estimate a median duration of 14.0 days (95\% CI: 12.9--15.4 days) but that this varied substantially by the viral load of an individual at the time of the initial positive test.
+Individuals with a higher viral load were estimated to have a longer duration of positivity; the highest viral load individuals were estimated to have a median duration of 19.6 days (16.1--25.8 days).
+This could be due to the higher viral load leading to a longer duration of positivity, or that individuals with a higher viral load were more likely to have been recently infected at the time of the initial positive test.
+As they do not consider the latent true time of infection, they cannot distinguish between these two possibilities and underestimate the duration of positivity.
+
 For the purposes of this thesis, estimates applicable to the general population are required.
 Therefore, I estimate the duration of positivity from the ATACCC and CIS studies, as described above.
-
-\todo[inline]{Discuss \textcite{ealesCharacterising}}
-
 
 \section{Bayesian inference} \label{intro:sec:Bayes}
 
