@@ -90,6 +90,14 @@ p_true_vs_posterior = posterior_intervals |>
     filter(.width == 0.95, !str_detect(parameter, "beta")) |>
     # calculate bias by joining with true values
     left_join(true_params, by = c("sim", "parameter")) |>
+    mutate(across(
+        c(value, true),
+        ~case_when(
+            parameter == "i0" | str_starts(parameter, "pi") ~ expit(.x),
+            parameter %in% c("theta", "matrix_modifiers") ~ exp(.x),
+            TRUE ~ .x
+        )
+    )) |>
     ggplot(aes(value, true)) +
     # facet_wrap(~ parameter, scales = "free", labeller = label_parsed) +
     facet_wrap(~ parameter, scales = "free", labeller = parameter_labeller) +
