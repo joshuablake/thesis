@@ -42,19 +42,6 @@ These include a prior to combine the information in the CIS with the results of 
 Reasonable priors successfully recover the true distribution.
 However, the method must be able to account for false negatives, discussed in \cref{E-imperf-test}.
 
-\todo[inline]{Are the following paragraphs better here or in the intro chapter when motivating each chapter and the overall narrative of the thesis?}
-In the rest of this and the following chapter, I use survival analysis rather than the biomarker approach taken in \cref{E-ATACCC}.
-This choice is motivated by the computational limitations of the SRS and the CIS's study design (see \cref{E-intro:sec:cis}).
-The biomarker approach is computational challenging because the number of random effects scales with the number of detected infection episodes.
-
-There are many detected episodes in CIS; in the period I will consider, around 50 times more than in ATACCC.
-Therefore, the biomarker approach would be computationally challenging.
-The computational challenge is compounded by the data being stored in a TRE, which has limited computational power and software.
-The issue with random effects is made worse by the CIS's study design.
-Infrequent testing means that most detected episodes have only a single positive test.
-Hence, there is no information on the viral load trajectory and the random effects are unidentifiable.
-
-
 \section{Problem description} \label{perf-test:sec:problem}
 
 The CIS tests each individual infrequently, either weekly or monthly (see \cref{E-intro:sec:cis}).
@@ -131,7 +118,7 @@ In CIS data both the initiating and the terminating events are interval censored
 Therefore, the CIS data is \emph{double interval censored}.
 \Textcite{sunAnalysis,bogaertsSurvival} review methods for double interval censored data.
 
-Few studies look at the combination of both double interval censoring and undetected (or truncated) events
+Few studies look at the combination of both double interval censoring and undetected (or truncated) events.
 This is especially true within the human biostatistical literature.
 The literature does include theoretical frameworks which include the double censored and truncated case~\autocite{turnbullEmpirical,dempsterMaximum}, yet these frameworks have only been applied when the terminating event was either uncensored or right censored~\autocite{sunEmpirical,bacchettiNonparametric}.
 These studies \autocite[and elsewhere, e.g.:][]{shenNonparametric} take a conditional likelihood approach.

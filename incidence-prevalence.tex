@@ -5,15 +5,7 @@
   \setcounter{chapter}{2}
 }
 
-\chapter{Statistical and epidemiological background} \label{inc-prev}
-
-\todo[inline]{%
-  Chapter 3 needs a better title: this is not all the statistical and epidemiological background and some of it is mathematical modelling / disease dynamics.
-  Perhaps: ``Data generating procsses and disease dynamics''.
-  Would need to define disease dynamics.
-}
-
-%\todo[inline]{This chapter is pretty short. Not sure if this matters or it needs to merged with another chapter? For example, one background chapter split into epi/biology and stats.}
+\chapter{Data generating process} \label{inc-prev}
 
 This chapter defines incidence and prevalence, and the relationship between these quantities.
 In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
@@ -482,8 +474,6 @@ In particular, the contacts are \emph{associative} (contacts are more likely bet
   \label{SEIR:fig:age-contacts}
 \end{figure}
 
-\todo[inline]{Does something need to link these sections?}
-
 \section{Prevalence process} \label{inc-prev:sec:prevalence-process}
 
 The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
@@ -716,7 +706,7 @@ This section showed that, when using a prevalence survey such as CIS, the likeli
 
 Robust, unbiased prevalence estimates already exist (\cref{E-biology-data:sec:cis}), and incidence estimates are the objective of this thesis.
 This chapter has shown that the key quantity relating these quantities is the distribution of the duration of RT-PCR positivity.
-However, no estimates of this quantity in the general population exist\todo{ref lit review of duration}.
+However, no estimates of this quantity in the general population exist (see \cref{E-intro:sec:duration-SARS-CoV-2}).
 Therefore, I now turn to estimating the duration of RT-PCR positivity.
 
 \ifSubfilesClassLoaded{
