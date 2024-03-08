@@ -200,7 +200,8 @@ Exploiting this property could enable efficient approximations to the posterior.
 \section{Mechanistic modelling} \label{SEIR}
 
 In this section, I apply the general mechanistic transmission modelling framework from \cref{E-SEIR} to the CIS prevalence data.
-The application of this framework follows \textcite{birrellRealtime}, with the most substantial context-specific work\todo{maybe change ``work" to something else: I want a succinct way to say that this was the major part that needed changing from the generic framework in chapter 3} in parameterising the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
+The application of this framework follows \textcite{birrellRealtime}.
+The largest modification from the generic framework presented in \cref{E-SEIR} is the parameterisation of the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
 A novel approach (\cref{SEIR:sec:observation}) links this transmission model to the CIS prevalence data; the approach is generalisable to other studies collecting representative prevalence data, \eg REACT.
 In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
 Having specified the full model (\cref{SEIR:sec:methods-application}), I conducted a simulation study to validate the inference process and identifiability (\cref{SEIR:sec:sim-study}), before applying the model to the CIS data (\cref{SEIR:sec:application}).
@@ -633,6 +634,7 @@ The lack of identifiability for $\vec{\pi}$ aligns with previous work showing th
         For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value.
     }
     \label{SEIR:fig:true-vs-posterior}
+    \todo[inline]{Fix x-axis labels overlapping / being unreadable}
 \end{figure}
 
 \subsection{Application to CIS data} \label{SEIR:sec:application}
