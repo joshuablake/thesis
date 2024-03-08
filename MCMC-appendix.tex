@@ -5,13 +5,13 @@
 \chapter{Markov chain Monte Carlo} \label{MCMC}
 
 This appendix outlines the basic theory and implementation of Markov chain Monte Carlo (MCMC) methods.
-Any reader interested in more technical details or proofs of the results here should consult the references within4.
+Any reader interested in more technical details or proofs of the results here should consult the references within.
 
 \section{Metropolis-Hastings}
 
 A common way of constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution is using the Metropolis-Hastings algorithm~\autocite{hastingsMCMC}.
 The algorithm requires a proposal distribution $q(\psi' \mid \psi)$, which proposes that the chain moves to a new state $\psi'$ from its current state $\psi$; $\pi(\psi)$, a calculation of $p(\psi \mid y)$ up to some constant.
-The proposal is then either accepted or rejected based on the \emph{acceptance ratio}, which is computed using $\pi$.
+At each iteration, a proposal is draw from $q$ and then accepted or rejected based on the \emph{acceptance ratio}, computed using $\pi$.
 The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further details in available in a wide-range of sources~\autocites[e.g.][]{brooksMCMCNotes}[chapter 11]{gelmanBDA}.
 \begin{algorithm}
  set $\psi^0$ to some initial value\;
