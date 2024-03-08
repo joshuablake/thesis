@@ -49,9 +49,10 @@ In this section, I propose extending this process by transforming the posterior 
 This results in a two-step process: first, the same inference process described in \cref{E-biology-data:sec:MRP} is used to estimate prevalence; second, the prevalence is transformed to incidence.
 This is required to fulfil several desirable features of the model.
 
-An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
+An alternative approach would be to estimate incidence proportion directly from the RT-PCR test results.
+
 Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
-The strata will represent at least age group and region, although including ethnicity and sex is also due to non-response in the survey (see \cref{E-intro:sec:cis-strata}).
+The strata will represent at least age group and region, although including ethnicity and sex is also included due to non-response in the survey (see \cref{E-intro:sec:cis-strata}).
 For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
 The statistical model and inference procedure should have the following properties.
 \begin{enumerate}

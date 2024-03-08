@@ -61,7 +61,7 @@ The Ct value decreases as the amount of DNA present in the original sample incre
 If there is more RNA present, more DNA is created, and hence fewer cycles are required to reach detection.
 As the number of DNA copies doubles each cycle, the Ct value decreases increases linearly on the log-scale each cycle (see \cref{biology-data:fig:ct-calibration}).
 A \emph{standard curve} translates the Ct value to viral load for a given test.
-They are produced by measuring the Ct value using reference samples with known viral load, and, as seen in \cref{biology-data:fig:ct-calibration}, they vary between studies.
+A standard curve is produced by measuring the Ct value using reference samples with known viral load, and, as seen in \cref{biology-data:fig:ct-calibration}, they vary between studies.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{biology-data/ct-calibration}
@@ -75,8 +75,8 @@ They are produced by measuring the Ct value using reference samples with known v
 \subsection{Detectable individuals} \label{biology-data:sec:detectable}
 
 An important concept throughout this thesis will be that of \emph{detectable} individuals.
-An individual is defined as detectable between the time they start testing positive on a RT-PCR test and the time they stop testing positive on a RT-PCR test.
-It is not possible to directly observe whether an individual is detectable or not due to noise in the RT-PCR test (see \cref{biology-data:sec:PCR}).
+An individual is defined as detectable between the time they would first test positive on a perfect RT-PCR test (if tested) and the time they would stop doing so.
+It is not possible to conclusively determine whether an individual is detectable because perfect RT-PCR tests do not exist (see \cref{biology-data:sec:PCR}).
 However, viewing the number of RNA genome copies in an individual as a latent process this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the RT-PCR test (defined in \cref{biology-data:sec:measurement-error}).
 While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
 
@@ -102,10 +102,10 @@ A positive result for an undetectable individual is a \emph{false positive}.
 False positives are very rare for SARS-CoV-2 RT-PCR tests.
 In summer 2020, the CIS performed 208,730 PCR tests and found only 159 positives~\autocite[section 5]{cisMethodsONS}.
 If these were all false positives, then the test specificity would be 99.9\%.
-In reality, it is almost certain that some of these are true positives, and hence this is a lower-bound on the true test senstivity.
+In reality, it is almost certain that some of these are true positives, and hence this is a lower-bound on the true test specificity.
 
 RT-PCR enables the detection of SARS-CoV-2 viral RNA in a sample.
-However, this does not necessarily mean that the virus is viable (\ie able to reproduce)~\autocite{puhachSARSCoV2}.
+However, this does not necessarily mean that the virus is viable (\ie able to reproduce, a necessary condition for transmission to occur)~\autocite{puhachSARSCoV2}.
 High viral loads (low Ct values) are more likely to be viable, but more sophisticated tests are required to determine viability.
 The gold standard procedure is attempting to grow and recover viral material from a sample, a process known as \emph{cell culturing}~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
 Further details on cell culturing are beyond the scope of this thesis.
