@@ -26,7 +26,7 @@ I will refer to the SARS-CoV-2 epidemic within England (or the UK), and the glob
 In this context, \emph{surveillance} is the ability to detect and monitor the spread of an outbreak.
 Surveillance is important at every stage: early on, for detecting a new outbreak quickly and assessing its likely impact and later for monitoring the ongoing burden of the disease and the effectiveness of interventions~\autocite{whoFluSurveillance}.
 In all cases, surveillance is required to inform public health policy.
-In this thesis, I consider methods to improve surveillance, using the SARS-SARS-CoV-2 epidemic in England as a case study.
+In this thesis, I consider methods to improve surveillance, using the SARS-CoV-2 epidemic in England as a case study.
 
 \section{Surveillance metrics}
 
@@ -72,7 +72,7 @@ The advantage of using the growth rate is that they are easier to estimate and c
 \subsection{Size of an epidemic}
 
 Growth rates and reproduction numbers only provide information on how an epidemic is changing.
-Yet the size of the epidemic is at least as important as how it is changing~\autocite{pellisEstimation}.
+Yet the size of the epidemic is just as, if not more, important~\autocite{pellisEstimation}.
 \emph{Incidence} (the number of new infections in a given time period) is the primary metric for the magnitude of a pandemic.
 Incidence informs the short-term future burden of the disease, for example, the future number of severe events (hospitalisations or deaths).
 To translate incidence into the burden of the disease, a measure of severity is required.
@@ -81,7 +81,7 @@ Estimation of severity is beyond the scope of this thesis.
 
 
 \emph{Transmission} refers to the process by which an infectious disease generates new infections.
-Estimating transmission refers to estimating the parameters of this process, including its components.
+Estimating transmission refers to estimating the parameters of this process, the infection process, including its components.
 The components of transmission (\eg number of contacts per day and age-stratified rates) inform how interventions can be targeted.
 They are also important for forecasting future incidence.
 
@@ -99,6 +99,9 @@ Therefore, they need to be inferred from other data sources.
 
 \section{Data sources}
 
+\todo[inline]{Not sure this section (data sources) needs to exist, particularly in this location}
+\todo[inline]{If this section kept, probably want to cite some things on generic data for pandemic surveillance}
+
 The data sources used for outbreak surveillance are often observational in nature.
 Therefore, they suffer from biases that can be hard to understand and quantify.
 For example, community testing which relies on individuals presenting for a test, hence biased by the willingness of individuals to be tested.
@@ -109,15 +112,15 @@ Furthermore, for these studies to be appropriately powered, they often require a
 A unique feature of the COVID-19 pandemic is that its impact was so large that the UK Government were willing to fund such studies.
 The availability of this data motivates the work in this thesis.
 
-\section{Transmission model}
+\section{Infection process model}
 
-The first component required to estimate incidence and transmission is a \emph{transmission model}, a mathematical description of how incidence arises.
-A spectrum of models exist, categorised by the strenght of assumptions they make about the transmission process.
+The first component required to estimate incidence and transmission is a model of the infection process, a mathematical description of how incidence arises.
+A spectrum of models exists, categorised by the strength of assumptions they make about the transmission process.
 Stronger assumptions allow more insight into the transmission process and generally lower the variance of the estimates, but can introduce bias and are often computationally challenging to fit.
 
 The models with the weakest assumptions are statistical models.
-These make almost no assumptions about the transmission process, viewing incidence as a generic counting process.
-The most assumption is that incidence follows a Poisson process (defined in \cref{E-inc-prev:sec:poisson-process}), and the intensity of the process is the target of incidence.
+These make almost no assumptions about the transmission process, viewing incidence as a generic counting process (introduced in full in \cref{E-inc-prev:sec:infection-process}).
+The most common model is that incidence follows a Poisson process, and the intensity of the process is the target of incidence.
 % The use of Poisson processes to model incidence of an infectious disease was very popular in the context of HIV/AIDS\todo{maybe a ref for Poisson in HIV/AIDS?}.
 
 Next, are semi-mechanistic models.
@@ -132,24 +135,28 @@ Therefore, the renewal equation relates incidence in the past to incidence in th
 The effective reproduction number can be constructed as a function of $\beta(t, \tau)$.
 % A scaled measure of $I(t)$ (\eg hospital admissions or community test results) allows estimating $\beta$.
 % The most common implementations are the R packages EpiNow2~\autocite{EpiNow2} and EpiEstim~\autocite{EpiEstim}.
-Renewal equations do not feature futher in this thesis, for details, including practical considerations when using them as the basis of a statistical model, see \textcite{nashEstimating,gosticPractical}.
+Renewal equations do not feature futher in this thesis, for details, including practical considerations when using them as the basis for inference, see \textcite{nashEstimating,gosticPractical}.
 
 Finally, mechanistic models are the most complex and aim to fully represent the transmission process.
 \emph{Compartmental models} are the most common type of mechanistic model.
-Compartmental models split the population into compartments, each representing a different state of the disease.
+Compartmental models split the population into compartments, each representing a different state of the disease (described in full in \cref{E-SEIR:sec:mechanistic-models}).
 The \emph{dynamics} of the epidemic, how it changes over time, are represented by the transitions between compartments.
-Mathematically, the dynamics are described by ODEs (ordinary differential equations) or SDEs (stochastic differential equations).
-Unlike renewal equations, there are not widely-used implementations of compartmental models.
-A commonly used frameork is the SEIR (susceptible, exposed, infectious, recovered) model.
-The SEIR model, has four components (susceptible, exposed, infectious, recovered), with the population divided into these components; it is described in detail in \cref{E-SEIR:sec:mechanistic-models}.
+Simple mechanistic models use a homogeneous population, with individuals differing only due to their disease state, and exponential distributions for the time in each disease state.
+More complex models relax these assumptions, in particular the age structure of the population is important for respiratory diseases.
+% Mathematically, the dynamics are described by ODEs (ordinary differential equations) or SDEs (stochastic differential equations).
+% Unlike renewal equations, there are not widely-used implementations of compartmental models.
+% A commonly used frameork is the SEIR (susceptible, exposed, infectious, recovered) model.
+% The SEIR model, has four components (susceptible, exposed, infectious, recovered), with the population divided into these components; it is described in detail in \cref{E-SEIR:sec:mechanistic-models}.
 
 \section{Observation models}
+
+\todo[inline]{Needs some generic citations about observation models}
 
 The \emph{observation model} links the transmission model to the data.
 The choice of observation model can, in theory, be independent of the transmission model.
 However, pragmatic considerations often mean that the observation model is chosen to be in a similar form to the transmission model.
 
-Typically, the core of an observation model is a \emph{convolution equation} of an approximation of it.
+Typically, the core of an observation model is a \emph{convolution equation} or an approximation of it.
 This equation links an observation at time $t$, $y_t$, to the incidence prior to time $t$.
 In discrete time, it is:
 \begin{align}
@@ -174,16 +181,28 @@ where $I(t)$ is the incidence at time $t$; $\zeta$ is the proportion of infectio
 % Common examples are the results of a prevalence survey or the number of individuals in hospital with a disease.
 % \todo[inline]{Finish writing about prevalence measures}
 
+\todo[inline]{Expand slightly on convolution equations and why solving them is challenging, including some citations}
 Solving a convolution equation for $I$ is an ill-posed problem when $f(0)$ is small.
 Either an approach which gives a large $f(0)$, for example by assuming that the delay between incidence and being prevelant is 0, or smoothing on $I(t)$ is required.
 
-For a prevalence survey, the delay distribution is the \emph{duration of positivity}, the distribution of the time between an individual becoming infected and the time they are no longer infected.
 
 \section{Backcalculation}
 
+\todo[inline]{
+  Decide whether to keep this section.
+  I think backcalculation probably does need to be called out explicitly, but it feels a little out-of-place.
+  IF kept, needs expanding a bit, flow a bit better, and citations added.
+}
+
 \emph{Backcalculation} was a modelling framework developed in the context of HIV/AIDS but since applied more broadly.
 The aim of backcalculation is to estimate the incidence of a disease from the observation of a prevalence measure.
-It combines a statistical transmission model with 
+It combines a statistical transmission model with an observation model for prevalence data.
+
+Here, $\zeta = 1$ and $f(t)$ represents the probability of having the disease $t$ days after infection.
+In this way, $f$ represents a duration.
+
+\todo[inline]{Following paragraph seems a bit specific but is needed to motivate the following section}
+For a prevalence survey, the delay distribution is the \emph{duration of positivity}, the distribution of the time between an individual becoming infected and the time they are no longer infected.
 
 \section{Estimating the duration of positivity}
 
@@ -209,12 +228,7 @@ Therefore, cohort studies, where the same group of individuals are followed over
 
 \section{Application to SARS-CoV-2 in England}
 
-The application I will consider in this thesis is the SARS-CoV-2 epidemic in England.
-
-
-\subsection{Data sources}
-
-\subsubsection{For estimating incidence and transmission}
+\subsection{Data for estimating incidence and transmission} \label{intro:sec:data-for-estimating}
 
 The main data sources informing the response to the SARS-Cov-2 epidemic in England were: community testing (known as pillar 2 testing), the number of severe events (\eg hospital admissions or deaths), seroprevalence surveys (estimating the proportion of the population with antibodies to a disease, a marker of prior infection), and prevalence surveys (estimating the proportion of the population currently with the disease).
 Each of these data sources have strengths and weaknesses, see \textcite{royalSocietyRnumber} for further details.
@@ -255,10 +269,10 @@ A major advantage of the CIS over REACT is that the CIS has daily testing of ind
 This means that REACT cannot be used to estimate transmission or incidence between rounds, instead relying on model assumptions at these times.
 A particular instance of this is that a peak in late December 2020 occurred between rounds of the REACT survey, complicating analysis of the survey data at that time~\autocite{rileyREACTround8}.
 
-\subsubsection{Cohort studies}
+\subsection{Cohort studies}
 
-In this thesis, I make use of two cohort studies with differing designs.
-These designs have complementary strengths, and I combine information from the studies to make use of these.
+In this thesis, I make use of two cohort studies with differing designs to estimate duration.
+These designs have complementary strengths, and I combine information from the studies.
 Both of the studies recruited individuals from the general population, aiming to observe a cohort of infections that are representative of the infections in the UK community.
 
 % In addition to population-level surveillance, cohort studies help understand other aspects of the pathogen~\autocite{royalSocietyRnumber}.
@@ -267,7 +281,7 @@ The first study I use, ATACCC (Assessment of Transmission and Contagiousness of 
 The density of this sampling allows for reliable estimates of the viral load dynamics and other quantities of interest, most importantly the duration of detectability, but the results are limited because the small sample size and short follow-up means that the tails of these distributions cannot be estimated.
 I describe ATACCC in detail in \cref{E-biology-data:sec:ataccc} and use it to estimate duration in \cref{E-ATACCC}.
 
-The second study is the CIS, which I previously mentioned.
+The second study is the CIS (introduced in \cref{intro:sec:data-for-estimating}).
 In addition to estimating prevalence, the CIS followed the same individuals over a long period of time (over a year in many cases), collecting longitudinal data.
 The large sample size and long follow-up mean that the tails of the distribution of the duration of positivity can be estimated.
 However, the lack of frequent testing (at most weekly) means that the viral load dynamics cannot be estimated.
@@ -295,30 +309,24 @@ Such estimates should be more robust, due to the representative nature of CIS.
 
 Several previous studies have used SARS-CoV-2 prevalence surveys to estimating incidence and/or transmission.
 
-The \emph{backcalculation} framework~\autocite[e.g.][]{brookmeyerMeasuring,brookmeyerMethod,brookmeyerBackcalculation}, developed in the context of HIV/AIDS
-\todo{this is a bad place for an intro to backcalculation: where does it go in this structure?}
-
 \Textcite{abbottCISincidence} applied backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
-They used a Gaussian process prior to smooth the incidence, applying the prior to either smooth the log-incidence or its derivative; smoothing of the incidence is required to stabilise the estimates~\autocite{brookmeyerBackcalculation}.
-\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the backcalculation, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:duration-SARS-CoV-2}).
+They used a Gaussian process prior to smooth the incidence and stabilise the estimates.
+\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the observation model, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:duration-SARS-CoV-2}).
 They fit to summary statistics of the CIS data, using a daily, independent Gaussian likelihood with parameters estimated from the posterior point estimate and 95\% credible interval published by the ONS.
 
-The estimates I present in \cref{E-backcalc} are methodologically similar.
-However, I fully propagate the uncertainty from the prevalence estimation procedure and use estimates of the duration of positivity from a general population study.
-\Textcite{abbottCISincidence} include the short period of low but increasing test sensitivity at the start of an infection (see \cref{E-biology-data:sec:natural-history}).
-
 \Textcite{colmanAscertainment} used CIS prevalence estimates to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
-Their methodology was similar to \textcite{abbottCISincidence} (see \cref{intro:sec:backcalc}), including using estimates from \textcite{hellewellPCRSensitivity} for how the sensitivity of RT-PCR testing varies over an infection.
+Their methodology was similar to \textcite{abbottCISincidence}, including using estimates from \textcite{hellewellPCRSensitivity} for how the sensitivity of RT-PCR testing varies over an infection.
 Rather than using a Gaussian process, as \textcite{abbottCISincidence} do, \textcite{colmanAscertainment} provide stability by assuming the ascertainment rate is assumed to be piecewise constant.
 They do not fully propagate the uncertainty from the CIS prevalence estimates, considering only the bounds of the 95\% confidence intervals the ONS publishes for prevalence.
 
 Several compartmental models incorporated data from SARS-CoV-2 prevalence surveys, alongside other data sources~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2}.
-These models incorporate prevalence survey data by adding additional compartments representing RT-PCR positive individuals, who may not be infectious (this is common, see \cref{E-biology-data}); except \textcite{nicholsonImproving} who have a more sophisticated approach (below) and \textcite{ironsEstimating}, who assume RT-PCR positivity coincides with infectiousness.
-The length of stay in these compartments (the duration of time positive) is assumed to follow a gamma distribution, with the parameters estimated from external data or having at most one free parameter.
-The proportion of the population in these compartments are then fit to the prevalence survey data using a binomial likelihood where possible, although some approaches take a Gaussian approximation.
-These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
+% These models incorporate prevalence survey data by adding additional compartments representing RT-PCR positive individuals, who may not be infectious (this is common, see \cref{E-biology-data}); except \textcite{nicholsonImproving} who have a more sophisticated approach (below) and \textcite{ironsEstimating}, who assume RT-PCR positivity coincides with infectiousness.
+% The length of stay in these compartments (the duration of time positive) is assumed to follow a gamma distribution, with the parameters estimated from external data or having at most one free parameter.
+The duration of positivity in these models is limited by the model structure.
+The models are fit to the prevalence survey data using a binomial likelihood where possible, although some approaches take a Gaussian approximation.
+% These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
 
-\Textcite{nicholsonImproving} have the most sophisticated use of prevalence survey data.
+\Textcite{nicholsonImproving} fit a simple mechanistic model, notably without age structure, but have the most sophisticated observation model.
 They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:duration-SARS-CoV-2} for discussion of the \textcite{hellewellPCRSensitivity} study).
 Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test into their model.
 
