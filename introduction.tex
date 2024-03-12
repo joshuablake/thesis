@@ -157,7 +157,7 @@ The choice of observation model can, in theory, be independent of the transmissi
 However, pragmatic considerations often mean that the observation model is chosen to be in a similar form to the transmission model.
 
 Typically, the core of an observation model is a \emph{convolution equation} or an approximation of it.
-This equation links an observation at time $t$, $y_t$, to the incidence prior to time $t$.
+This equation links the expectation of an observation at time $t$, $y_t$, conditional on the incidence prior to time $t$.
 In discrete time, it is:
 \begin{align}
     y_t &= \zeta \sum_{i=0}^\infty I(t-i) f(i)
@@ -228,7 +228,13 @@ Therefore, cohort studies, where the same group of individuals are followed over
 
 \section{Application to SARS-CoV-2 in England}
 
-\subsection{Data for estimating incidence and transmission} \label{intro:sec:data-for-estimating}
+In this case we needed...
+
+Urgency of situtation (cf HIV/AIDS) - rate of harm .
+
+Needed rapid use of ideas
+
+\subsection{Surveillance data} \label{intro:sec:data-for-estimating}
 
 The main data sources informing the response to the SARS-Cov-2 epidemic in England were: community testing (known as pillar 2 testing), the number of severe events (\eg hospital admissions or deaths), seroprevalence surveys (estimating the proportion of the population with antibodies to a disease, a marker of prior infection), and prevalence surveys (estimating the proportion of the population currently with the disease).
 Each of these data sources have strengths and weaknesses, see \textcite{royalSocietyRnumber} for further details.
@@ -399,28 +405,6 @@ Including both of these elements would require more complex modelling but includ
 A secondary aim of this thesis is to improve our understanding of the epidemic in England over this period, and our understanding of the SARS-CoV-2 virus more broadly.
 The results of the analyses I perform in pursuit of the primary aim will naturally contribute to this aim.
 
-\subsection{Software and data availability}
-
-In order to best fulfill this thesis's primary aim, the methodology developed should be easy for others to use.
-Therefore, the code for the analyses in this thesis is available online.
-An index to the various repositories is available at\todo{insert GitHub link}.
-Two elements of the code have been structured as R packages to enable their application to future contexts.
-
-First, the framework to simulate the CIS (used in \cref{E-imperf-test:sec:simulate,E-perf-test:sec:simulation-study}).
-The package enables customisation of various features of the study, for example the testing regime of the participants, the sensitivity of the tests, and the duration of positivity.
-This package would be particularly useful in answering questions regarding the design of future prevalence surveys, for example, how frequently should individuals be tested, or how many individuals should be tested.
-
-Second, the survival analysis framework used to infer the duration of positivity in \cref{E-perf-test,E-imperf-test}.
-The framework allows for all the different analyses performed in these chapters to be specified by the user in a simple interface.
-Furthermore, adding new analyses, for example varying the priors or the inclusion of covariates, is straightforward.
-
-Where possible, aggregated, non-disclosive versions of the datasets are available alongside the code.
-The original ATACCC data used is available alongside the code.
-The original CIS data can only be accessed by accredited researchers within the ONS's SRS (Secure Research Service); see \url{https://www.ons.gov.uk/aboutus/whatwedo/statistics/requestingstatistics/secureresearchservice} for details.
-
-Almost all code, excluding dependencies, was written from scratch for these analyses.
-The exception is the Markov chain Monte Carlo sampler used in \cref{E-SEIR}, which was written by Sanmitra Ghosh for the article \textcite{ghoshApproximate}.
-
 \subsection{Methodological contributions}
 
 As its primary aim, this thesis makes several methodological contributions.
@@ -461,6 +445,28 @@ These estimates could be used to inform public health policy, for example, in in
 In \cref{E-transmission}, I present estimates of the incidence and transmission of SARS-CoV-2 in England over the period being studied.
 These estimates contribute to the literature reconstructing the SARS-CoV-2 epidemic in England.
 Understanding the dynamics of the past infection is important for informing the response to future pandemics, and the future burden of SARS-CoV-2.
+
+\subsection{Software and data availability}
+
+In order to best fulfill this thesis's primary aim, the methodology developed should be easy for others to use.
+Therefore, the code for the analyses in this thesis is available online.
+An index to the various repositories is available at\todo{insert GitHub link}.
+Two elements of the code have been structured as R packages to enable their application to future contexts.
+
+First, the framework to simulate the CIS (used in \cref{E-imperf-test:sec:simulate,E-perf-test:sec:simulation-study}).
+The package enables customisation of various features of the study, for example the testing regime of the participants, the sensitivity of the tests, and the duration of positivity.
+This package would be particularly useful in answering questions regarding the design of future prevalence surveys, for example, how frequently should individuals be tested, or how many individuals should be tested.
+
+Second, the survival analysis framework used to infer the duration of positivity in \cref{E-perf-test,E-imperf-test}.
+The framework allows for all the different analyses performed in these chapters to be specified by the user in a simple interface.
+Furthermore, adding new analyses, for example varying the priors or the inclusion of covariates, is straightforward.
+
+Where possible, aggregated, non-disclosive versions of the datasets are available alongside the code.
+The original ATACCC data used is available alongside the code.
+The original CIS data can only be accessed by accredited researchers within the ONS's SRS (Secure Research Service); see \url{https://www.ons.gov.uk/aboutus/whatwedo/statistics/requestingstatistics/secureresearchservice} for details.
+
+Almost all code, excluding dependencies, was written from scratch for these analyses.
+The exception is the Markov chain Monte Carlo sampler used in \cref{E-SEIR}, which was written by Sanmitra Ghosh for the article \textcite{ghoshApproximate}.
 
 \subsection{Structure}
 
