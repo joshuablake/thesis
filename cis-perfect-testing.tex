@@ -237,7 +237,7 @@ The counts $\na$ and $\nnodet$ are jointly distributed multinomially.
 The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{\nsched} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
 Hence:
 \begin{align}
-&p(\na \mid \ntot, \theta) \\
+p(\na \mid \ntot, \theta)
 &= p(\nnodet, \na\mid \ntot, \theta) \\
 &= \frac{\ntot!}{\nnodet! \prod_{i=1}^{\nsched} n_{ia}!}  \pnodet^{\nnodet}\prod_{i=1}^{\nsched} \left(\frac{1}{\nsched}p_{ia}\right)^{n_{ia}} \\
 &\propto \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i \in \set{D}} p_{ia} \label{perf-test:eq:augmented-likelihood}
@@ -254,7 +254,7 @@ Therefore, I present this version as it is clearer.
 The posterior density we are interested in is $p(\theta \mid \na)$.
 It can be written as follows.
 \begin{align}
-&p(\theta \mid \na) \\
+p(\theta \mid \na)
 &\propto p(\theta) p(\na \mid \theta) \\
 &= p(\theta) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) p(\na \mid \theta, \ntot) \\
 &\propto p(\theta) \sum_{\ntot=\ndet}^\infty \left( p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i \in \set{D}} p_{ia} \right) \\
@@ -311,16 +311,17 @@ p(\theta \mid \na)
 Next, I derive $p_{ia}$.
 By definition (see~\cpageref{perf-test:def:admissible}), we have, for any $i \in \set{D}$:
 \begin{align}
-p_{ia} &= \prob((b, e) \in \alpha_i \mid \theta) \\
-\alpha_i &= \{ (b, e) : l_{j(i)}^{(b)} \leq b \leq r_{j(i)}^{(b)} \wedge l_{j(i)}^{(e)} \leq e \leq r_{j(i)}^{(e)}\}.
+p_{ia} =& \prob((b, e) \in \alpha_i \mid \theta) \\
+\alpha_i =& \{ (b, e) : l_{j(i)}^{(b)} \leq b \leq r_{j(i)}^{(b)} \wedge l_{j(i)}^{(e)} \leq e \leq r_{j(i)}^{(e)}\}.
 \intertext{Suppressing the conditioning on $\theta$, this gives:}
 p_{ia}
-&= \prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)}, l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \right) \\
-&= \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \\
-&=\sum_{b = l_{j(i)}^{(l)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid B_{j(i)} = b \right) \prob \left(B_{j(i)} = b \right) \\
-&=\sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} - b + 1 \leq D_{j(i)} \leq r_{j(i)}^{(e)} - b + 1 \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $D_{j(i)}$} \\
-&=\sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $S_\theta$} \\
-&\propto \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right)
+=& \prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)}, l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \right) \\
+=& \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \\
+   &\times\prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \\
+=& \sum_{b = l_{j(i)}^{(l)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid B_{j(i)} = b \right) \prob \left(B_{j(i)} = b \right) \\
+=& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} - b + 1 \leq D_{j(i)} \leq r_{j(i)}^{(e)} - b + 1 \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $D_{j(i)}$} \\
+=& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $S_\theta$} \\
+\propto& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right)
 \end{align}
 under the assumption of uniform probability of infection time.
 
