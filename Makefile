@@ -197,3 +197,9 @@ distributions.pdf: $(DISTRIBUTIONS_DEPS) $(SHARED_DEPS)
 
 cis.pdf: cis.tex biology-data/STATS13734/data_viz.pdf $(SHARED_DEPS)
 	$(LATEX_CMD)
+
+#####################################################
+## SURVIVAL ANALYSIS PAPER
+
+paper-surv-analysis.pdf: paper-surv-analysis.tex $(IMPERF_DEPS) $(PERF_DEPS) $(SHARED_DEPS)
+	$(LATEX_CMD)
