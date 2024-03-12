@@ -301,7 +301,7 @@ This is likely caused by too large a violation of the simplifying assumptions ma
   \label{imperf-test:fig:constant-test-sensitivity}
 \end{figure}
 
-Next, I considered the consequence of $\psens$ being misspecified, using the vague prior; the better performing prior in the correctly specified case.
+Next, I considered the consequence of $\psens$ being misspecified, using the model combination prior; the better performing prior in the correctly specified case.
 If the test sensitivity is misspecified, that is the assumed value for $p_\text{sens}$ in \cref{imperf-test:eq:pit-prime,imperf-test:eq:pit-prime} is different to the value used in the simulation, then the survival time will be biased (see \cref{imperf-test:fig:misspecified-test-sensitivity}).
 If $\psens$ is misspecified and too low (see \cref{imperf-test:fig:misspecified-test-sensitivity}(A)), then the posterior estimate initially follows the true value but then separates.
 The number of episodes inferred to have truly ended by the first negative is too high, and hence the survival time is overestimated.
