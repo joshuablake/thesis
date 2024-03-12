@@ -4,6 +4,10 @@
 
 \chapter{Markov chain Monte Carlo} \label{MCMC}
 
+MCMC (Markov chain Monte Carlo) is a class of algorithms for sampling from a distribution where the normalising constant for the distribution is unknown.
+I use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data (again, scalar or vector).
+MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid y)$ by constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution~\autocite[275]{gelmanBDA}.
+It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, \ie the target posterior.
 This appendix outlines the basic theory and implementation of Markov chain Monte Carlo (MCMC) methods.
 Any reader interested in more technical details or proofs of the results here should consult the references within.
 
@@ -29,7 +33,45 @@ Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC
 The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
 One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:inference}.
 
-\section{Improving MCMC efficiency}
+\section{Practical issues}
+
+Two practical issues arise when applying MCMC: \emph{convergence} and \emph{stability}~\autocite[72]{lunnBUGS}.
+
+\subsection{Convergence} \label{MCMC:sec:convergence}
+
+Convergence is how close a MCMC chain's samples are to its stationary distribution.
+Early draws from the Markov chain reflect the choice of the starting point, $\psi^0$, rather than the stationary distribution that the chain will eventually converge to~\autocite[282]{gelmanBDA}.
+%The Rhat statistic is defined for a scalar parameter $\psi$.
+%Let $\psi^{(ij)}$ denote the $i$th (of $M$) sample from the $j$th chain (of $N$).
+%Let $\bar{\psi}^j$ denote the mean value of the samples of $\psi$ from the $j$th chain, $\bar{\psi}^j = \frac{1}{M} \sum_{i=1}^M \psi^{(ij)}$.
+%Let $\bar{\psi}$ denote the mean value of the samples of $\psi$ from all chains, $\bar{\psi} = \frac{1}{N} \sum_{j=1}^N \bar{\psi}^j$.
+%Then the between-chain variance is $B = \frac{M}{N-1} \sum_{j=1}^N (\bar{\psi}^j - \bar{\psi})^2$.
+%The within-chain variance is $W = \frac{1}{N} \sum_{j=1}^N \frac{1}{M-1} \sum_{i=1}^M (\psi^{(ij)} - \bar{\psi}^j)^2$.
+
+The simplest technique for assessing convergence is graphically, using traceplots~\autocite[81]{brooksMCMCNotes}.
+Traceplots show the value of $\psi^i$ against $i$.
+If the chain has converged, then the traceplot will show a random walk around the stationary distribution.
+This can be improved by using multiple chains with different starting points~\autocite[283]{gelmanBDA}.
+If all chains have converged, then they will be in the same location.
+
+A more complex measure of convergence when running multiple MCMC chains is comparing the within-chain variance to the between-chains variance.
+The principle here is that if all chains have converged then they are sampling from the same distribution.
+Therefore, the within-chain and between-chain variances are the same~\autocite[82]{brooksMCMCNotes}.
+
+Various metrics quantify this, I make use of the improved Rhat statistic~\autocite{vehtariRhat}.
+A Rhat of 1 means that the within-chain and between-chain variance are equal, informally that convergence is perfect, as far as can be measured by this technique.
+Various rules-of-thumb exist for what should be considered an acceptable Rhat.
+Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 or 1.05 is more appropriate~\autocite{vehtariRhat}.
+
+\subsection{Stability}
+
+The stability of estimates considers the error arising from only using a finite sample of the distribution and the samples being autocorrelated.
+Autocorrelation means that estimates using the sample have higher variance than if it were an iid sample from the posterior~\autocite[286]{gelmanBDA}.
+The \emph{effective sample size} corrects for the autocorrelation.
+The effective sample size can be interpreted as the number of iid samples that would have the same variance as the MCMC sample~\autocites[286]{gelmanBDA}{vehtariRhat}.
+Various techniques have been proposed for computing the effective sample size, I will follow the approach of \textcite{vehtariRhat}, implemented in RStan~\autocite{RStan-2-32-3}.
+
+\section{Improving MCMC efficiency} \label{MCMC:sec:improving}
 
 MCMC using a Normal proposal distribution can be inefficient.
 In particular, it often poorly explores the tails of the posterior in finite time~\autocite[e.g.][]{turitsynIrreversible}.
@@ -45,18 +87,5 @@ I will make use of the implementation in the package \emph{Sampling through adap
 Stan implements \emph{automatic differentiation}~\autocite{griewankAutoDiff} to calculate the gradient of the posterior density without any user input.
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.
-
-\section{Convergence}
-
-The simplest technique for assessing convergence is graphically, using traceplots~\autocite[81]{brooksMCMCNotes}.
-Traceplots show the value of $\psi^i$ against $i$.
-If the chain has converged, then the traceplot will show a random walk around the stationary distribution.
-This can be improved by using multiple chains with different starting points~\autocite[283]{gelmanBDA}.
-If all chains have converged, then they will be in the same location.
-
-A more complex measure of convergence when running multiple MCMC chains is comparing the within-chain variance to the between-chains variance.
-This is the basis of the Rhat statistic used throughout this thesis (see \cref{E-intro:sec:MCMC}).
-The principle here is that if all chains have converged then they are sampling from the same distribution.
-Therefore, the within-chain and between-chain variances are the same~\autocite[82]{brooksMCMCNotes}.
 
 \end{document}
