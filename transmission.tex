@@ -43,16 +43,15 @@ This relationship between incidence proportion and prevalence means that once on
 Therefore, a statistical methodology for estimating one of these quantities is required.
 
 Estimation of prevalence from the CIS data was carried out using MRP throughout the pandemic (see \cref{E-biology-data:sec:MRP}).
-In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before post-stratifying.
+In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before the poststratification step.
 
 % I keep the same logistic regression model for predicting prevalence, then transform its posterior distribution of prevalence to a posterior distribution of incidence.
 This results in a two-step process: first, the same inference process described in \cref{E-biology-data:sec:MRP} is used to estimate prevalence; second, the prevalence is transformed to incidence.
 This is required to fulfil several desirable features of the model.
 
-An alternative approach would be to estimate incidence proportion directly from the RT-PCR test results.
-
+An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
 Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
-The strata will represent at least age group and region, although including ethnicity and sex is also included due to non-response in the survey (see \cref{E-intro:sec:cis-strata}).
+The strata are defined by at least age group, region, ethnicity, and sex due to differential non-response in the survey (see \cref{E-intro:sec:cis-strata}).
 For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
 The statistical model and inference procedure should have the following properties.
 \begin{enumerate}
@@ -64,7 +63,7 @@ The statistical model and inference procedure should have the following properti
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
     \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:cis}).
     \item Borrow information across the different covariates.
-        The borrowing should penalise away from changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
+        The borrowing should penalise changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
         Standard stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) predict this, if behavioural changes are independent of strata and there is negligible impact of immunity.
     \item Be computationally efficient.
         The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
