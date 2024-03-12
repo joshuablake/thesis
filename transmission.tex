@@ -32,28 +32,55 @@ Incidence and transmission have not previously been estimated from only SARS-CoV
 \section{Backcalculation} \label{backcalc}
 
 In this section, I will apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
-% First, I explain the method I will apply (\cref{backcalc:sec:methods}) and then present the results (\cref{backcalc:sec:results}).
-% I discuss the results in \cref{backcalc:sec:discussion} and conclude in \cref{backcalc:sec:conclustion}.
+I view the CIS as a series of daily, cross-sectional prevalence surveys.
+This is the same approach as previously used to estimate prevalence from the CIS (see \cref{E-biology-data:sec:MRP}).
 
+An important consideration in this section is the non-response bias.
+I adopt the poststratification method introduced in \cref{E-biology-data:sec:MRP} to correct for this bias.
+Therefore, incidence must be estimated in each stratum before being poststratified to the target population and subpopulations of interest.
+The strata are defined by at least age group, region, ethnicity, and sex due to differential non-response in the survey (see \cref{E-intro:sec:cis}).
 
-\subsection{Methods} \label{backcalc:sec:methods}
+\subsection{Approach} \label{backcalc:sec:approach}
 
 In \cref{E-inc-prev:sec:observation-process}, I showed that a deterministic approximation to the relationship between true prevalence and incidence is a good approximation for estimating incidence.
 This relationship between incidence proportion and prevalence means that once one is inferred, the other is calculated via a deterministic function.
-Therefore, a statistical methodology for estimating one of these quantities is required.
+This gives two possible approaches for estimating incidence from prevalence data.
 
-Estimation of prevalence from the CIS data was carried out using MRP throughout the pandemic (see \cref{E-biology-data:sec:MRP}).
-In this section, I propose extending this process by transforming the posterior distribution of prevalence in each stratum to a posterior distribution of incidence before the poststratification step.
+\subsubsection{Possible approaches}
 
-% I keep the same logistic regression model for predicting prevalence, then transform its posterior distribution of prevalence to a posterior distribution of incidence.
-This results in a two-step process: first, the same inference process described in \cref{E-biology-data:sec:MRP} is used to estimate prevalence; second, the prevalence is transformed to incidence.
-This is required to fulfil several desirable features of the model.
+The first approach, which I call the \emph{incidence-inferred} approach, is a single statistical model where incidence is inferred, with prevalence as a derived quantity.
+The basis of the statistical model, in a Bayesian framework, would be as follows.
+\begin{align}
+    \vec{Z} \mid \vec{\phi} &\dist g_Z(\vec{\phi}) \\
+    P_{i,t} &= \matr{S} \vec{Z}_i \\
+    Y_{i,t} \mid \vec{P} &\dist \BB(n_{i,t}, P_{i,t})
+\end{align}
+where $\vec{Z}$ is a vector of incidence proportion for each strata and day defined by some model $g$ with parameters $\vec{\phi}$; $P_{i,t}$ is the prevalence in stratum $i$ on day $t$; $\matr{S}$ is the survival matrix defined in \cref{E-inc-prev:eq:Smatrix}; $Y_{i,t}$ is the number of positive tests in stratum $i$ on day $t$; and $n_{i,t}$ is the number of tests in stratum $i$ on day $t$.
+The model $g_Z$ would be specified to share information across time and/or strata.
+This both helps stabilise the estimation (see\todo{ref wherever I end up explaining backcalculation stability issues}) and allows borrowing of information across strata.
+Borrowing information is required because some strata and time combinations have few positives (fewer than five per day).
+The relationship between $P$ and $Z$ is from \cref{E-inc-prev:eq:EPt-matrix}, although dividing both sides by $\Npop$ to have the values in terms of incidence proportion and prevalence rather than incidence and number of prevalent individuals.
 
-An alternative would be an inference procedure that estimates incidence proportion, fit directly to the RT-PCR test results.
-Denote the quantity to be inferred (which could be either incidence proportion or prevalence) at time $t$ in strata $i$ as $\pi_{it}$.
-The strata are defined by at least age group, region, ethnicity, and sex due to differential non-response in the survey (see \cref{E-intro:sec:cis-strata}).
-For many combinations of stratum $i$ and day $t$, the number of positives will be small, often fewer than 5; therefore some form of borrowing between time and strata is required.
-The statistical model and inference procedure should have the following properties.
+The second approach, which I call the \emph{prevalence-inferred} approach takes a two-step approach.
+First, it uses the statistical model from \cref{E-biology-data:sec:MRP} to estimate prevalence.
+Then, it transforms the posterior distribution of prevalence to a posterior distribution of incidence using the forward substitution as in \cref{E-inc-prev:eq:forward-substitute}.
+At a high-level, the statistical model is:
+\begin{align}
+    \vec{P} \sim \vec{\phi} &\dist g_P(\vec{\phi}) \\
+    Y_{i,t} &\dist \BB(n_{i,t}, P_{i,t})
+\end{align}
+where $g_P$ is analogous to $g_Z$ in providing a joint prior for the prevalence in each strata and day combination.
+
+\subsubsection{Desirable properties}
+
+The incidence-inferred approach is more parsimonious in being a single step procedure.
+However, it poses several pragmatic challenges which means I favour the prevalence-inferred approach.
+Here I explain that further developments, beyond the scope of this thesis, would be required to use the incidence-inferred approach with a suitable $\pi_Z$ within the computational constraints of the SRS.
+
+Denote the quantity to be inferred at time $t$ in strata $i$ as $\pi_{i,t}$.
+That is, under the incidence-inferred approach, $\pi_{i,t}$ is the incidence proportion, and under the prevalence-inferred approach, $\pi_{i,t}$ is the prevalence.
+
+The chosen approach should have the following properties.
 \begin{enumerate}
     \item The smoothing model over time should penalise changes from continuous exponential growth.
         Penalising changes from continuous exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
@@ -61,16 +88,16 @@ The statistical model and inference procedure should have the following properti
     \item Limit estimates to epidemiologically and biologically plausible values.
         That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
-    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias (see \cref{E-biology-data:sec:cis}).
+    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias.
     \item Borrow information across the different covariates.
         The borrowing should penalise changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
-        Standard stratified, mechanistic transmission model (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) predict this, if behavioural changes are independent of strata and there is negligible impact of immunity.
-    \item Be computationally efficient.
+        A constant distribution is predicted by the theoretical study of epidemics, for example the dynamics of stratified, mechanistic transmission models (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) over short periods of time with negligible behavioural and immunity changes.
+    \item Be computationally efficient
         The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
 \end{enumerate}
 
-Properties 1 and 2 suggest a model of the form $\logit(\pi_{it}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised (\ie changes away from linear are penalised).
-The $\logit$ link function both limits $\pi_{it}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{it}$~\autocite{ealesAppropriately}.
+Properties 1 and 2 suggest a model of the form $\logit(\pi_{i,t}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised (\ie changes away from linear are penalised).
+The $\logit$ link function both limits $\pi_{i,t}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{i,t}$~\autocite{ealesAppropriately}.
 Combined with property 4, the form of $g$ the null model is $g(i, t) = a_0 + a_t t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified; that is, changes away from this model should be penalised.
 
 % Properties 3 and 4 suggest the extension of the previously-developed MRP method, used to already estimate prevalence, which already satisfies these properties.
@@ -81,22 +108,34 @@ Properties 3 and 5 suggest the use of an approximate method for computing the po
 In particular, using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
 Instead, previous MRP implementations used INLA (see \cref{E-biology-data:sec:MRP}).
 
-\todo[inline]{Is it OK that $x$ and $y$ in the following two paragraphs don't align with the rest of the thesis chapter? Should I use alterantive notation - but then different to standard in the INLA papers.}
 INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models})~\autocite{rueINLAseminar,rueINLA,martinoINLAtutorial}; see \cref{E-transmission:sec:INLA} for further details on INLA.
-An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
 
-In this context, each $y_j$ corresponds to the observed RT-PCR results in one stratum on one day.
-Hence, $\eta_{j}$ must determine the distribution of $y_{j}$ (up to some hyperparameters); where $j$ uniquely identifies a stratum $i$ and day $t$.
+An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{z}$; a vector of $n$ data points, $\vec{w} = [w_1, \dots, w_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
+To be an LGM, $\vec{z}$ must be a latent Gaussian field, that is $\vec{z} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{w} \mid \vec{\varphi}, \vec{z}) = \prod_j p(w_j \mid \eta_j(\vec{z}), \vec{\varphi})$.
+
+In this context, each $w_j$ corresponds to the observed RT-PCR results in one stratum on one day.
+Hence, $\eta_{j}$ must determine the distribution of $w_{j}$ (up to some hyperparameters); where $j$ uniquely identifies a stratum $i$ and day $t$.
+
 In practice, this means that $\eta_j$ is a one-to-one transformation of the population prevalence in stratum $i$ on day $t$.
-If $\eta_j = \logit(\pi_{it})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is a LGM.
+If $\eta_j = \logit(\pi_{i,t})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is a LGM.
 However, if $\pi$ is instead representing incidence proportion, then no such linear relationship between $\eta_j$ and $g$ exists.
-In particular, if $\eta_j$ is the prevalence, then $\eta_{it} = \sum_{k=-\infty}^0 \pi_{ik} S(k) = \sum_{k=-\infty}^0 \expit(g(i, k)) S(k)$.
-As $g(i, k)$ is linear in the model parameters, $\vec{x}$, then $\eta_{it}$ is not, violating the requirements of a LGM.
-Therefore, the application of the INLA approximation, while satisfying the other desirable properties, requires that the regression model predicts RT-PCR prevalence, not incidence proportion.
+In particular, if $\eta_j$ is the prevalence, then:
+\begin{align}
+    \eta_{i,t}
+    &= \sum_{k=-\infty}^0 \pi_{ik} S(k) \\
+    &= \sum_{k=-\infty}^0 \expit(g(i, k)) S(k).
+\end{align}
+As $g(i, k)$ is linear in the model parameters, $\vec{z}$, then $\eta_{i,t}$ is not, violating the requirements of a LGM.
 
-Next, I explain how I extended the MRP model introduced in \cref{E-biology-data:sec:MRP} to calculate incidence.
-I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
+Therefore, using the INLA approximation while satisfying the other desirable properties requires that $g$ predicts prevalence, not incidence proportion.
+Hence, I adopt the prevalence-inferred approach.
+
+
+\subsection{Methods} \label{backcalc:sec:methods}
+
+Now I explain how I extended the MRP model introduced in \cref{E-biology-data:sec:MRP} to implement the prevalence-inferred approach.
+
+First, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 For each stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
 I solve this system using forward substitution, calculating the value of $Z_t$ in \cref{E-inc-prev:eq:forward-substitute} sequentially for $t = 1, \dots, T$.
@@ -116,6 +155,7 @@ There are two sets of assumptions which are most likely to be violated.
 The first set of assumptions is in constructing survival matrix, $\matr{S}$, which is assumed to be known with no uncertainty in this procedure.
 However, \cref{E-imperf-test} showed that the estimate of $S(t)$ is sensitive to assumptions made, such as the assumed $\psens$ and strength of priors used.
 The second set of assumptions are in specifying the statistical model used to estimate prevalence, for example the form of the smoothing used.
+In this context, that means the prior $\pi_P$ places non-zero mass on prevalence values which imply negative incidence under the other model assumptions.
 
 For $\vec{P} = \matr{S} \vec{I}$ to have a unique solution, $\vec{I}$ and $\vec{P}$ need the same dimension.
 However, I am using a period of prevalence which starts after the first infections.
@@ -187,14 +227,17 @@ However, the rest of the series is robust to this assumption and hence reliable.
 \end{figure}
 
 Alternative inference techniques could allow more powerful modelling approaches, if they allowed a broader set of models than LGMs.
-In particular, the incidence proportion could be directly modelled rather than the prevalence.
+In particular, the incidence-inferred approach could be adopted.
 This could allow more interpretable priors to be used because the infection process is the process that corresponds to biological and behavioural processes.
 Furthermore, the incidence proportion could be restricted to be non-negative, preventing the negative incidence seen in some strata.
 
 Various alternative inference techniques could be considered.
-If the infection process is considered a Poisson process (see \cref{E-inc-prev:sec:poisson-process}), then, conditional on the process's intensity, there is independence between individuals' infection status.
-Therefore, the incidence proportion and prevalence can both be viewed as the mean of many Bernoulli variables, meaning that the Central Limit Theorem suggests they are approximately normally distributed.
+If the infection process is considered a Poisson process (defined in \cref{E-inc-prev:sec:poisson-process}), then, conditional on the process's intensity, there is independence between individuals' infection status.
+The conditional independence implies the incidence proportion and prevalence are the mean of many independent Bernoulli variables.
+Therefore, the Central Limit Theorem implies they are approximately normally distributed.
 Exploiting this property could enable efficient approximations to the posterior.
+For example, a Laplace approximation or variational inference.
+Further work, to check the quality of these approximations, is required.
 
 
 \section{Mechanistic modelling} \label{SEIR}
@@ -595,7 +638,7 @@ I constructed a confidence interval for the coverage using the Pearson-Klopper m
 
 The majority of the confidence intervals contain the nominal probability (see \cref{SEIR:fig:sim-coverage}).
 There is a tendency for the coverage to be slightly lower than the nominal probability, suggesting that the credible intervals are slightly too narrow.
-This is a common issue with random walk MCMC (see \cref{E-inc-prev:sec:MCMC}).
+This is a common issue with random walk MCMC (see \cref{E-MCMC:sec:improving}).
 The same issue arises with the coverage for derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
     \includegraphics{SEIR/sim/coverage}
@@ -716,7 +759,7 @@ For example, in the North East region, the 11--16 age group has its prevalence o
     \todo[inline]{Remake/reposition this plot so that it fits on a page.}
 \end{figure}
 
-All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-intro:sec:MCMC}).
+All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-MCMC:sec:convergence}).
 The highest Rhat was 1.01 for $\sigma_\epsilon$ in London.
 All parameters had ESS > 1000, except $\sigma_\epsilon$ and $\psi$ in London, which had ESS of 450 and 950 respectively.
 
