@@ -1,0 +1,80 @@
+\documentclass[thesis.tex]{subfiles}
+
+\begin{document}
+\ifSubfilesClassLoaded{
+    \setcounter{chapter}{7}
+}
+
+\chapter{Conclusions} \label{conclusion}
+
+Pandemics will continue to pose a significant threat to public health for the foreseeable future.
+Therefore, there is a public health need to respond to pandemics.
+Such a response needs to be informed by monitoring.
+In this thesis, I have investigated one method of monitoring pandemics: prevalence surveys.
+
+\section{Main findings}
+
+In \cref{E-intro:sec:aims}, I posed the central question for this thesis: can prevalence surveys alone be used to infer incidence and transmission, and if so how?
+
+In \cref{E-transmission}, I showed that this it is possible by appying two models.
+The differing models, one statistical in nature and one mechanistic, each had their own strengths and weaknesses.
+The statistical approach, based on the backcalculation framework, estimates incidence and makes fewer assumptions about the infection process.
+However, the estimates are very uncertain.
+The mechanistic approach, within the compartmental modelling framework, reduces the uncertainty and allows estimation of the components of transmission by making stronger assumptions about the infection process.
+
+These results highlighted the heterogeneity across regions and age groups in England.
+
+These models relied on the theoretical work of \cref{E-inc-prev}.
+This work developed the backcalculation framework for the context of prevalence surveys for SARS-CoV-2.
+The major insight was the justification of the deterministic model framework and the importance of the distribution of the duration of positivity.
+
+In \cref{E-perf-test,E-imperf-test}, I developed methodology to estimate the distribution of the duration of positivity from the CIS prevalence survey.
+Therefore, showing that this important parameter can be estimated from prevalence surveys.
+While I did make use of external estimates, from \cref{E-ATACCC}, this was to address weaknesses of the CIS study design that could be addressed in future studies (see \cref{conclusion:sec:future-work}).
+
+Both approaches assumed that the distribution of the duration of positivity was perfectly known.
+
+Estimating this distribution was the focus of the majority of this thesis.
+
+
+\section{Future work} \label{conclusion:sec:future-work}
+
+The feasibility of jointly modelling duration and incidence was not investigated in this thesis.
+The model for duration in \cref{E-perf-test,E-imperf-test} estimated the total number of infections in the cohort but assumed these occurred uniformly over the duration of the survey.
+Relaxing the uniformity assumption, would give incidence estimation.
+The issue of including covariates to control for non-response bias, encountered in \cref{E-transmission}, as well as the parameterisation of the shape of the incidence curve would be major challenges in this extension.
+Modelling frameworks could be adopted from the existing literature~\autocite[e.g.][]{taffeJoint,haySerosolver} used approximations (\eg empirical Bayes), smaller sample sizes, or high-performance computing to address these challenges.
+However, the CIS is larger and incidence estimation desired at a more granular level than previously encountered.
+Furthermore, high-performance computing cannot be used within the SRS.
+
+A common theme in this thesis was computational challenges.
+The challenges could be addressed by more efficient MCMC algorithms, approximate methods, or alternate computing methods (\eg the use of GPUs).
+Alternate computing methods would require appropriate hardware within the SRS, which should be considered when choosing the design of future TREs.
+
+The CIS was a household-based survey, but the household structure was not considered in this thesis.
+The household-based design is likely to induce clustering in results.
+Therefore, the uncertainty in my results might be underestimated.
+While the beta-binomial likelihood used in \cref{E-transmission} should capture this, it does not consider the clustering between different strata.
+Other chapters did not consider clustering at all.
+Similarly, the treatment of a longitudinal survey as a cross-sectional survey in \cref{E-perf-test} may have underestimated the uncertainty in the results.
+More sophisticated incorporation of clustering, for instance using random effects for households and/or individuals, could be considered in future work.
+
+The challenges in estimating the distribution of the duration of positivity originated in the design of the studies used.
+Exploring the design of future studies to better estimate the distribution of the duration of positivity would be beneficial.
+A particularly promising direction would be intensive follow-up of individuals following a positive test (\eg daily testing) until they have two or more negative tests.
+Intensive follow-up would increase the precision by which the end of the infection episode is known.
+Furthermore, it reduces the impact of false negatives because they are likely to be followed by a true positive.
+I have developed software that could be used to perform simulation studies of alternative designs.
+
+Other design questions are also posed by the work in this thesis.
+For example, whether a representative sample of the population is optimal, or if certain groups should be oversampled.
+Certain groups, such as younger individuals, were more likely to be infected.
+It is plausible that sampling in proportion to incidence would be beneficial.
+This is especially true if policy questions (\eg closing of schools) are of importance.
+These questions could be investigated through simulation studies.
+
+\ifSubfilesClassLoaded{
+  \listoftodos
+}{}
+
+\end{document}

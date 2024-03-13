@@ -7,6 +7,7 @@ ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_tr
 IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.pdf cis-imperfect-testing/sim-single-positive-episodes.pdf cis-imperfect-testing/sim-constant-sensitivity.pdf cis-imperfect-testing/sim-misspecified-sensitivity.pdf cis-imperfect-testing/sim-variable-sensitivity.pdf cis-imperfect-testing/CIS_perfect.pdf cis-imperfect-testing/CIS_final.pdf cis-imperfect-testing/CIS_vary.pdf cis-imperfect-testing/CIS_ntot.pdf
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.pdf cis-perfect-testing/double-interval-censor.pdf cis-perfect-testing/truncation.pdf cis-perfect-testing/flat-prior.pdf cis-perfect-testing/kt-prior.pdf cis-perfect-testing/rw2-prior.pdf cis-perfect-testing/vague-prior.pdf cis-perfect-testing/survival-results.pdf cis-perfect-testing/hazard-results.pdf cis-perfect-testing/ataccc-approximation-survival.pdf cis-perfect-testing/ataccc-approximation-hazard.pdf cis-perfect-testing/input-duration-dists.pdf
 TRANSMISSION_DEPS = transmission.tex transmission-appendix-INLA.tex transmission-appendix-phase-type.tex SEIR/sim/data.pdf SEIR/sim/predictive_coverage.pdf SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.pdf SEIR/CIS/prev_young.pdf SEIR/CIS/prev_old.pdf SEIR/CIS/incidence.pdf SEIR/CIS/p_peak.pdf SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.pdf transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf transmission/backcalc-ages.pdf transmission/backcalc-start-effect.pdf transmission/compare-regions.pdf transmission/compare-NE.pdf
+CONCLUSION_DEPS = conclusion.tex
 DISTRIBUTIONS_DEPS = distributions.tex
 
 thesis.pdf: $(SHARED_DEPS) $(INTRODUCTION_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(TRANSMISSION_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
@@ -185,6 +186,12 @@ transmission/compare-NE.pdf: transmission/compare_NE.R transmission/outputs/regi
 transmission/outputs/%:
 	mkdir -p transmission/outputs
 	rsync -aq --delete hpc:/home/jbb50/PhD_work/final_backcalc/for_thesis/ transmission/outputs/
+
+#####################################################
+## CONCLUSION CHAPTER
+
+conclusion.pdf: $(CONCLUSION_DEPS) $(SHARED_DEPS)
+	$(LATEX_CMD)
 
 #####################################################
 ## DISTRIBUTIONS CHAPTER
