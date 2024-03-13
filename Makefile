@@ -119,11 +119,11 @@ cis-perfect-testing/input-duration-dists.pdf: cis-perfect-testing/input-duration
 cis-perfect-testing/%-prior.pdf: cis-perfect-testing/priors.R utils.R cisRuns-output/input_curves.rds
 	Rscript $<
 
-cis-perfect-testing/%-results.pdf: cis-perfect-testing/results.R utils.R cisRuns-output/input_curves.rds cisRuns-output/perfect_posteriors.rds cisRuns-output/vague_perfect_hazard_posterior_samples.rds
+cis-perfect-testing/%-results.pdf: cis-perfect-testing/results.R utils.R cisRuns-output/input_curves.rds cisRuns-output/perfect_posteriors.rds
 	Rscript $<
 
 cisRuns-output/%:
-	rsync -aq hpc:~/modular-cis-sims/cisRuns/outputs/thesis/ cisRuns-output/
+	rsync -aq hpc:~/rds/hpc-work/PhD_survival_analysis/output/ cisRuns-output/
 
 
 #####################################################

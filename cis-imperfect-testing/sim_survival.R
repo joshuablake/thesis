@@ -38,20 +38,15 @@ base_plot = function(df, colour_curves_by, colour_key = NULL) {
 
 tbl_posteriors = readRDS(here::here("cisRuns-output/all_posteriors.rds")) |>
     filter(
-        .width == 0.95, # Credible intervals are narrow anyway so only show 95%
-        is.na(type),
         survival_prior %in% c(
-            "ATACCC-new",
+            "ATACCC",
             "vague"
         ),
-        # Use the reference prior on the number of missed infections as this doesn't matter
-        missed_prior == "vague", 
-        missing_model == "total"
     ) |>
     mutate(
         survival_prior = case_match(
             survival_prior,
-            "ATACCC-new" ~ "Combination",
+            "ATACCC" ~ "Combination",
             "vague" ~ "Independent (vague)"
         ),
     )

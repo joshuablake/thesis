@@ -7,22 +7,11 @@ library(tidyr)
 source(here::here("utils.R"))
 
 tbl_posteriors = readRDS(here::here("cisRuns-output/perfect_posteriors.rds")) |>
-    filter(
-        .width == 0.95, # Credible intervals are narrow anyway so only show 95%
-        survival_prior %in% c(
-            "ATACCC-new",
-            "RW2-infer-sigma",
-            "vague"
-        ),
-        # Use the reference prior on the number of missed infections as this doesn't matter
-        missed_prior == "vague", 
-        missing_model == "total"
-    ) |>
     mutate(
         survival_prior = case_match(
             survival_prior,
-            "ATACCC-new" ~ "Combination",
-            "RW2-infer-sigma" ~ "Smoothing (RW2)",
+            "ATACCC" ~ "Combination",
+            "RW2" ~ "Smoothing (RW2)",
             "vague" ~ "Independent (vague)"
         ),
     )
@@ -78,19 +67,4 @@ ggsave(
     units = "cm",
     dpi = 300,
     device = cairo_pdf
-)
-
-tbl_samples = readRDS(here::here("cisRuns-output/vague_perfect_hazard_posterior_samples.rds"))
-hazard_pairs = tbl_samples |>
-    filter(between(time, 10, 20)) |>
-    pivot_wider(names_from = time, values_from = lambda, id_cols = .draw) |>
-    select(!.draw) |>
-    GGally::ggpairs()
-ggsave(
-    filename = here::here("cis-perfect-testing/hazard-pairs-results.pdf"),
-    plot = hazard_pairs,
-    width = 15,
-    height = 15,
-    units = "cm",
-    dpi = 300
 )

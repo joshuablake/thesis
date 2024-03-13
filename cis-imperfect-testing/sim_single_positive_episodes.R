@@ -11,16 +11,14 @@ sims = readRDS(here::here("cisRuns-output/sim_reps.rds")) |>
     
 p_single_pos = sims |>
     summarise(
-        .by = c(.draw, scenario_name),
+        .by = c(.draw, sensitivity),
         num_single = mean(n_pos == 1)
     ) |>
-    mutate(
-        sensitivity = stringr::str_split_fixed(scenario_name, "-", 3)[,3] |>
-            stringr::str_to_sentence()
-    ) |>
+    mutate(sensitivity = as.character(sensitivity)) |>
+    replace_na(list(sensitivity = "Varied")) |>
     ggplot() +
     geom_bar(aes(num_single, fill = sensitivity)) +
-    geom_vline(aes(xintercept = 3730/4837, colour = "Observed"), size = 1) +
+    geom_vline(aes(xintercept = 3730/4837, colour = "Observed"), linewidth = 1) +
     standard_plot_theming() +
     labs(
         x = "Proportion of episodes",
