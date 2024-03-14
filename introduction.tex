@@ -160,7 +160,7 @@ Typically, the core of an observation model is a \emph{convolution equation} or 
 This equation links the expectation of an observation at time $t$, $y_t$, conditional on the incidence prior to time $t$.
 In discrete time, it is:
 \begin{align}
-    y_t &= \zeta \sum_{i=0}^\infty I(t-i) f(i)
+    \E(y_t \mid I_1, I_2, \dots) &= \zeta \sum_{i=0}^\infty I(t-i) f(i)
 \end{align}
 where $I(t)$ is the incidence at time $t$; $\zeta$ is the proportion of infections that are ever observed; and $f(i)$ is the probability that an infection at time $t-i$ is observed at time $t$, conditional on it ever being observed.
 
