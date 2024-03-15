@@ -319,17 +319,22 @@ For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is
     y_{taes} &\dist \BB(n_{taes}, p_{taes}, \rho).
 \end{align}
 The terms are as follows.
+\todo[inline]{Check I've written the priors correctly}
 \begin{itemize}
     \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution, as discussed in \cref{biology-data:sec:clustering}.
-    \item $\beta$ is a global intercept term with the prior $\beta \dist \N(0, 1/0.001^2)$.
-    \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females.
-    \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).% $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
+    \item $\beta$ is a global intercept term with the vague prior $\beta \dist \N(0, 1/0.001^2)$.
+    \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females. The prior for $\beta_s$ is vague, $\beta_s \dist \N(0, 1/0.001^2)$.
+    \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).
+      The prior for $\beta_n$ is vague, $\beta_n \dist \N(0, 1/0.001^2)$.
+      % $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
     \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior~\autocite{simpsonPenalising} with a 10\% probability of being greater than 1.
     \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
-    \item $l_{a,t}$ is an age-group specific second-order random walk. That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
+      $\sigma_w$ has a vague prior, $1/\sigma_w \dist \GamDist(1, 5 \times 10^{-5})$.
+    \item $l_{a,t}$ is an age-group specific second-order random walk.
+      That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
+      $\sigma_l$ has a vague prior, $1/\sigma_l \dist \GamDist(1, 5 \times 10^{-5})$.
 \end{itemize}
-All parameters have the default R-INLA priors (see \cref{E-transmission:sec:INLA:priors}), except where stated above.
-For these parameters, the large amount of data means that the prior has little influence on the posterior distribution.
+For parameters given vague priors, the large amount of data means that the prior has little influence on the posterior distribution.
 
 I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.

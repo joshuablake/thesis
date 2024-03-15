@@ -9,59 +9,72 @@ INLA (Integrated Nested Laplace Approximation) is a method for approximate Bayes
 It was introduced by \textcite{rueINLA}.
 This appendix is based on that paper, as well as the seminar \textcite{rueINLAseminar} and the tutorial paper \textcite{martinoINLAtutorial}.
 
+The standard implementation of INLA is the R-INLA package~\autocite{RINLA}.
+
 \section{Latent Gaussian model}
 
-The INLA method requires a LGM (latent Gaussian model).
+INLA requires a LGM (latent Gaussian model).
 An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j p(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
+To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $\pi(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j \pi(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
+% The Gaussian structure allows the use of the approximations in \cref{transmission:sec:INLA:inference}.
+% The conditional independence structure means that the precision matrix, $\matr{Q} = \matr{\Sigma}^{-1}$, is sparse.
 
-The Gaussian structure allows the use of the approximations in \cref{transmission:sec:INLA:inference}.
-The conditional independence structure means that the precision matrix, $\matr{Q} = \matr{\Sigma}^{-1}$, is sparse.
-The sparsity of $\matr{Q}$ allows for efficient computation of the procedure.
+For INLA to perform well, \ie be compuutationally efficient and an accurate approximation, $\vec{\theta}$ should be of low dimension, \textcite{martinoINLAtutorial} recommend $< 15$; and the precision matrix, $\matr{Q}$, should be sparse.
+The low dimensionality of $\vec{\theta}$ is because the method requires numerical integration over it.
+The sparsity of $\matr{Q}$ allows for efficient computation.
+Sparsity is introduced by conditional independence structures of the latent field that are present in many models.
+For example, in the classic random effect setting, all random effects are independent conditional on the hyperparameters.
 
 \section{Inference procedure} \label{transmission:sec:INLA:inference}
+
+The core of INLA is an approximation for the posterior distribution of the hyperparameters $\pi(\vec{\theta} \mid \vec{y})$ and the marginal posterior distribution of the latent field, $\pi(x_i \mid \vec{y})$.
 
 \subsection{Gaussian likelihood}
 
 Start by the case in which the likelihood, $\vec{y} \mid \vec{x}, \vec{\theta}$, is Gaussian.
-In this case, as $\vec{x} \mid \vec{\theta}$ is also Gaussian, the distributions of $\vec{x}, \vec{y} \mid \vec{\theta}$ and $\vec{x} \mid \vec{y}, \vec{\theta}$ are both Gaussian too.
+In this case, as $\vec{x} \mid \vec{\theta}$ is also Gaussian, the distributions of $\vec{x} \mid \vec{y}, \vec{\theta}$ is Gaussian too.
+The Gaussian form of $\vec{x} \mid \vec{y}, \vec{\theta}$ follows from the conjugate property of the Gaussian distribution.
+This distribution can easily be found analytically.
 
 The posterior density of $\vec{\theta}$, $\vec{\theta }\mid \vec{y}$, is not Gaussian.
-Its density (up to a normalising constant) is:
+Approximate it by the distribution $\tilde\pi(\vec{\theta} \mid \vec{y})$ defined as:
 \begin{align}
-p(\vec{\theta} \mid \vec{y}) \propto \frac{p(\vec{x}, \vec{y} \mid \vec{\theta}) p(\vec{\theta})}{p(\vec{x} \mid \vec{y}, \vec{\theta})}.
+\tilde\pi(\vec{\theta} \mid \vec{y})
+&\propto \frac{\pi(\vec{x^*}, \vec{y} \mid \vec{\theta}) \pi(\vec{\theta})}{\pi(\vec{x^*} \mid \vec{y}, \vec{\theta})}
 \end{align}
+where $\vec{x^*} = \argmax_{\vec{x}} \pi(\vec{x} \mid \vec{y}, \vec{\theta})$.
 All of the densities on the right-hand side can easily be found analytically.
 
 Assume that $\vec{\theta} \mid \vec{y}$ is unimodal, which is very likely for reasonable priors on $\vec{\theta}$.
 Find its mode via optimisation and explore its area, until the density is negligible.
 By integrating over this area, the normalising constant can be found.
-Hence, the posterior density of the hyperparameters is known.
+Hence, the approximate posterior density of the hyperparameters is known.
 
-Finally, the marginal posterior density of $\vec{x}$ is found by integrating over $\vec{\theta}$:
+Finally, the marginal posterior density of $x_i$ is found by integrating over $\vec{\theta}$:
 \begin{align}
-p(\vec{x} \mid \vec{y}) = \int p(\vec{x} \mid \vec{\theta}) p(\vec{\theta} \mid \vec{y}) d\vec{\theta}.
+\pi(x_i \mid \vec{y})
+&\approx \int \pi(x_i \mid \vec{\theta}, \vec{y}) \tilde\pi(\vec{\theta} \mid \vec{y}) d\vec{\theta}.
 \end{align}
-which can be computed using a Monte Carlo integration over $p(\vec{\theta} \mid \vec{y})$, previously calculated.
+which can be computed using numerical integration over $\tilde\pi(\vec{\theta} \mid \vec{y})$, previously calculated.
 
 \subsection{Non-Gaussian likelihood}
 
-Now, the INLA approach needs extending to non-Gaussian, but known, likelihoods for $\vec{y} \mid \vec{x}, \vec{\theta}$.
-The density $p(\vec{x}, \vec{y} \mid \vec{\theta})$ is not Gaussian, but still known.
+Now, the INLA needs extending to non-Gaussian, but known, likelihoods for $\vec{y} \mid \vec{x}, \vec{\theta}$.
+The density $\pi(\vec{x}, \vec{y} \mid \vec{\theta})$ is not Gaussian, but still known.
 However, $\vec{x} \mid \vec{y}, \vec{\theta}$ is not Gaussian, and its density is not known.
 
 INLA assumes that $\vec{x} \mid \vec{y}, \vec{\theta}$ is approximately Gaussian, and therefore takes a Laplace approximation to the distribution.
 The greater the smoothing, the better the approximation.
 This is because, if $\vec{x} \mid \vec{y}, \vec{\theta}$ is then dominated by the prior $\vec{x} \mid \vec{\theta}$ and the prior is Gaussian.
-\todo[inline]{Add justification for the Laplace approximation}
-
+Exploiting the structure of the problem, in particular the conditional independence structure, the Laplace approximation can be computed efficiently.
 
 \section{Drawing from the posterior} \label{transmission:sec:INLA:posterior}
 
+Various methods exist to sample from the joint posterior of the hyperparameters and the latent variables, based on the INLA approximation.
 The joint posterior is not approximated by default.
-The function \texttt{inla.posterior.sample} can be used to draw from the joint posterior of the hyperparameters and the latent variables.
-The method is described in \textcite[section 4]{chiuchioloJoint}.
+I used the one implemented in the R-INLA function \texttt{inla.posterior.sample}, described in \textcite[section 4]{chiuchioloJoint}.
 
-\section{Default priors} \label{transmission:sec:INLA:priors}
+This method incorporates the first three moments of each marginal distribution, and uses a skew Gaussian copula to approximate the joint distribution.
+
 
 \end{document}
