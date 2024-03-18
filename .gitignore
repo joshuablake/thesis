@@ -308,3 +308,6 @@ transmission/outputs/
 ## Files for SRS extraction request
 cis.tex
 CIS-intro-extraction/
+
+## Files for misc purposes
+tmp*.tex
