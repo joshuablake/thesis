@@ -41,25 +41,31 @@ The cDNA can then be used in the standard PCR process.
 
 \todo[inline]{Consider finding or making a figure to explain PCR testing.}
 
-PCR consists of a series of cycles, each cycle containing a three-step process~\autocite{powledgePCR,garibyanPCR}.
+At the start of the PCR process, four substances are required: template DNA, nucleotides, primers, and DNA polymerase~\autocite{garibyanPCR}.
+The \emph{template DNA}, in this context, is the sample which is being tested~\autocite{caseTemplate}.
+\emph{Nucleotides} or \emph{bases} are the building blocks of DNA.
+There are four nucleotides in DNA (A, C, G, T) each of which forms a pair, known as a \emph{base pair}, with its \emph{complementary} nucleotide (A with T, and G with C)~\autocite{batesBase}.
+The choice of \emph{primers} specifies the exact DNA which will be amplified; they are the complementary DNA sequence to the start and end of the DNA sequence to be amplified~\autocite{garibyanPCR}.
+DNA \emph{polymerase} is an enzyme required to link individual nucleotides together~\autocite{garibyanPCR}.
+
+The process is a series of cycles, each cycle containing three steps~\autocite{powledgePCR,garibyanPCR}.
 In the first step, \emph{denaturation}, the DNA is heated to separate the two strands of DNA.
-In the second step, \emph{annealing}, the temperature is lowered to allow primers to bind to the DNA.
-Primers are short sequences of DNA that are complementary to the DNA sequence of interest.
-By choosing the primers, the PCR process targets a portion of DNA starting and ending with a specified sequence.
-In the final step, \emph{extension}, the temperature is raised to allow the enzyme DNA polymerase to extend the primers and hence replicate the DNA sequence of interest.
+In the second step, \emph{annealing}, the temperature is lowered to allow the primers to bind to the DNA.
+In the final step, \emph{extension}, the temperature is raised, causing the DNA polymerase to replicate the DNA sequence between the primers.
 In the course of such a cycle, the amount of DNA doubles.
 Therefore, the number of DNA copies increases geometrically with the number of cycles completed.
 
-Quantitative real-time (RT-)PCR gives a measurement of the amount of the target DNA sequence present in the original sample~\autocite{yangPCRdiagnostics}.
+\emph{Quantitative real-time (RT-)PCR} gives a measurement of the amount of the target DNA sequence present in the original sample~\autocite{yangPCRdiagnostics}.
 After each PCR cycle, the amount of target DNA is measured and compared to a pre-derived standard.
 Once the measured amount of DNA exceeds the standard, the target DNA is said to be detected.
 The number of cycles required to reach detection is known as the \emph{cycle threshold} (Ct) value.
+Originally, the amount of target DNA was only measured after the completion of all cycles, hence the name real-time.
 Quantitative real-time PCR have a number of other practical advantages over previous PCR techniques (\eg speed); see \textcite{yangPCRdiagnostics,valasekPower} for more details.
 All RT-PCR tests I consider in this thesis are quantitative real-time RT-PCR tests, and produce Ct values.
 
-The Ct value decreases as the amount of DNA present in the original sample increases~\autocite{hanRTPCR}.
-If there is more RNA present, more DNA is created, and hence fewer cycles are required to reach detection.
-As the number of DNA copies doubles each cycle, the Ct value decreases increases linearly on the log-scale each cycle (see \cref{biology-data:fig:ct-calibration}).
+% The Ct value decreases as the amount of DNA present in the original sample increases~\autocite{hanRTPCR}.
+If there is more RNA present, proportionally more DNA is created in reverse transcription, and hence fewer cycles are required to reach detection; that is, the Ct value is lower~\autocite{hanRTPCR}.
+The number of DNA copies doubles each cycle, therefore the log Ct value decreases linearly with the quanitiy of RNA or DNA in the original sample (see \cref{biology-data:fig:ct-calibration}).
 A \emph{standard curve} translates the Ct value to viral load for a given test.
 A standard curve is produced by measuring the Ct value using reference samples with known viral load, and, as seen in \cref{biology-data:fig:ct-calibration}, they vary between studies.
 \begin{figure}
@@ -78,7 +84,7 @@ An important concept throughout this thesis will be that of \emph{detectable} in
 An individual is defined as detectable between the time they would first test positive on a perfect RT-PCR test (if tested) and the time they would stop doing so.
 It is not possible to conclusively determine whether an individual is detectable because perfect RT-PCR tests do not exist (see \cref{biology-data:sec:PCR}).
 However, viewing the number of RNA genome copies in an individual as a latent process this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the RT-PCR test (defined in \cref{biology-data:sec:measurement-error}).
-While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
+% While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
 
 
 \subsection{Measurement error} \label{biology-data:sec:measurement-error}
@@ -88,7 +94,7 @@ The quantitative result (the Ct value) is noisy, and the qualitative result (pos
 Errors arise from a variety of sources, including the sampling/swabbing process and batch effects in the RT-PCR process~\autocite{hanRTPCR}.
 
 The \emph{analytical sensitivity} of the test is the minimum number of copies of the target RNA material in the sample that the test can detect, typically expressed as the \emph{limit of detection}~\autocite{bustinMIQE}.
-The limit of detection is the lowest concentration of the target RNA material that can be reliably detected using the procedure.
+The limit of detection is the lowest concentration of the target RNA material that can be reliably detected using the procedure; below this level there is a substantial (generally, >5\%) chance that errors in the process cause the amplification procedure to fail~\autocite{forootanLOD}.
 This is different to the \emph{clinical sensitivity} of the test, the ability of the test to detect a detectable individual.
 Clinical sensitivity can be affected by a large variety of preanalytical factors, such as sample collection (\ie the swabbing process) and sample transportation~\autocite{lippiPotential}.
 Clinical sensitivity is of primary interest in this thesis.
