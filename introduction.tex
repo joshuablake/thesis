@@ -205,8 +205,10 @@ Either an approach which gives a large $f(0)$ or smoothing on $Z_t$ is required.
 \section{Observation models}
 
 An observation model links $W_t$ to a possibly biased and/or noisy observation of it at time $t$.
+
 Biases can arise in a variety of ways, \eg healthcare-seeking behaviour or tests which are less than 100\% accurate.
 Bias can be modelled through additional parameters or data quantifying these issues.
+
 Noise could come from a variety of sources, \eg sampling error, clustering, or unexplained overdispersion.
 Noise is typically modelled by a parameteric distribution \eg the negative binomial distribution allowing for overdispersion compared to a Poisson process assumption.
 
@@ -244,6 +246,7 @@ Much analysis of SARS-CoV-2 data was done at great haste, requiring trade-offs t
 
 Deep understanding of each data source's potential was not possible.
 In this thesis, I will investigate the potential of the prevalence surveys in greater detail.
+The disease model will be a prevalence model (defined further in \cref{inc-prev:sec:prevalence-process}) with the delay distribution being the duration of PCR positivity.
 
 \subsection{Data sources} \label{intro:sec:data-for-estimating}
 
