@@ -150,7 +150,7 @@ The first component required to estimate incidence and transmission is a model o
 A spectrum of models exists, categorised by the strength of assumptions they make about the transmission process.
 Stronger assumptions allow more insight into the transmission process and generally lower the variance of the estimates, but can introduce bias and are often computationally challenging to fit.
 
-The models with the weakest assumptions are statistical models.
+The models with the weakest assumptions are \emph{phenomenological} models.
 These make almost no assumptions about the transmission process, viewing incidence as a generic counting process (introduced in full in \cref{E-inc-prev:sec:infection-process}).
 The most common model is that incidence follows a Poisson process, and the intensity of the process is the target of inference.
 % The use of Poisson processes to model incidence of an infectious disease was very popular in the context of HIV/AIDS\todo{maybe a ref for Poisson in HIV/AIDS?}.
@@ -536,7 +536,7 @@ In \cref{E-perf-test}, I provide a framework for estimating the duration of posi
 However, the assumption of perfect tests is not realistic; in \cref{E-imperf-test}, I extend the framework to include false negatives.
 
 Having estimated the duration of positivity, I then turn to estimating incidence and transmission from the CIS data in \cref{E-transmission}, thus fulfilling the primary aim of this thesis.
-I use both a statistical and mechanistic transmission model, contrasting their results and discussing the advantages and disadvantages of each in this context.
+I use both a phenomenological and mechanistic transmission model, contrasting their results and discussing the advantages and disadvantages of each in this context.
 Finally, I conclude in \cref{E-conclusion}.
 
 Definitions of the probability distributions used throughout this thesis, are given in \cref{E-distributions}.
