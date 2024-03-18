@@ -122,7 +122,7 @@ This means that the observations do not provide much information on incidence in
 
 Prevalence-type data originate from observations of the number or proportion of a population in a specific disease state at a specific time.
 For example, the number of hospital beds occupied with individuals with the disease or the proportion of the population with a marker of prior infection.
-The issues associated with incidence-type data also apply to prevalence-type data.
+The issues associated with incidence-type data often also apply to prevalence-type data.
 
 Prevalence surveys are one form of prevalence-type data that can be unbiased.
 Here, a representative proportion of the population (or a subpopulation of interest) are tested for a marker of current infection.
@@ -389,7 +389,7 @@ Several previous studies have used SARS-CoV-2 prevalence surveys to estimating i
 
 \Textcite{abbottCISincidence} applied backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
 They used a Gaussian process prior to smooth the incidence and stabilise the estimates.
-\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the observation model, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:duration-SARS-CoV-2}).
+\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the observation model, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:previous-duration-estimates}).
 They fit to summary statistics of the CIS data, using a daily, independent Gaussian likelihood with parameters estimated from the posterior point estimate and 95\% credible interval published by the ONS.
 
 \Textcite{colmanAscertainment} used CIS prevalence estimates to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
@@ -405,7 +405,7 @@ The models are fit to the prevalence survey data using a binomial likelihood whe
 % These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
 
 \Textcite{nicholsonImproving} fit a simple mechanistic model, notably without age structure, but have the most sophisticated observation model.
-They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:duration-SARS-CoV-2} for discussion of the \textcite{hellewellPCRSensitivity} study).
+They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:previous-duration-estimates} for discussion of the \textcite{hellewellPCRSensitivity} study).
 Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test into their model.
 
 \Textcite{mccabeCISincidence}, adapting the methodology \textcite{ealesAppropriately} developed for REACT, estimate $\Re$ and the growth rate from the CIS data.
@@ -440,7 +440,7 @@ The method I use for the majority of the analyses is MCMC (Markov chain Monte Ca
 \section{Thesis aims and contribution} \label{intro:sec:aims}
 
 The overall question that I investigate in this thesis is: can prevalence surveys alone be used to infer incidence and transmission, and if so how?
-Prevalence surveys provide data that is far more representative of the general population than other data sources (see \cref{intro:sec:data-sources}), therefore, conclusions based on them should be far more robust.
+Prevalence surveys provide data that is far more representative of the general population than other data sources, therefore, conclusions based on them should be far more robust.
 There are two components to this question.
 First, how can prevalence surveys be designed to help estimate these quantities.
 Second, what statistical methodology can be used to estimate these quantities from prevalence surveys.
@@ -484,7 +484,7 @@ A particular challenge with these analyses is that they must be performed within
 
 Finally, in \cref{E-SEIR}, I describe a compartmental model for SARS-CoV-2 transmission, which I fit to CIS data.
 I allow a more flexible distribution of the duration of positivity than any of the papers discussed above, except \textcite{nicholsonImproving}, incorporating the skew of the distribution.
-This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:duration-SARS-CoV-2}).
+This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:previous-duration-estimates}).
 Unlike \textcite{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
 I use only data from the CIS, and show this is sufficient for estimating incidence and transmission.
 
@@ -536,7 +536,7 @@ In \cref{E-perf-test}, I provide a framework for estimating the duration of posi
 However, the assumption of perfect tests is not realistic; in \cref{E-imperf-test}, I extend the framework to include false negatives.
 
 Having estimated the duration of positivity, I then turn to estimating incidence and transmission from the CIS data in \cref{E-transmission}, thus fulfilling the primary aim of this thesis.
-I use both of the approaches discussed in \cref{intro:sec:estimating-incidence}, contrasting their results and discussing the advantages and disadvantages of each in this context.
+I use both a statistical and mechanistic transmission model, contrasting their results and discussing the advantages and disadvantages of each in this context.
 Finally, I conclude in \cref{E-conclusion}.
 
 Definitions of the probability distributions used throughout this thesis, are given in \cref{E-distributions}.
