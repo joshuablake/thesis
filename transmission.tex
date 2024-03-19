@@ -12,10 +12,10 @@ I will show that the CIS data is sufficient; demonstrating the value of surveys 
 
 I take two approaches, backcalculation and a mechanistic model, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
 
-First, in \cref{backcalc}, I use a back-calculation approach, based on \cref{E-inc-prev:eq:EPt}.
+First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
 This approach enables estimation of incidence within (sub)populations of England.
 There are several attractive features about this approach in the context here.
-The backcalculation approach makes no assumptions about the transmission process, which have the potential to introduce bias.
+The backcalculation approach makes no assumptions about how transmission occurs, which have the potential to introduce bias.
 It can also easily incorporate arbitrary covariates to adjust for non-response bias.
 The scale of the CIS and desire to correct for non-response bias presents challenges for this methodology, especially within the limited computation of the SRS environment.
 
@@ -40,19 +40,19 @@ I adopt the poststratification method introduced in \cref{E-biology-data:sec:MRP
 Therefore, incidence must be estimated in each stratum before being poststratified to the target population and subpopulations of interest.
 The strata are defined by at least age group, region, ethnicity, and sex due to differential non-response in the survey (see \cref{E-intro:sec:cis}).
 
-\subsection{Approach} \label{backcalc:sec:approach}
+\subsection{Approaches} \label{backcalc:sec:approach}
 
 In \cref{E-inc-prev:sec:observation-process}, I showed that a deterministic approximation to the relationship between true prevalence and incidence is a good approximation for estimating incidence.
 This relationship between incidence proportion and prevalence means that once one is inferred, the other is calculated via a deterministic function.
 This gives two possible approaches for estimating incidence from prevalence data.
 
-\subsubsection{Possible approaches}
+% \subsubsection{Possible approaches}
 
 The first approach, which I call the \emph{incidence-inferred} approach, is a single statistical model where incidence is inferred, with prevalence as a derived quantity.
 The basis of the statistical model, in a Bayesian framework, would be as follows.
 \begin{align}
     \vec{Z} \mid \vec{\phi} &\dist g_Z(\vec{\phi}) \\
-    P_{i,t} &= \matr{S} \vec{Z}_i \\
+    \vec{P_{i}} &= \matr{S} \vec{Z}_i \\
     Y_{i,t} \mid \vec{P} &\dist \BB(n_{i,t}, P_{i,t})
 \end{align}
 where $\vec{Z}$ is a vector of incidence proportion for each strata and day defined by some model $g$ with parameters $\vec{\phi}$; $P_{i,t}$ is the prevalence in stratum $i$ on day $t$; $\matr{S}$ is the survival matrix defined in \cref{E-inc-prev:eq:Smatrix}; $Y_{i,t}$ is the number of positive tests in stratum $i$ on day $t$; and $n_{i,t}$ is the number of tests in stratum $i$ on day $t$.
@@ -66,25 +66,26 @@ First, it uses the statistical model from \cref{E-biology-data:sec:MRP} to estim
 Then, it transforms the posterior distribution of prevalence to a posterior distribution of incidence using the forward substitution as in \cref{E-inc-prev:eq:forward-substitute}.
 At a high-level, the statistical model is:
 \begin{align}
-    \vec{P} \sim \vec{\phi} &\dist g_P(\vec{\phi}) \\
-    Y_{i,t} &\dist \BB(n_{i,t}, P_{i,t})
+    \vec{P} \mid \vec{\phi} &\dist g_P(\vec{\phi}) \\
+    Y_{i,t} \mid \vec{P} &\dist \BB(n_{i,t}, P_{i,t})
 \end{align}
 where $g_P$ is analogous to $g_Z$ in providing a joint prior for the prevalence in each strata and day combination.
+Step 2 is...
 
-\subsubsection{Desirable properties}
+\subsection{Desirable properties}
 
 The incidence-inferred approach is more parsimonious in being a single step procedure.
 However, it poses several pragmatic challenges which means I favour the prevalence-inferred approach.
-Here I explain that further developments, beyond the scope of this thesis, would be required to use the incidence-inferred approach with a suitable $\pi_Z$ within the computational constraints of the SRS.
+Here I explain that further developments, beyond the scope of this thesis, would be required to use the incidence-inferred approach with a suitable $g_Z$ within the computational constraints of the SRS.
 
 Denote the quantity to be inferred at time $t$ in strata $i$ as $\pi_{i,t}$.
 That is, under the incidence-inferred approach, $\pi_{i,t}$ is the incidence proportion, and under the prevalence-inferred approach, $\pi_{i,t}$ is the prevalence.
 
 The chosen approach should have the following properties.
 \begin{enumerate}
-    \item The smoothing model over time should penalise changes from continuous exponential growth.
+    \item The smoothing model, $g_Z$ or $g_P$, over time should penalise changes from continuous exponential growth of $\pi$ over time.
         Penalising changes from continuous exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
-        Furthermore, such penalisation has previously been shown to improve estimates of SARS-CoV-2 prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}.
+        Furthermore, such penalisation has previously been shown to improve estimates of SARS-CoV-2 prevalence by balancing over and under-fitting~\autocite{ealesAppropriately}. Used by CIS (section 3.?).
     \item Limit estimates to epidemiologically and biologically plausible values.
         That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
@@ -92,11 +93,11 @@ The chosen approach should have the following properties.
     \item Borrow information across the different covariates.
         The borrowing should penalise changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
         A constant distribution is predicted by the theoretical study of epidemics, for example the dynamics of stratified, mechanistic transmission models (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) over short periods of time with negligible behavioural and immunity changes.
-    \item Be computationally efficient
+    \item Be computationally efficient.
         The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
 \end{enumerate}
 
-Properties 1 and 2 suggest a model of the form $\logit(\pi_{i,t}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised (\ie changes away from linear are penalised).
+Properties 1 and 2 suggest a model of the form $\logit(\pi_{i,t}) = g(i, t)$, where $g$ is a function with changes in the first derivative penalised w.r.t.\ $t$ (\ie changes away from linear are penalised).
 The $\logit$ link function both limits $\pi_{i,t}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{i,t}$~\autocite{ealesAppropriately}.
 Combined with property 4, the form of $g$ the null model is $g(i, t) = a_0 + a_t t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified; that is, changes away from this model should be penalised.
 

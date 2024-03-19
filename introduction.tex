@@ -80,8 +80,8 @@ Estimation of severity is beyond the scope of this thesis.
 
 
 \emph{Transmission} refers to the process by which an infectious disease generates new infections.
-Estimating transmission refers to inferring the parameters of this process, including its components.
-The components of transmission (\eg number of contacts per day and age-stratified rates) inform how interventions can be targeted.
+Estimating transmission refers to inferring the parameters of this process.
+The components of transmission (\eg the number of contacts each individual makes per day) allow interventions to be targeted.
 They are also important for forecasting future incidence.
 
 \emph{Prevalence} is the proportion of the population with the disease at a given time.
@@ -101,6 +101,7 @@ The data sources used for outbreak surveillance are often observational in natur
 Therefore, they suffer from biases that can be hard to understand and quantify.
 Here I discuss three types of data which are useful for surveillance.
 Incidence-type and prevalence-type data can directly inform estimation of incidence and transmission, however, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities.
+For example, the time between infection and symptom onset.
 These quantities can be estimated from other studies, \eg cohort studies.
 
 \subsection{Incidence-type data}
@@ -116,7 +117,7 @@ An extreme example is the development of AIDS following infection by HIV.
 Here, the disease is so severe that it is extremely unlikely for an individual to develop the disease without seeking healthcare~\autocite{evansCompleteness}.
 
 However, severe symptoms can be rare in some population subgroups (\eg young, otherwise healthy individuals infected with SARS-CoV-2).
-This means that the observations do not provide much information on incidence in those subgroups.
+This means that the observations do not provide much information on incidence in those subgroups.Furthermore, the delay between infection and the severe event occurring means that recent infections cannot be estimated.
 
 \subsection{Prevalence-type data}
 
@@ -162,8 +163,9 @@ The renewal equation~\autocite{fraserRenewal} for an infectious disease, in the 
 \begin{align}
     Z(t) &= \int_{0}^{t} \beta(t,\tau) Z(t-\tau) d \tau
 \end{align}
-where $Z(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the instantaneous probability of an individual infected $\tau$ time units ago infects an individual at time $t$.
+where $Z(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the mean rate an individual infected $\tau$ time units ago infects individuals at time $t$.
 Therefore, the renewal equation relates incidence in the past to incidence in the future.
+This partially describes the transmission process, hence the name semi-mechanistic.
 The effective reproduction number can be constructed as a function of $\beta(t, \tau)$ and the generation interval.
 % A scaled measure of $I(t)$ (\eg hospital admissions or community test results) allows estimating $\beta$.
 % The most common implementations are the R packages EpiNow2~\autocite{EpiNow2} and EpiEstim~\autocite{EpiEstim}.
@@ -173,7 +175,8 @@ Finally, mechanistic models are the most complex, representing the transmission 
 \emph{Compartmental} models, the most common type of mechanistic model, split the population into compartments, each representing a different state of the disease.
 The \emph{dynamics} of the epidemic, how it changes over time, are represented by the transitions between compartments (for more details see \cref{E-SEIR:sec:mechanistic-models}).
 Simple mechanistic models use a homogeneous population, with individuals differing only due to their disease state, and exponential distributions for the time in each disease state.
-More complex models relax these assumptions, in particular incorporating heterogeneity; the age structure of the population is important for respiratory diseases.
+More complex models relax these assumptions, in particular to incorporate heterogeneity.
+The age structure of the population is important for respiratory diseases because individuals meet individuals of their own age more frequently.
 % Mathematically, the dynamics are described by ODEs (ordinary differential equations) or SDEs (stochastic differential equations).
 % Unlike renewal equations, there are not widely-used implementations of compartmental models.
 % A commonly used frameork is the SEIR (susceptible, exposed, infectious, recovered) model.
@@ -181,13 +184,14 @@ More complex models relax these assumptions, in particular incorporating heterog
 
 \section{Disease models}
 
-The \emph{disease model} links the transmission model to a population-level quantity which we will make observations of.
-Examples are the incidence or prevalence of symptomatic individuals and admissions to hospital.
+\emph{Disease models} link transmission models to population-level quantities on which we will make observation.
+For example, the incidence or prevalence of symptomatic individuals and admissions to hospital.
+They will then be recorded through some system (\eg a testing programme) described by the observation model (see next section).
 
-The choice of observation model can, in theory, be independent of the transmission model.
-However, pragmatic considerations often mean that the observation model is chosen to be in a similar form to the transmission model.
+% The choice of observation model can, in theory, be independent of the transmission model.
+% However, pragmatic considerations often mean that the observation model is chosen to be in a similar form to the transmission model.
 
-Typically, the core of an observation model is a \emph{convolution equation} or an approximation of it.
+At the core of many observation models is a \emph{convolution equation} or an approximation of it.
 This equation describes the expectation of the quantity at time $t$, $W_t$, conditional on the incidence prior to time $t$.
 In discrete time, it is:
 \begin{align}
