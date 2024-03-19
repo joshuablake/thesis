@@ -12,14 +12,18 @@
 
 \chapter{SARS-CoV-2: biology and data} \label{biology-data}
 
-\todo[inline]{Rewrite chapter 2 intro after writing thesis intro because it will be clearer how to divide content.}
-
-SARS-CoV-2 is a beta coronavirus that emerged in late 2019.
-It is closely related to previous coronaviruses that have caused outbreaks in humans, SARS-CoV and MERS-CoV.
-
+SARS-CoV-2 is closely related to previous coronaviruses that have caused outbreaks in humans, SARS-CoV and MERS-CoV.
 Coronaviruses are RNA (Ribonucleic acid) viruses.
 RNA viruses use RNA, rather than DNA, as their genetic material.
+RNA viruses, which include influenza, mutate rapidly and are the most likely class of viruses to cause pandemics~\autocite{woolhouseRNA}.
 
+The initial and most sensitive diagnostic test for SARS-CoV-2 uses RT-PCR, which I explain in \cref{biology-data:sec:PCR}.
+SARS-CoV-2 causes the disease COVID-19; I discuss the \emph{natural history} of the disease, the course it takes from beginning to end~\autocite[193]{portaEpiDictionary}, in \cref{biology-data:sec:natural-history}.
+
+I then move on to discussing the two studies I use in this thesis.
+These are ATACCC (\cref{biology-data:sec:ataccc}) and the CIS (\cref{intro:sec:cis}), both briefly discussed in \cref{E-intro}.
+Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
+Therefore, the results from these studies are more generalizable to the entire UK population.
 
 \section{PCR testing} \label{biology-data:sec:PCR}
 
@@ -205,14 +209,14 @@ A high viral load is associated with being more infectious, more likely to test 
 % \end{enumerate}
 
 
-\section{Studies used in this thesis} \label{biology-data:sec:studies}
+% \section{Studies used ie this thesis} \label{biology-data:sec:studies}
 
-In this section, I expand on the major two studies I use in this thesis (ATACCC and CIS).
-Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
-Therefore, the results from these studies are more generalisable to the entire UK population.
+% In this section, I expand on the major two studies I use in this thesis (ATACCC and CIS).
+% Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
+% Therefore, the results from these studies are more generalisable to the entire UK population.
 
 
-\subsection{Assessment of Transmission and Contagiousness of COVID-19 in Contacts} \label{biology-data:sec:ataccc}
+\section{Assessment of Transmission and Contagiousness of COVID-19 in Contacts} \label{biology-data:sec:ataccc}
 
 The ATACCC study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
 Contacts were invited to participate if they were 5 years or older and  could be reached within 5 days of the index case's symptom onset date.
@@ -230,7 +234,7 @@ They excluded the remaining 115 contacts with at least one positive RT-PCR test,
 This exclusion was to ensure viral load trajectories are identifiable.
 I will revisit and extend this analysis in \cref{E-ATACCC}.
 
-\subsection{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
+\section{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
 
 The CIS~\autocite{CIS} was set up in April 2020 to provide gold-standard measurements of the prevalence of SARS-CoV-2 in the community.
 It was a longitudinal study with a representative sample of private households, \ie excluding settings such as care homes and student halls.
@@ -287,7 +291,7 @@ However, for many purposes, including this thesis, the difference between the po
 Generally, the point in time of interest is a specific day, although it has also been applied to a week~\autocite{cisMethodsONS,pouwelsMRPvaccination,pouwelsCommunity}.
 Larger time periods (\ie weeks instead of days) allow more granular estimates in other dimensions, most commonly geography.
 
-\subsubsection{Strata} \label{biology-data:sec:cis-strata}
+\subsection{Strata} \label{biology-data:sec:cis-strata}
 
 In estimating positivity, I will divide the population into strata based on age group, sex, ethnicity, and geographic area.
 I will report results aggregated to geographic regions and age groups, as done previously.
@@ -303,7 +307,7 @@ I also use more granular ethnicities (Asian, Black, Mixed, White, and Other).
 The geographic areas I will adopt are the nine standard regions of England (International Territorial Level 1, previously Nomenclature of Territorial Units for Statistics 1); these are: North East, North West, Yorkshire and the Humber (commonly abbreviated to Yorkshire), East Midlands, West Midlands, East, London, South East, and South West~\autocite{onsRegions}.
 These are the geographic areas used throughout the major CIS analyses in England, although sometimes more granular areas were defined~\autocite[e.g.][]{pouwelsMRPvaccination,pouwelsCommunity,cisMethodsONS,houseInferring,walkerTracking}.
 
-\subsubsection{Adjustment for non-response and data sparsity} \label{biology-data:sec:MRP}
+\subsection{Adjustment for non-response and data sparsity} \label{biology-data:sec:MRP}
 
 If the CIS was truly a random sample, an unbiased estimator of the positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
 However, in practice, two issues arise with this.
@@ -355,7 +359,7 @@ To start, I draw a sample of 500 prevalence time series in each stratum from the
 For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the number of individuals in that stratum.
 The population numbers for each stratum are provided by the Office for National Statistics.
 
-\subsubsection{Clustering} \label{biology-data:sec:clustering}
+\subsection{Clustering} \label{biology-data:sec:clustering}
 
 The household-based design of the CIS means that the data is clustered.
 In particular, individuals in the same household are likely to transmit to each other and hence have correlated test results.
@@ -368,7 +372,7 @@ The parameterization of the beta-binomial that I use (detailed in \cref{E-distri
 $\rho=0$ means the beta-binomial coincides with the binomial distribution.
 As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
-\subsubsection{Positivity results} \label{biology-data:sec:positivity-results}
+\subsection{Positivity results} \label{biology-data:sec:positivity-results}
 
 \Cref{biology-data:fig:CIS-positivity} shows estimates from this model compared to the unadjusted positivity rate.
 Both show similar trends.
@@ -385,7 +389,7 @@ The MRP estimate most often increases the estimated positivity rate, compared to
 \end{figure}
 
 
-\subsubsection{Episodes} \label{biology-data:sec:cis-episodes}
+\subsection{Episodes} \label{biology-data:sec:cis-episodes}
 
 Positive test results need to be grouped into \emph{infection episodes}.
 An infection episode is a series of positive tests that originate from a single transmission event.
@@ -424,7 +428,7 @@ The crucial features of an infection episode are the start and end times of the 
 Ignoring misclassified test results, latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
 Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
 
-\subsubsection{Computational limitations and privacy protection} \label{biology-data:sec:SRS}
+\subsection{Computational limitations and privacy protection} \label{biology-data:sec:SRS}
 
 For privacy reasons, the CIS data is stored in the ONS's SRS (Secure Research Service)~\autocite{onsSRS}.
 The SRS is a Trusted Research Environment (TRE) that allows researchers to access sensitive data in a secure environment.
