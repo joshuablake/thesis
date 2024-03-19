@@ -26,14 +26,14 @@ RNA viruses use RNA, rather than DNA, as their genetic material.
 PCR (Polymerase Chain Reaction) is a procedure that produces millions to billions of copies of a specific segment of DNA (Deoxyribonucleic acid) from a single copy~\autocite{smithPCR,garibyanPCR}.
 This is known as \emph{amplifying} the DNA.
 PCR has many uses within the biological sciences; Mark R.\ Hughes, deputy director of the Human Genome Project, has claimed it is the most important scientific technology of the last hundred years~\autocite{powledgePCR}.
-It is central to the work in this thesis because it is used to detect the presence of SARS-CoV-2 in a sample taken from a human, most commonly a nose and/or throat swab.
+It is central to the work in this thesis because it can detect the presence of SARS-CoV-2 in a sample taken from a human, most commonly a nose and/or throat swab.
 
 \subsection{Reverse transcription}
 
 SARS-CoV-2 is an RNA virus, but PCR amplifies DNA.
-Therefore, before the PCR process can be used to detect SARS-CoV-2, the RNA must be converted to DNA.
+Therefore, before using PCR process to detect SARS-CoV-2, the RNA must be converted to DNA.
 This process is known as \emph{reverse transcription}.
-In reverse transcription, a naturally-occurring enzyme known as reverse transcriptase generates cDNA (complementary DNA) from the RNA in the sample~\autocite{valasekPower}.
+In reverse transcription, a naturally occurring enzyme known as reverse transcriptase generates cDNA (complementary DNA) from the RNA in the sample~\autocite{valasekPower}.
 Any sequence of cDNA has a one-to-one correspondence with a sequence of RNA.
 The cDNA can then be used in the standard PCR process.
 
@@ -41,31 +41,32 @@ The cDNA can then be used in the standard PCR process.
 
 \todo[inline]{Consider finding or making a figure to explain PCR testing.}
 
-At the start of the PCR process, four substances are required: template DNA, nucleotides, primers, and DNA polymerase~\autocite{garibyanPCR}.
+The PCR process requires four substances at its start: template DNA, nucleotides, primers, and DNA polymerase~\autocite{garibyanPCR}.
 The \emph{template DNA}, in this context, is the sample which is being tested~\autocite{caseTemplate}.
 \emph{Nucleotides} or \emph{bases} are the building blocks of DNA.
 There are four nucleotides in DNA (A, C, G, T) each of which forms a pair, known as a \emph{base pair}, with its \emph{complementary} nucleotide (A with T, and G with C)~\autocite{batesBase}.
-The choice of \emph{primers} specifies the exact DNA which will be amplified; they are the complementary DNA sequence to the start and end of the DNA sequence to be amplified~\autocite{garibyanPCR}.
+The choice of \emph{primers} specifies the exact DNA to amplify; they are the complementary DNA sequence to the start and end of the DNA sequence to be amplified~\autocite{garibyanPCR}.
 DNA \emph{polymerase} is an enzyme required to link individual nucleotides together~\autocite{garibyanPCR}.
 
 The process is a series of cycles, each cycle containing three steps~\autocite{powledgePCR,garibyanPCR}.
-In the first step, \emph{denaturation}, the DNA is heated to separate the two strands of DNA.
-In the second step, \emph{annealing}, the temperature is lowered to allow the primers to bind to the DNA.
-In the final step, \emph{extension}, the temperature is raised, causing the DNA polymerase to replicate the DNA sequence between the primers.
+The first step, \emph{denaturation}, heats the DNA causing its two strands to separate.
+The second step, \emph{annealing}, lowers the temperature, causing the primers to bind to the DNA.
+The final step, \emph{extension}, raises the temperature, causing the DNA polymerase to replicate the DNA sequence between the primers. 
 In the course of such a cycle, the amount of DNA doubles.
 Therefore, the number of DNA copies increases geometrically with the number of cycles completed.
 
 \emph{Quantitative real-time (RT-)PCR} gives a measurement of the amount of the target DNA sequence present in the original sample~\autocite{yangPCRdiagnostics}.
 After each PCR cycle, the amount of target DNA is measured and compared to a pre-derived standard.
-Once the measured amount of DNA exceeds the standard, the target DNA is said to be detected.
+Once the measurement exceeds the standard, the target DNA is declared detected. 
 The number of cycles required to reach detection is known as the \emph{cycle threshold} (Ct) value.
-Originally, the amount of target DNA was only measured after the completion of all cycles, hence the name real-time.
-Quantitative real-time PCR have a number of other practical advantages over previous PCR techniques (\eg speed); see \textcite{yangPCRdiagnostics,valasekPower} for more details.
-All RT-PCR tests I consider in this thesis are quantitative real-time RT-PCR tests, and produce Ct values.
+Originally, measurement occurred only after the completion of all cycles, hence the name real-time.
+Quantitative real-time PCR has other practical advantages (\eg speed); see \textcite{yangPCRdiagnostics,valasekPower} for more details.
+All RT-PCR tests I consider in this thesis are quantitative real-time RT-PCR tests and produce Ct values.
 
 % The Ct value decreases as the amount of DNA present in the original sample increases~\autocite{hanRTPCR}.
-If there is more RNA present, proportionally more DNA is created in reverse transcription, and hence fewer cycles are required to reach detection; that is, the Ct value is lower~\autocite{hanRTPCR}.
-The number of DNA copies doubles each cycle, therefore the log Ct value decreases linearly with the quanitiy of RNA or DNA in the original sample (see \cref{biology-data:fig:ct-calibration}).
+If there is more RNA present, reverse transcription creates proportionally more DNA.
+More initial DNA means fewer cycles until detection; that is, the Ct value is lower~\autocite{hanRTPCR}.
+The number of DNA copies doubles each cycle, therefore the log Ct value decreases linearly with the quantity of RNA or DNA in the original sample (see \cref{biology-data:fig:ct-calibration}).
 A \emph{standard curve} translates the Ct value to viral load for a given test.
 A standard curve is produced by measuring the Ct value using reference samples with known viral load, and, as seen in \cref{biology-data:fig:ct-calibration}, they vary between studies.
 \begin{figure}
@@ -96,7 +97,7 @@ Errors arise from a variety of sources, including the sampling/swabbing process 
 The \emph{analytical sensitivity} of the test is the minimum number of copies of the target RNA material in the sample that the test can detect, typically expressed as the \emph{limit of detection}~\autocite{bustinMIQE}.
 The limit of detection is the lowest concentration of the target RNA material that can be reliably detected using the procedure; below this level there is a substantial (generally, >5\%) chance that errors in the process cause the amplification procedure to fail~\autocite{forootanLOD}.
 This is different to the \emph{clinical sensitivity} of the test, the ability of the test to detect a detectable individual.
-Clinical sensitivity can be affected by a large variety of preanalytical factors, such as sample collection (\ie the swabbing process) and sample transportation~\autocite{lippiPotential}.
+Clinical sensitivity is affected by a large variety of preanalytical factors, \eg sample collection (\ie the swabbing process) and sample transportation~\autocite{lippiPotential}.
 Clinical sensitivity is of primary interest in this thesis.
 I will quantify it as the \emph{test sensitivity} (strictly the clinical test sensitivity), the probability of a positive test result for a detectable individual.
 A negative result for a detectable individual is a \emph{false negative}.
@@ -112,8 +113,8 @@ In reality, it is almost certain that some of these are true positives, and henc
 
 RT-PCR enables the detection of SARS-CoV-2 viral RNA in a sample.
 However, this does not necessarily mean that the virus is viable (\ie able to reproduce, a necessary condition for transmission to occur)~\autocite{puhachSARSCoV2}.
-High viral loads (low Ct values) are more likely to be viable, but more sophisticated tests are required to determine viability.
-The gold standard procedure is attempting to grow and recover viral material from a sample, a process known as \emph{cell culturing}~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
+Determining viability requires more sophisticated tests, although high viral loads (low Ct values) are positively correlated with viability.
+The gold standard procedure for assessing viability is attempting to grow and recover viral material from a sample, a process known as \emph{cell culturing}~\autocite{singanayagamDuration,puhachSARSCoV2,hakkiOnset}.
 Further details on cell culturing are beyond the scope of this thesis.
 
 \section{Natural history of the disease} \label{biology-data:sec:natural-history}
@@ -159,7 +160,7 @@ Further details on cell culturing are beyond the scope of this thesis.
   \caption[Natural history of SARS-CoV-2.]{%
     Natural history of SARS-CoV-2.
     (A) A simplified state-based representation of the natural history.
-    Shading represents states where the individual is detectable by a RT-PCR test.
+    Shading represents states where the individual is detectable by an RT-PCR test.
     (B) A fuller representation of the natural history, including the latent processes of the quantity of RNA genome copied and infectious virus within and individual (reproduced from \textcite{puhachSARSCoV2} with permission).
     Ag-RDT (antigen rapid diagnostic test) tests are lateral flow tests, which detect infectious virus rather than RNA, and are not used in this thesis.
   }
@@ -167,31 +168,33 @@ Further details on cell culturing are beyond the scope of this thesis.
 \end{figure}
 
 An individual infected with SARS-CoV-2 goes through several disease stages, depicted in \cref{biology-data:fig:natural-history}~\autocite{puhachSARSCoV2}.
-First, they are exposed to the virus and become infected.
-At this initial stage they are not infectious (cannot spread the disease to others), do not have symptoms, and will not test positive on a RT-PCR test.
-After a few days, they will start testing positive on a RT-PCR test; this is normally prior to being infectious or having symptoms.
+First, the individual is exposed to the virus and becomes infected.
+At this initial stage they are not infectious (cannot spread the disease to others), do not have symptoms, and will not test positive on an RT-PCR test.
+After a few days, they will start testing positive on an RT-PCR test; this is normally prior to being infectious or having symptoms.
 Next, the individual becomes infectious; normally, this occurs prior to symptom onset for those who experience symptoms.
 Recovery from symptoms occurs after a few days, around the time the individual is no longer infectious.
-Finally, the individual will test negative on a RT-PCR test.
+Finally, the individual will test negative on an RT-PCR test.
 
-The time for each of these stages depends on various features of host and virus characteristics, and has a large amount of variation.
+The time for each of these stages depends on various features of host and virus characteristics and has a large amount of variation.
 In this thesis, I focus on pre-Alpha variants of SARS-CoV-2 in unvaccinated individuals.
 The time from infection to infectiousness is known as the \emph{latent period}.
-The length of the latent period is hard to estimate because neither the time of infection or the start of infectiousness can be observed.
-The length has been estimated based on careful contact tracing, where transmission times are thought to be known with a reasonable degree of certainty.
-These estimates vary, but suggest a mean length of 3--4 days for pre-Alpha variants~\autocite[and references therein]{zhaoEstimating}.
-The time from infection to experiencing symptoms is known as the \emph{incubation period}; it is undefined for aymptomatic individuals.
-As the symptom onset time (when symptoms start) can be observed directly, this is easier to estimate than the latent period.
+The length of the latent period is hard to estimate because we rarely observe either the time of infection or the start of infectiousness.
+Estimates of its length are based on careful contact tracing, where transmission times are thought to be known with a reasonable degree of certainty.
+These estimates vary but suggest a mean length of 3--4 days for pre-Alpha variants~\autocite[and references therein]{zhaoEstimating}.
+The time from infection to experiencing symptoms is known as the \emph{incubation period}; it is undefined for asymptomatic individuals.
+As the symptom onset time (when symptoms start) is often known, this is easier to estimate than the latent period.
 However, the unknown infection time still poses challenges, again requiring contact tracing data.
 Therefore, estimates are sensitive to the choice of data and statistical model.
-The mean length has been estimated as around 6 days~\autocite{wuIncubation,quesadaIncubation,aleneSerial}.
+Its mean length is around 6 days~\autocite{wuIncubation,quesadaIncubation,aleneSerial}.
 
 A host's \emph{viral load}, the quantity of viral particles in a host, is the underlying biological process driving the different periods and characteristics of an infection~\autocite{puhachSARSCoV2}.
 Any host's viral load is determined by the interaction of many biological processes, most prominently the virus's replication increasing the viral load and the host's immune response reducing the viral load~\autocite{keVivo}.
 Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining potential host cells, known as \emph{target cells}, to infect.
+Host cells which can potentially be infected are known as \emph{target cells}.
+The rate at which host cells are infected slows over time because there are fewer remaining target cells to infect.
 The host's immune system can slow this process by various mechanisms; the most relevant for SARS-CoV-2 is by making some target cells less susceptible to infection.
-A host's immune response is triggered by the viral load, and becomes stronger as the viral load increases.
-A high viral load is associated with being more infectious, more likely to test positive on a RT-PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
+A host's immune response is triggered by the viral load and becomes stronger as the viral load increases.
+A high viral load is associated with being more infectious, more likely to test positive on an RT-PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
 
 
 % Possible summaries
@@ -218,18 +221,18 @@ The first wave enrolled 393 contacts between 13th Sep 2020 and 31st Mar 2021, wh
 The second wave enrolled 345 contacts between 24th May 2021 and 228th Oct 2021, when the Delta variant was circulating.
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
 For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve (see \cref{biology-data:sec:PCR-process}).
-Other data such as demography and symptoms was also collected, although I do not use this information.
+Other data such as demography and symptoms were also collected, although I do not use this information.
 For further details see \textcite{singanayagamDuration,hakkiOnset}.
 
 Of the 738 contacts enrolled, 172 (23\%) had at least one positive test
 \Textcite{hakkiOnset} analysed the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
 They excluded the remaining 115 contacts with at least one positive RT-PCR test, ATACCC did not capture the phase of the infection with increasing viral load.
-This exclusion was to ensure viral load trajectories could be identified.
+This exclusion was to ensure viral load trajectories are identifiable.
 I will revisit and extend this analysis in \cref{E-ATACCC}.
 
 \subsection{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
 
-The CIS~\autocite{CIS} was setup in April 2020 to provide gold-standard measurements of the prevalence of SARS-CoV-2 in the community.
+The CIS~\autocite{CIS} was set up in April 2020 to provide gold-standard measurements of the prevalence of SARS-CoV-2 in the community.
 It was a longitudinal study with a representative sample of private households, \ie excluding settings such as care homes and student halls.
 The dataset is globally unique in providing a representative, longitudinal, and large-scale study across the pandemic.
 Initially, it was limited to England, but expanded to cover the whole of the UK in September 2020.
@@ -254,7 +257,7 @@ In this thesis, I focus on the period from Mon 31st Aug 2020 until Sun 24th Jan 
 During the start of this period, the recruitment rate of CIS was expanded (see \cref{biology-data:fig:CIS-recruitment}(A)).
 Following this, the recruitment then decreases and stabilises, as does the rate of swabs taken (see \cref{biology-data:fig:CIS-recruitment}(B)).
 The recruitment pattern was chosen to hit targets regarding the fortnightly number of swabs.
-Because the testing becomes less frequent after the first 4 weeks, some continuous recruitment is needed to maintain the number of swabs, as well as to replace participants who drop out.
+Because testing becomes less frequent after the first 4 weeks, some continuous recruitment is needed to maintain the number of swabs, as well as to replace participants who drop out.
 
 \begin{figure}
   \centering \includegraphics{biology-data/CIS-recruitment}
@@ -279,7 +282,7 @@ Because the testing becomes less frequent after the first 4 weeks, some continuo
 
 The main result reported by the study was what they defined as the \emph{positivity rate}, the proportion of people in a given (sub)population that (if they were tested using RT-PCR) would test positive for SARS-CoV-2 at a defined point in time~\autocite{cisMethodsONS}.
 A notable feature of this definition is that it explicitly does not correct for false positive or negative results.
-However, for many purposes, including this thesis, the difference between the positivity rate and prevalence is negligible
+However, for many purposes, including this thesis, the difference between the positivity rate and prevalence is negligible.
 
 Generally, the point in time of interest is a specific day, although it has also been applied to a week~\autocite{cisMethodsONS,pouwelsMRPvaccination,pouwelsCommunity}.
 Larger time periods (\ie weeks instead of days) allow more granular estimates in other dimensions, most commonly geography.
@@ -287,8 +290,8 @@ Larger time periods (\ie weeks instead of days) allow more granular estimates in
 \subsubsection{Strata} \label{biology-data:sec:cis-strata}
 
 In estimating positivity, I will divide the population into strata based on age group, sex, ethnicity, and geographic area.
-I will report results aggregated to geographic regions and age groups, as has been done previously.
-For the purposes of both fitting and reporting results, test results are aggregated to daily counts for each stratum.
+I will report results aggregated to geographic regions and age groups, as done previously.
+For the purposes of both fitting and reporting results, test results are aggregated into daily counts for each stratum.
 
 The age groups used have varied slightly for different CIS analyses~\autocite[e.g.][]{pouwelsMRPvaccination,pouwelsCommunity,cisMethodsONS,houseInferring,walkerTracking}.
 I will use the age groups: 0--10 (pre-school and primary school), 11--15 (compulsory secondary school), 16--24 (adolescents and young adults who may remain in formal education), 25--49 (younger working age adults), 50--69 (older working age adults), and 70+ (elderly).
@@ -313,9 +316,9 @@ MRP is a statistical methodology developed to correct political opinion polling 
 MRP is a two-step process.
 In this context, the first step, multilevel regression, consists of using a Bayesian multilevel logistic regression model to predict RT-PCR test results in the sample based on demographic covariates.
 To address the low number of positives, MRP uses a hierarchical Bayesian model to borrow information across time and other covariates.
-The second step, poststratification, is using the posterior distribution of the parameters is used to predict the population prevalence in each stratum.
+The second step, poststratification, uses the posterior distribution of the parameters predict the population prevalence in each stratum.
 These are combined by taking a weighted average across the strata, where a stratum's weight is equal to its (known) population size.
-The poststratification step is used to correct for non-response bias.
+The poststratification step corrects for non-response bias.
 
 I modified the regression component of a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for the specific context of this thesis~\citePersonalComms{Koen Pouwels}.
 As in prior work~\autocite{pouwelsMRPvaccination}, I used INLA for inference, implemented in R-INLA (see \cref{E-transmission:sec:INLA}).
@@ -333,7 +336,7 @@ The terms are as follows.
     \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).
       The prior for $\beta_n$ is vague, $\beta_n \dist \N(0, 1/0.001^2)$.
       % $\beta_n$ and $\beta_f$ have the default INLA prior for fixed effects\todo{check what this is}.
-    \item $u_a$ and $v_e$ are independent Gaussian random effects for age and ethnic group respectively. Their standard deviation have a penalised complexity prior~\autocite{simpsonPenalising} with a 10\% probability of being greater than 1.
+    \item $u_a$ and $v_e$ are independent normal random effects for age and ethnic group respectively. Their standard deviation has a penalized complexity prior~\autocite{simpsonPenalising} with a 10\% probability of being greater than 1.
     \item $w_t$ is a second-order random walk, that is $w_t = 2w_{t-1} - w_{t-2} + \epsilon_t$ where $\epsilon_t \dist \N(0, \sigma_w^2)$.
       $\sigma_w$ has a vague prior, $1/\sigma_w \dist \GamDist(1, 5 \times 10^{-5})$.
     \item $l_{a,t}$ is an age-group specific second-order random walk.
@@ -359,13 +362,13 @@ The positivity analyses use a beta-binomial likelihood (defined in \cref{E-distr
 
 The beta-binomial distribution is overdispersed relative to the binomial distribution.
 Overdispersion allows for household clustering and other overdispersion in the data, which is common in epidemiological data~\autocite{griffithsBBD}.
-The parameterisation of the beta-binomial that I use (detailed in \cref{E-distributions}) has an overdispersion parameter $\rho$, regarded as a nuisance parameter in this context.
+The parameterization of the beta-binomial that I use (detailed in \cref{E-distributions}) has an overdispersion parameter $\rho$, regarded as a nuisance parameter in this context.
 $\rho=0$ means the beta-binomial coincides with the binomial distribution.
 As $\rho \to \infty$, the distribution tends towards the uniform distribution on $[0, 1]$~\autocite{hughesUsing}.
 
 \subsubsection{Positivity results} \label{biology-data:sec:positivity-results}
 
-The estimates from this model compared to the unadjusted positivity rate are shown in \cref{biology-data:fig:CIS-positivity}.
+\Cref{biology-data:fig:CIS-positivity} shows estimates from this model compared to the unadjusted positivity rate.
 Both show similar trends.
 The MRP estimate most often increases the estimated positivity rate, compared to uncorrected positivity rate, because the underrepresented demographic groups tended to have higher positivity rates.
 
@@ -384,7 +387,7 @@ The MRP estimate most often increases the estimated positivity rate, compared to
 
 Positive test results need to be grouped into \emph{infection episodes}.
 An infection episode is a series of positive tests that originate from a single transmission event.
-I use a heuristic-based algorithm developed throughout the pandemic, and published within \textcite{weiRisk}; see that publication for full justification of the criteria.
+I use a heuristic-based algorithm developed throughout the pandemic and published within \textcite{weiRisk}; see that publication for full justification of the criteria.
 
 The algorithm determines whether a new positive test, at time $t$, is part of the previous infection episode in the same individual.
 If the individual has no previous positive tests, the new positive test is always the start of a new infection episode.
@@ -398,12 +401,12 @@ The test at $t$, in the pre-Omicron era (prior to December 2021), is defined as 
   \item A complex heuristic based on the likely variant of the positive tests (see \textcite{weiRisk} for details). This heuristic rarely applied in the pre-Omicron era~\citePersonalComms{Sarah Walker}.
 \end{enumerate}
 
-A negative between two positive tests, when those positives are classed as part of the same infection episode, is known as an \emph{intermittent negative}.
+A negative between two positive tests, when those positives are part of the same infection episode, is known as an \emph{intermittent negative}.
 Intermittent negatives are the clearest example of a false negative.
 I will generally consider that intermittent negatives are uninformative on the duration of detectability, and hence exclude them from several analyses.
 
 A sample of 500 randomly selected infection episodes (selected from the episodes used in the analyses in this thesis) have their test results shown in \cref{biology-data:fig:episodes}.
-As can be seen, the number of tests within an episode, their length, and other characteristics vary greatly.
+The number of tests within an episode, their length, and other characteristics vary greatly.
 \begin{figure}
   \thisfloatpagestyle{empty}
   \vspace{-5cm}
@@ -426,7 +429,7 @@ The SRS is a Trusted Research Environment (TRE) that allows researchers to acces
 
 Statistical disclosure controls must be applied to any data or results to be extracted from the SRS.
 Statistical disclosure control ensures that no individual can be identified from the data.
-This means that data must be aggregated to counts of at least 5, and no individual-data included.
+This means that data must be aggregated to counts of at least 5, and no individual-level data included.
 
 Analyses requiring more fine-grained stratification (such as that in \cref{biology-data:sec:MRP}) or linking data from the same individual over time (such as that in \cref{E-perf-test,E-imperf-test}) must be performed within the SRS.
 Therefore, computationally efficient approaches must be taken to this work.
@@ -435,7 +438,7 @@ Therefore, computationally efficient approaches must be taken to this work.
 
 In this chapter, I have introduced RT-PCR testing, the natural history of SARS-CoV-2, and the two studies used in this thesis.
 The next chapter will introduce the data generating processes behind infection, prevalence, and our observations of these processes.
-Then, I will apply these concept to the two studies.
+Then, I will apply these concepts to the two studies.
 
 
 \ifSubfilesClassLoaded{

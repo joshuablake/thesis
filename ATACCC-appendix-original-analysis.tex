@@ -21,7 +21,7 @@ Their Ct value at the peak is $C_{i,\text{peak}}$ and inferred.
 The slope parameter, $\beta_i$, determines how quickly an individual's Ct value increases following the peak viral load.
 We denote the vector of the parameters defined here as $\vec\theta_i = \begin{bmatrix} t_{i,0} & t_{i,\text{peak}} & C_{i,\text{peak}} &  \beta_i \end{bmatrix}^T$.
 
-This parameterisation leads to the following Ct value trajectory for individual $i$:
+This parameterization leads to the following Ct value trajectory for individual $i$:
 $$
 \hat{C}_i(t, \vec\theta_i) = \begin{cases}
   C_{\text{lod}} + (C_{i,\text{peak}} - C_{\text{lod}}) \frac{t - t_{i,0}}{t_{i,\text{peak}}}
@@ -35,7 +35,7 @@ Day 0 for an individual is the day they were enrolled in the study and first swa
 
 \subsection{Observation model and likelihood}
 
-Observed Ct values are assumed to be drawn from a Normal distribution with mean $\hat{C}_i(t)$ and standard deviation $\sigma_\text{obs}$.
+Observed Ct values are assumed to be drawn from a normal distribution with mean $\hat{C}_i(t)$ and standard deviation $\sigma_\text{obs}$.
 censored at the limit of detection.
 Additionally, we introduce a probability of a false negative $\eta$, to account for negative test results seen near the peak viral load.
 Denoting an observed Ct value for individual $i$ at time $t$ as $y_{i,t}$ with
@@ -48,7 +48,7 @@ $$
 $$
 where $\sigma_\text{obs}$ is a model parameter determining the variability in
 test results, and $f_N(y \mid \mu, \sigma^2)$ and $F_N(y \mid \mu, \sigma^2)$ are the pdf
-and cdf (respectively) of a Normal distribution with mean $\mu$ and variance $\sigma^2$.
+and cdf (respectively) of a normal distribution with mean $\mu$ and variance $\sigma^2$.
 
 We assume that all observations (both of the same and different individuals) are independent conditional on the model parameters.
 The parameter $\vec\theta_i$ introduces dependence between observations of the same individuals.
@@ -81,8 +81,8 @@ The formal specification of this, including the required population-level parame
 \subsection{Inference}
 
 Inference was performed by Hamiltonian Monte Carlo (HMC) implemented in Stan 2.26.1~\autocite{Stan-2-32-2}.
-To aid with mixing, the hierarchical parameters were implemented using the non-centred parameterisation~\autocites{papaspiliopoulosGeneral,stanReparameterization}.
-In addition, $t_{i,0}$ was reparameterised in terms of the absolute time of peak.
+To aid with mixing, the hierarchical parameters were implemented using the non-centred parameterization~\autocites{papaspiliopoulosGeneral,stanReparameterization}.
+In addition, $t_{i,0}$ was reparameterized in terms of the absolute time of peak.
 Convergence was assessed by checking R-hat < 1.1, and visual inspection of traceplots, and effective sample size.
 
 \subsection{Priors}

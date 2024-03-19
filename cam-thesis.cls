@@ -272,6 +272,11 @@
 \newcommand{\@acknowledgements}{}
 \newcommand{\acknowledgements}[1]{\renewcommand{\@acknowledgements}{#1}}
 
+% DOCVAR: preface (The text that will be instered into the
+% preface of the thesis.)
+\newcommand{\@preface}{}
+\newcommand{\preface}[1]{\renewcommand{\@preface}{#1}}
+
 % DOCVAR: college (The name of the thesis writer's college, which will appear
 % just below their name.)
 \newcommand{\@college}{}
@@ -539,6 +544,15 @@ It does not exceed the prescribed word limit for the relevant Degree Committee.
 \@acknowledgements{}
 \fi}
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Preface
+%%
+%%%%%
+\chapter*{Preface}
+\thispagestyle{empty}
+\@preface{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%

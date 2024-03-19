@@ -270,7 +270,7 @@ Other approaches have been taken to estimate incidence and/or transmission from 
 
 \Textcite{mccabeCISincidence}, adapting the methodology \textcite{ealesAppropriately} developed for REACT, estimate $\Re$ and the growth rate from the CIS data.
 They estimate a posterior distribution of the parameters of a spline by fitting to the prevalence results via a binomial distribution.
-Their setup penalises the spline deviating from a constant growth rate.
+Their setup penalizes the spline deviating from a constant growth rate.
 The growth rate is then calculated from the derivative of the spline, an analytical transformation of the parameters.
 Since, under reasonable model assumptions, there is a one-to-one correspondence between reproduction numbers and growth rates~\autocite{wallingaGI}, and they assume that the growth rate in incidence and prevalence is equal, this also estimates $\Re$.
 
@@ -298,7 +298,7 @@ This requires both sufficient observations per individual and an assumption on t
 
 Modelling the duration directly, as I do in \cref{E-perf-test,E-imperf-test} considers only the binary result at each test (positive or negative); in this thesis a \emph{survival analysis} framework is adopted.
 This approach generally requires fewer parameters, and no random effect(s), reducing the computational burden.
-It is also easier to specify non-parameteric forms of the distribution, which is important for SARS-CoV-2 as the tail behaviour may be important.
+It is also easier to specify non-parametric forms of the distribution, which is important for SARS-CoV-2 as the tail behaviour may be important.
 A more detailed review of the literature is in the relevant chapters.
 % Survival analysis is the area of statistics concerned with estimating the distribution of the times between two events.
 Other related approaches, such as a multi-state model (reviewed by \textcite{jacksonMSM}), could also be considered; multi-state models can be viewed as a generalisation of survival analysis.
