@@ -19,8 +19,12 @@ In \cref{E-intro:sec:aims}, I posed the central question for this thesis: can pr
 In \cref{E-transmission}, I found that this it is possible, developing two models that can infer incidence and transmission from prevalence surveys.
 One model was phenomenological in nature and the other mechanistic.
 The phenomenological approach, based on the backcalculation framework, provides estimates of incidence and makes fewer assumptions about the infection process; however, the estimates are very uncertain.
-The mechanistic approach, based on an SIR-type compartmental model, reduces the uncertainty and allows estimation of the components of transmission by making stronger assumptions about the infection process.
-These results highlighted the heterogeneity across regions and age groups in England.
+The mechanistic approach, based on an SEIR-type compartmental model, reduces the uncertainty and allows estimation of the components of transmission by making stronger assumptions about the infection process.
+Both sets of results highlighted the heterogeneity across regions and age groups in England.
+The choice of modelling approach should depend on the situation.
+The phenomenological approach is more robust when there are high levels of uncertainty; for example, early in an outbreak or in the presence of new variants the infectious period duration may not be known.
+However, the mechanistic approach provides more information.
+Where possible, both methods should be implemented; discrepancies between results may highlight deficiencies in modelling assumptions.
 
 The work in \cref{E-transmission} relied on the theoretical work of \cref{E-inc-prev}.
 This work developed the backcalculation framework for the context of prevalence surveys for SARS-CoV-2.
@@ -41,9 +45,11 @@ A well-designed survey is sufficient to estimate all the quantities of interest 
 
 \section{Future work} \label{conclusion:sec:future-work}
 
-The feasibility of jointly modelling duration and incidence was not investigated in this thesis.
+A natural extension of the work in this thesis would be a joint model of duration and incidence.
+Such a model poses both identifiability and computational challenges.
 The model for duration in \cref{E-perf-test,E-imperf-test} allowed estimation of the total number of infections in the cohort but assumed these occurred uniformly over the duration of the survey.
-If, rather than assuming uniformity, the time of incidence was estimated, this would be a form of incidence estimation.
+If, rather than assuming uniformity, a distribution for the infection episode start times was estimated, this would be a form of incidence estimation.
+Previous studies~\autocite[e.g.][]{bacchettiNonparametric} have suggested that a joint model would be unidentifiable; however, CIS data contains information on the number of individuals that were never infected which may be sufficient to resolve this issue.
 The issue of including covariates to control for non-response bias, encountered in \cref{E-transmission}, as well as the parameterization of the shape of the incidence curve would be major challenges in this extension.
 The basis of such a model could be existing modelling frameworks~\autocite[e.g.][]{taffeJoint,haySerosolver}.
 These frameworks addressed the challenges by: taking approximations (\eg empirical Bayes), having smaller sample sizes, or using high-performance computing.

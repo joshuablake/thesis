@@ -344,6 +344,8 @@ The terms are as follows.
       $\sigma_l$ has a vague prior, $1/\sigma_l \dist \GamDist(1, 5 \times 10^{-5})$.
 \end{itemize}
 For parameters given vague priors, the large amount of data means that the prior has little influence on the posterior distribution.
+The second-order random walk priors favours linear growth in $\logit(p_{taes})$ over time.
+For the small values of $p_{taes}$ likely to be encountered, this approximates exponential growth.
 
 I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
