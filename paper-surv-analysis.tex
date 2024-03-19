@@ -365,7 +365,7 @@ $(b_{j(i)}, e_{j(i)}, \sched_i)$ is a detected episode when the following three 
 First, $\exists t \in \sched_i$ such that $b_{j(i)} \leq t \leq e_{j(i)}$; this condition is equivalent to having at least one positive test for the episode.
 Second, $\exists t \in \sched_i$ such that $t < b_{j(i)}$, to lower bound the start of the episode.
 Finally, $\exists t \in \sched_i$ such that $t > e_{j(i)}$, to upper bound the end of the episode; this condition will be met for any episode sufficiently far in the past in individuals not lost to follow-up (almost always the case in this context).
-For a new context where recent infections need to be considered, this condition can be relaxed by considering these episodes as right-censored, at little cost except a more complicated likelihood expression.
+For a new context where recent infections need to be considered, this condition can be relaxed by considering these episodes as rightcensored, at little cost except a more complicated likelihood expression.
 
 
 To relate the state space to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$), for a test schedule $\sched_i$.
@@ -531,7 +531,7 @@ We use the model with a constant test sensitivity to ensure the likelihood remai
 
 I will modify $p_{ia}$ to allow the negative test following the last positive to be a false negative.
 If it is a false negative, then I will consider the episode's end right-censored.
-However, if it is a true negative, then the episode's end is interval-censored, as previously.
+However, if it is a true negative, then the episode's end is interval censored, as previously.
 A mixture of these scenarios forms the episode's likelihood contribution, with the mixture probability determined by the test sensitivity.
 
 I start by finding the tests that need consideration.
@@ -553,7 +553,7 @@ Consider the negative test at $r_{j(i)}^{(e)}+1$, the first negative after the s
 It is a false negative if and only if the episode ends after the test, \ie $e_{j(i)} > r_{j(i)}^{(e)}$.
 I proceed by considering whether this is the case, and considering the case with $b_{j(i)}$ known; $b_{j(i)}$ will later be integrated out.
 
-First, if $e_{j(i)} \leq r_{j(i)}^{(e)}$, meaning that the test at $r_{j(i)}^{(e)}+1$ is a true negative and the end of the episode is interval-censored as in the previous chapter.
+First, if $e_{j(i)} \leq r_{j(i)}^{(e)}$, meaning that the test at $r_{j(i)}^{(e)}+1$ is a true negative and the end of the episode is interval censored as in the previous chapter.
 % In this case, the test at $r_{j(i)}^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_i$.
 The true negative occurs with probability 1, by the assumption of no false positives.
 \begin{align}
@@ -874,13 +874,13 @@ These negatives will, in general, be further from the end of an episode than a r
 Therefore, considering the viral dynamics from \cref{E-ATACCC}, the viral load will be higher and false negatives rarer.
 
 Estimating the test sensitivity excluding intermittent negatives is not possible because \cref{imperf-test:eq:pia-prime-constant,imperf-test:eq:pit-prime} are both monotonically decreasing in $\psens$; therefore, the likelihood always favours $\psens = 0$ (\ie no true positives).
-This aligns with the situation with singly interval-censored, untruncated data, when stopping at the first observed time of the terminating event (which may be misclassified) means that the test sensitivity cannot be estimated~\autocite[e.g.]{titmanMisclassify}.
+This aligns with the situation with singly interval censored, untruncated data, when stopping at the first observed time of the terminating event (which may be misclassified) means that the test sensitivity cannot be estimated~\autocite[e.g.]{titmanMisclassify}.
 
 Estimating a time-varying $\psens$ with $S_\theta$ jointly may cause identifiability issues.
 Previous studies have avoided issues by including external information (such as a prior giving the magnitude) on $\psens$, or test results from later follow-up~\autocite[and references therein]{piresIntervalMisclassify}.
 However, these studies use a constant $\psens$.
 Whether these methods are sufficient for the model to be identifiable with a time-varying $\psens$ needs further investigation.
-A simple parameteric form of the test sensitivity, such as that proposed by \textcite{brownBayesian}, may be sufficient to allow identifiability.
+A simple parametric form of the test sensitivity, such as that proposed by \textcite{brownBayesian}, may be sufficient to allow identifiability.
 In any case, the likelihood, especially $p_{iu}'$, would be substantially complicated by such an addition which may greatly increase the computational cost of inference.
 
 The assumption, made in \cref{E-perf-test}, was that the episode start times are independent.
@@ -940,7 +940,7 @@ I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tai
 The tail is modified based on a previously unpublished analysis of CIS data, without accounting for several of the issues previously described.
 Walker uses survival analysis to estimate the duration from CIS data.
 The initiating event is assumed known as the time the episode was detected.
-The final event is assumed interval-censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
+The final event is assumed interval censored between the time of the final positive test and the subsequent negative test, or right-censored if a negative test has not yet been observed.
 A flexible, spline-based form is assumed for the baseline survival function~\autocite{roystonSTPM,roystonFlexible} with covariates introduced via proportional odds.
 By not accounting for either the undetected infections or the interval censoring of the initiating event, this analysis has competing biases which makes them hard to interpret~\autocite{cisMethodsONS}.
 
