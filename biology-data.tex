@@ -426,8 +426,9 @@ Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded a
 
 \subsubsection{Computational limitations and privacy protection} \label{biology-data:sec:SRS}
 
-For privacy reasons, the CIS data is stored in the ONS's SRS (Secure Research Service).
+For privacy reasons, the CIS data is stored in the ONS's SRS (Secure Research Service)~\autocite{onsSRS}.
 The SRS is a Trusted Research Environment (TRE) that allows researchers to access sensitive data in a secure environment.
+The SRS gives accredited researchers working on projects in the public interest access to granular data which cannot be legally shared publicly.
 
 Statistical disclosure controls must be applied to any data or results to be extracted from the SRS.
 Statistical disclosure control ensures that no individual can be identified from the data.
@@ -435,6 +436,12 @@ This means that data must be aggregated to counts of at least 5, and no individu
 
 Analyses requiring more fine-grained stratification (such as that in \cref{biology-data:sec:MRP}) or linking data from the same individual over time (such as that in \cref{E-perf-test,E-imperf-test}) must be performed within the SRS.
 Therefore, computationally efficient approaches must be taken to this work.
+The SRS contains limited computational power.
+It has\todo{insert SRS computational power}.
+However, these are shared computational resources and due consideration must be given to other users.
+Processes which run for multiple days are liable to be cancelled.
+
+This computational limitation will feature in several places in this thesis.
 
 \section{Conclusion}
 
