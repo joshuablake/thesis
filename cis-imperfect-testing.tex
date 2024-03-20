@@ -33,7 +33,7 @@ The \cref{E-ATACCC} estimates are more reliable over the first 2--3 weeks due to
 This suggests an issue in the estimation using CIS data.
 \begin{figure}
   \centering \includegraphics{cis-imperfect-testing/CIS_perfect}
-  \caption[Estimating survival using CIS data assuming perfect testing]{Estimates of the survival function using CIS data alongside the ATACCC-based estimates of \cref{E-perf-test}. CIS-based has more episodes ending in the first 14 days. \label{imperf-test:fig:problem-cis-estimates}}
+  \caption[Estimating survival using CIS data assuming perfect testing]{Estimates of the survival function using CIS data alongside the ATACCC-based estimates of \cref{E-perf-test}. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
 Comparing repeated data simulations, using the set-up of \cref{E-perf-test:sec:simulation-study}, to the observed CIS data, suggests that this is due to the high frequency of single positive episodes in the CIS data (compare the histogram with $\psens=1$ and the vertical line in \cref{imperf-test:fig:sim-single-pos}).
@@ -359,9 +359,9 @@ The estimate using a test sensitivity of 0.8 and $\NBc(\mu\inform, r\inform)$ gi
   \label{imperf-test:fig:cis-estimates}
 \end{figure}
 \begin{figure}
-  \vspace{-2.5cm}
+  \thisfloatpagestyle{empty}
   \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/CIS_vary}}
-  \caption{%
+  \caption[Sensitivity of CIS estimates to the prior.]{%
     (A-C) Sensitivity of CIS estimates to the value of $r$, the dispersion of the prior for $\ntot$ (a larger $r$ means a more informative prior) when $\psens = 0.8$.
     (D-F) Sensitivity of CIS estimates to the value of $\psens$ when $r = r\inform$.
     A and D: median survival time, in comparison to the ATACCC-based estimate of \cref{E-ATACCC} (shown in red).
@@ -380,7 +380,7 @@ The median using $r\inform$ matched \cref{E-ATACCC}'s median estimate and is a p
 Therefore, I use this estimate in the application to the CIS data.
 \begin{figure}
   \centering \includegraphics{cis-imperfect-testing/CIS_ntot}
-  \caption{How the posterior estimate of $\ntot$ changes with the value of $r$ in the prior on $\ntot$.}
+  \caption[Sensitivity of estimates of $\ntot$ to the prior.]{How the posterior estimate of $\ntot$ changes with the value of $r$ in the prior on $\ntot$.}
   \label{imperf-test:fig:ntot}
 \end{figure}
 
