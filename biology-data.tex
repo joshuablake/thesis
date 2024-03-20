@@ -411,23 +411,23 @@ A negative between two positive tests, when those positives are part of the same
 Intermittent negatives are the clearest example of a false negative.
 I will generally consider that intermittent negatives are uninformative on the duration of detectability, and hence exclude them from several analyses.
 
+The crucial features of an infection episode are the start and end times of the infection.
+Ignoring misclassified test results, latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
+Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
+
 A sample of 500 randomly selected infection episodes (selected from the episodes used in the analyses in this thesis) have their test results shown in \cref{biology-data:fig:episodes}.
 The number of tests within an episode, their length, and other characteristics vary greatly.
 \begin{figure}
   \thisfloatpagestyle{empty}
-  \vspace{-5cm}
-  \makebox[\textwidth][c]{\includegraphics[height=.7\paperheight]{biology-data/STATS13734/data_viz}}
+  \vspace{-1cm}
+  \makebox[\textwidth][c]{\includegraphics[height=.9\paperheight]{biology-data/STATS13734/data_viz}}
   \caption[CIS infection episodes]{%
     500 randomly selected infection episodes.
-    Shown are the negative tests before and after the outermost positive tests associated with the episode.
-    Red dots are negative tests, green dots are positive tests, and blue dots are void tests (where the result could not be determined; excluded from other analyses).
+    Includes all tests between $l_j^{(b)}$ (day 0) and $r_j^{(e)}$.
+    Colours give test result (red is negative, green is positive, and blue is void).
   }
   \label{biology-data:fig:episodes}
 \end{figure}
-
-The crucial features of an infection episode are the start and end times of the infection.
-Ignoring misclassified test results, latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
-Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
 
 \subsection{Computational limitations and privacy protection} \label{biology-data:sec:SRS}
 
