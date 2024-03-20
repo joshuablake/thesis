@@ -127,6 +127,17 @@
 \let\forlistloop\etoolboxforlistloop % restore the good meaning of \forlistloop
 \makeatletter
 \let\blx@noerroretextools\empty
+
+% add contents and list of figures to PDF bookmarks
+% See: https://tex.stackexchange.com/a/1821/95193
+\pretocmd{\tableofcontents}{%
+  \if@openright\cleardoublepage\else\clearpage\fi
+  \pdfbookmark[0]{\contentsname}{toc}%
+}{}{}%
+\pretocmd{\listoffigures}{%
+  \if@openright\cleardoublepage\else\clearpage\fi
+  \pdfbookmark[0]{\listfigurename}{lof}%
+}{}{}%
 \makeatother
 
 %% Bibliography
