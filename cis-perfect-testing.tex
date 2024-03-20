@@ -379,7 +379,12 @@ The expected survival time, $\E \left( \prod_{i=1}^{t-1} (1-\lambda_t) \right)$,
 This prior expresses extreme scepticism in estimates from previous studies, such as \cref{E-ATACCC} and the meta-analysis of \textcite{cevikShedding}.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/flat-prior}
-  \caption[Uninformative priors for the hazard]{The density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors (left) with the prior predictive survival time (right). The implied prior on the survival time is very short when using either prior on the hazard at each time. \label{perf-test:fig:flat-prior}}
+  \caption[Uninformative priors for the hazard]{
+    (A) Density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors.
+    (B) Prior predictive survival time (mean and 95\% CrI).
+    The implied prior on the survival time is very short when using either prior on the hazard at each time.
+  }
+ \label{perf-test:fig:flat-prior}
 \end{figure}
 
 Instead, I propose a weakly informative (or vague) prior Beta(0.1, 1.9), which has mean 0.05 and minimal information.
@@ -390,7 +395,12 @@ The central estimate, of 0.05, is in line with previous estimates that the media
 This prior gives a very vague prior predictive distribution on the survival time (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/vague-prior}
-  \caption[Vague prior for the hazard]{The density of Beta(0.1, 1.9) vague prior (left) and the prior predictive survival time (right). The prior predictive survival time is very vague using a Beta(0.1, 1.9) prior. Note the different x-axis to \cref{perf-test:fig:flat-prior}. \label{perf-test:fig:vague-prior}}
+  \caption[Vague prior for the hazard]{
+    (A) Density of Beta(0.1, 1.9) vague prior.
+    (B) Prior predictive survival time (mean and 95\% CrI).
+    Note the different x-axis to \cref{perf-test:fig:flat-prior}.
+  }
+  \label{perf-test:fig:vague-prior}
 \end{figure}
 
 
@@ -418,7 +428,7 @@ The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/rw2-prior}
-  \caption[RW2 prior for the hazard]{The prior predictive distribution (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} are shown for comparison. \label{perf-test:fig:rw2-prior}}
+  \caption[RW2 prior for the hazard]{The prior predictive survival time (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} are shown for comparison. \label{perf-test:fig:rw2-prior}}
 \end{figure}
 
 \subsection{Model combination priors} \label{perf-test:sec:informative-priors}
@@ -445,9 +455,9 @@ To estimate the parameters of the multivariate normal, I use the method of momen
 The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazard} and \cref{perf-test:fig:approximate-ATACCC-survival}).
 \begin{figure}
   \thisfloatpagestyle{empty}
-  \vspace{-2.5cm}
+  % \vspace{-1cm}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{cis-perfect-testing/ataccc-approximation-hazard}}
-  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernel density estimate smoothed) for the first 15 hazards. \label{perf-test:fig:approximate-ATACCC-hazard}}
+  \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernel density estimate smoothed) for hazards between day 4 and 15. The density for smaller hazards is concentrated very close to 0. \label{perf-test:fig:approximate-ATACCC-hazard}}
 \end{figure}
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}
@@ -529,7 +539,7 @@ These curves and the combined curve are compared in \cref{perf-test:fig:duration
 Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/input-duration-dists}
-  \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. See main text for details of each analysis. \label{perf-test:fig:duration-dist}}
+  \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. \label{perf-test:fig:duration-dist}}
 \end{figure}
 
 \subsection{Implementation}

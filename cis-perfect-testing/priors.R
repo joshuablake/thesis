@@ -87,8 +87,10 @@ ataccc_posterior = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
   filter(source == "ATACCC")
 
 p_flat_dens = beta_plot_dens(flat_params, flat_params) +
-  theme(legend.position = "none")
-p_flat_surv = beta_plot_surv(flat_params, flat_params, prior_len = 15)
+  theme(legend.position = "none") +
+  labs(subtitle = ("(A) Hazard density"))
+p_flat_surv = beta_plot_surv(flat_params, flat_params, prior_len = 15) +
+  labs(subtitle = ("(B) Survival"))
 p_flat = p_flat_dens + p_flat_surv
 ggsave(
   filename = "cis-perfect-testing/flat-prior.pdf",
@@ -100,9 +102,11 @@ ggsave(
 )
 
 p_vague_dens = beta_plot_dens(0.1, 1.9) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(subtitle = ("(A) Hazard density"))
 p_vague_surv = beta_plot_surv(0.1, 1.9, prior_len = 30) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(subtitle = ("(B) survival"))
 p_vague = p_vague_dens + p_vague_surv
 ggsave(
   filename = "cis-perfect-testing/vague-prior.pdf",

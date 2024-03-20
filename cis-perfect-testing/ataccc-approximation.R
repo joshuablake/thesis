@@ -54,7 +54,13 @@ p_surv = tbl_priors |>
     ggplot(aes(time, S, ymin = .lower, ymax = .upper, colour = version,
                 fill = version)) +
     geom_lineribbon(alpha = 0.4) +
-    standard_plot_theming()
+    standard_plot_theming() +
+    labs(
+        x = "Day",
+        y = "S",
+        colour = "",
+        fill = ""
+    )
 ggsave(
     filename = here::here(
         "cis-perfect-testing/ataccc-approximation-survival.pdf"
@@ -67,9 +73,9 @@ ggsave(
 )
 
 p_hazard = tbl_priors |>
-    filter(time <= 11) |>
+    filter(between(time, 4, 15)) |>
     ggplot(aes(lambda, colour = version)) +
-    geom_density() +
+    geom_density(bounds = c(0, Inf), trim = TRUE) +
     facet_wrap(~time, scales = "free", ncol = 4) +
     standard_plot_theming() +
     labs(
@@ -88,7 +94,7 @@ ggsave(
     ),
     plot = p_hazard,
     width = 15,
-    height = 20,
+    height = 19,
     units = "cm",
     dpi = 300
 )
