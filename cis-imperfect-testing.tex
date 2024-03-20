@@ -213,7 +213,7 @@ p_{ia}'
 
 \subsection{Modifying \texorpdfstring{$p_{iu}$}{piu}} \label{imperf-test:sec:modifying-p_iu}
 
-Several mechanisms for episodes being undetected were considered when deriving $p_{iu}$ in \cref{E-perf-test:eq:piu}.
+Several mechanisms for episodes being undetected were considered when deriving $p_{iu}$ in \cref{perf-test:eq:piu}.
 I now consider the additional mechanisms arising due to false negatives.
 Specifically, episode $i$ could be undetected if the first test after the $b_{j(i)}$, episode $i$'s start day, is a false negative and then there are no subsequent positive tests.
 
@@ -230,7 +230,7 @@ Then, the episode ends before this test if $d_i < \tau^2_{\sched_i}(b_{j(i)})$.
 
 Therefore, this mechanism causes episode $i$ to be undetected if all the following conditions hold.
 \begin{enumerate}
-    \item The episode would have been detected considering only the mechanisms in \cref{E-perf-test:eq:piu}. That is $b_{j(i)} > \min(\sched_i)$ and $\tau_{\sched_i}(b_{j(i)}) + b_{j(i)} \leq e_{j(i)}$.
+    \item The episode would have been detected considering only the mechanisms in \cref{perf-test:eq:piu}. That is $b_{j(i)} > \min(\sched_i)$ and $\tau_{\sched_i}(b_{j(i)}) + b_{j(i)} \leq e_{j(i)}$.
     \item The episode ends in the interval $[\tau_{\sched_i}(b_{j(i)}) + b_{j(i)}, \tau^2_{\sched_i}(b_{j(i)}) + b_{j(i)}]$.
       Note that the lower bound here is exactly the bound on $e_{j(i)}$ in the previous condition.
       Equivalently, $\tau_{\sched_i}(b_{j(i)}) + 1 \leq d_i \leq \tau^2_{\sched_i}(b_{j(i)}) + 1$.
@@ -245,7 +245,7 @@ The probability of this occurring, conditional on $B_{j(i)} = b_{j(i)} > \min(\s
 \theta \right) (1 - \psens) \\
 &= \left( S_\theta(\tau_{\sched_i}(b_{j(i)}) + 1) - S_\theta(\tau^2_{\sched_i}(b_{j(i)}) + 1) \right) (1 - \psens).
 \end{align}
-Integrating over $b_{j(i)}$ for $\min \sched_i < b_{j(i)} \leq T$ ($T$ being the last day of the period considered), in the same way as \cref{E-perf-test:eq:piu}, gives:
+Integrating over $b_{j(i)}$ for $\min \sched_i < b_{j(i)} \leq T$ ($T$ being the last day of the period considered), in the same way as \cref{perf-test:eq:piu}, gives:
 \begin{align}
 \eta = (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_\theta(\tau_{\sched_i}(b) + 1) - S_\theta(\tau^2_{\sched_i}(b) + 1) \right).
 \end{align}

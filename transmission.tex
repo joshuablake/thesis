@@ -66,7 +66,7 @@ In the context of the CIS, it needs to allow borrowing information across time a
 
 The second approach, which I call the \emph{prevalence-inferred} approach takes a two-step approach.
 First, it uses the statistical model from \cref{E-biology-data:sec:MRP} to estimate prevalence.
-Then, it transforms the posterior distribution of prevalence to a posterior distribution of incidence using the forward substitution as in \cref{E-inc-prev:eq:forward-substitute}.
+Then, it transforms the posterior distribution of prevalence to a posterior distribution of incidence using the forward substitution as in \cref{inc-prev:eq:forward-substitute}.
 At a high-level, the statistical model is:
 \begin{align}
     \vec{P}  &\dist F_P \\
@@ -77,7 +77,7 @@ where $F_P$ is analogous to $F_Z$ in providing a joint prior for the prevalence 
 The first step is to fit this model, giving a posterior distribution for $\vec{P}$.
 
 The second step is to transform the posterior distribution for $\vec{P}$ to a posterior distribution for $\vec{Z}$.
-A posterior sample for $\vec{P}$ can be transformed to a posterior sample for $\vec{Z}$ based on \cref{E-inc-prev:eq:forward-substitute}, see \cref{backcalc:sec:methods} for details.
+A posterior sample for $\vec{P}$ can be transformed to a posterior sample for $\vec{Z}$ based on \cref{inc-prev:eq:forward-substitute}, see \cref{backcalc:sec:methods} for details.
 
 \subsection{Desirable properties}
 
@@ -164,7 +164,7 @@ I start with the prevalence posterior from \cref{E-biology-data:sec:positivity-r
 I draw 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 
 Then, I transform this posterior sample using \cref{transmission:alg:calculate-Z}.
-The algorithm is based on \cref{E-inc-prev:eq:forward-substitute}, which is repeated here for convenience:
+The algorithm is based on \cref{inc-prev:eq:forward-substitute}, which is repeated here for convenience:
 \begin{align}
 Z_t
 % &= \frac{P_t - \sum_{i=1}^{t-1} S_{ti} Z_i}{S_{tt}} \\
@@ -194,7 +194,7 @@ The algorithm uses a deterministic relationship between incidence and prevalence
     \label{transmission:alg:calculate-Z}
 \end{algorithm}
 
-\Cref{transmission:eq:forward-substitute} is derived from \cref{E-inc-prev:eq:EPt-matrix}: $\vec{P} = \matr{S} \vec{I}$.
+\Cref{transmission:eq:forward-substitute} is derived from \cref{inc-prev:eq:EPt-matrix}: $\vec{P} = \matr{S} \vec{I}$.
 For this to have a unique solution, $\vec{I}$ and $\vec{P}$ need the same dimension.
 However, I am using a period of prevalence which starts after the first infections.
 These prior infections will still contribute to the prevalence.
@@ -204,9 +204,9 @@ Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_t = P_1 / \sum_{i=1}^{\dma
 % First, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 % For each sample and stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
 % I consider the relationship between incidence and prevalence within a stratum to be deterministic, as \cref{E-inc-prev:sec:observation-process} justifies, that is the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
-% I solve this system using forward substitution, calculating the value of $Z_t$ in \cref{E-inc-prev:eq:forward-substitute} sequentially for $t = 1, \dots, T$.
+% I solve this system using forward substitution, calculating the value of $Z_t$ in \cref{inc-prev:eq:forward-substitute} sequentially for $t = 1, \dots, T$.
 % $t = 1$ is defined as the first day where prevalence data is used.
-% \Cref{E-inc-prev:eq:forward-substitute} is repeated here for convenience:
+% \Cref{inc-prev:eq:forward-substitute} is repeated here for convenience:
 % \begin{align}
 % Z_t
 % &= \frac{P_t - \sum_{i=1}^{t-1} S_{ti} Z_i}{S_{tt}} \\
