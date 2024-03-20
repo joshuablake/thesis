@@ -140,7 +140,7 @@ where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the paramete
 These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
 % Correlation matrices have diagonal elements all 1, therefore this reparameterization has the same number of parameters as the original model.
 
-\textcite{hakkiOnset} uses weakly informative priors, similar to those previously used~\autocite{singanayagamCommunity}, see \cref{ATACCC:table:hakki-priors}.
+\textcite{hakkiOnset} uses weakly informative priors, similar to \textcite{singanayagamCommunity}, see \cref{ATACCC:table:hakki-priors}.
 I reran \textcite{hakkiOnset}'s analysis using R~4.3.1~\autocite{R-4-3-1}.
 The inference was performed using RStan~2.32.3~\autocite{RStan-2-32-3} and Stan~2.32.2~\autocite{Stan-2-32-2}.
 Inference settings were the same as \textcite{hakkiOnset}, which included 8 chains with a total of 8000 iterations each with the first 3000 used as warm-up.
@@ -322,7 +322,7 @@ Therefore, the relationships shown here are not causal, or even generalisable to
 Despite these confounders, the result is in agreement with previous work showing that the Alpha and Delta variants of concern (compared to pre-Alpha variants) and being vaccinated are all associated with shorter durations of RT-PCR positivity, although the vaccination effect is larger~\autocite{kisslerDynamicsVaccines}.
 
 A strength of the ATACCC data is its general population sample.
-This is unlike most estimates (see \cref{E-intro:sec:duration-SARS-CoV-2}) which are from hospitalised patients or healthcare workers.
+This is unlike most estimates (see \cref{E-intro:sec:previous-duration-estimates}) which are from hospitalised patients or healthcare workers.
 This means that, notwithstanding the issues highlighted in the previous paragraph, the estimates are likely to be generalisable to the general population.
 
 Individuals 55 and 57 appear to have far noisier measurements than the other individuals (see \cref{ATACCC:fig:goodness-of-fits}), suggesting that the observation noise might vary between individuals.

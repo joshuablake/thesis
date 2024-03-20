@@ -174,7 +174,7 @@ Since its development, backcalculation has been further developed for a wide-var
 
 \Textcite{abbottCISincidence} applied backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
 They used a Gaussian process prior to smooth the incidence, applying the prior to either smooth the log-incidence or its derivative; smoothing of the incidence is required to stabilise the estimates~\autocite{brookmeyerBackcalculation}.
-\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the backcalculation, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:duration-SARS-CoV-2}).
+\Textcite{abbottCISincidence} used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing to inform the backcalculation, which are based on a longitudinal study in healthcare workers (see \cref{intro:sec:previous-duration-estimates}).
 They fit to summary statistics of the CIS data, using a daily, independent Gaussian likelihood with parameters estimated from the posterior point estimate and 95\% credible interval published by the ONS.
 
 The estimates I present in \cref{E-backcalc} are methodologically similar.
@@ -252,14 +252,14 @@ The proportion of the population in these compartments are then fit to the preva
 These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
 
 \Textcite{nicholsonImproving} have the most sophisticated use of prevalence survey data.
-They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:duration-SARS-CoV-2} for discussion of the \textcite{hellewellPCRSensitivity} study).
+They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:previous-duration-estimates} for discussion of the \textcite{hellewellPCRSensitivity} study).
 Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test into their model.
 % However, they do not incorporate age-stratification into their transmission model, and primarily aim to estimate the bias of community testing in the UK rather than incidence and/or transmission.
 
 \todo[inline]{Maybe the following paragraph should be in the contribution section?}
 In \cref{E-SEIR}, I describe a compartmental model for SARS-CoV-2 transmission, which I fit to CIS data.
 I allow a more flexible distribution of the duration of positivity than any of the papers discussed above, except \textcite{nicholsonImproving}, incorporating the skew of the distribution.
-This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:duration-SARS-CoV-2}).
+This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:previous-duration-estimates}).
 Unlike \textcite{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
 I use only data from the CIS, and show this is sufficient for estimating incidence and transmission.
 Finally, I fit directly to counts from the CIS, rather than an approximation of this data, which has not previously be done.
@@ -306,7 +306,7 @@ Other related approaches, such as a multi-state model (reviewed by \textcite{jac
 In both cases, longitudinal data is required.
 Therefore, cohort studies, where the same group of indivdiuals are followed over time, are the most appropriate study design.
 
-\subsection{SARS-CoV-2} \label{intro:sec:duration-SARS-CoV-2}
+\subsection{SARS-CoV-2} \label{intro:sec:previous-duration-estimates}
 
 \subsubsection{Cohort studies}
 
