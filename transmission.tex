@@ -246,7 +246,6 @@ A second peak occurs in late December or early January in all regions; this seco
     \includegraphics{transmission/backcalc-regions}
     \caption[Incidence estimated using backcalculation by region]{%
         Incidence proportion for (A) all of England and (B) its component regions.
-        Yorkshire and the Humber is labelled Yorkshire for brevity.
     }
     \label{transmission:fig:backcalc-regions}
 \end{figure}
@@ -790,34 +789,22 @@ Some of these infections occurred prior to the period covered by this study; dur
     \label{SEIR:fig:attack-rates}
 \end{figure}
 
-Overall, the model fits the data well (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
-\todo{move one or some of the goodness-of-fit plots into an appendix - maybe by region?}
+Overall, the model fits the data well (see \cref{SEIR:fig:prev,SEIR:fig:prev-appendix}).
 There are a few features of the data which are not captured by the model and the posterior estimate appears to be a compromise with the prevalence too low in one age group and too high in another.
 For example, in the North East region, the 11--16 age group has its prevalence overestimated in October but the 16--25 age group has its prevalence underestimated.
 \begin{figure}
     \thisfloatpagestyle{empty}
     \vspace{-3cm}
-    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_young}}
+    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_main}}
     \captionsetup{width=0.8\paperwidth}
-    \captionof{figure}[SEIR prevalence goodness-of-fit (younger ages)]{%
-        Goodness-of-fit to prevalence data by region and age for the younger three age groups (see \cref{SEIR:fig:prev-old} for the others).
+    \captionof{figure}[SEIR prevalence goodness-of-fit]{%
+        Goodness-of-fit to prevalence data by region and age for selected regions (see \cref{SEIR:fig:prev-appendix} for others).
         The central ribbon and line show the posterior median and 95\% CrI estimate for the proportion of the relevant stratum RT-PCR positive on each day.
         The lighter outer ribbon is the 95\% posterior predictive interval for the proportion of test results that are positive each week.
         The dots show the observed prevalence in CIS, aggregated by week.
         For a well-calibrated model, 95\% of the dots would be within the outer ribbon.
     }
-    \label{SEIR:fig:prev-young}
-\end{figure}
-\begin{figure}
-    \thisfloatpagestyle{empty}
-    \vspace{-3cm}
-    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_old}}
-    \captionsetup{width=0.8\paperwidth}
-    \captionof{figure}[SEIR prevalence goodness-of-fit (older ages)]{%
-        Goodness-of-fit prevalence for the older three age groups (see \cref{SEIR:fig:prev-young} for the other age groups and details).
-    }
-    \label{SEIR:fig:prev-old}
-    \todo[inline]{Remake/reposition this plot so that it fits on a page.}
+    \label{SEIR:fig:prev}
 \end{figure}
 
 All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-MCMC:sec:convergence}).
@@ -861,7 +848,8 @@ These correlations could be exploited to improve the precision of estimates with
 
 The current model could be more flexible with regards to the age distribution of infections.
 This would better exploit one of the strengths of the CIS: the availability of data  on all age groups.
-In some regions, there appears to be a trade-off between the 11--16s and 16--25s, with the model misfitting in opposite directions (see \cref{SEIR:fig:prev-young}).
+In some regions, there appears to be a trade-off between under and overfitting in different age groups (see \cref{SEIR:fig:prev}).
+For example, in the North East, most of the data points in the $[11, 16)$ age group are below the median posterior estimate, while most of the data points in the $[16, 25)$ age group are above the median posterior estimate.
 This implies that the data would allow identification of a more flexible age-based model.
 
 Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $q_c$.
@@ -920,7 +908,7 @@ The SEIR model is limited by the inference procedure and the requirement to solv
 To incorporate a more flexible model, and reduce its bias, a more efficient inference procedure would be required.
 
 Many of these issues are clearly demonstrated by the estimates for the North East (see \cref{transmission:fig:compare-NE}).
-I previously observed the quality of the SEIR model's fit is variable between different age groups (see \cref{SEIR:fig:prev-young,SEIR:fig:prev-old}).
+I previously observed the quality of the SEIR model's fit is variable between different age groups (see \cref{SEIR:fig:prev,SEIR:fig:prev-appendix}).
 This is because the model is not flexible enough to capture the true age distribution of infections.
 The overestimation of prevalence in the 11--16 age group and underestimation in the 16--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
 \begin{figure}
@@ -947,6 +935,7 @@ This would require a more flexible model, which would likely require a more effi
   \appendix
   \subfile{transmission-appendix-INLA}
   \subfile{transmission-appendix-phase-type}
+  \subfile{transmission-appendix-plots}
   \listoftodos
 }{}
 

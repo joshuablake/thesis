@@ -6,7 +6,7 @@ INC_PREV_DEPS = incidence-prevalence.tex inc-prev/contact_matrices.png
 ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.pdf ATACCC/compare_hakki_modified.pdf ATACCC/mean_trajectories.pdf ATACCC/duration.pdf ATACCC/fits.pdf ATACCC/fit_individual_55.pdf
 IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.pdf cis-imperfect-testing/sim-single-positive-episodes.pdf cis-imperfect-testing/sim-constant-sensitivity.pdf cis-imperfect-testing/sim-misspecified-sensitivity.pdf cis-imperfect-testing/sim-variable-sensitivity.pdf cis-imperfect-testing/CIS_perfect.pdf cis-imperfect-testing/CIS_final.pdf cis-imperfect-testing/CIS_vary.pdf cis-imperfect-testing/CIS_ntot.pdf
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.pdf cis-perfect-testing/double-interval-censor.pdf cis-perfect-testing/truncation.pdf cis-perfect-testing/flat-prior.pdf cis-perfect-testing/kt-prior.pdf cis-perfect-testing/rw2-prior.pdf cis-perfect-testing/vague-prior.pdf cis-perfect-testing/survival-results.pdf cis-perfect-testing/hazard-results.pdf cis-perfect-testing/ataccc-approximation-survival.pdf cis-perfect-testing/ataccc-approximation-hazard.pdf cis-perfect-testing/input-duration-dists.pdf
-TRANSMISSION_DEPS = transmission.tex transmission-appendix-INLA.tex transmission-appendix-phase-type.tex SEIR/sim/data.pdf SEIR/sim/predictive_coverage.pdf SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.pdf SEIR/CIS/prev_young.pdf SEIR/CIS/prev_old.pdf SEIR/CIS/incidence.pdf SEIR/CIS/p_peak.pdf SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.pdf transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf transmission/backcalc-ages.pdf transmission/backcalc-start-effect.pdf transmission/compare-regions.pdf transmission/compare-NE.pdf
+TRANSMISSION_DEPS = transmission.tex transmission-appendix-plots.tex transmission-appendix-INLA.tex transmission-appendix-phase-type.tex SEIR/sim/data.pdf SEIR/sim/predictive_coverage.pdf SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.pdf SEIR/CIS/prev_main.pdf SEIR/CIS/prev_appendix.pdf SEIR/CIS/incidence.pdf SEIR/CIS/p_peak.pdf SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.pdf transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf transmission/backcalc-ages.pdf transmission/backcalc-start-effect.pdf transmission/compare-regions.pdf transmission/compare-NE.pdf
 CONCLUSION_DEPS = conclusion.tex
 DISTRIBUTIONS_DEPS = distributions.tex
 
@@ -132,6 +132,9 @@ cisRuns-output/%:
 transmission.pdf: $(TRANSMISSION_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
+transmission-appendix-plots.pdf: transmission-appendix-plots.tex SEIR/CIS/prev_appendix.pdf $(SHARED_DEPS)
+	$(LATEX_CMD)
+
 transmission-appendix-INLA.pdf: transmission-appendix-INLA.tex $(SHARED_DEPS)
 	$(LATEX_CMD)
 
@@ -147,7 +150,7 @@ SEIR/CIS/attack_rates.pdf: SEIR/CIS/attack_rates.R utils.R transmission/utils.R 
 SEIR/CIS/beta_walk.pdf: SEIR/CIS/random_walk.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/params.csv
 	Rscript $<
 
-SEIR/CIS/p_peak.pdf SEIR/CIS/incidence.pdf SEIR/CIS/prev_young.pdf SEIR/CIS/prev_old.pdf: SEIR/CIS/posterior_predictive.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
+SEIR/CIS/p_peak.pdf SEIR/CIS/incidence.pdf SEIR/CIS/prev_main.pdf SEIR/CIS/prev_appendix.pdf: SEIR/CIS/posterior_predictive.R utils.R transmission/utils.R SEIR/utils.R SEIR/CIS/predictive.csv SEIR/CIS/data.csv SEIR/CIS/params.csv
 	Rscript $<
 
 SEIR/CIS/params.csv SEIR/CIS/predictive.csv SEIR/CIS/final_state.csv:

@@ -79,19 +79,19 @@ weekly_predictions = noisy_predict |>
     group_by(region, age, week) |>
     median_qi()
 
-create_prev_plot = function(age_groups, label) {
+create_prev_plot = function(regions, label) {
     plot = weekly_predictions |>
-        filter(age %in% age_groups) |>
+        filter(region %in% regions) |>
         ggplot(aes(week)) +
         geom_point(aes(y = p), size = 0.5) +
         geom_ribbon(aes(ymin = pred_p.lower, ymax = pred_p.upper), alpha = 0.1) +
         geom_lineribbon(
             aes(day, prevalence, ymin = prevalence.lower, ymax = prevalence.upper),
-            data = filter(prediction_intervals, age %in% age_groups),
+            data = filter(prediction_intervals, region %in% regions),
             alpha = 0.4,
             size = 0.2
         ) +
-        facet_grid(region ~ age) +
+        facet_grid(age ~ region) +
         standard_plot_theming() +
         labs(
             x = "Date",
@@ -99,7 +99,8 @@ create_prev_plot = function(age_groups, label) {
         ) +
         theme(
             legend.position = "none",
-            strip.text = element_text(size = 7)
+            strip.text = element_text(size = 7),
+            axis.text.x = element_text(angle = 45, hjust = 1)
         )
 
     ggsave(
@@ -108,17 +109,23 @@ create_prev_plot = function(age_groups, label) {
         ),
         plot = plot,
         width = 15,
-        height = 20,
+        height = 15,
         units = "cm",
         dpi = 300
     )
 }
 
 # Generate goodness-of-fit plots, separately for age groups due to size
-young_ages = unique(weekly_predictions$age)[1:3]
-old_ages = unique(weekly_predictions$age)[4:6]
-create_prev_plot(young_ages, "young")
-create_prev_plot(old_ages, "old")
+all_regions = unique(weekly_predictions$region)
+regions_in_main = c(
+    "East of England",
+    "North East",
+    "London",
+    "Yorkshire"
+)
+regions_in_appendix = all_regions[!all_regions %in% regions_in_main]
+create_prev_plot(regions_in_main, "main")
+create_prev_plot(regions_in_appendix, "appendix")
 
 # Generate posterior incidence plots
 p_incidence = prediction_intervals |>
