@@ -99,22 +99,21 @@ p_true_vs_posterior = posterior_intervals |>
         )
     )) |>
     ggplot(aes(value, true)) +
-    # facet_wrap(~ parameter, scales = "free", labeller = label_parsed) +
-    facet_wrap(~ parameter, scales = "free", labeller = parameter_labeller) +
+    facet_wrap(~ parameter, scales = "free", labeller = parameter_labeller, ncol = 3) +
     geom_abline(slope = 1, intercept = 0) +
     geom_smooth(method = "lm", formula = y ~ x) +
     standard_plot_theming() +
     geom_point() +
-    # geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0) +
     labs(
         x = "Posterior median",
         y = "True value"
-    )
+    ) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(
     filename = here::here("SEIR/sim/true_vs_posterior.pdf"),
     plot = p_true_vs_posterior,
     width = 20,
-    height = 15,
+    height = 22,
     units = "cm",
     dpi = 300
 )
