@@ -21,6 +21,7 @@ seir_incidence_summary = seir_predictive |>
     mutate(Model = "SEIR")
 
 backcalc_prevalence_summary = readRDS(here::here("transmission", "outputs", "region.rds")) |>
+    filter(daynr > 1) |>
     group_by(date, region) |>
     median_qi(incidence, prevalence, .simple_names = FALSE) |>
     ungroup() |>

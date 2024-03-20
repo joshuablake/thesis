@@ -12,7 +12,7 @@ source(here::here("transmission/utils.R"))
 
 
 backcalc_prevalence_summary = readRDS(here::here("transmission", "outputs", "region_age.rds")) |>
-    filter(region == "North East") |>
+    filter(region == "North East", daynr > 1) |>
     group_by(date, age_group) |>
     median_qi(incidence, prevalence, .simple_names = FALSE) |>
     ungroup() |>

@@ -23,7 +23,6 @@ alpha_dates = tribble(
 
 incidence_plot = function(df) {
     df |>
-        filter(daynr > 1) |>
         ggplot(aes(date, incidence)) +
         stat_lineribbon(alpha = 0.3, .width = 0.95) +
         scale_y_continuous(labels = scales::label_percent()) +
@@ -35,7 +34,8 @@ incidence_plot = function(df) {
         theme(legend.position = "none")
 }
 
-tbl_regions = readRDS(file.path(output_dir, "region.rds"))
+tbl_regions = readRDS(file.path(output_dir, "region.rds")) |>
+    filter(daynr > 1)
 p_region = (
     tbl_regions |>
         filter(region == "England") |>
@@ -58,7 +58,7 @@ ggsave(
     height = 7
 )
 
-tbl_min = readRDS(file.path(output_dir, "region.rds"))  |>
+tbl_min = tbl_regions |>
     # for each .draw and region, find the day of minimum
     # incidence between start of Nov and start of Jan
     filter(between(
