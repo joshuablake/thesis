@@ -109,7 +109,7 @@ create_prev_plot = function(regions, label) {
         ),
         plot = plot,
         width = 15,
-        height = 15,
+        height = 16,
         units = "cm",
         dpi = 300
     )

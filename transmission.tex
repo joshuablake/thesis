@@ -783,7 +783,7 @@ In this model it is $1 - \vec{s}$, the proportion susceptible at the time the st
 The attack rate is highest in the $[11, 16)$ age group in the North West at 68\% (95\% CrI: 66--70\%) (see \cref{SEIR:fig:attack-rates}).
 Some of these infections occurred prior to the period covered by this study; during the period of this study 23\% (95\% CrI: 21--24\%) of the population in the North West aged 11--16 was infected.
 \begin{figure}
-    \includegraphics{SEIR/CIS/attack_rates}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/attack_rates}}
     \caption{Posterior median and 95\% CrI of the attack rate in each region and age group.}
     \todo[inline]{Maybe compare this to blood donors, as used in the prior.}
     \label{SEIR:fig:attack-rates}
@@ -793,8 +793,8 @@ Overall, the model fits the data well (see \cref{SEIR:fig:prev,SEIR:fig:prev-app
 There are a few features of the data which are not captured by the model and the posterior estimate appears to be a compromise with the prevalence too low in one age group and too high in another.
 For example, in the North East region, the 11--16 age group has its prevalence overestimated in October but the 16--25 age group has its prevalence underestimated.
 \begin{figure}
-    \thisfloatpagestyle{empty}
-    \vspace{-3cm}
+    % \thisfloatpagestyle{empty}
+    % \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_main}}
     \captionsetup{width=0.8\paperwidth}
     \captionof{figure}[SEIR prevalence goodness-of-fit]{%
