@@ -1,43 +1,11 @@
 suppressMessages(library(dplyr))
 library(ggplot2)
+library(patchwork)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
-decide_panel = function(region) {
-    case_match(
-        region,
-        "England" ~ "England",
-        "North East" ~ "North",
-        "North West" ~ "North",
-        "Yorkshire" ~ "North",
-        "East Midlands" ~ "Midlands",
-        "West Midlands" ~ "Midlands",
-        "East of England" ~ "Midlands",
-        "London" ~ "South",
-        "South East" ~ "South",
-        "South West" ~ "South",
-    )
-}
-
 output_dir = here::here("transmission/outputs")
-label_letters = as_labeller(function(labels, base_labeller = label_value) {
-    glue::glue("({LETTERS[seq_along(labels)]}) {base_labeller(labels)}")
-})
-
-# alpha_dates = tribble(
-#     ~region, ~date,
-#     "North East", lubridate::dmy("09/12/2020"),
-#     "North West", lubridate::dmy("17/12/2020"),
-#     "Yorkshire", lubridate::dmy("08/12/2020"),
-#     "East Midlands", lubridate::dmy("24/11/2020"),
-#     "West Midlands", lubridate::dmy("27/11/2020"),
-#     "East of England", lubridate::dmy("27/11/2020"),
-#     "London", lubridate::dmy("21/11/2020"),
-#     "South East", lubridate::dmy("03/12/2020"),
-#     "South West", lubridate::dmy("21/12/2020"),
-# ) |>
-    #  mutate(panel = decide_panel(region))
 
 alpha_dates = tribble(
     ~region, ~date,
@@ -50,40 +18,44 @@ alpha_dates = tribble(
     "London", lubridate::dmy("21/11/2020"),
     "South East", lubridate::dmy("03/12/2020"),
     # "South West", lubridate::dmy("21/12/2020"),
-) |>
-    mutate(panel = decide_panel(region))
+)
 
-p_region = readRDS(file.path(output_dir, "region.rds")) |>
-    filter(daynr > 1) |>
-    mutate(
-        panel = decide_panel(region),
-    ) |>
-    ggplot(aes(date, incidence, colour = region, fill = region)) +
-    stat_lineribbon(alpha = 0.3, .width = 0.95) +
-    facet_wrap(~panel, labeller = label_letters) +
-    scale_y_continuous(labels = scales::label_percent()) +
-    labs(
-        x = "Date",
-        y = "Incidence proportion",
-        fill = "Region",
-        colour = "Region"
-    ) +
-    standard_plot_theming() +
-    theme(legend.position = "bottom")
 
-p_region +
-    # vertical line at alpha_dates
-    geom_vline(
-        data = alpha_dates,
-        aes(xintercept = date, colour = region),
-        linetype = "dashed",
-        linewidth = 0.5
-    )
+incidence_plot = function(df) {
+    df |>
+        filter(daynr > 1) |>
+        ggplot(aes(date, incidence)) +
+        stat_lineribbon(alpha = 0.3, .width = 0.95) +
+        scale_y_continuous(labels = scales::label_percent()) +
+        labs(
+            x = "Date",
+            y = "Incidence proportion",
+        ) +
+        standard_plot_theming() +
+        theme(legend.position = "none")
+}
+
+tbl_regions = readRDS(file.path(output_dir, "region.rds"))
+p_region = (
+    tbl_regions |>
+        filter(region == "England") |>
+        incidence_plot() +
+        labs(subtitle = "(A) England")
+) / (
+    tbl_regions |>
+        filter(region != "England") |>
+        incidence_plot() +
+        facet_wrap(~region) +
+        labs(subtitle = "(B) Regions") +
+        theme(panel.spacing.x = unit(7, "mm"))
+) +
+    plot_layout(heights = c(1, 1.6))
+
 ggsave(
     filename = here::here("transmission", "backcalc-regions.pdf"),
     plot = p_region,
-    width = 6,
-    height = 5.5
+    width = 6.5,
+    height = 7
 )
 
 tbl_min = readRDS(file.path(output_dir, "region.rds"))  |>
