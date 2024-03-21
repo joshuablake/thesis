@@ -110,12 +110,14 @@
 % \keywords{one two three}
 
 %% Submission date :
-\submissiondate{March 2024}
+\newcommand{\textdate}{March 2024}
+\submissiondate{\textdate}
 
 %% You can redefine the submission notice [optional]:
+% For some reason the submission notice breaks if I just use \submissiondate
 \submissionnotice{%
     This thesis is submitted for the degree of \\ \emph{Doctor of Philosophy} \\
-    March 2024
+    \textdate
 }
 
 % Only number labelled equations

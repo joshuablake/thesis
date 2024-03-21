@@ -487,12 +487,12 @@ This thesis is the result of my own work and includes nothing which is the outco
 I further state that no substantial part of my thesis has already been submitted, or, is being concurrently submitted for any such degree, diploma or other qualification at the University of Cambridge or any other University or similar institution except as declared in the Preface and specified in the text.
 It does not exceed the prescribed word limit for the relevant Degree Committee.
 
-% Leaving some space for the signature:
-\vspace{15mm}
 
 \begin{flushright}
 \@author{}\\
-\@date{}\\
+\ifcam@submissiondate
+    \@submissiondate{}\\
+\fi
 \end{flushright}
 \vfill
 \fi
