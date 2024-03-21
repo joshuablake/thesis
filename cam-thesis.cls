@@ -519,11 +519,10 @@ It does not exceed the prescribed word limit for the relevant Degree Committee.
 % Cambridge thesis submission guidelines require the title and author be in the abstract.
 % For more info see https://www.cambridgestudents.cam.ac.uk/your-course/examinations/graduate-exam-information/after-examination/degree-approval-and-1
 \textbf{\large \@title}
-\par\vspace{0.3cm}
+\par\vspace{0.1cm}
 \noindent\textit{\@author}
-\par\vspace{0.6cm}
-
-\@abstract{}
+\par\vspace{0.3cm}
+\noindent\@abstract{}
 \fi
 
 
