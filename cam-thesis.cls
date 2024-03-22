@@ -130,7 +130,9 @@
     \RequirePackage[
         pdfpagelabels=false,
         pdfborder={0 0 0},
-        pdfusetitle=true
+        pdfusetitle=true,
+        unicode,
+        psdextra
     ]{hyperref}
 \else
     \RequirePackage[
@@ -138,7 +140,9 @@
         pdfpagelabels=true,
         colorlinks=false,
         pdfborder={0 0 0},
-        pdfusetitle=true
+        pdfusetitle=true,
+        unicode,
+        psdextra
     ]{hyperref}
 \fi
 \RequirePackage[all]{hypcap}        % Fixes links to floats (must be included after hyperref).
