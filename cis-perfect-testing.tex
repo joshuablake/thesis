@@ -163,7 +163,7 @@ The model will be used to analyse on the 4,800 episodes first detected between 1
 A negative test before the start of the episode provides a lower bound on the episode's start time; otherwise, there is little information on its length.
 Similar information comes from the negative test after the end of the episode.
 This is typically observed, unless the individual is lost to follow-up before their episode is ended, which happens rarely.
-I will incorporate episodes excluded in this step in the model for undetected infections.
+I will incorporate episodes excluded in this step in the model for undetected infections. {\color{red} introduce here what is being done in teh next subsections to give some ideas of why you do what you do}
 
 \subsection{Types of episodes}
 
@@ -235,7 +235,7 @@ Therefore, conditional on $\ntot$, the number of episodes in each class, $(n_{ia
 with probabilities ($p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$), which are conditional on these episode occurring with test schedule $\sched_i$.
 By multiplying these probabilities by $\eta_i/\Ncis$, where $\eta_i$ is the number of individuals with test schedule $\sched_i$, the probability that an episode belongs to each class, without conditioning on a specific individual can be derived.
 
-{\color{red} Would this be the place to introduce a new subsection? on how to calculate the likelihood? Or on line 242?}
+{\color{red} Would this be the place to introduce a new subsection? on how to calculate the likelihood? }
 The undetected classes for each individual cannot be distinguished by any observable data.
 Each class's count needs to be marginalised over to calculate the likelihood.
 Because the counts have a joint multinomial distribution, this is equivalent to only considering the sum of the counts.
@@ -244,7 +244,7 @@ Furthermore, the inadmissible classes are guaranteed to have zero episodes.
 Counts of zero do not contribute to the multinomial probability mass function (they multiply by 1).
 Therefore, I combine the undetected classes into a single class and ignore the inadmissible classes.
 
-{\color{red} subsection here instead of line 233?}
+{\color{red} subsection on likelihood calculation here instead of above?}
 Let $\na = (n_{1a}, \dots, n_{\nsched a})^T$ be the vector of counts of episodes in the admissible classes.
 The counts $\na$ and $\nnodet$ are jointly distributed multinomially.
 The support of the distribution requires $\nnodet = \ntot - \sum_{i=1}^{\nsched} n_{ia} = \ntot - \ndet$ and $\ntot \geq \ndet$.
@@ -276,7 +276,7 @@ p(\theta \mid \na)
 \end{align}
 The rest of this section derives expressions for each $p_{ia}$, $p_{u}$ and the sum.
 
-To start, I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NBc(\mu, r)$.
+\paragraph{name of the sum} To start, I derive an analytical solution to $\sum_{\ntot=\ndet}^\infty p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}$ under the prior $\ntot \dist \NBc(\mu, r)$.
 I assume that $\theta$, which are only the parameters of the survival distribution, has a prior independent of $\ntot$, the number of infections that occurred in the cohort.
 Therefore, $p(\ntot \mid \theta) = p(\ntot)$.
 Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite; its use simplifies the derivation.
@@ -322,7 +322,7 @@ p(\theta \mid \na)
 % Comparing this expression to the pmf of a negative binomial, we find that $\nnodet = \ntot - \ndet$ is distributed negative binomial with size parameter $r+\ndet$ and probability parameter $(r + \mu(1 - \pnodet))/(r + \mu)$.
 %The mean of this distribution is $(r+\ndet)\mu \pnodet/(r+\mu(1-\pnodet))$.
 
-Next, I derive $p_{ia}$.
+\Paragraph{$p_{ia}$}
 By definition (see~\cpageref{perf-test:def:admissible}), we have, for any $i \in \set{D}$:
 \begin{align}
 p_{ia} =& \prob((b, e) \in \alpha_i \mid \theta) \\
@@ -340,7 +340,9 @@ p_{ia}
 under the assumption of uniform probability of infection time.
 This is the standard form of the likelihood for doubly interval censored data with truncation.
 
-The next step is to derive $1 - p_u = 1 - \frac{1}{N} \sum_{i=1}^{\nsched} p_{iu} = \frac{1}{N} \sum_{i=1}^{\nsched} (1 - p_{iu})$.
+%The next step is to derive 
+\paragraph{$1 - p_u$}
+Note that $1 - p_u= 1 - \frac{1}{N} \sum_{i=1}^{\nsched} p_{iu} = \frac{1}{N} \sum_{i=1}^{\nsched} (1 - p_{iu})$.
 Therefore, the crucial component is $1 - p_{iu} = 1 - \prob((B_{j(i)}, E_{j(i)}) \in \Omega_i \mid \theta)$, one minus the probability that episode $i$ was undetected.
 An episode is undetected if and only if no tests are performed during the episode or if there was no negative test prior to the episode.
 Equivalently, that the first test at or after $b$ is after $e$, or that there is no negative test prior to $b$.
@@ -369,13 +371,9 @@ Therefore, suppressing the conditioning on $\theta$:
 \section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
 In this section I specify the form of $S_\theta(t)$.
-% As frequently observed in the literature~\autocite[e.g.][]{heBayesian}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
-% The mass function must sum to one.
-% The survival must be monotonically decreasing
-% But, there are no constraints across multiple hazards.
-% This would complicate the inference process in a way that cannot be removed through a simple transformation.
-% The only constraint on the hazard is to be in the interval $[0, 1]$, since they are probabilities.
-% The [0, 1] interval is easily be mapped to the unconstrained reals using a logit transformation (where $\logit(x) = \log(x/(1-x))$).
+I parameterise $S$ in terms of the hazard $S_{\vec{\theta}}(t) = \prod_{i=1}^{t-1} (1 - \lambda(i))$ (see \cref{E-inc-prev:sec:definitions}).
+Therefore, $\vec{\theta} = [\lambda_1, \dots, \lambda_{\dmax-1}]^T$.
+
 Priors cannot be vague on both the hazard and the survival, the implications of which I consider in what follows.
 Informative priors are also attractive to allow the incorporation of the estimates from \cref{E-ATACCC}.
 
@@ -405,7 +403,7 @@ Instead, I propose a weakly informative (or vague) prior Beta(0.1, 1.9), which h
 The amount of information in a Beta distribution is related to the sum of its parameters.
 Here, the sum equals 2, the same as the flat prior case.
 The central 95\% probability mass of Beta(0.1, 1.9) is 0.00--0.47.
-The central estimate, of 0.05, is in line with previous estimates that the median duration i in the range 15--20 days~\autocite{cevikShedding}.
+The central estimate, of 0.05, is in line with previous estimates that the median duration in the range 15--20 days~\autocite{cevikShedding}.
 This prior gives a very vague prior predictive distribution on the survival time (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/vague-prior}
@@ -421,7 +419,7 @@ This prior gives a very vague prior predictive distribution on the survival time
 \subsection{Smoothing priors}
 
 Smoothing priors encode the biological consideration that the hazard should not vary significantly from day-to-day.
-It is the Bayesian equivalent of a penalized likelihood, used frequently in the non-parametric frequentist setting~\autocite[e.g.][]{bacchettiNonparametric}.
+It is the Bayesian equivalent of a penalized likelihood, which is used frequently in the non-parametric frequentist setting~\autocite[e.g.][]{bacchettiNonparametric}.
 Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
 I use a second-order random walk (RW2) because it is simple and produces sensible prior predictive distributions.
 
@@ -438,11 +436,11 @@ Formally:
   \logit \lambda_1 &\dist \N(\mu_{\lambda_1}, \sigma_{\lambda_1}^2) \\
   \sigma &\dist \Exponential(1/\mu_\sigma).
 \end{align}
-The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ the smoothness of the random walk.
+The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ represents the smoothness of the random walk.
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/rw2-prior}
-  \caption[RW2 prior for the hazard]{The prior predictive survival time (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} are shown for comparison. \label{perf-test:fig:rw2-prior}}
+  \caption[RW2 prior for the hazard]{The prior predictive survival time (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} is shown for comparison. \label{perf-test:fig:rw2-prior}}
 \end{figure}
 
 \subsection{Model combination priors} \label{perf-test:sec:informative-priors}
