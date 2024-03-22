@@ -137,26 +137,6 @@ In particular:
 
 Therefore, satisfying all the desirable properties requires the prevalence-inferred approach, which I adopt.
 
-\todo[inline]{Here to the end of the section moved to Appendix.}
-
-An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{z}$; a vector of $n$ data points, $\vec{w} = [w_1, \dots, w_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-To be an LGM, $\vec{z}$ must be a latent Gaussian field, that is $\vec{z} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $p(\vec{w} \mid \vec{\varphi}, \vec{z}) = \prod_j p(w_j \mid \eta_j(\vec{z}), \vec{\varphi})$.
-
-In this context, each $w_j$ corresponds to the observed RT-PCR results in one stratum on one day.
-Hence, $\eta_{j}$ must determine the distribution of $w_{j}$ (up to some hyperparameters); where $j$ uniquely identifies a stratum $i$ and day $t$.
-
-In practice, this means that $\eta_j$ is a one-to-one transformation of the population prevalence in stratum $i$ on day $t$.
-If $\eta_j = \logit(\pi_{i,t})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is an LGM.
-However, if $\pi$ is instead representing incidence proportion, then no such linear relationship between $\eta_j$ and $g$ exists.
-In particular, if $\eta_j$ is the prevalence, then:
-\begin{align}
-    \eta_{i,t}
-    &= \sum_{k=-\infty}^0 \pi_{ik} S(k) \\
-    &= \sum_{k=-\infty}^0 \expit(g(i, k)) S(k).
-\end{align}
-As $g(i, k)$ is linear in the model parameters, $\vec{z}$, then $\eta_{i,t}$ is not, violating the requirements of an LGM.
-
-
 \subsection{Methods} \label{backcalc:sec:methods}
 
 Now I explain how I extended the MRP model introduced in \cref{E-biology-data:sec:MRP} to implement the prevalence-inferred approach.

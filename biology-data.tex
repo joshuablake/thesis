@@ -246,7 +246,7 @@ The CIS had a household-based design, meaning that households were invited to pa
 From households that participated, all individuals aged 2 and over were invited to participate.
 Once invited, an enrolment swab would be taken at the first visit followed by 4 further weekly visits (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolment) after which visits were monthly.
 As well as a swab to test for SARS-CoV-2, participants were asked to complete a questionnaire, and some participants were asked to provide blood samples.
-In reality, visits were often not on this precise schedule, and occasionally missed.
+In reality, visits were often not on this precise schedule, and occasionally missed altogether.
 A full description of the study can be found in the study protocol~\autocite{cisProtocol}.
 
 Up until July 2020, households were selected from those that had previously participated in an ONS survey~\autocite{CIStechData}.
@@ -334,7 +334,7 @@ For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is
 The terms are as follows.
 \todo[inline]{Check I've written the priors correctly}
 \begin{itemize}
-    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution, as discussed in \cref{biology-data:sec:clustering}.
+    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution for the likelihood, as discussed in \cref{biology-data:sec:clustering}.
     \item $\beta$ is a global intercept term with the vague prior $\beta \dist \N(0, 1/0.001^2)$.
     \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females. The prior for $\beta_s$ is vague, $\beta_s \dist \N(0, 1/0.001^2)$.
     \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).
@@ -347,15 +347,16 @@ The terms are as follows.
       That is $l_{a,t} = 2l_{a,t-1} - l_{a,t-2} + \epsilon_{a,t}$ where $\epsilon_{a,t} \dist \N(0, \sigma_l^2)$.
       $\sigma_l$ has a vague prior, $1/\sigma_l \dist \GamDist(1, 5 \times 10^{-5})$.
 \end{itemize}
-For parameters given vague priors, the large amount of data means that the prior has little influence on the posterior distribution.
+% For parameters given vague priors, the large amount of data means that the prior has little influence on the posterior distribution.
 The second-order random walk priors favours linear growth in $\logit(p_{taes})$ over time.
 For the small values of $p_{taes}$ likely to be encountered, this approximates exponential growth.
 
+An approximation of the posterior distribution is computed using INLA (the Integrated Nested Laplace Approximation), see \cref{E-transmission:sec:INLA} for details.
 I fitted the model separately and independently for each region, implicitly adding all interactions between region and the other variables.
 This step assumes that the estimates for each region can be considered independent, which is reasonable because the regions are large with many tests conducted within each.
 
 The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
-To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
+To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
 For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the number of individuals in that stratum.
 The population numbers for each stratum are provided by the Office for National Statistics.
 
@@ -440,12 +441,11 @@ Statistical disclosure control ensures that no individual can be identified from
 This means that data must be aggregated to counts of at least 5, and no individual-level data included.
 
 Analyses requiring more fine-grained stratification (such as that in \cref{biology-data:sec:MRP}) or linking data from the same individual over time (such as that in \cref{E-perf-test,E-imperf-test}) must be performed within the SRS.
-Therefore, computationally efficient approaches must be taken to this work.
-The SRS contains limited computational power.
-It has\todo{insert SRS computational power}.
-However, these are shared computational resources and due consideration must be given to other users.
+The SRS contains five 2.40\,GHz dual-core Intel Xeon E5-4650 processors and 164\,GB RAM.
+These computational resources are shared between all users of the CIS SRS project and due consideration must be given to other users.
 Processes which run for multiple days are liable to be cancelled.
 
+Therefore, computational approaches requiring high-performance computing, graphical processing units, or long runtimes are not feasible within the SRS.
 This computational limitation will feature in several places in this thesis.
 
 \section{Conclusion}

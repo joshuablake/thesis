@@ -41,13 +41,13 @@ A single positive episode is an episode containing exactly one positive test; in
 Specifically, if $j$ is a single positive episode then $j$'s admissible region (as defined in \cref{E-perf-test:sec:model}) includes $b_j = e_j = r_j^{(b)} = l_j^{(e)}$.
 In this case, the beginning and end day of the episode are both equal to the day of this one positive test.
 If this is true, then the duration is $d_j = e_j - b_j + 1 = 1$.
-Additionally, short episodes are very likely to be missed, which means that the design of the CIS cannot rule out many of them occurring.
+Additionally, short episodes are very likely to be undetected, which means that the design of the CIS cannot rule out many of them occurring.
 % This produced the same pattern, that is estimating too many short episodes (not shown).
 
 \Textcite{shenNonparametrica}, generalising \textcite{panNote}, studied the situation when only the terminating event is interval censored (\ie singly censored data) and left truncated.
 They showed that the non-parametric maximum likelihood estimator is inconsistent if single positive episodes occur, and the survival function is severely biased downwards.
 
-The CIS is a more complex setting, including double interval censoring and a complex pattern of missed episodes (see \cref{E-perf-test:sec:problem}).
+The CIS is a more complex setting, including double interval censoring and a complex pattern of undetected episodes (see \cref{E-perf-test:sec:problem}).
 This means the result cannot simply be extended to the CIS, but still reinforces the intuition that single positive episodes are likely to be problematic.
 
 % Discussion and interrogation of the data led me to
@@ -138,7 +138,7 @@ In this section, I introduce a simple model of false negatives (\ie allowing $\p
 The simple model, including a constant test sensitivity, means the likelihood remains tractable.
 
 First, in \cref{imperf-test:sec:modifying-p_ia}, I modify $p_{ia}$, the probability of an episode with test schedule $i$ being admissible, to allow for the episode possibly being longer than observed.
-Then, in \cref{imperf-test:sec:modifying-p_iu}, I modify $p_{iu}$, the probability of an episode with test schedule $i$ being undetected, to allow for additional episodes being missed.
+Then, in \cref{imperf-test:sec:modifying-p_iu}, I modify $p_{iu}$, the probability of an episode with test schedule $i$ being undetected, to allow for additional episodes being undetected.
 
 \subsection{Modifying \texorpdfstring{$p_{ia}$}{pia}} \label{imperf-test:sec:modifying-p_ia}
 
@@ -173,10 +173,10 @@ First, if $e_{j(i)} \leq r_{j(i)}^{(e)}$, meaning that the test at $r_{j(i)}^{(e
 % In this case, the test at $r_{j(i)}^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_i$.
 The true negative occurs with probability 1, by the assumption of no false positives.
 \begin{align}
-&p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \theta) \\
-&= p(\vec{y_{j(i)}}, l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \theta) \\ % &\text{as no false positives}
-&= p(\vec{y_{j(i)}} \mid l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \theta) p(l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \left( S_\theta(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right)
+&p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
+&= p(\vec{y_{j(i)}}, l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\ % &\text{as no false positives}
+&= p(\vec{y_{j(i)}} \mid l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) p(l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
+&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right)
 \label{imperf-test:eq:ll-ei-lt-ri}
 \end{align}
 
@@ -185,9 +185,9 @@ In this case, the test at $r_{j(i)}^{(e)}$ is a false negative, occurring with p
 To avoid having to consider tests after $r_{j(i)}^{(e)}$, which could greatly complicate the likelihood, I model this case as the episode being right censored at $r_{j(i)}^{(e)}$.
 Taking the same approach as before:
 \begin{align}
-&p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \theta) \\
-&= p(\vec{y_{j(i)}} \mid e_{j(i)} > r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \theta) p(e_{j(i)} > r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) (1 - p_\text{sens}) S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1)
+&p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
+&= p(\vec{y_{j(i)}} \mid e_{j(i)} > r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) p(e_{j(i)} > r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
+&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) (1 - p_\text{sens}) S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1)
 \label{imperf-test:eq:ll-ei-gt-ri}
 \end{align}
 
@@ -195,19 +195,19 @@ These expressions can now be used to form the full replacement for $p_{ia}$, $p'
 First, augment the data with $b_{j(i)}$, and split into the cases just discussed:
 \begin{align}
 p_{ia}'
-&= p(\vec{y_{j(i)}} \mid p_\text{sens}, \theta) \\
-&= \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \theta) + p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \theta) \right) p(b_{j(i)} \mid p_\text{sens}, \theta).
+&= p(\vec{y_{j(i)}} \mid p_\text{sens}, \vec{\theta}) \\
+&= \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \vec{\theta}) + p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \vec{\theta}) \right) p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}).
 \intertext{Now, substitute in \cref{imperf-test:eq:ll-ei-lt-ri,imperf-test:eq:ll-ei-gt-ri}, then take out the common factor:}
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1) + (1 - p_\text{sens}) S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) \\ & \ \times p(b_{j(i)} \mid p_\text{sens}, \theta) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) p(b_{j(i)} \mid p_\text{sens}, \theta).
+&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) + (1 - p_\text{sens}) S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) \\ & \ \times p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}) \\
+&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}).
 \label{imperf-test:eq:pia-prime}
 \end{align}
 Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
-If $\psens$ is fixed (\ie has a point prior) and $p(b_{j(i)} \mid \psens, \theta) \propto 1$ (as assumed in \cref{E-perf-test}) then:
+If $\psens$ is fixed (\ie has a point prior) and $p(b_{j(i)} \mid \psens, \vec{\theta}) \propto 1$ (as assumed in \cref{E-perf-test}) then:
 \begin{align}
 p_{ia}'
-&\propto \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} S_\theta(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_\theta(r_{j(i)}^{(e)} - b_{j(i)} - 1).
+&\propto \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1).
 \label{imperf-test:eq:pia-prime-constant}
 \end{align}
 
@@ -242,23 +242,23 @@ The probability of this occurring, conditional on $B_{j(i)} = b_{j(i)} > \min(\s
 &\prob \left(
     \tau_{\sched_i}(b_{j(i)}) + 1 \leq D_i \leq \tau^2_{\sched_i}(b_{j(i)}) + 1
     \mid b_{j(i)},
-\theta \right) (1 - \psens) \\
-&= \left( S_\theta(\tau_{\sched_i}(b_{j(i)}) + 1) - S_\theta(\tau^2_{\sched_i}(b_{j(i)}) + 1) \right) (1 - \psens).
+\vec{\theta} \right) (1 - \psens) \\
+&= \left( S_{\vec{\theta}}(\tau_{\sched_i}(b_{j(i)}) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b_{j(i)}) + 1) \right) (1 - \psens).
 \end{align}
 Integrating over $b_{j(i)}$ for $\min \sched_i < b_{j(i)} \leq T$ ($T$ being the last day of the period considered), in the same way as \cref{perf-test:eq:piu}, gives:
 \begin{align}
-\eta = (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_\theta(\tau_{\sched_i}(b) + 1) - S_\theta(\tau^2_{\sched_i}(b) + 1) \right).
+\eta = (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1) \right).
 \end{align}
 
 Denote the replacement for $p_{iu}$ as $p_{iu}'$.
-$p_{iu}'$ is the probability of episode $i$ being missed, considering both the mechanisms from \cref{E-perf-test} and the new mechanism here.
+$p_{iu}'$ is the probability of episode $i$ being undetected, considering both the mechanisms from \cref{E-perf-test} and the new mechanism here.
 These mechanisms are mutually exclusive.
 Hence, $p_{iu}'$ is the sum of these, $p_{iu}' = p_{iu} + \eta$.
 For the posterior density, \cref{E-perf-test:eq:full-posterior}, $1 - p_{iu}'$ is the required quantity.
 \begin{align}
 1 - p_{iu}'
-&= 1 - p_{iu} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_\theta(\tau_{\sched_i}(b) + 1) - S_\theta(\tau^2_{\sched_i}(b) + 1) \right) \\
-&= \frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( p_\text{sens} S_\theta(\tau_{\sched_i}(b) + 1) + (1 - p_\text{sens}) S_\theta(\tau^2_{\sched_i}(b) + 1)\right).
+&= 1 - p_{iu} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1) \right) \\
+&= \frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( p_\text{sens} S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) + (1 - p_\text{sens}) S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1)\right).
 \label{imperf-test:eq:pit-prime}
 \end{align}
 
@@ -305,7 +305,7 @@ Next, I considered the consequence of $\psens$ being misspecified, I use the mod
 If the test sensitivity is misspecified, that is the assumed value for $p_\text{sens}$ in \cref{imperf-test:eq:pit-prime,imperf-test:eq:pit-prime} is different to the value used in the simulation, then the survival time will be biased (see \cref{imperf-test:fig:misspecified-test-sensitivity}).
 If $\psens$ is misspecified and too low (see \cref{imperf-test:fig:misspecified-test-sensitivity}(A)), then the posterior estimate initially follows the true value but then separates.
 The number of episodes inferred to have truly ended by the first negative is too high, and hence the survival time is overestimated.
-This effect dominates over the opposing bias of overestimating the number of missed episodes.
+This effect dominates over the opposing bias of overestimating the number of undetected episodes.
 The opposite occurs if the test sensitivity is assumed to be too high, although the posterior moves away from the truth earlier (see \cref{imperf-test:fig:misspecified-test-sensitivity}(C)).
 \begin{figure}
   % \makebox[\textwidth][c]{
@@ -365,7 +365,7 @@ The estimate using a test sensitivity of 0.8 and $\NBc(\mu\inform, r\inform)$ gi
     (A-C) Sensitivity of CIS estimates to the value of $r$, the dispersion of the prior for $\ntot$ (a larger $r$ means a more informative prior) when $\psens = 0.8$.
     (D-F) Sensitivity of CIS estimates to the value of $\psens$ when $r = r\inform$.
     A and D: median survival time, in comparison to the ATACCC-based estimate of \cref{E-ATACCC} (shown in red).
-    B and E: survival at day 50, $S_\theta(50)$.
+    B and E: survival at day 50, $S_{\vec{\theta}}(50)$.
     C and F: full survival curves out to day 100.
   }
   \label{imperf-test:fig:cis-sensitivity}
@@ -396,7 +396,7 @@ An informative prior on $\ntot$ is required is for the bulk of the distribution 
 In the simulation study, the uninformative prior on $\ntot$ performed well, even when the test sensitivity was misspecified.
 A possible explanation is that the true changes in the test sensitivity is significantly different to the function in \cref{imperf-test:eq:variable-test-sensitivity}.
 In particular, the test sensitivity for long episodes may become much lower than 50\%.
-This allows many more episodes to be missed than the model assumes, and hence a higher $\ntot$ is required to explain the data.
+This allows many more episodes to be undetected than the model assumes, and hence a higher $\ntot$ is required to explain the data.
 Furthermore, it violates assumptions made in \cref{imperf-test:sec:modelling}; this is similar to when the simulating using a too low test sensitivity.
 Violating these assumptions would lead to unpredictable inference results, perhaps those seen here.
 
@@ -409,7 +409,7 @@ Therefore, considering the viral dynamics from \cref{E-ATACCC}, the viral load w
 Estimating the test sensitivity excluding intermittent negatives is not possible because \cref{imperf-test:eq:pia-prime-constant,imperf-test:eq:pit-prime} are both monotonically decreasing in $\psens$; therefore, the likelihood always favours $\psens = 0$ (\ie no true positives).
 This aligns with the situation with singly interval censored, untruncated data, when stopping at the first observed time of the terminating event (which may be misclassified) means that the test sensitivity cannot be estimated~\autocite[e.g.]{titmanMisclassify}.
 
-Estimating a time-varying $\psens$ with $S_\theta$ jointly may cause identifiability issues.
+Estimating a time-varying $\psens$ with $S_{\vec{\theta}}$ jointly may cause identifiability issues.
 Previous studies have avoided issues by including external information (such as a prior giving the magnitude) on $\psens$, or test results from later follow-up~\autocite[and references therein]{piresIntervalMisclassify}.
 However, these studies use a constant $\psens$.
 Whether these methods are sufficient for the model to be identifiable with a time-varying $\psens$ needs further investigation.
@@ -422,8 +422,8 @@ Prevalence was fairly constant over the period I chose, suggesting the same is t
 Additionally, some simulations exploring the results of changing incidence suggested this would not have a large effect on the results (not shown).
 
 % However, comparing the CIS and simulated datasets do not show any differences which suggest what in the data is causing these differences.
-% Then, the additional missed infections implied by a 
-% This would lead to more missed infections than the model assumes, and hence a higher $\ntot$ is required to explain the data.
+% Then, the additional undetected infections implied by a 
+% This would lead to more undetected infections than the model assumes, and hence a higher $\ntot$ is required to explain the data.
 
 \section{Conclusion} \label{imperf-test:sec:conclusion}
 

@@ -12,7 +12,7 @@
 \usepackage[nameinlink]{cleveref}
 \usepackage[style=british]{csquotes}
 \usepackage[T1]{fontenc}
-\usepackage{hyperref}
+\usepackage[unicode,psdextra]{hyperref}
 \usepackage{textcomp} % provide symbols
 \usepackage[disable]{todonotes}
 \usepackage{xr}
@@ -73,7 +73,7 @@
 \DeclareMathOperator{\expit}{expit}
 \newcommand\matr{\bm}
 \newcommand\set{\mathcal}
-\renewcommand{\vec}{\bm}
+\renewcommand{\vec}[1]{\bm{#1}}
 \newcommand{\ssep}{:}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
@@ -87,7 +87,7 @@
 \newcommand{\Npop}{N_\text{pop}}
 \newcommand{\Ncis}{N_\text{CIS}}
 \newcommand{\ncis}{\vec{n_\text{CIS}}}
-\newcommand{\na}{\vec{n_\text{a}}}
+\newcommand{\na}{\vec{n}_\text{a}}
 \newcommand{\pcis}{\vec{p_\text{CIS}}}
 \newcommand{\sched}{\mathbb{T}}
 \newcommand{\nsched}{n_{\sched}}
@@ -110,12 +110,14 @@
 % \keywords{one two three}
 
 %% Submission date :
-\submissiondate{March 2024}
+\newcommand{\textdate}{March 2024}
+\submissiondate{\textdate}
 
 %% You can redefine the submission notice [optional]:
+% For some reason the submission notice breaks if I just use \submissiondate
 \submissionnotice{%
     This thesis is submitted for the degree of \\ \emph{Doctor of Philosophy} \\
-    March 2024
+    \textdate
 }
 
 % Only number labelled equations
@@ -186,7 +188,40 @@
 \myexternaldocument{thesis}
 
 \abstract{%
-    \todo[inline]{Write Abstract}
+    Surveillance is a crucial component to a pandemic response, informing public health and wider policy.
+    Unfortunately, it is often subject to reporting and behavioural biases, reducing its robustness.
+    % During the SARS-CoV-2 epidemic, the UK government funded two large-scale prevalence surveys with samples recruited randomly from the general population.
+    % One of these, the CIS (Coronavirus Infection Survey), was a longitudinal survey run from April 2020 to March 2023.
+    The CIS (Coronavirus Infection Survey) was a large-scale prevalence survey with participants recruited randomly from the general population, therefore avoiding these issues.
+
+    In this thesis, I consider how to best use the CIS data for surveillance.
+    %, can be used for surveillance to perform more robust inference.
+    In particular, I consider the estimation of incidence (the number of new infections) and transmission (where infections are occurring) in England.
+
+    This relies on knowledge of the duration of positivity (how long individuals test positive for).
+    Therefore, I first consider how to estimate the distribution of this duration in the general population.
+    I extend a pre-existing model of how an individual's viral load changes over time to estimate the duration of positivity.
+    % I take two complementary approaches using different datasets.
+    % This model is fitted to data from a longitudinal study of contacts of individuals with confirmed SARS-CoV-2 infection.
+    % In \cref{ATACCC}, I extend a pre-existing model of how an individual's viral load changes over time to estimate the duration of positivity.
+    % This model is fitted to data from the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study, a longitudinal study of viral load in contacts of individuals with confirmed SARS-CoV-2 infection.
+    I use this detailed model to exploit frequent (daily) sampling of individuals in a cohort of contact traced individuals.
+    However, the cohort was small and follow-up short meaning that the tail of the duration distribution is poorly estimated.
+
+    % Therefore, in \cref{perf-test,imperf-test}, I combine the information from ATACCC with the larger CIS dataset.
+    % I analyse the CIS in a survival analysis framework.
+    Therefore, I combine the information with the larger and longer CIS dataset.
+    The CIS data poses several challenges because it is double interval censored and some individuals in the cohort have infections that are never detected.
+    I apply a survival analysis framework to analyse this data, which had previously only been in simpler settings.
+    In addition, I develop novel methodology to incorporate false negatives into the framework.
+    % The results showed that false negatives in the CIS data needed to be included in the model.
+    % In \cref{imperf-test} I develop a novel methodology to do so.
+    This results in an estimate of the full duration distribution in the general population, not previously available.
+
+    Finally, I use this estimate to estimate the incidence and transmission of SARS-CoV-2 in England.
+    I fully propagate the sampling error, accurately include the shape of the duration distribution, and estimate the quantities by age; previous work lacked at least one of these.
+    Furthermore, I fit to only the CIS data, showing that such a survey is adequate to estimate these quantities.
+    % without requiring an evidence synthesis approach previously used.
 }
 
 \acknowledgements{%

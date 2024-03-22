@@ -130,7 +130,9 @@
     \RequirePackage[
         pdfpagelabels=false,
         pdfborder={0 0 0},
-        pdfusetitle=true
+        pdfusetitle=true,
+        unicode,
+        psdextra
     ]{hyperref}
 \else
     \RequirePackage[
@@ -138,7 +140,9 @@
         pdfpagelabels=true,
         colorlinks=false,
         pdfborder={0 0 0},
-        pdfusetitle=true
+        pdfusetitle=true,
+        unicode,
+        psdextra
     ]{hyperref}
 \fi
 \RequirePackage[all]{hypcap}        % Fixes links to floats (must be included after hyperref).
@@ -487,12 +491,12 @@ This thesis is the result of my own work and includes nothing which is the outco
 I further state that no substantial part of my thesis has already been submitted, or, is being concurrently submitted for any such degree, diploma or other qualification at the University of Cambridge or any other University or similar institution except as declared in the Preface and specified in the text.
 It does not exceed the prescribed word limit for the relevant Degree Committee.
 
-% Leaving some space for the signature:
-\vspace{15mm}
 
 \begin{flushright}
 \@author{}\\
-\@date{}\\
+\ifcam@submissiondate
+    \@submissiondate{}\\
+\fi
 \end{flushright}
 \vfill
 \fi
@@ -519,11 +523,10 @@ It does not exceed the prescribed word limit for the relevant Degree Committee.
 % Cambridge thesis submission guidelines require the title and author be in the abstract.
 % For more info see https://www.cambridgestudents.cam.ac.uk/your-course/examinations/graduate-exam-information/after-examination/degree-approval-and-1
 \textbf{\large \@title}
-\par\vspace{0.3cm}
+\par\vspace{0.1cm}
 \noindent\textit{\@author}
-\par\vspace{0.6cm}
-
-\@abstract{}
+\par\vspace{0.3cm}
+\noindent\@abstract{}
 \fi
 
 

@@ -5,7 +5,9 @@
 \chapter{INLA} \label{transmission:sec:INLA}
 
 
-INLA (Integrated Nested Laplace Approximation) is a method for approximate Bayesian inference.
+INLA (Integrated Nested Laplace Approximation) is a method for approximate Bayesian inference for LGMs (latent Gaussian models).
+LGMs are a broad class of models, including all generalised linear mixed models and generalised linear additive mixed models, as well as many more complex models.
+
 It was introduced by \textcite{rueINLA}.
 This appendix is based on that paper, as well as the seminar \textcite{rueINLAseminar} and the tutorial paper \textcite{martinoINLAtutorial}.
 
@@ -13,17 +15,65 @@ The standard implementation of INLA is the R-INLA package~\autocite{RINLA}.
 
 \section{Latent Gaussian model}
 
-INLA requires a LGM (latent Gaussian model).
-An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $\pi(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j \pi(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
+An LGM is a model for a series of observations $\vec{y} = [y_1, \dots, y_n]^T$.
+Each observation has an associated linear predictor $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
+The linear predictor and, optionally, some hyperparameters $\vec{\theta}$ give the conditional independence structure:
+\begin{align}
+    \pi(\vec{y} \mid \vec{\eta}, \vec{\theta}) = \prod_{i=1}^n \pi(y_i \mid \eta_i, \vec{\theta}).
+\end{align}
+Such a structure is familiar from linear regression models which have $\vec{\eta} = \matr{X} \vec{\beta}$, where $\matr{X}$ is the design matrix and $\vec{\beta}$ are the coefficients; $\vec{\theta}$ is one-dimensional; and $\pi(y_i \mid \eta_i, \vec{\theta})$ is the normal distribution with mean $\eta_i$ and standard deviation $\theta$.
+
+An LGM introduces a latent field $\vec{x}$ with a multivariate Gaussian distribution (hence the name):
+\begin{align}
+    \vec{x} \mid \vec{\theta} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\theta}))
+\end{align}
+where $\Sigma(\vec{\theta})$ is the covariance matrix formed as a deterministic transformation of the hyperparameters.
+The linear predictors must be able to be expressed as a linear transformation of the latent field, \ie $\vec{\eta} = \matr{A} \vec{x}$ for some pre-specified matrix $\matr{A}$.
+For the linear regression model, $\matr{A} = \matr{X}$, $\vec{x} = \vec{\beta}$, and $\matr{\Sigma}(\vec{\theta})$ would be a fixed diagonal matrix specifying the prior on the regression coefficients.
+In the (generalised) linear model case $\vec{\theta}$ is fixed; however, LGMs allow an arbitrary prior distribution on $\vec{\theta}$ which means that some elements of $\vec{x}$ can be random effects (or more complex structures).
+
+In summary, the full specification of an LGM is:
+\begin{align}
+    \vec{\theta} &\dist \pi(\vec{\theta}) \\
+    \vec{x} \mid \vec{\theta} &\dist \N(\vec{0}, \matr{\Sigma}(\vec{\theta})) \\
+    \vec{\eta} &= \matr{A} \vec{x} \\
+    \pi(\vec{y} \mid \vec{\eta}, \vec{\theta}) &= \prod_{i=1}^n \pi(y_i \mid \eta_i, \vec{\theta})
+\end{align}
+where $\pi(\vec{\theta})$ is an arbitrary prior distribution on the hyperparameters.
+
+% An LGM is defined in terms of a vector of hyperparameters, $\vec{\varphi}$; a deterministic transformation of the hyperparameters into covariance matrix, $\matr{\Sigma}(\vec{\varphi})$; a vector of latent variables, $\vec{x}$; a vector of $n$ data points, $\vec{y} = [y_1, \dots, y_n]^T$; and $n$ linear predictors $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
+% To be an LGM, $\vec{x}$ must be a latent Gaussian field, that is $\vec{x} \mid \vec{\varphi} \dist \N(\vec{0}, \matr{\Sigma}(\vec{\varphi}))$; and the likelihood must have the conditional independence property $\pi(\vec{y} \mid \vec{\varphi}, \vec{x}) = \prod_j \pi(y_j \mid \eta_j(\vec{x}), \vec{\varphi})$.
 % The Gaussian structure allows the use of the approximations in \cref{transmission:sec:INLA:inference}.
 % The conditional independence structure means that the precision matrix, $\matr{Q} = \matr{\Sigma}^{-1}$, is sparse.
 
-For INLA to perform well, \ie be compuutationally efficient and an accurate approximation, $\vec{\theta}$ should be of low dimension, \textcite{martinoINLAtutorial} recommend $< 15$; and the precision matrix, $\matr{Q}$, should be sparse.
+For INLA to perform well, \ie be compuutationally efficient and an accurate approximation, $\vec{\theta}$ should be of low dimension (\textcite{martinoINLAtutorial} recommend $< 15$); and the precision matrix, $\matr{\Sigma}^{-1}$, should be sparse.
+However, the dimension of $\vec{x}$ is unrestricted, allowing a large number of random effects, or more complex structures.
 The low dimensionality of $\vec{\theta}$ is because the method requires numerical integration over it.
-The sparsity of $\matr{Q}$ allows for efficient computation.
+The sparsity of $\matr{\Sigma}^{-1}$ allows for efficient computation.
 Sparsity is introduced by conditional independence structures of the latent field that are present in many models.
 For example, in the classic random effect setting, all random effects are independent conditional on the hyperparameters.
+
+% \subsection{Application}
+
+% Next, I explain why the inference-inferred approach proposed in \cref{backcalc:sec:approach} cannot be expressed as an LGM.
+% In this context, each $i$ refers to a specific stratum and day combination.
+% The number of positive test results in this stratum and day is $y_i$.
+% $\eta_i$ is the population prevalence in this stratum on this day.
+% Hence, $y_i \mid \eta_i, \rho \dist \BB(n_i, \eta_i, \rho)$ where $\rho$ is a hyperparameter (in $\vec{\theta}$) determining the overdispersion of the beta-binomial distribution and $n_i$ is the number of .
+
+% In this context, each $w_j$ corresponds to the observed RT-PCR results in one stratum on one day.
+% Hence, $\eta_{j}$ must determine the distribution of $w_{j}$ (up to some hyperparameters); where $j$ uniquely identifies a stratum $i$ and day $t$.
+
+% In practice, this means that $\eta_j$ is a one-to-one transformation of the population prevalence in stratum $i$ on day $t$.
+% If $\eta_j = \logit(\pi_{i,t})$, where $\pi$ is prevalence, then a model of $\eta_j = g(i, t)$, as before, is an LGM.
+% However, if $\pi$ is instead representing incidence proportion, then no such linear relationship between $\eta_j$ and $g$ exists.
+% In particular, if $\eta_j$ is the prevalence, then:
+% \begin{align}
+%     \eta_{i,t}
+%     &= \sum_{k=-\infty}^0 \pi_{ik} S(k) \\
+%     &= \sum_{k=-\infty}^0 \expit(g(i, k)) S(k).
+% \end{align}
+% As $g(i, k)$ is linear in the model parameters, $\vec{z}$, then $\eta_{i,t}$ is not, violating the requirements of an LGM.
 
 \section{Inference procedure} \label{transmission:sec:INLA:inference}
 
@@ -53,9 +103,9 @@ Hence, the approximate posterior density of the hyperparameters is known.
 Finally, the marginal posterior density of $x_i$ is found by integrating over $\vec{\theta}$:
 \begin{align}
 \pi(x_i \mid \vec{y})
-&\approx \int \pi(x_i \mid \vec{\theta}, \vec{y}) \tilde\pi(\vec{\theta} \mid \vec{y}) d\vec{\theta}.
+&\approx \int \pi(x_i \mid \vec{\theta}, \vec{y}) \tilde\pi(\vec{\theta} \mid \vec{y}) d\vec{\theta}
 \end{align}
-which can be computed using numerical integration over $\tilde\pi(\vec{\theta} \mid \vec{y})$, previously calculated.
+computed using numerical integration.
 
 \subsection{Non-Gaussian likelihood}
 
@@ -64,9 +114,11 @@ The density $\pi(\vec{x}, \vec{y} \mid \vec{\theta})$ is not Gaussian, but still
 However, $\vec{x} \mid \vec{y}, \vec{\theta}$ is not Gaussian, and its density is not known.
 
 INLA assumes that $\vec{x} \mid \vec{y}, \vec{\theta}$ is approximately Gaussian, and therefore takes a Laplace approximation to the distribution.
-The greater the smoothing, the better the approximation.
-This is because, if $\vec{x} \mid \vec{y}, \vec{\theta}$ is then dominated by the prior $\vec{x} \mid \vec{\theta}$ and the prior is Gaussian.
+The approximation then proceeds as before.
 Exploiting the structure of the problem, in particular the conditional independence structure, the Laplace approximation can be computed efficiently.
+
+The greater the smoothing, the better the Laplace approximation.
+This is because, if $\vec{x} \mid \vec{y}, \vec{\theta}$ is then dominated by the prior $\vec{x} \mid \vec{\theta}$ and the prior is Gaussian.
 
 \section{Drawing from the posterior} \label{transmission:sec:INLA:posterior}
 
