@@ -150,115 +150,120 @@ A mixture of these scenarios forms the episode's likelihood contribution, with t
 Similar likelihoods have previously appeared in the literature~\autocite[e.g.][eq.\ (2)]{piresIntervalMisclassify}.
 However, this prior work was for singly interval censored data; incorporating the double interval censored nature of the CIS data will involve summing over the possible episode start times.
 
-I start by finding the tests that need consideration.
-For tractability and simplicity, I consider only tests between the negative tests providing an upper bound on the length of the episode.
-By definition (see \cref{E-biology-data:sec:cis-episodes}), these are the tests between $l_{j(i)}^{(b)} - 1$ and $r_{j(i)}^{(e)} + 1$ inclusive.
-They are a subset of $\sched_i$, the set of test times for the individual in which episode $i$ occurs.
+I start by finding the tests that need consideration for episode $j$.
+For tractability and simplicity, I consider only tests between the negative tests providing an upper bound on the length of episode $j$.
+By definition (see \cref{E-biology-data:sec:cis-episodes}), these are the tests in individual $i(j)$ between $l_j^{(b)} - 1$ and $r_j^{(e)} + 1$ inclusive.
 
-For tractability, assume that the negative test bounding the start of the episode, on day $l_{j(i)}^{(b)}-1$, is a true negative.
-This assumption is reasonable because, since a positive test follows at $r_{j(i)}^{(b)}$, the negative at $l_{j(i)}^{(b)}-1$ is likely early in the infection and the test sensitivity is high early in an infection.
+For tractability, assume that the negative test bounding the start of the episode, on day $l_j^{(b)}-1$, is a true negative.
+This assumption is reasonable because, since a positive test follows at $r_j^{(b)}$, the negative at $l_j^{(b)}-1$ is likely early in the infection and the test sensitivity is high early in an infection.
 Therefore, this is unlikely to be a false negative because, if the individual was detectable at this time, they are in a period with high test sensitivity.
-This true negative occurs with probability 1, and hence does not contribute to the likelihood.
-Denote the remaining tests considered as $\sched'_i = \{ t \in \sched_i \ssep r_{j(i)}^{(b)} \leq t \leq r_{j(i)}^{(e)} + 1 \}$, and their results by $\vec{y_{j(i)}} = \{ y_{j(i)}(t) \ssep t \in \sched'_i \}$ where $y_{j(i)}(t) = 1$ if the test on day $t$ is positive and 0 otherwise.
+True negatives occur with probability 1, and hence this test does not contribute to the likelihood.
 
-As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_{j(i)}, l^{(e)}_{j(i)}]$ because it starts and ends with a positive test.
-This includes all $t \in \sched'_i$ except $t = r_{j(i)}^{(e)}+1$.
-Therefore, the test results at times in $\sched_i'$, except the test at $r_{j(i)}^{(e)}+1$, are either true positives or false negatives.
+Denote the set of the remaining test times to consider as $\sched'_{i(j)}$.
+$\sched'_{i(j)}$ is the set of times individual $i(j)$ was tested between $l_j^{(b)}$ and $r_j^{(e)} + 1$ inclusive.
+Denote their results by $\vec{y}_j = \{ y_{i(j)}(t) \ssep t \in \sched'_{i(j)} \}$ where $y_{i(j)}(t) = 1$ if the test on day $t$ in individual $i(j)$ is positive and 0 otherwise.
 
-Consider the negative test at $r_{j(i)}^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
-It is a false negative if and only if the episode ends after the test, \ie $e_{j(i)} > r_{j(i)}^{(e)}$.
-I proceed by considering whether this is the case and considering the case with $b_{j(i)}$ known; $b_{j(i)}$ will later be integrated out.
+As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_j, l^{(e)}_j]$, because this period starts and ends with a positive test.
+This includes all $t \in \sched'_{i(j)}$ except $t = r_j^{(e)}+1$.
+Therefore, the test results $\vec{y}_j$, except the test at $r_j^{(e)}+1$, are either true positives or false negatives.
 
-First, if $e_{j(i)} \leq r_{j(i)}^{(e)}$, meaning that the test at $r_{j(i)}^{(e)}+1$ is a true negative and the end of the episode is interval censored as in the previous chapter.
-% In this case, the test at $r_{j(i)}^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_i$.
+Consider the negative test at $r_j^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
+It is a false negative if and only if the episode ends after the test, \ie $E_j > r_j^{(e)}$.
+I proceed by considering whether this is the case and with $B_j = b$ known.
+
+First, if $E_j \leq r_j^{(e)}$, meaning that the test at $r_j^{(e)}+1$ is a true negative and the end of the episode is interval censored as in the previous chapter.
+% In this case, the test at $r_j^{(e)} + 1$ is a true negative, as are all other tests not in $\sched'_{i(j)}$.
 The true negative occurs with probability 1, by the assumption of no false positives.
 \begin{align}
-&p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
-&= p(\vec{y_{j(i)}}, l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\ % &\text{as no false positives}
-&= p(\vec{y_{j(i)}} \mid l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) p(l_{j(i)}^{(e)} \leq e_{j(i)} \leq r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right)
+&\prob(\vec{y_j}, E_j \leq r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \\
+&= \prob(\vec{y_j}, l_j^{(e)} \leq E_j \leq r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \\ % &\text{as no false positives}
+&= \prob(\vec{y_j} \mid l_j^{(e)} \leq E_j \leq r_j^{(e)}, B_j = b, p_\text{sens}, \vec{\theta}) \prob(l_j^{(e)} \leq E_j \leq r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \\
+&= \left( \prod_{t \in \sched'_{i(j)}} p_\text{sens}^{y_{i(j)}(t)} (1 - p_\text{sens})^{(1 - y_{i(j)}(t))} \right) \left( S_{\vec{\theta}}(l_j^{(e)} - b + 1) - S_{\vec{\theta}}(r_j^{(e)} - b + 2) \right)
 \label{imperf-test:eq:ll-ei-lt-ri}
 \end{align}
 
-Second, if $e_{j(i)} > r_{j(i)}^{(e)}$.
-In this case, the test at $r_{j(i)}^{(e)}$ is a false negative, occurring with probability $(1 - p_\text{sens})$.
-To avoid having to consider tests after $r_{j(i)}^{(e)}$, which could greatly complicate the likelihood, I model this case as the episode being right censored at $r_{j(i)}^{(e)}$.
+Second, if $E_j > r_j^{(e)}$.
+In this case, the test at $r_j^{(e)}$ is a false negative, occurring with probability $(1 - p_\text{sens})$.
+To avoid having to consider tests after $r_j^{(e)}$, which could greatly complicate the likelihood, I model this case as the episode being right censored at $r_j^{(e)}$.
 Taking the same approach as before:
 \begin{align}
-&p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} | b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
-&= p(\vec{y_{j(i)}} \mid e_{j(i)} > r_{j(i)}^{(e)}, t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) p(e_{j(i)} > r_{j(i)}^{(e)} | t_i, b_{j(i)}, p_\text{sens}, \vec{\theta}) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) (1 - p_\text{sens}) S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1)
+&\prob(\vec{y_j}, E_j > r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \\
+&= \prob(\vec{y_j} \mid E_j > r_j^{(e)}, B_j = b, p_\text{sens}, \vec{\theta}) \prob(E_j > r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \\
+&= \left( \prod_{t \in \sched'_{i(j)}} p_\text{sens}^{y_{i(j)}(t)} (1 - p_\text{sens})^{(1 - y_{i(j)}(t))} \right) (1 - p_\text{sens}) S_{\vec{\theta}}(r_j^{(e)} - b_j + 2)
 \label{imperf-test:eq:ll-ei-gt-ri}
 \end{align}
 
-These expressions can now be used to form the full replacement for $p_{ia}$, $p'_{ia}$, the likelihood of the data $\vec{y_{j(i)}}$.
-First, augment the data with $b_{j(i)}$, and split into the cases just discussed:
+These expressions can now be used to form the full replacement for $p_{ia}$, $p'_{ia}$, the likelihood of the data $\vec{y_j}$.
+First, augment the data with $b_j$, and split into the cases just discussed:
 \begin{align}
 p_{ia}'
-&= p(\vec{y_{j(i)}} \mid p_\text{sens}, \vec{\theta}) \\
-&= \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( p(\vec{y_{j(i)}}, e_{j(i)} \leq r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \vec{\theta}) + p(\vec{y_{j(i)}}, e_{j(i)} > r_{j(i)}^{(e)} \mid b_{j(i)}, p_\text{sens}, \vec{\theta}) \right) p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}).
-\intertext{Now, substitute in \cref{imperf-test:eq:ll-ei-lt-ri,imperf-test:eq:ll-ei-gt-ri}, then take out the common factor:}
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) + (1 - p_\text{sens}) S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) \\ & \ \times p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}) \\
-&= \left( \prod_{t \in \sched'_i} p_\text{sens}^{y_{j(i)}(t)} (1 - p_\text{sens})^{(1 - y_{j(i)}(t))} \right) \\ & \ \times \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1) \right) p(b_{j(i)} \mid p_\text{sens}, \vec{\theta}).
+=& \prob(\vec{y_j} \mid p_\text{sens}, \vec{\theta}) \\
+=& \sum_{b = l_j^{(b)}}^{r_j^{(b)}} \left( \prob(\vec{y_j}, E_j \leq r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) + \prob(\vec{y_j}, E_j > r_j^{(e)} \mid B_j = b, p_\text{sens}, \vec{\theta}) \right) \\
+  &\times \prob(B_j = b \mid p_\text{sens}, \vec{\theta}).
+\intertext{Now, substitute in \cref{imperf-test:eq:ll-ei-lt-ri,imperf-test:eq:ll-ei-gt-ri} and take out the common factor:}
+=& \left( \prod_{t \in \sched'_{i(j)}} p_\text{sens}^{y_{i(j)}(t)} (1 - p_\text{sens})^{(1 - y_{i(j)}(t))} \right) \\ & \ \times \sum_{b = l_j^{(b)}}^{r_j^{(b)}} \left( S_{\vec{\theta}}(l_j^{(e)} - b + 1) - S_{\vec{\theta}}(r_j^{(e)} - b + 2) + (1 - p_\text{sens}) S_{\vec{\theta}}(r_j^{(e)} - b + 2) \right) \\ 
+  & \times \prob(B_j = b \mid p_\text{sens}, \vec{\theta}) \\
+=& \left( \prod_{t \in \sched'_{i(j)}} p_\text{sens}^{y_{i(j)}(t)} (1 - p_\text{sens})^{(1 - y_{i(j)}(t))} \right) \\
+  & \times \sum_{b_j = l_j^{(b)}}^{r_j^{(b)}} \left( S_{\vec{\theta}}(l_j^{(e)} - b_j + 1) - p_\text{sens} S_{\vec{\theta}}(r_j^{(e)} - b_j + 2) \right) \\
+  & \times \prob(B_j = b \mid p_\text{sens}, \vec{\theta}).
 \label{imperf-test:eq:pia-prime}
 \end{align}
 Note that if $p_\text{sens} = 1$ then $p_{ia}' = p_{ia}$.
 
-If $\psens$ is fixed (\ie has a point prior) and $p(b_{j(i)} \mid \psens, \vec{\theta}) \propto 1$ (as assumed in \cref{E-perf-test}) then:
+If $\psens$ is fixed (\ie has a point prior) and $p(b_j \mid \psens, \vec{\theta}) \propto 1$ (as assumed in \cref{E-perf-test}) then:
 \begin{align}
 p_{ia}'
-&\propto \sum_{b_{j(i)} = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} S_{\vec{\theta}}(l_{j(i)}^{(e)} - b_{j(i)} - 1) - p_\text{sens} S_{\vec{\theta}}(r_{j(i)}^{(e)} - b_{j(i)} - 1).
+&\propto \sum_{b = l_j^{(b)}}^{r_j^{(b)}} S_{\vec{\theta}}(l_j^{(e)} - b_j + 1) - p_\text{sens} S_{\vec{\theta}}(r_j^{(e)} - b + 2).
 \label{imperf-test:eq:pia-prime-constant}
 \end{align}
 
 \subsection{Modifying \texorpdfstring{$p_{iu}$}{piu}} \label{imperf-test:sec:modifying-p_iu}
 
-Several mechanisms for episodes being undetected were considered when deriving $p_{iu}$ in \cref{perf-test:eq:piu}.
+Several mechanisms for episodes being undetected were considered when deriving $p_{iu}$ in \cref{E-perf-test:sec:prob-undetected}.
 I now consider the additional mechanisms arising due to false negatives.
-Specifically, episode $i$ could be undetected if the first test after the $b_{j(i)}$, episode $i$'s start day, is a false negative and then there are no subsequent positive tests.
+Specifically, episode $j$ could be undetected if the first test after $b_j$ is a false negative and then there are no subsequent positive tests.
 
-This false negative would occur at the first test after the infection episode begins, on day $b_{j(i)} + \tau_{\sched_i}(b_{j(i)})$ (see \cref{E-perf-test:sec:model}).
+This false negative would occur at the first test after the infection episode begins, on day $b_j + \tau_{\sched_{i(j)}}(b_j)$ (see \cref{E-perf-test:sec:prob-undetected}).
 A false negative occurring requires that the episode has not yet ended but a negative still occurs.
-The episode has not yet ended at the time of the test if $e_{j(i)} = b_{j(i)} + d_i - 1$ is after the test, that is the duration of the infection $d_i > \tau_{\sched_i}(b_{j(i)})$.
+The episode has not yet ended at the time of the test if $e_j = b_j + d_j - 1$ is after the test, that is the duration of the infection $d_j > \tau_{\sched_{i(j)}}(b_j)$.
 Conditional on the episode having not yet ended, the test result is negative with probability $1 - \psens$.
 
-For there to be no subsequent positive tests, all tests up until day $e_{j(i)}$ are false negatives.
+For there to be no subsequent positive tests, all tests up until day $e_j$ are false negatives.
 I assume there is a negligible probability of two false negatives.
 Therefore, this can only occur if the episode ends before another test.
-Denote the number of days between $b_{j(i)}$ and the test following the false negative as $\tau^2_{\sched_i}(b_{j(i)}) \stackrel{\text{def}}{=} \tau_{\sched_i}(\tau_{\sched_i}(b_{j(i)}) + 1)$.
-Then, the episode ends before this test if $d_i < \tau^2_{\sched_i}(b_{j(i)})$.
+Denote the number of days between $b_j$ and the test following the false negative as $\tau^2_{\sched_{i(j)}}(b_j) \stackrel{\text{def}}{=} \tau_{\sched_{i(j)}}(\tau_{\sched_{i(j)}}(b_j) + 1)$.
+Then, the episode ends before this test if $d_j < \tau^2_{\sched_{i(j)}}(b_j)$.
 
-Therefore, this mechanism causes episode $i$ to be undetected if all the following conditions hold.
+Therefore, this mechanism causes episode $j$ to be undetected if all the following conditions hold.
 \begin{enumerate}
-    \item The episode would have been detected considering only the mechanisms in \cref{perf-test:eq:piu}. That is $b_{j(i)} > \min(\sched_i)$ and $\tau_{\sched_i}(b_{j(i)}) + b_{j(i)} \leq e_{j(i)}$.
-    \item The episode ends in the interval $[\tau_{\sched_i}(b_{j(i)}) + b_{j(i)}, \tau^2_{\sched_i}(b_{j(i)}) + b_{j(i)}]$.
-      Note that the lower bound here is exactly the bound on $e_{j(i)}$ in the previous condition.
-      Equivalently, $\tau_{\sched_i}(b_{j(i)}) + 1 \leq d_i \leq \tau^2_{\sched_i}(b_{j(i)}) + 1$.
-    \item A false negative occurs on day $\tau_{\sched_i}(b_{j(i)}) + b_{j(i)}$. Conditional on the previous condition, this occurs with probability $1 - \psens$.
+    \item The episode would have been detected considering only the mechanisms in \cref{E-perf-test:sec:prob-undetected}. That is $b_j > \min(\sched_{i(j)})$ and $e_j \geq \tau_{\sched_{i(j)}}(b_j) + b_j$.
+    \item The episode ends in the interval $[\tau_{\sched_{i(j)}}(b_j) + b_j, \tau^2_{\sched_{i(j)}}(b_j) + b_j]$.
+      Note that the lower bound here is exactly the bound on $e_j$ in the previous condition.
+      Equivalently, $\tau_{\sched_{i(j)}}(b_j) + 1 \leq d_j \leq \tau^2_{\sched_{i(j)}}(b_j) + 1$.
+    \item A false negative occurs on day $\tau_{\sched_{i(j)}}(b_j) + b_j$. Conditional on the previous condition, this occurs with probability $1 - \psens$.
 \end{enumerate}
 
-The probability of this occurring, conditional on $B_{j(i)} = b_{j(i)} > \min(\sched_i)$ is:
+The probability of this occurring, conditional on $B_j = b_j > \min(\sched_{i(j)})$ is:
 \begin{align}
 &\prob \left(
-    \tau_{\sched_i}(b_{j(i)}) + 1 \leq D_i \leq \tau^2_{\sched_i}(b_{j(i)}) + 1
-    \mid b_{j(i)},
-\vec{\theta} \right) (1 - \psens) \\
-&= \left( S_{\vec{\theta}}(\tau_{\sched_i}(b_{j(i)}) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b_{j(i)}) + 1) \right) (1 - \psens).
+    \tau_{\sched_{i(j)}}(b_j) + 1 \leq D_j \leq \tau^2_{\sched_{i(j)}}(b_j) + 1
+    \mid B_j = b, \vec{\theta} \right) (1 - \psens) \\
+&= \left( S_{\vec{\theta}}(\tau_{\sched_{i(j)}}(b_j) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_{i(j)}}(b_j) + 1) \right) (1 - \psens).
 \end{align}
-Integrating over $b_{j(i)}$ for $\min \sched_i < b_{j(i)} \leq T$ ($T$ being the last day of the period considered), in the same way as \cref{perf-test:eq:piu}, gives:
+Summing over $b_j$ for $\min \sched_{i(j)} < b_j \leq T$ ($T$ being the last day of the period considered), in the same way as \cref{perf-test:eq:piu}, gives:
 \begin{align}
-\eta = (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1) \right).
+\zeta = (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_{i(j)}) + 1}^T \left( S_{\vec{\theta}}(\tau_{\sched_{i(j)}}(b) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_{i(j)}}(b) + 1) \right).
 \end{align}
 
 Denote the replacement for $p_{iu}$ as $p_{iu}'$.
 $p_{iu}'$ is the probability of episode $i$ being undetected, considering both the mechanisms from \cref{E-perf-test} and the new mechanism here.
 These mechanisms are mutually exclusive.
-Hence, $p_{iu}'$ is the sum of these, $p_{iu}' = p_{iu} + \eta$.
+Hence, $p_{iu}'$ is the sum of these, $p_{iu}' = p_{iu} + \zeta$.
 For the posterior density, \cref{E-perf-test:eq:full-posterior}, $1 - p_{iu}'$ is the required quantity.
 \begin{align}
 1 - p_{iu}'
-&= 1 - p_{iu} - (1 - p_\text{sens})\frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) - S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1) \right) \\
-&= \frac{1}{T} \sum_{b=\min(\sched_i) + 1}^T \left( p_\text{sens} S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1) + (1 - p_\text{sens}) S_{\vec{\theta}}(\tau^2_{\sched_i}(b) + 1)\right).
+&= 1 - p_{iu} - \zeta \\
+&= \frac{1}{T} \sum_{b=\min(\sched_{i(j)}) + 1}^T \left( p_\text{sens} S_{\vec{\theta}}(\tau_{\sched_{i(j)}}(b) + 1) + (1 - p_\text{sens}) S_{\vec{\theta}}(\tau^2_{\sched_{i(j)}}(b) + 1)\right).
 \label{imperf-test:eq:pit-prime}
 \end{align}
 
@@ -271,7 +276,7 @@ Here, I modify the simulation study in \cref{E-perf-test:sec:simulation-study} t
 First, the ability to identify the survival function even with false negatives.
 Second, the impact of misspecifying $\psens$, such as the assumption that it is constant.
 Finally, the impact of the simplifying assumptions made in \cref{imperf-test:sec:modelling} for tractability.
-These assumptions are that the negative at $l^{(b)}_i - 1$ is a true negative and that there is a negligible probability of missing an episode due to two false negatives.
+These assumptions are that the negative at $l^{(b)}_j - 1$ is a true negative and that there is a negligible probability of missing an episode due to two false negatives.
 
 I simulate datasets under four conditions: a constant $\psens$ of 0.6, 0.8, or 1.0 (the latter being the same as the simulated data in \cref{E-perf-test:sec:simulation-study}), or the varying test sensitivity model proposed at the end of \cref{imperf-test:sec:simulate}.
 The simulation is otherwise unchanged from that in \cref{E-perf-test:sec:simulation-study}.

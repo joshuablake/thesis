@@ -390,8 +390,8 @@ p_{ia}
    &\times\prob \left( l_{j}^{(b)} \leq B_{j} \leq r_{j}^{(b)} \right) \\
 =& \sum_{b = l_{j}^{(l)}}^{r_{j}^{(b)}} \prob \left( l_{j}^{(e)} \leq E_{j} \leq r_{j}^{(e)} \mid B_{j} = b \right) \prob \left(B_{j} = b \right) \\
 =& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \prob \left( l_{j}^{(e)} - b + 1 \leq D_{j} \leq r_{j}^{(e)} - b + 1 \right) \prob \left(B_{j} = b \right) &\text{by def of $D_{j}$} \\
-=& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \left( S_{\vec{\theta}}(l_{j}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j}^{(e)} - b + 1) \right) \prob \left(B_{j} = b \right) &\text{by def of $S_{\vec{\theta}}$} \\
-\propto& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \left( S_{\vec{\theta}}(l_{j}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j}^{(e)} - b + 1) \right)
+=& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \left( S_{\vec{\theta}}(l_{j}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j}^{(e)} - b + 2) \right) \prob \left(B_{j} = b \right) &\text{by def of $S_{\vec{\theta}}$} \\
+\propto& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \left( S_{\vec{\theta}}(l_{j}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j}^{(e)} - b + 2) \right)
 \end{align}
 under the assumption of uniform probability of infection time.
 This is the standard form of the likelihood for doubly interval censored data without truncation.
