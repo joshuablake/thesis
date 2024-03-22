@@ -532,18 +532,16 @@ I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$
 \subsection{Model combination priors} \label{perf-test:sec:informative-priors}
 
 The information from \cref{E-ATACCC} can be incorporated through the prior.
-This is desirable because the ATACCC study frequently sampled individuals early in the infection.
-Therefore, \cref{E-ATACCC}'s estimate of the survival distribution in the early infection period should be reliable.
-In the later infection period, the ATACCC study has fewer observations and hence the estimates are less reliable.
-CIS can inform the posterior in this region.
+This is desirable because the ATACCC study frequently sampled individuals for around the first 20 days of their infection.
+Therefore, the first 20 days of \cref{E-ATACCC}'s estimate of the survival distribution is reliable.
+The CIS data can then inform the posterior after this point.
 
 When constructing the prior, two aspects need consideration.
 Firstly, the model structure from \cref{E-ATACCC} leads to positive correlation in the posterior estimates of the hazard, which should be propagated into this analysis.
 That is, the prior used in this analysis cannot be independent across the hazards.
-Secondly, the uncertainty in the estimates from \cref{E-ATACCC} is underestimated.
-The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates beyond the data using strong model assumptions (see \cref{E-ATACCC:sec:discussion}).
+Secondly, the uncertainty in the estimates from \cref{E-ATACCC} is underestimated because it extrapolates beyond the data using strong model assumptions (see \cref{E-ATACCC:sec:discussion}).
 %Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
-I form the prior for the combination in two steps.
+I form the prior to include this prior information into the CIS analysis two steps.
 
 I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as $\logit{\vec{h}} \dist \MNorm(\vec{\mu}_A, \matr{\Sigma}_A)$ where $\vec{h}$ is the posterior distribution of the hazards, and $\vec{\mu}_A$ and $\matr{\Sigma}_A$ are the mean and covariance matrix computed from the samples of $\logit{\vec{h}}$ derived using the method of \cref{ATACCC:sec:duration}.
 Using a multivariate normal, as opposed to multiple univariate distribution for each $h_t$, preserves the correlation between the hazards.
