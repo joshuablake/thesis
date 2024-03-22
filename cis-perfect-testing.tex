@@ -394,7 +394,7 @@ p_{ia}
 \propto& \sum_{b = l_{j}^{(b)}}^{r_{j}^{(b)}} \left( S_{\vec{\theta}}(l_{j}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j}^{(e)} - b + 2) \right)
 \end{align}
 under the assumption of uniform probability of infection time.
-This is the standard form of the likelihood for doubly interval censored data without truncation.
+This is the standard form of the likelihood for doubly interval censored data without truncation~\autocite[e.g.][]{sunEmpirical}.
 
 \subsection{Undetected probability} \label{perf-test:sec:prob-undetected}
 
@@ -504,8 +504,8 @@ This prior gives a very vague prior predictive distribution on the survival time
 
 \subsection{Smoothing priors}
 
-Smoothing priors encode the biological consideration that the hazard should not vary significantly from day-to-day.
-It is the Bayesian equivalent of a penalized likelihood, which is used frequently in the non-parametric frequentist setting~\autocite[e.g.][]{bacchettiNonparametric}.
+Smoothing priors~\autocite{gerschSmoothness} encode the biological consideration that the hazard should not vary significantly from day-to-day.
+They serve the same purpose as a penalized likelihood, which is used frequently in the non-parametric maximum-likelihood setting~\autocite[e.g.][]{bacchettiNonparametric}.
 Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
 I use a second-order random walk (RW2) because it is simple and produces sensible prior predictive distributions.
 
@@ -522,7 +522,7 @@ Formally:
   \logit \lambda_1 &\dist \N(\mu_{\lambda_1}, \sigma_{\lambda_1}^2) \\
   \sigma &\dist \Exponential(1/\mu_\sigma).
 \end{align}
-The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ the prior on the initial gradient; and $\mu_\sigma$ represents the smoothness of the random walk.
+The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ specify the prior on the initial gradient, $\lambda_2 - \lambda_1$; and $\mu_\sigma$ specifies the smoothness of the random walk.
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/rw2-prior}
@@ -545,11 +545,9 @@ The additional uncertainty is because the \cref{E-ATACCC} analysis extrapolates 
 %Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
 I form the prior for the combination in two steps.
 
-I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as a multivariate normal on the logit scale.
-This can be viewed as an approximation of Markov melding~\autocite{goudieJoining}.
-Using a multivariate normal, as opposed to multiple univariate distribution preserves the correlation between the hazards.
+I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as $\logit{\vec{h}} \dist \MNorm(\vec{\mu}_A, \matr{\Sigma}_A)$ where $\vec{h}$ is the posterior distribution of the hazards, and $\vec{\mu}_A$ and $\matr{\Sigma}_A$ are the mean and covariance matrix computed from the samples of $\logit{\vec{h}}$ derived using the method of \cref{ATACCC:sec:duration}.
+Using a multivariate normal, as opposed to multiple univariate distribution for each $h_t$, preserves the correlation between the hazards.
 The logit transformation maps from the $[0, 1]$ interval to the full real line.
-To estimate the parameters of the multivariate normal, I use the method of moments.
 The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazard} and \cref{perf-test:fig:approximate-ATACCC-survival}).
 \begin{figure}
   \thisfloatpagestyle{empty}
@@ -566,11 +564,12 @@ Having approximated the estimate as a multivariate normal, I add additional unce
 The discrete Beta process prior generalises the form of prior used in \cref{perf-test:sec:independent-priors} by allowing the central estimate of the hazard to vary over time~\autocite{ibrahimBayesian,sunStatisticala}.
 It is:
 \begin{align}
-  \lambda_t &\sim \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
+  \logit \vec{h} &\dist \MNorm(\vec{\mu}_A, \matr{\Sigma}_A) \\
+  \lambda_t &\dist \text{Beta}(\alpha_t, \beta_t) &t = 1, 2, \dots \\
   \alpha_t &= k_t h_t + \alpha_0 \\
   \beta_t &= k_t (1 - h_t) + \beta_0
 \end{align}
-where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is a point estimate of the hazard at time $t$ from ATACCC.
+where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and $h_t$ is an estimate of the hazard at time $t$ from ATACCC.
 An intuition for what this distribution represents derives from a conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
 If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
 
