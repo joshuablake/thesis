@@ -9,10 +9,10 @@
 % \item
 %   We assume that, for all episodes $i$, $D_i$ is iid and independent
 %   of the time of the infection. Define the survival function
-%   $\prob(D_i \geq t \mid B_{j(i)} = b, \theta) = \prob(D_i \geq t \mid \theta) = S_\theta(t)$,
-%   where $\theta$ are the parameters controlling the survival
+%   $\prob(D_i \geq t \mid B_{j(i)} = b, \vec{\theta}) = \prob(D_i \geq t \mid \vec{\theta}) = S_{\vec{\theta}}(t)$,
+%   where $\vec{\theta}$ are the parameters controlling the survival
 %   distribution (the discussion in this document is valid regardless of
-%   the model specified for $S_\theta$ and hence we consider $\theta$
+%   the model specified for $S_{\vec{\theta}}$ and hence we consider $\vec{\theta}$
 %   as an arbitrary vector of parameters).
 % \item
 %   The beginning of episode $i$ is known to occur in the interval
@@ -205,17 +205,17 @@ Each episode, whether detected or not, must fall into one of these three classes
   Admissible episodes, $\alpha_i$, which have an infection and recovery time consistent with the data observed.
   This space is empty for $i \notin \set{D}$; in this case, $n_{ia} = 0$ admissible episodes occurred in individuals with test schedule $\sched_i$.
   Otherwise, if $i \in \set{D}$ then $n_{ia} =1$ admissible episode occurred in an individual with test schedule $\sched_{i}$.
-  Conditional on the episode occurring in individuals with test schedule $\sched_i$, the episode is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \theta)$.
+  Conditional on the episode occurring in individual $i$, the episode is admissible with probability $p_{ia} = \prob((b, e) \in \alpha_i \mid \vec{\theta})$.
   \label{perf-test:def:admissible}
 \item
   Undetected episodes, $\Omega_i$, which have an infection and recovery time such that they would not have tested positive.
   An unknown number, $n_{iu}$ of these occur in individuals with test schedule $\sched_i$.
-  Conditional on the episode occurring in individuals with test schedule $\sched_i$, the episode is undetected with probability $p_{iu} = \prob((b, e) \in \Omega_i \mid \theta)$.
+  Conditional on the episode occurring in individuals with test schedule $\sched_i$, the episode is undetected with probability $p_{iu} = \prob((b, e) \in \Omega_i \mid \vec{\theta})$.
 \item
   Inadmissible episodes, $\beta_i$, which are not consistent with the data observed but would have been
   detected.
   These are all remaining episodes not in the previous sets, with $n_{i\bar{a}} = 0$ of these occurred in any individuals with test schedule $\sched_i$.
-  Conditional on the episode occurring in these individuals, the episode inadmissible with probability $p_{i\bar{a}} = \prob((b, e) \in \beta_i \mid \theta)$.
+  Conditional on the episode occurring in these individuals, the episode inadmissible with probability $p_{i\bar{a}} = \prob((b, e) \in \beta_i \mid \vec{\theta})$.
 \end{itemize}
 
 \begin{figure}
@@ -303,18 +303,18 @@ Hence:
 
 Substituting this into \cref{perf-test:eq:full-posterior} gives:
 \begin{align}
-p(\theta \mid \na)
-&\propto p(\theta) \left( \prod_{i \in \set{D}} p_{ia} \right) (r + \mu (1- \pnodet))^{-(r+\ndet)} \label{perf-test:eq:full-posterior-simplified}.
+p(\vec{\theta} \mid \na)
+&\propto p(\vec{\theta}) \left( \prod_{i \in \set{D}} p_{ia} \right) (r + \mu (1- \pnodet))^{-(r+\ndet)} \label{perf-test:eq:full-posterior-simplified}.
 \end{align}
 
 % $\ntot$ is generally a nuisance parameter, however, its posterior distribution can be useful for diagnostic purposes (as in X\todo{ref where I use this in the next chapter}).
-% Its posterior can be reconstructed using a posterior sample of $\theta$.
-% For each posterior sample of $\theta$, sample from the full conditional of $\ntot$ to give the joint posterior of $\ntot$ and $\theta$.
+% Its posterior can be reconstructed using a posterior sample of $\vec{\theta}$.
+% For each posterior sample of $\vec{\theta}$, sample from the full conditional of $\ntot$ to give the joint posterior of $\ntot$ and $\vec{\theta}$.
 % The full conditional of $\ntot$ is given by:
 % \begin{align}
-% p(n_\text{tot} \mid \ncis, \theta)
-% &\propto p(\ntot \mid \theta) p(\ncis \mid \theta, \ntot) \\
-% &\propto p(\ntot \mid \theta) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} &\text{by \cref{perf-test:eq:augmented-likelihood}} \\
+% p(n_\text{tot} \mid \ncis, \vec{\theta})
+% &\propto p(\ntot \mid \vec{\theta}) p(\ncis \mid \vec{\theta}, \ntot) \\
+% &\propto p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} &\text{by \cref{perf-test:eq:augmented-likelihood}} \\
 % &\propto \frac{\Gamma(r + \ntot)}{\ntot!} \left( \frac{\mu}{r + \mu} \right)^{\ntot} \frac{\ntot!}{(\ntot-\ndet)!} \pnodet^{\ntot} \\
 % &= \frac{\Gamma(r + \ntot)}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot}  \\
 % &= \frac{\Gamma((r + \ndet) + (\ntot- \ndet))}{(\ntot-\ndet)!} \left( \frac{\mu \pnodet}{r + \mu} \right)^{\ntot-\ndet}.
@@ -325,23 +325,23 @@ p(\theta \mid \na)
 Next, I derive $p_{ia}$.
 By definition (see~\cpageref{perf-test:def:admissible}), we have, for any $i \in \set{D}$:
 \begin{align}
-p_{ia} =& \prob((b, e) \in \alpha_i \mid \theta) \\
+p_{ia} =& \prob((b, e) \in \alpha_i \mid \vec{\theta}) \\
 \alpha_i =& \{ (b, e) : l_{j(i)}^{(b)} \leq b \leq r_{j(i)}^{(b)} \wedge l_{j(i)}^{(e)} \leq e \leq r_{j(i)}^{(e)}\}.
-\intertext{Omitting the conditioning on $\theta$, this gives:}
+\intertext{Omitting the conditioning on $\vec{\theta}$, this gives:}
 p_{ia}
 =& \prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)}, l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \right) \\
 =& \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \\
    &\times\prob \left( l_{j(i)}^{(b)} \leq B_{j(i)} \leq r_{j(i)}^{(b)} \right) \\
 =& \sum_{b = l_{j(i)}^{(l)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} \leq E_{j(i)} \leq r_{j(i)}^{(e)} \mid B_{j(i)} = b \right) \prob \left(B_{j(i)} = b \right) \\
 =& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} - b + 1 \leq D_{j(i)} \leq r_{j(i)}^{(e)} - b + 1 \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $D_{j(i)}$} \\
-=& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $S_\theta$} \\
-\propto& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_\theta(l_{j(i)}^{(e)} - b + 1) - S_\theta(r_{j(i)}^{(e)} - b + 1) \right)
+=& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b + 1) \right) \prob \left(B_{j(i)} = b \right) &\text{by def of $S_{\vec{\theta}}$} \\
+\propto& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b + 1) \right)
 \end{align}
 under the assumption of uniform probability of infection time.
 This is the standard form of the likelihood for doubly interval censored data with truncation.
 
 The next step is to derive $1 - p_u = 1 - \frac{1}{N} \sum_{i=1}^{\nsched} p_{iu} = \frac{1}{N} \sum_{i=1}^{\nsched} (1 - p_{iu})$.
-Therefore, the crucial component is $1 - p_{iu} = 1 - \prob((B_{j(i)}, E_{j(i)}) \in \Omega_i \mid \theta)$, one minus the probability that episode $i$ was undetected.
+Therefore, the crucial component is $1 - p_{iu} = 1 - \prob((B_{j(i)}, E_{j(i)}) \in \Omega_i \mid \vec{\theta})$, one minus the probability that episode $i$ was undetected.
 An episode is undetected if and only if no tests are performed during the episode or if there was no negative test prior to the episode.
 Equivalently, that the first test at or after $b$ is after $e$, or that there is no negative test prior to $b$.
 To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
@@ -352,23 +352,23 @@ Then $\Omega_i$ can be written as:
 \begin{align}
 \Omega_i = \{ (b, e) \ssep \tau_{\sched_i}(b) + b > e \vee b \leq \min(\sched_i) \}.
 \end{align}
-Therefore, suppressing the conditioning on $\theta$:
+Therefore, suppressing the conditioning on $\vec{\theta}$:
 \begin{align}
 1 - p_{iu}
 &= 1 - \prob((B_{j(i)}, E_{j(i)}) \in \Omega_i) \\
 &= 1 - \prob( \tau_{\sched_i}(B_{j(i)}) + B_{j(i)} > E_{j(i)} \vee B_{j(i)} \leq \min(\sched_i) ) \\
 &= 1 - \prob( \tau_{\sched_i}(B_{j(i)}) + 1 > D_i , B_{j(i)} > \min(\sched_i) )  - \prob( B_{j(i)} \leq \min(\sched_i) ) \\
 &= 1 - \sum_{b={\min\sched_i} + 1}^T \prob( \tau_{\sched_i}(b) + 1> D_i) \prob(B_{j(i)} = b) - \sum_{t=1}^{\min\sched_i} \prob(B_{j(i)} = b)\\
-&= 1 - \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T (1 - S_\theta(\tau_{\sched_i}(b) + 1)) - \frac{1}{T} \min\sched_i \\
-&= \frac{1}{T} \left(T - \sum_{b=\min\sched_i+1}^T (1 - S_\theta(\tau_{\sched_i}(b) + 1)) - \min\sched_i \right) \\
-&= \frac{1}{T} \left(T - (T - \min\sched_i) + \sum_{b=\min\sched_i+1}^T S_\theta(\tau_{\sched_i}(b + 1)) - \min\sched_i \right) \\
-&= \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T S_\theta(\tau_{\sched_i}(b) + 1). \label{perf-test:eq:piu}
+&= 1 - \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T (1 - S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1)) - \frac{1}{T} \min\sched_i \\
+&= \frac{1}{T} \left(T - \sum_{b=\min\sched_i+1}^T (1 - S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1)) - \min\sched_i \right) \\
+&= \frac{1}{T} \left(T - (T - \min\sched_i) + \sum_{b=\min\sched_i+1}^T S_{\vec{\theta}}(\tau_{\sched_i}(b + 1)) - \min\sched_i \right) \\
+&= \frac{1}{T} \sum_{b=\min(\sched_i)+1}^T S_{\vec{\theta}}(\tau_{\sched_i}(b) + 1). \label{perf-test:eq:piu}
 \end{align}
 
 
 \section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
-In this section I specify the form of $S_\theta(t)$.
+In this section I specify the form of $S_{\vec{\theta}}(t)$.
 % As frequently observed in the literature~\autocite[e.g.][]{heBayesian}, it is more convenient to operate with the hazard than the survival or probability mass function directly.
 % The mass function must sum to one.
 % The survival must be monotonically decreasing
