@@ -40,7 +40,7 @@ plot = ggplot() +
         ),
         labels = c(
             "Admissible" = "Admissible, α",
-            "Undetected" = bquote("Undetected, Ω"^C),
+            "Undetected" = "Undetected, Ω",
             "Impossible" = "Impossible",
             "Inadmissible" = "Inadmissible, β"
         )
