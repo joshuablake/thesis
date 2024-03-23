@@ -174,7 +174,7 @@ SEIR/sim/data.pdf: SEIR/sim/data.R utils.R transmission/utils.R SEIR/utils.R SEI
 transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf: transmission/backcalc-regions.R transmission/outputs/region.rds utils.R
 	Rscript $<
 
-transmission/backcalc-ages.pdf: transmission/backcalc-ages.R transmission/outputs/age.rds utils.R
+transmission/backcalc-ages.pdf: transmission/backcalc-ages.R transmission/outputs/age.rds transmission/utils.R utils.R
 	Rscript $<
 
 transmission/backcalc-start-effect.pdf: transmission/backcalc-start-effect.R transmission/outputs/region.rds utils.R

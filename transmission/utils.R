@@ -19,9 +19,17 @@ normalise_region_names = function(in_names) {
 
 normalise_age_groups = function(in_names) {
     paste0("[", stringr::str_sub(in_names, 2, -2), ")") |>
-        stringr::str_replace(stringr::fixed("[1,"), "[0,") |>
         stringr::str_replace(stringr::fixed("+"), "Inf") |>
-        stringr::str_replace(stringr::fixed(", "), ",")
+        stringr::str_replace(stringr::fixed(", "), ",") |>
+        stringr::str_replace(stringr::fixed("[1,"), "[0,") |>
+        dplyr::case_match(
+            "[0,11)" ~ "0–11",
+            "[11,16)" ~ "12–16",
+            "[16,25)" ~ "17–25",
+            "[25,50)" ~ "26–50",
+            "[50,70)" ~ "51–70",
+            "[70,Inf)" ~ "71+",
+        )
 }
 
 load_poststrat_table = function() {

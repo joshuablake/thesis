@@ -239,9 +239,9 @@ A second peak occurs in late December or early January in all regions; this seco
     \label{transmission:fig:backcalc-alpha}
 \end{figure}
 
-The incidence proportion was highest among the 11--15 and 16--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
-Except the 16--25 age group, all age groups show similar trends (\ie parallel lines on a log scale), meaning there was insufficient information in the data to overcome the prior which favoured this situation.
-The incidence proportion in the 16--25 age group decreases faster than other age groups during November.
+The incidence proportion was highest among the 12--16 and 17--25 age groups throughout the period (see \cref{transmission:fig:backcalc-ages}).
+Except the 17--25 age group, all age groups show similar trends (\ie parallel lines on a log scale), meaning there was insufficient information in the data to overcome the prior which favoured this situation.
+The incidence proportion in the 17--25 age group decreases faster than other age groups during November.
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
 Alternatively, it could be a consequence of schools remaining open in the November lockdown; 20--24 year olds rarely interact with school-aged children (see \cref{E-SEIR:fig:age-contacts})
@@ -296,7 +296,7 @@ In common with \cref{E-SEIR:sec:mechanistic-models}, the notation in this sectio
 \subsection{Methods} \label{SEIR:sec:methods-application}
 
 % The model will be stratified only by region and age group, so the data are aggregated to these levels.
-% Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole $[0, 11)$ age group.
+% Only individuals aged two or older are eligible to participate in the CIS; I assume that test results in all participants aged under 11 are still representative of the whole 0--11 age group.
 
 I model each region fully independently, \ie with no shared parameters or transmission between regions.
 As well as the motivation given in \cref{E-backcalc}, independent regions allow heterogeneity in the parameters between regions, which could arise from a range of socioeconomic factors.
@@ -517,7 +517,7 @@ I approximated the posterior of this proportion with a beta distribution to form
 
 \centering
 \begin{tabular}{l|lllll}
-         & $[0,16)$ & $[16,25)$ & $[25,50)$ & $[50,70)$ & $[70,\infty)$ \\
+         & 0--11 & 12--16 & 17--25 & 26--50 & 71+ \\
         \hline
         East Midlands & $\BetaDist(8.5, 301)$ & $\BetaDist(18, 256)$ & $\BetaDist(19, 475)$ & $\BetaDist(20, 493)$ & $\BetaDist(5, 337)$ \\
         East of England & $\BetaDist(7.9, 236)$ & $\BetaDist(21, 248)$ & $\BetaDist(35, 677)$ & $\BetaDist(26, 613)$ & $\BetaDist(5.6, 332)$ \\
@@ -722,7 +722,7 @@ The lack of identifiability for $\vec{\pi}$ aligns with previous work showing th
 
 \subsection{Application to CIS data} \label{SEIR:sec:application}
 
-The 11--16 age group (roughly corresponding to compulsory secondary school education) is estimated to have the highest incidence (see \cref{SEIR:fig:incidence}).
+The 12--16 age group (roughly corresponding to compulsory secondary school education) is estimated to have the highest incidence (see \cref{SEIR:fig:incidence}).
 Incidence is smooth within each week but shows discontinuities between weeks.
 This is because the parameters within $\matr{\beta}(t)$ are constant within each week.
 A constant $\matr{\beta}(t)$ would lead to exponential growth following a period of transitory dynamics, although the weekly switching may mean that these transitory dynamics never end, especially when incidence is high~\autocite{rhodesConvergence}.
@@ -760,7 +760,7 @@ Correlation is clear across the regions even though each region is estimated ind
 
 The \emph{attack rate} is the proportion of the population that have been infected at least once.
 In this model it is $1 - \vec{s}$, the proportion susceptible at the time the study ends.
-The attack rate is highest in the $[11, 16)$ age group in the North West at 68\% (95\% CrI: 66--70\%) (see \cref{SEIR:fig:attack-rates}).
+The attack rate is highest in the 12--16 age group in the North West at 68\% (95\% CrI: 66--70\%) (see \cref{SEIR:fig:attack-rates}).
 Some of these infections occurred prior to the period covered by this study; during the period of this study 23\% (95\% CrI: 21--24\%) of the population in the North West aged 11--16 was infected.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/attack_rates}}
@@ -771,7 +771,7 @@ Some of these infections occurred prior to the period covered by this study; dur
 
 Overall, the model fits the data well (see \cref{SEIR:fig:prev,SEIR:fig:prev-appendix}).
 There are a few features of the data which are not captured by the model and the posterior estimate appears to be a compromise with the prevalence too low in one age group and too high in another.
-For example, in the North East region, the 11--16 age group has its prevalence overestimated in October but the 16--25 age group has its prevalence underestimated.
+For example, in the North East region, the 12--16 age group has its prevalence overestimated in October but the 17--25 age group has its prevalence underestimated.
 \begin{figure}
     % \thisfloatpagestyle{empty}
     % \vspace{-3cm}
@@ -829,7 +829,7 @@ These correlations could be exploited to improve the precision of estimates with
 The current model could be more flexible with regards to the age distribution of infections.
 This would better exploit one of the strengths of the CIS: the availability of data  on all age groups.
 In some regions, there appears to be a trade-off between under and overfitting in different age groups (see \cref{SEIR:fig:prev}).
-For example, in the North East, most of the data points in the $[11, 16)$ age group are below the median posterior estimate, while most of the data points in the $[16, 25)$ age group are above the median posterior estimate.
+For example, in the North East, most of the data points in the 12--16 age group are below the median posterior estimate, while most of the data points in the 17--25 age group are above the median posterior estimate.
 This implies that the data would allow identification of a more flexible age-based model.
 
 Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $q_c$.
@@ -890,7 +890,7 @@ To incorporate a more flexible model, and reduce its bias, a more efficient infe
 Many of these issues are clearly demonstrated by the estimates for the North East (see \cref{transmission:fig:compare-NE}).
 I previously observed the quality of the SEIR model's fit is variable between different age groups (see \cref{SEIR:fig:prev,SEIR:fig:prev-appendix}).
 This is because the model is not flexible enough to capture the true age distribution of infections.
-The overestimation of prevalence in the 11--16 age group and underestimation in the 16--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
+The overestimation of prevalence in the 12--16 age group and underestimation in the 17--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
 \begin{figure}
     \centering \includegraphics{transmission/compare-NE}
     \caption[Comparing each models estimate of North East incidence by age.]{%
