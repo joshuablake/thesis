@@ -30,23 +30,23 @@ Duration distributions tend to be right-skewed.
 Therefore, estimates of the mean would be sensitive to the tail of the duration distribution.
 
 In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset.
-However, this study suffered from a small sample size and only 20 days of follow-up, preventing accurate estimation of the tail.
-Therefore, model assumptions drive the size of the estimated tail.
+However, this study had a small sample size and only 20 days of follow-up, which prevented accurate estimation of the tail.
+Therefore, model assumptions drive the estimated size of the tail.
 
-The CIS sampling is less frequent, but with has a large sample size (\numprint{4800} detected infection episodes) and a long follow-up.
+The CIS samples individuals less frequently, but has a large sample size (\numprint{4800} detected infection episodes) and up to years of follow-up.
 Therefore, it is suitable for estimating the tail of the duration distribution.
-In this chapter, I develop a method to estimate the duration distribution using CIS data, assuming no false negatives or positives.
-Formally, I aim to estimate the survival function $S$ defined in \cref{inc-prev:sec:definitions}.
+In this chapter, I develop a method to estimate the duration distribution using CIS data, assuming the test ??? has perfect sensitivity and specificity, {\it i.e.} there are no false negatives or positives.
+Formally, I aim to estimate the survival function $S(t)$ defined in \cref{inc-prev:sec:definitions}.
 
 In \cref{perf-test:sec:problem}, I describe the challenges analysing the data presents.
 This motivates using a survival analysis framework which I introduce in \cref{perf-test:sec:surv-analysis}, before deriving the statistical model for the CIS setting in \cref{perf-test:sec:model}.
-Next, in \cref{perf-test:sec:parameters-priors}, I consider how to parameterize the survival function and choose priors; these include vague and smoothing priors as well as including information from \cref{E-ATACCC}.
+In \cref{perf-test:sec:parameters-priors}, I consider how to parameterize the survival function and choose its priors, including vague and smoothing priors as well as a prior constructed to include the information from \cref{E-ATACCC}.
 I evaluate the model and priors using a simulation study (\cref{perf-test:sec:simulation-study}), showing that they perform well.
 Finally, I discuss the results in \cref{perf-test:sec:discussion}.
 
 \section{Problem description} \label{perf-test:sec:problem}
 
-The CIS tests each individual infrequently, either weekly or monthly (see \cref{E-intro:sec:cis}), complicating the data in two ways.
+In the CIS, individuals are tested infrequently, either weekly or monthly (see \cref{E-intro:sec:cis}), complicating the data in two ways.
 First, infection episodes can go undetected.
 Second, the infection episode start and end times are known imprecisely.
 I explain these issues below, and devote the rest of the chapter to the development of a method to tackle  them.
@@ -61,10 +61,10 @@ Undetected episodes are important because they are, on average, shorter than det
 To see why this is the case, consider the infection episode in figure \cref{perf-test:fig:truncation}.
 Here two individuals are shown, with identical data collected for each of them (a series of negative
 tests).
-The fist individual was never infected whereas the second individual was; the latter is an undetected infection. 
+The fist individual was never infected whereas the second individual was; but their infection episode was undetected.
 The undetected infection episode begins at time 33 and has a 10-day duration.
 The individual would have been detected at their next test if their duration had instead been 24 days or more.
-The gap between tests in the CIS (up to 28 days, see \cref{E-intro:sec:cis}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
+The gap between tests in the CIS (up to 28 days, see \cref{E-intro:sec:cis}) is longer than the duration of most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
 Therefore, it is likely that many infection in the CIS cohort were undetected.
 This is because the interval between tests in the same individual (up to 28 days, see \cref{E-intro:sec:cis}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
 \begin{figure}
@@ -74,7 +74,7 @@ This is because the interval between tests in the same individual (up to 28 days
 
 \subsection{Unobserved times for each episode's beginning and end} \label{perf-test:sec:interval-censoring}
 
-The second complication is that the beginning and end times of detected infection episodes is latent.
+The second complication is that the beginning and end times of detected infection episodes are latent.
 Recall, from \cref{E-biology-data:sec:cis-episodes}, that the time episode $j$ starts, $b_j$, is only known to lie in the interval $[l_j^{(b)}, r_j^{(b)}]$ where $l_j^{(b)}$ is the day after the negative test prior to the start of episode $j$ and $r_j^{(b)}$ is the first positive test in episode $j$.
 Similarly, for the end of the infection episode, $e_j \in [l_j^{(e)}, r_j^{(e)}]$.
 \Cref{perf-test:fig:double-interval-censor} shows this issue graphically.
@@ -90,23 +90,23 @@ Similarly, for the end of the infection episode, $e_j \in [l_j^{(e)}, r_j^{(e)}]
 \section{Survival analysis} \label{perf-test:sec:surv-analysis}
 
 In survival analysis, the interest is in estimating the distribution of the interval between an \emph{initiating event} and a \emph{terminating event}.
-In this context, the initiating event is the episode's start; the terminating event is the episode's end.
+In the current context, the initiating event is the episode's start; the terminating event is the episode's end.
 I start by introducing the relevant, standard concepts in survival analysis; a wide range of texts cover them including \textcite[chapter 1]{bogaertsSurvival}.
 
 A common issue is that the initiating and/or terminating events are not known exactly.
 This is known as the event being \emph{censored}.
-An event is \emph{left censored} if it is known to occur before a certain time.
-An event is \emph{right censored} if it is known to occur after a certain time.
-An event is \emph{interval censored} if it is known to occur within an interval.
-If both the initiating and terminating event are censored, the data are \emph{doubly censored}.
-To handle doubly censored data, the times need to be jointly modelled~\autocite[and references therein]{liSemiparametric}.
-If both events are interval censored then the data are \emph{doubly interval censored}.
+An event is \emph{left censored} if it is known to have occurred before a certain time.
+An event is \emph{right censored} if it is known to have occurred after a certain time.
+An event is \emph{interval censored} if it is known to have occurred within an interval.
+If both the initiating and terminating event are interval censored, the data are \emph{doubly interval censored}.
+To handle doubly interval censored data, the times need to be jointly modelled~\autocite[and references therein]{liSemiparametric}.
 
+Another important concepts typical of survival data is truncation, which refers to ...?
 Sometimes, only intervals satisfying some property are recorded.
 In this case, data are \emph{truncated}.
 \emph{Left truncation} is when only events lasting longer than a minimum amount of time are observed.
 \emph{Right truncation} is when only events lasting shorter than a maximum amount of time are observed.
-Without correcting for the truncation, inference will be biased.
+Without correcting for truncation, inference on the distribution of a duration will be biased.
 
 In the CIS data, the initiating and terminating events are only bounded (see \cref{perf-test:sec:interval-censoring}).
 Therefore, the data are doubly interval censored.
@@ -116,7 +116,7 @@ However, the situation is subtly different from the standard truncation situatio
 In the standard situation, nothing is known about the unrecorded intervals.
 But in CIS, individuals in which undetected infections occurred are enrolled in the study.
 Therefore, we know the times that they were tested.
-This provides information on how long their infections may have been.
+This provides information on how long their infections may have occurred.
 I refer to these events as ``undetected'', rather than truncated, to emphasise this difference.
 
 \Textcite{sunAnalysis,bogaertsSurvival} review methods for doubly interval censored data.
@@ -129,7 +129,7 @@ These studies base their inference on a likelihood contribution for each detecte
 For this conditional likelihood to be valid, they assume this conditioning provides negligible information on the distribution of interest~\citePersonalComms{Nick Jewell}.
 This assumption performs well in these settings, when the length of the intervals is fairly constant.
 In particular, when the interval lengths are near-constant, $p(\text{episode $j$ detected} \mid b_j \in [l_j^{(b)}, r_j^{(b)}]) \approx p(\text{episode $j$ detected})$.
-However, the interval lengths change from one to four weeks in the CIS (see \cref{E-intro:sec:cis}).
+However, in the CIS (see \cref{E-intro:sec:cis}) the interval lengths change from one to four weeks.
 
 Infection episodes in an individual's one-week testing period are over-represented in the detected infections.
 This is because more frequent testing will detect a higher proportion of infections.

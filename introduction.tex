@@ -5,6 +5,7 @@
 \chapter{Introduction} \label{intro}
 
 COVID-19 (coronavirus disease 2019), the disease caused by the virus SARS-CoV-2 (severe acute respiratory syndrome coronavirus 2), is estimated to have killed approximately 15 million in the most acute phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
+
 History suggests severe pandemics are not rare (see \cref{intro:fig:pandemic-timeline}).
 \begin{figure}
     \includegraphics[width=\textwidth]{introduction/pandemic-timeline}
@@ -67,7 +68,7 @@ However, their intuitive simplicity and convenient properties in simple epidemic
 Reproduction numbers are strongly connected to \emph{growth rates}.
 Over short periods of time, epidemics tend to grow (or shrink) exponentially, and hence have an exponential growth rate, normally denoted $r$.
 For a given disease and population, an analogous growth rate can be defined for each definition of the reproduction number~\autocite{pellisEstimation,paragGrowthRates,wallingaGI}.
-The advantage of using the growth rate it is easier to estimate and captures how quickly spread happens in calendar time; however, they do not directly give the strength of intervention required to control the epidemic~\autocite{royalSocietyRnumber}.
+The advantages of using the growth rates are that they are easier to estimate and capture how quickly spread happens in calendar time; however, they do not directly give the strength of intervention required to control the epidemic~\autocite{royalSocietyRnumber}.
 
 \subsection{Size of an epidemic}
 
@@ -85,27 +86,27 @@ The components of transmission (\eg the number of contacts each individual makes
 They are also important for forecasting future incidence.
 
 \emph{Prevalence} is the proportion of the population with the disease at a given time.
-Whether a given individual is \emph{prevalent} (has the disease) is often measurable through a diagnostic test.
+Whether a given individual is \emph{prevalent} (has the disease) is often measurable through diagnostic testing.
 Therefore, the prevalence of the population can be estimated with a prevalence survey, although these are typically very expensive to power appropriately.
 Prevalence and incidence are strongly related, via the duration of an infection (see \cref{E-inc-prev}).
 
 % Severity does not feature in this thesis, but it is important to note that it is a key component of understanding the burden of a pandemic.\todo{maybe reword sentence}
 
-Collecting data which directly informs inference of the quantities in this section is expensive or impossible.
+Collecting data that directly inform inference of the quantities in this section is expensive or impossible.
 Hence, they are typically inferred from other data sources through modelling.
 
 \section{Data sources}
 
-The data sources used for outbreak surveillance are often observational in nature.
+Data sources used for outbreak surveillance are often observational in nature.
 Therefore, they suffer from biases that can be hard to understand and quantify~\autocite{shadboltChallenges}.
 Here I discuss three types of data which are useful for surveillance.
-Incidence-type and prevalence-type data can directly inform estimation of incidence and transmission; however, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities.
+Incidence-type and prevalence-type data can inform estimation of incidence and transmission; however, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities.
 For example, the time between infection and symptom onset.
 These quantities can be estimated from other studies, \eg cohort studies.
 
 \subsection{Incidence-type data}
 
-Incidence-type data originates from observations of the consequences of a disease, \eg the development of symptoms or admission to hospital.
+Incidence-type data originate from observations of the consequences of a disease, \eg the development of symptoms or admission to hospital.
 This type of data typically suffers from reporting biases, particularly that the proportion of infections which are counted can vary over time or within different subgroups of the population~\autocites[chapter 9]{lashModern}{shadboltChallenges}.
 
 An example of incidence-type data is community testing.
@@ -117,11 +118,11 @@ Here, the disease is so severe that it is extremely unlikely for an individual t
 
 However, severe symptoms can be rare in some population subgroups (\eg young, otherwise healthy individuals infected with SARS-CoV-2~\autocite{wardSero,bhopalChildren}).
 This means that the observations do not provide much information on incidence in those subgroups.
-Furthermore, the delay between infection and the severe event occurring means that recent infections cannot be estimated~\autocite{swallow2022challenges}.
+Furthermore, the delay between infection and the severe event occurring means that recent infections cannot be estimated with much precision~\autocite{swallow2022challenges}.
 
 \subsection{Prevalence-type data}
 
-Prevalence-type data originates from observations of the number or proportion of a population in a specific disease state at a specific time.
+Prevalence-type data originate from observations of the number or proportion of a population in a specific disease state at a specific time.
 For example, the number of hospital beds occupied by individuals with the disease or the proportion of the population with a marker of prior infection.
 The issues associated with incidence-type data often also apply to prevalence-type data.
 
@@ -158,22 +159,22 @@ The most common model is that incidence follows a Poisson process, and the inten
 
 Next, are semi-mechanistic models.
 These have components of the transmission process in them but do not fully represent the process.
-The most common type of semi-mechanistic model is those based on a \emph{renewal equation}~\autocite{bhattSemimechanistic}.
+A common type of semi-mechanistic model is those based on a \emph{renewal equation}~\autocite{bhattSemimechanistic}.
 The renewal equation~\autocite{fraserRenewal} for an infectious disease, in the most general form, is:
 \begin{align}
     Z(t) &= \int_{0}^{t} \beta(t,\tau) Z(t-\tau) d \tau
     \label{intro:eq:renewal}
 \end{align}
-where $Z(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the mean rate an individual infected $\tau$ time units ago infects individuals at time $t$.
+where $Z(t)$ is the mean incidence at time $t$ and $\beta(t, \tau)$ is the mean rate at which an individual infected $\tau$ time units ago infects individuals at time $t$.
 Therefore, the renewal equation relates incidence in the past to incidence in the future.
 This partially describes the transmission process, hence the name semi-mechanistic.
 The effective reproduction number is $\Re = \int_0^\infty \beta(t, \tau) d\tau$.
 % A scaled measure of $I(t)$ (\eg hospital admissions or community test results) allows estimating $\beta$.
 % The most common implementations are the R packages EpiNow2~\autocite{EpiNow2} and EpiEstim~\autocite{EpiEstim}.
-Extensions of \cref{intro:eq:renewal} to track the number of susceptible individuals become full mechanistic models, equivalent to the compartmental models introduced next~\autocite{champredonEquivalence}.
+Extensions of \cref{intro:eq:renewal} that track the number of susceptible individuals become full mechanistic models, equivalent to the compartmental models introduced next~\autocite{champredonEquivalence}.
 Renewal equations do not feature further in this thesis; for details, including practical considerations when using them as the basis for inference, see \textcite{nashEstimating,gosticPractical}.
 
-Finally, mechanistic models are the most complex, representing the transmission process in varying levels of detail.
+Finally, mechanistic models are the most complex models, representing the transmission process in varying levels of detail.
 \emph{Compartmental} models, the most common type of mechanistic model, split the population into compartments, each representing a different state of the disease.
 The \emph{dynamics} of the epidemic, how it changes over time, are represented by the transitions between compartments (for more details see \cref{E-SEIR:sec:mechanistic-models}).
 Simple mechanistic models use a homogeneous population, with individuals differing only due to their disease state, and exponential distributions for the time in each disease state.
@@ -202,12 +203,12 @@ $f$ is known as a \emph{delay function}.
 $f$ is commonly the pdf of a distribution, or a transformation of it.
 
 Solving \cref{intro:eq:disease-model} for $Z$ is an ill-posed problem when $f(0)$ is small.
-The forwards error of the solution is large when the ratio of the off-diagonal to diagonal elements is large~\autocite[chapter 8.2]{highamAccuracy}; for this situation, which is when the value of $\max_{i > 0} f(i) / f(0)$ is large.
+The forwards error of the solution is large when $\max_{i > 0} f(i) / f(0)$~\autocite[chapter 8.2]{highamAccuracy}.
 A large forwards error means that the computed value is far from the true solution~\autocite[6--9]{highamAccuracy}; this is avoided by either using an approach which gives a large $f(0)$ or smoothing $Z_t$.
 
 \section{Observation models}
 
-An observation model links $W_t$ to a possibly biased and/or noisy observation of it at time $t$.
+Observation models link $W_t$ to a possibly biased and/or noisy observation of it at time $t$.
 
 Biases can arise in a variety of ways, \eg healthcare-seeking behaviour or tests which are less than 100\% accurate.
 Bias can be modelled through additional parameters or data quantifying these issues~\autocite[e.g.][]{sherrattExploring,birrellRealtimea,nicholsonImproving,swallow2022challenges}.
@@ -226,10 +227,9 @@ Modelling a biomarker uses more information per observation but requires stronge
 
 The biomarker approach models the trajectory of a biomarker over time in a cohort of individuals.
 An individual is in the disease state while the biomarker is above or below some threshold.
-This approach often requires parametric assumption(s).
-For example, the functional form of the biomarker's trajectory.
-In addition, if individual-level variation wants to be included, which is generally important, a distributional form of random effects is required.
-This requires both sufficient observations per individual and an assumption on the form of the distribution.
+This approach often requires parametric assumption(s) such as a functional form of the biomarker's trajectory.
+In addition, if individual-level variation is included, which is generally important, a distributional form of random effects is required.
+This requires both sufficient observations of the biomarker per individual and an assumption on the form of the distribution.
 More details are in \cref{E-ATACCC}.
 
 Modelling the duration directly considers only the binary result at each test (positive or negative), for instance in a \emph{survival analysis} framework.
@@ -246,7 +246,7 @@ Both cases require longitudinal data, suggesting that cohort studies are the mos
 
 The surveillance systems used in response to SARS-CoV-2 are historically unique.
 Modern technology allowed large amounts of data to be collected, distributed, and analysed.
-While the HIV/AIDS pandemic inspired the development of a large amount of statistical methodology, the pandemic was far slower moving.
+While the HIV/AIDS pandemic inspired the development of a large amount of statistical methodology, it was far slower moving.
 Much analysis of SARS-CoV-2 data was done at great haste, requiring trade-offs to be made between timeliness and rigour of results presented.
 
 A deep understanding of each data source's potential was not possible.
@@ -261,13 +261,13 @@ Each of these data sources have strengths and weaknesses, see \textcite{royalSoc
 \subsubsection{Incidence-type data}
 
 For large parts of the pandemic, community testing was widely available in the UK.
-However, it did not test a random or even representative sample of the population.
+However, it did not test a representative sample of the population.
 The number of tests conducted varied over time and space, for a variety of known and unknown reasons.
 These include: policy on who is eligible for testing, the availability of tests, and the willingness of individuals to be tested.
 Therefore, fluctuations in the number of positive tests may not reflect changes in the true incidence of the disease.
 The large number of tests conducted allowed detailed analyses to be performed, including stratification by small geographic areas or age groups, although this does not solve the issue of the biases present.
 
-Severe events counts are generally a reliable measure of the burden of the disease.
+Severe events counts are generally a more reliable measure of the burden of the disease.
 The criteria for being a severe event are normally well-defined and generally well-recorded in the UK context.
 Therefore, these data are subject to fewer biases than community testing.
 However, SARS-CoV-2 rarely leads to severe events in younger individuals, meaning severe event counts are insensitive to changes in transmission only occurring in younger individuals.
@@ -278,7 +278,7 @@ Seroprevalence surveys were conducted throughout the epidemic, primarily in bloo
 In addition to the normal problem of the delay between infection and antibody response, blood donors are a convenience sample whose representativeness of the wider population is unclear.
 
 The extraordinary impact of SARS-CoV-2 led the UK Government to fund two large prevalence surveys in representative samples of the general population.
-These were not subject to the biases of community testing and observed the whole population, unlike severe events, although suffered from non-response bias.
+These were designed to avoid the biases of community testing and observe the whole population.
 Therefore, some modelling is required to borrow information across strata or time to provide stable estimates, as well as to correct for non-response bias (see \cref{E-intro:sec:cis}).
 Despite this issue, they are considered the gold-standard metric.
 
