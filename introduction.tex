@@ -199,7 +199,7 @@ The age structure of the population is important for respiratory diseases becaus
 $W_t$ will then be recorded through some system (\eg a testing programme) described by the observation model (see next section).
 For example, $W_t$ could be the incidence or prevalence of symptomatic individuals on day $t$.
 
-At the core of many observation models is a \emph{convolution equation} or an approximation of it~\autocite[e.g.][]{brookmeyerBackcalculation,abbottEstimating,birrellRealtimea}.
+At the core of many observation models is a \emph{convolution equation} or an approximation of it~\autocite[e.g.][]{brookmeyerBackcalculation,abbottEstimating,birrellBayesian}.
 This equation describes the expectation of $W_t$, conditional on the incidence prior to time $t$.
 In discrete time, it is:
 \begin{align}
@@ -219,10 +219,10 @@ A large forwards error means that the computed value is far from the true soluti
 Observation models link $W_t$ to a possibly biased and/or noisy observation of it at time $t$.
 
 Biases can arise in a variety of ways, \eg healthcare-seeking behaviour or tests which are less than 100\% accurate.
-Bias can be modelled through additional parameters or data quantifying these issues~\autocite[e.g.][]{sherrattExploring,birrellRealtimea,nicholsonImproving,swallow2022challenges}.
+Bias can be modelled through additional parameters or data quantifying these issues~\autocite[e.g.][]{sherrattExploring,birrellBayesian,nicholsonImproving,swallow2022challenges}.
 
 Noise could come from a variety of sources, \eg sampling error, clustering, or unexplained overdispersion.
-Noise is typically modelled by a parametric distribution \eg the negative binomial distribution allowing for overdispersion compared to a Poisson process assumption~\autocite[e.g.][]{birrellRealtimea,frassoBayesian}.
+Noise is typically modelled by a parametric distribution \eg the negative binomial distribution allowing for overdispersion compared to a Poisson process assumption~\autocite[e.g.][]{birrellBayesian,frassoBayesian}.
 
 \section{Delay functions}
 

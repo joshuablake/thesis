@@ -303,7 +303,7 @@ As well as the motivation given in \cref{E-backcalc}, independent regions allow 
 Furthermore, the assumption of homogeneous mixing within age groups is more plausible for regions than the whole of England.
 By modelling each region independently, I assume that the epidemics in each region do not interact.
 Clearly, this is not realistic as travel between regions of England is common and unrestricted.
-However, except in an epidemic's early stages, the interaction between large regions has a negligible impact on the epidemic's progression~\autocite[e.g.][]{birrellRealtimea,gogSpatial,eggoSpatial}.
+However, except in an epidemic's early stages, the interaction between large regions has a negligible impact on the epidemic's progression~\autocite[e.g.][]{birrellBayesian,gogSpatial,eggoSpatial}.
 
 \subsubsection{WAIFW matrix} \label{SEIR:sec:WAIFW-application}
 
@@ -476,7 +476,7 @@ where $\circ$ indicates element-wise multiplication and $\matr{N}$ is a matrix w
 See \cref{SEIR:eq:fullODEs}
 
 I solve the system of ODEs using Euler's method, discretised at timesteps of $\delta t = 1/2$ days.
-That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $x_{t+\frac{1}{2}} = x_t + (d\vec{x}(t)/dt) \delta t$.
+That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1, \dots \}$ then $y_{t+\frac{1}{2}} = y_t + (d\vec{x}(t)/dt) \delta t$.
 
 The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likelihood}), can be calculated as $\bar{p}_{at} = \frac{1}{2} \sum_{k=1}^l ( p_{kat} + p_{ka,t+1/2} )$.
 
