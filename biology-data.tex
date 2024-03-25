@@ -215,7 +215,7 @@ Of the 738 contacts enrolled, 172 (23\%) had at least one positive test.
 \Textcite{hakkiOnset} analysed the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
 They excluded the remaining 115 contacts with at least one positive RT-PCR test, ATACCC did not capture the phase of the infection with increasing viral load.
 This exclusion was to ensure viral load trajectories are identifiable.
-I will revisit and extend this analysis in \cref{E-ATACCC}.
+I will revisit and extend their analysis in \cref{E-ATACCC}.
 
 \section{Coronavirus (COVID-19) Infection Survey} \label{intro:sec:cis}
 
@@ -226,7 +226,7 @@ Initially, it was limited to England, but expanded to cover the whole of the UK 
 Enrolment was continuous until 31 Jan 2022, with data collected until 13 Mar 2023~\autocite{weiRisk}. 
 
 The CIS had a household-based design, meaning that households were invited to participate in the study.
-From households that participated, all individuals aged 2 and over were invited to participate.
+From the households that participated, all individuals aged 2 and over were invited to participate.
 Once invited, an enrolment swab would be taken at the first visit followed by 4 further weekly visits (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolment) after which visits were monthly.
 As well as a swab to test for SARS-CoV-2, participants were asked to complete a questionnaire, and some participants were asked to provide blood samples.
 In reality, visits were often not on this precise schedule, and occasionally missed altogether.
@@ -269,7 +269,7 @@ Because testing becomes less frequent after the first 4 weeks, some continuous r
 
 The main result reported by the study was what they defined as the \emph{positivity rate}, the proportion of people in a given (sub)population that (if they were tested using RT-PCR) would test positive for SARS-CoV-2 at a defined point in time~\autocite{cisMethodsONS}.
 A notable feature of this definition is that it explicitly does not correct for false positive or negative results.
-However, for many purposes, including this thesis, the difference between the positivity rate and prevalence is negligible.
+However, for many purposes, including this thesis, the difference between the positivity rate and prevalence is neglected.
 
 Generally, the point in time of interest is a specific day, although it has also been applied to a week~\autocite{cisMethodsONS,pouwelsMRPvaccination,pouwelsCommunity}.
 Larger time periods (\ie weeks instead of days) allow more granular estimates in other dimensions, most commonly geography.
@@ -294,20 +294,20 @@ These are the geographic areas used throughout the major CIS analyses in England
 
 If the CIS was truly a random sample, an unbiased estimator of the positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
 However, in practice, two issues arise with this.
-First, the non-response bias discussed previously.
-Second, the number of positives on any day is low, especially among any specific subpopulation (\eg age group or region).
+First, the non-response (discussed above) causes bias.
+Second, the number of positives on any day is low, especially among any specific subpopulation (\eg age group or region) increases variance.
 Statistical methods are used to correct for these issues.
 
-The preferred statistical method for estimating the positivity rate is MRP (multi-level regression and poststratification)~\autocite{cisMethodsONS,pouwelsCommunity}.
-MRP is a statistical methodology developed to correct political opinion polling suffering from response bias~\autocite{gelmanMRT,gelmanPoststratication,parkMRP}.
+The preferred statistical method for estimating the positivity rate is MRP (multilevel regression and poststratification)~\autocite{cisMethodsONS,pouwelsCommunity}.
+MRP is a statistical methodology developed to correct political opinion polling suffering from non-response bias~\autocite{gelmanMRT,gelmanPoststratication,parkMRP}.
 MRP is a two-step process.
 In this context, the first step, multilevel regression, consists of using a Bayesian multilevel logistic regression model to predict RT-PCR test results in the sample based on demographic covariates.
 To address the low number of positives, MRP uses a hierarchical Bayesian model to borrow information across time and other covariates.
-The second step, poststratification, uses the posterior distribution of the parameters predict the population prevalence in each stratum.
+The second step, poststratification, uses the posterior distribution of the parameters to predict the population prevalence in each stratum.
 These are combined by taking a weighted average across the strata, where a stratum's weight is equal to its (known) population size.
 The poststratification step corrects for non-response bias.
 
-I modified the regression component of a pre-existing version of a MRP model for CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for the specific context of this thesis~\citePersonalComms{Koen Pouwels}.
+I modified the regression component of a pre-existing version of a MRP model for the CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for the specific context of this thesis~\citePersonalComms{Koen Pouwels}.
 As in prior work~\autocite{pouwelsMRPvaccination}, I used INLA for inference, implemented in R-INLA (see \cref{E-transmission:sec:INLA}).
 For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is:
 \begin{align}
@@ -317,7 +317,7 @@ For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is
 The terms are as follows.
 \todo[inline]{Check I've written the priors correctly}
 \begin{itemize}
-    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution for the likelihood, as discussed in \cref{biology-data:sec:clustering}.
+    \item $n_{taes}$ and $y_{taes}$ are the number of individuals tested and the number of positive test results respectively on day $t$ in individuals of age group $a$, ethnicity $e$, and sex $s$. I use a beta-binomial distribution for the likelihood, as discussed in \cref{biology-data:sec:clustering}.
     \item $\beta$ is a global intercept term with the vague prior $\beta \dist \N(0, 1/0.001^2)$.
     \item $\beta_s$ is a fixed effect for sex, with $\beta_s = 0$ for males and estimated for females. The prior for $\beta_s$ is vague, $\beta_s \dist \N(0, 1/0.001^2)$.
     \item $\beta_{w(e)}$ is a fixed effect for White or non-White ethnicity. $\beta_{w(e)} = 0$ if $e$ corresponds to White ethnicity and $\beta_{w(e)} = \beta_{n}$ otherwise (\ie non-White ethnic groups).
@@ -360,7 +360,7 @@ As $\rho \to \infty$, the distribution tends towards the uniform distribution on
 
 \Cref{biology-data:fig:CIS-positivity} shows estimates from this model compared to the unadjusted positivity rate.
 Both show similar trends.
-The MRP estimate most often increases the estimated positivity rate, compared to uncorrected positivity rate, because the underrepresented demographic groups tended to have higher positivity rates.
+The MRP estimate is normally greater than the uncorrected positivity rate because the underrepresented demographic groups tended to have higher positivity rates.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{biology-data/CIS-positivity}
@@ -388,7 +388,7 @@ The test at $t$, in the pre-Omicron era (prior to December 2021), is defined as 
   \item $n \geq 2$ and $t - t_p > 90$.
   \item $n \geq 3$ and $t - t_p > 60$.
   \item $n \geq 4$.
-  \item A complex heuristic based on the likely variant of the positive tests (see \textcite{weiRisk} for details). This heuristic rarely applied in the pre-Omicron era~\citePersonalComms{Sarah Walker}.
+  \item A complex heuristic based on the most probable variant of the positive tests (see \textcite{weiRisk} for details). This heuristic rarely applied in the pre-Omicron era~\citePersonalComms{Sarah Walker}.
 \end{enumerate}
 
 A negative between two positive tests, when those positives are part of the same infection episode, is known as an \emph{intermittent negative}.
@@ -428,7 +428,7 @@ The SRS contains five \numprint[GHz]{2.40} dual-core Intel Xeon E5-4650 processo
 These computational resources are shared between all users of the CIS SRS project and due consideration must be given to other users.
 Processes which run for multiple days are liable to be cancelled.
 
-Therefore, computational approaches requiring high-performance computing, graphical processing units, or long runtimes are not feasible within the SRS.
+Computational approaches requiring high-performance computing, graphical processing units, or long runtimes are not feasible within the SRS.
 This computational limitation will feature in several places in this thesis.
 
 \section{Conclusion}
