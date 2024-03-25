@@ -103,7 +103,7 @@ As test sensitivity is the proportion of individuals who should test positive th
 Therefore, I calculate the test sensitivity for each day, considering the first positive result in an episode as day 0.
 As the latent start day of the infection episode is before the first positive result, day 0 reflects some unknown number of days into the infection episode.
 I bound the test sensitivity on each day by assuming either all or none of the possible false negatives (group 3) are in fact false negatives.
-% In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie: the first positive test in the episode).
+% In \cref{imperf-test:fig:bounding-cis-sensitivity} we consider the values produced by assuming the negative following the last positive in an episode could be either a true or false negative as a function of time since the individual was detected (\ie the first positive test in the episode).
 This generates broad bounds, although suggest a declining test sensitivity over the course of an episode (see \cref{imperf-test:fig:bounding-cis-sensitivity}).
 Small numbers of tests mean that the series is noisy near the start and the end, such as both bounds being 0 on some days after day 40.
 However, the general trend is clear.
