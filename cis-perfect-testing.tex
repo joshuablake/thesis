@@ -445,6 +445,7 @@ Therefore, omitting the conditioning on $\vec{\theta}$ and $i(j) = i$:
 &= \prob(D_j \geq \tau_{\sched_{i}}(B_j)+ 1, B_j > \min \sched_{j}) \\
 &= \sum_{b = \min \sched_{i} + 1}^T \prob(D_j \geq \tau_{\sched_{i}}(b) + 1 \mid B_j = b) \prob(B_j = b)\\
 &= \frac{1}{T} \sum_{b = \min \sched_{i} + 1}^T S_{\vec{\theta}}(\tau_{\sched_{i}}(b) + 1)
+\label{perf-test:eq:piu}
 \end{align}
 defining $S_{\vec{\theta}}(\infty) = 0$.
 
