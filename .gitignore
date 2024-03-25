@@ -20,6 +20,7 @@
 # *.ps
 # *.eps
 /*.pdf
+/final_versions/*.pdf
 CollegeShields/*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
@@ -301,9 +302,13 @@ TSWLatexianTemp*
 ## Data files
 *.rds
 *.csv
-cis-imperfect-testing/STATS17701/
-cis-imperfect-testing/STATS18596/
+cis-imperfect-testing/STATS17701/*
+cis-imperfect-testing/STATS18596/*
 transmission/outputs/
+!cis-imperfect-testing/STATS18596/changing-sensitivity/results_by_day_of_episode.csv
+!cis-imperfect-testing/STATS18744/means.rds
+!cis-imperfect-testing/STATS18744/draws.rds
+!cis-imperfect-testing/STATS17701/draws.rds
 
 ## Files for SRS extraction request
 cis.tex

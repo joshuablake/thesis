@@ -20,6 +20,8 @@
 \usepackage{afterpage}
 \usepackage{caption}
 \usepackage{numprint}
+\npfourdigitnosep
+\npdecimalsign{.}
 % \usepackage{microtype}
 \usepackage[UKenglish]{babel}
 \usepackage{makecell}
@@ -155,6 +157,14 @@
     {\href{https://doi.org/#1}{\nolinkurl{#1}}}
     {\nolinkurl{#1}}%
 }
+% Declare the format for the pubstate field
+\DeclareFieldFormat{pubstate}{\mkbibparens{#1}}
+% Append pubstate to the end of the entry
+\renewbibmacro*{addendum+pubstate}{%
+  \printfield{addendum}%
+  \newunit\newblock
+  \printfield{pubstate}%
+}
 
 \usepackage{subfiles} % Best loaded last in the preamble
 
@@ -190,11 +200,11 @@
 \myexternaldocument{thesis}
 
 \abstract{%
-    Surveillance is a crucial component to a pandemic response, informing public health and wider policy.
+    Surveillance is a crucial component of a pandemic response, informing public health and wider policy.
     Unfortunately, it is often subject to reporting and behavioural biases, reducing its robustness.
     % During the SARS-CoV-2 epidemic, the UK government funded two large-scale prevalence surveys with samples recruited randomly from the general population.
     % One of these, the CIS (Coronavirus Infection Survey), was a longitudinal survey run from April 2020 to March 2023.
-    The CIS (Coronavirus Infection Survey) was a large-scale prevalence survey with participants recruited randomly from the general population, therefore avoiding these issues.
+    The CIS (Coronavirus Infection Survey) was a large-scale prevalence survey, with participants recruited randomly from the general population, thereby avoiding these issues.
 
     In this thesis, I consider how to best use the CIS data for surveillance.
     %, can be used for surveillance to perform more robust inference.
@@ -208,35 +218,97 @@
     % In \cref{ATACCC}, I extend a pre-existing model of how an individual's viral load changes over time to estimate the duration of positivity.
     % This model is fitted to data from the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study, a longitudinal study of viral load in contacts of individuals with confirmed SARS-CoV-2 infection.
     I use this detailed model to exploit frequent (daily) sampling of individuals in a cohort of contact traced individuals.
-    However, the cohort was small and follow-up short meaning that the tail of the duration distribution is poorly estimated.
+    However, the cohort was small and the follow-up time short meaning that the tail of the duration distribution is poorly estimated.
 
     % Therefore, in \cref{perf-test,imperf-test}, I combine the information from ATACCC with the larger CIS dataset.
     % I analyse the CIS in a survival analysis framework.
-    Therefore, I combine the information with the larger and longer CIS dataset.
-    The CIS data poses several challenges because it is double interval censored and some individuals in the cohort have infections that are never detected.
-    I apply a survival analysis framework to analyse this data, which had previously only been in simpler settings.
+    To overcome this issue, I combine the information with the larger and longer CIS dataset.
+    The CIS data poses several challenges because it is doubly interval censored and some individuals in the cohort have infections that are never detected.
+    I apply a survival analysis framework to analyse this data, which had previously only been used in simpler settings.
     In addition, I develop novel methodology to incorporate false negatives into the framework.
     % The results showed that false negatives in the CIS data needed to be included in the model.
     % In \cref{imperf-test} I develop a novel methodology to do so.
     This results in an estimate of the full duration distribution in the general population, not previously available.
 
-    Finally, I use this estimate to estimate the incidence and transmission of SARS-CoV-2 in England.
+    Finally, I use this estimate to infer the incidence and transmission of SARS-CoV-2 in England from the CIS.
     I fully propagate the sampling error, accurately include the shape of the duration distribution, and estimate the quantities by age; previous work lacked at least one of these.
     Furthermore, I fit to only the CIS data, showing that such a survey is adequate to estimate these quantities.
     % without requiring an evidence synthesis approach previously used.
 }
 
 \acknowledgements{%
-    \todo[inline]{Write acknowledgements}
+    It takes a village to raise a child, and a city to write a PhD.
+    In other words, naming everyone who has helped in this process would not only be an impossible test of my memory, but also require a thesis-length acknowledgements section.
+    However, there are of course several individuals who stand out for their contribution.
+
+    First, I would like to thank my supervisors, Professor Daniela De Angelis and Dr Paul Birrell for their advice and unwavering support throughout my PhD.
+    Dani, for your experience and your constant drive to improve the rigour of my work.
+    Paul, for your constant ideas on new ways to attack a problem.
+    Our long discussions, whether online or in front of a whiteboard, were a necessary part of this thesis.
+    Without your guidance, I would have been lost and given up a long time ago.
+
+    I am extremely fortunate in that much of this work was supervised by a much larger group of people: Professor A.\ Sarah Walker, Dr Koen Pouwels, Professor Thomas House, and Professor Theodore Kypraios.
+    Sarah, your encyclopaedic knowledge of the CIS data was invaluable and your ability to get things done inspirational.
+    Koen introduced me to several ideas and methods that I would never have considered.
+    Thomas provided constant ambition and seemingly infinite ideas.
+    Theo gave insight into the black art of MCMC.
+    Thank you all for all the time you put into helping me throughout this process.
+
+    The MRC Biostatistics Unit has been a great source of support.
+    Many discussions, especially those with Drs Shaun Seaman and Brian Tom, contributed to progressing my work.
+    % I would especially like to thank Drs Shaun Seaman and Brian Tom for their help with survival analysis.
+    The admin team is a great asset to the Unit and were outstandingly supportive through the disrupted the pandemic caused.
+    My fellow PhD students have created a great environment, having peers at the same stage in my journey has been invaluable.
+    The Unit also arranged my funding, through the Bayes 4 Health grant, which I gratefully acknowledge.
+
+    % This work would not have been possible without the data from the Coronavirus Infection Survey, run by the Office for National Statistics and funded by the Department of Health and Social Care, and the Assessment of Transmission and Contagiousness of COVID-19 in Contacts study.
+    % Thank you to everyone organising, funding, and participating in these studies; none of whom necessarily endorse views expressed in this thesis.
+
+    In addition to the supervision and advice mentioned, several people contributed code or results to this work.
+    Professor A.\ Sarah Walker created the episodes dataset in \cref{biology-data:sec:cis-episodes} and performed the initial survival analysis I use for a simulation study \cref{perf-test:sec:simulation-study}.
+    Dr Koen Pouwels provided code I use as the basis of the positivity model in \cref{biology-data:sec:MRP}.
+    Dr Edwin van Leeuwen created the contact matrices and Dr Sanmitra Ghosh provided code for the MCMC sampler I use in \cref{E-SEIR}.
+    Thank you all for your contributions.
+
+    Of course, the support outside of work has been just as, if not more, important.
+    The many people I have met in Cambridge and have become lifelong friends have kept me sane.
+    Many of you I have met through Jesus College Boat Club or the Meridian co-working space, both inspiring groups of people.
+    I could write several pages naming all the individuals who have kept me going, given me an escape from work, and kept my spirits high.
+    You all know who you are.
+
+    There is of course one individual in this group who I must name: Hena McGhee.
+    You were always there from the very worst moments when I thought nothing would ever work, and this thesis would never be written, to the best moments of the breakthroughs.
+    I am forever grateful for your support, words of encouragement, and most of all love; without you I simply wouldn't have kept going.
+    
+    Finally, I must thank my family, especially my parents, Laurence and Tracy Blake.
+    Throughout my life, no ask has ever been too much.
+    Your love and support are infinite and unconditional, your gentle nudges towards the right path irreplaceable.
+    Thank you for everything.
+
+    Having written this, I realise how fortunate I am to have been supported by such great people.
+    I can never thank you enough.
 }
 
 \preface{%
-    \todo[inline]{Write preface}
-    \begin{itemize}
-        \item Early version of this work used in ONS reports
-        \item Chapters in JASA paper
-        \item Chapter for PNAS (or similar) journal
-    \end{itemize}
+    In October 2019 I began a PhD project entitled ``Advancing Bayesian Statistical Methods for Real-Time Epidemic Monitoring'', aiming to develop methods in preparation for a future influenza pandemic.
+    So began a journey of reading, and an expectation of few deadlines, a lot of deep thinking, and complex statistical theory.
+    Like much of the world, the events of early 2020 rapidly changed that.
+    Following a brief interlude to provide rapid support to the response, the origins of this thesis emerged.
+
+    Several aspects of the work in this thesis were completed in support of the ongoing response.
+    In particular, an earlier version of the backcalculation work was adopted by the Office for National Statistics to estimate incidence, published in their weekly online reports~\autocite{cisMethodsONS}.
+    This method was also used for the analysis of several respiratory diseases over winter 2022/3~\autocite{dietzSARSCoV2final}.
+
+    I plan two publications based on the work in this thesis.
+    The analysis in \cref{perf-test,imperf-test} will be submitted to a statistical or biostatistical journal.
+    The results in \cref{transmission} will be submitted to a multidisciplinary scientific journal.
+
+    During this period, I have been involved in several other pieces of work and discussion contributing to the response, not directly used in this thesis.
+    These have led to several publications, listed in \cref{publications} for completeness.
+    
+    This work contains statistical data from ONS which is Crown Copyright.
+    The use of the ONS statistical data in this work does not imply the endorsement of the ONS in relation to the interpretation or analysis of the statistical data.
+    This work uses research datasets which may not exactly reproduce National Statistics aggregates. 
 }
 
 \setcounter{tocdepth}{2}
@@ -268,6 +340,14 @@
 \appendix
 
 \subfile{distributions}
+
+\chapter{List of publications} \label{publications}
+\begin{refsection}
+\newrefcontext[sorting=ynt]
+\nocite{birrellRealtime, funkShortterm, pellisEstimation, swallow2022challenges, birrellRTM2}
+\printbibliography[heading=none]
+\end{refsection}
+
 \subfile{MCMC-appendix}
 \subfile{ATACCC-appendix-original-analysis}
 \subfile{transmission-appendix-INLA}

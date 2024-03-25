@@ -25,8 +25,7 @@ data = readr::read_csv(here::here("SEIR/CIS/data.csv")) |>
     filter(!region %in% c("Wales", "Scotland", "Northern_Ireland")) |>
     mutate(
         obs_prevalence = obs_positives / num_tests,
-        age = str_replace(age, fixed("("), "[") |>
-            str_replace(fixed("]"), ")"),
+        age = normalise_age_groups(age),
         region = normalise_region_names(region),
     ) |>
     rename(day = date) |>
@@ -104,6 +103,7 @@ create_prev_plot = function(regions, label) {
         )
 
     ggsave(
+        device = cairo_pdf,
         filename = here::here(
             glue::glue("SEIR/CIS/prev_{label}.pdf")
         ),
@@ -147,6 +147,7 @@ p_incidence = prediction_intervals |>
     standard_plot_theming() +
     theme(legend.position = "bottom")
 ggsave(
+    device = cairo_pdf,
     filename = here::here(
         glue::glue("SEIR/CIS/incidence.pdf")
     ),
@@ -180,6 +181,7 @@ p_peak = peak_days |>
         colour = "Age group"
     )
 ggsave(
+    device = cairo_pdf,
     filename = here::here("SEIR/CIS/p_peak.pdf"),
     plot = p_peak,
     width = 15,

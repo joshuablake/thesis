@@ -180,7 +180,7 @@ The dataset is globally unique in providing a representative, longitudinal, and 
 Enrolment was continuous until 31st Jan 2022, with data collected until 13th Mar 2023~\autocite{weiRisk}. 
 
 The CIS had a household-based design inviting all individuals aged 2 and over from selected households.
-Once invited, an enrollment swab would be taken at the first visit followed by 4 further weekly visits (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrollment) after which visits were monthly.
+Once invited, an enrolment swab would be taken at the first visit followed by 4 further weekly visits (giving a total of 5 swabs on days 0, 7, 14, 21, 28 relative to enrolment) after which visits were monthly.
 Swabs were tested for the presence of SARS-CoV-2 using RT-PCR.
 In reality, visits were often not on this precise schedule, and occasionally missed.
 A full description of the study can be found in the study protocol~\autocite{cisProtocol}.
@@ -198,7 +198,7 @@ The crucial features of an infection episode are the start and end times of the 
 Ignoring misclassified test results, latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
 Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
 
-For privacy reasons, the CIS data is stored in the ONS's SRS (Secure Research Service).
+For privacy reasons, the CIS data are stored in the ONS's SRS (Secure Research Service).
 The SRS is a Trusted Research Environment (TRE) that allows researchers to access sensitive data in a secure environment.
 The SRS must be used to perform analyses using individual-level data.
 Therefore, computationally efficient approaches must be taken to this work.
@@ -432,7 +432,7 @@ p(\na \mid \ntot, \theta)
 \end{align}
 the final line follows because $\nnodet = \ntot - \ndet$, $n_{ia} = 1$ for $i \in \set{D}$, and $n_{ia} = 0$ otherwise.
 
-In forming the probability $p_{ia}$, the data is used.
+In forming the probability $p_{ia}$, the data are used.
 This is not quite correct because the cell probabilities in the likelihood should not depend on the data.
 However, an alternative where each combination of infection and recovery times is considered its own class is possible.
 Then, the counts for all the classes that previously contained undetected episodes would be zero.

@@ -5,6 +5,7 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 source(here::here("SEIR/utils.R"))
+source(here::here("transmission/utils.R"))
 
 final_states = readr::read_csv(here::here("SEIR/CIS/final_state.csv"), show_col_types = FALSE) |>
     mutate(
@@ -45,7 +46,10 @@ attack_rate = final_states |>
         )
     ) |>
     select(!state) |>
-    mutate(increase = occupancy - initial_attack) |>
+    mutate(
+        increase = occupancy - initial_attack,
+        age = normalise_age_groups(age),
+    ) |>
     group_by(region, age) |>
     median_qi(occupancy, increase, initial_attack, .simple_names = FALSE)
 readr::write_csv(attack_rate, here::here("SEIR/CIS/attack_rates.csv"))
@@ -64,5 +68,6 @@ ggsave(
     filename = here::here("SEIR/CIS/attack_rates.pdf"),
     plot = p_attack_rate,
     width = 5,
-    height = 5
+    height = 5,
+    device = cairo_pdf
 )

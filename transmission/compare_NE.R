@@ -16,7 +16,7 @@ backcalc_prevalence_summary = readRDS(here::here("transmission", "outputs", "reg
     group_by(date, age_group) |>
     median_qi(incidence, prevalence, .simple_names = FALSE) |>
     ungroup() |>
-    mutate(Model = "Backcalculation")
+    mutate(Model = "Backcalculation", age_group = normalise_age_groups(age_group))
 
 seir_incidence_summary = load_seir_predictive() |>
     filter(region == "North East") |>
@@ -35,7 +35,6 @@ p_compare = bind_rows(
         ),
     backcalc_prevalence_summary,
 ) |>
-    mutate(age_group = normalise_age_groups(age_group)) |>
     ggplot(aes(date, incidence, ymin = incidence.lower, ymax = incidence.upper, colour = Model, fill = Model)) +
     geom_lineribbon(alpha = 0.4, linewidth = 0.2) +
     facet_wrap(~age_group) +
@@ -48,6 +47,7 @@ p_compare = bind_rows(
     )
 ggsave(
     filename = here::here("transmission", "compare-NE.pdf"),
+    device = cairo_pdf,
     plot = p_compare,
     width = 6,
     height = 4
