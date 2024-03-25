@@ -12,13 +12,13 @@
 
 \chapter{SARS-CoV-2: biology and data} \label{biology-data}
 
-SARS-CoV-2 is closely related to previous coronaviruses that have caused outbreaks in humans, SARS-CoV and MERS-CoV.
+SARS-CoV-2 is closely related to previous coronaviruses that have caused outbreaks in humans, including SARS-CoV and MERS-CoV.
 Coronaviruses are RNA (Ribonucleic acid) viruses.
-RNA viruses use RNA, rather than DNA, as their genetic material.
+RNA viruses use RNA, rather than DNA (Deoxyribonucleic acid), as their genetic material.
 RNA viruses, which include influenza, mutate rapidly and are the most likely class of viruses to cause pandemics~\autocite{woolhouseRNA}.
 
 The initial and most sensitive diagnostic test for SARS-CoV-2 uses RT-PCR, which I explain in \cref{biology-data:sec:PCR}.
-SARS-CoV-2 causes the disease COVID-19; I discuss the \emph{natural history} of the disease, the course it takes from beginning to end~\autocite[193]{portaEpiDictionary}, in \cref{biology-data:sec:natural-history}.
+I discuss the SARS-CoV-2 infection \emph{natural history}, the course it takes from beginning to end~\autocite[193]{portaEpiDictionary}, in \cref{biology-data:sec:natural-history}.
 
 I then move on to discussing the two studies I use in this thesis.
 These are ATACCC (\cref{biology-data:sec:ataccc}) and the CIS (\cref{intro:sec:cis}), both briefly discussed in \cref{E-intro}.
@@ -27,7 +27,7 @@ Therefore, the results from these studies are more generalizable to the entire U
 
 \section{PCR testing} \label{biology-data:sec:PCR}
 
-PCR (Polymerase Chain Reaction) is a procedure that produces millions to billions of copies of a specific segment of DNA (Deoxyribonucleic acid) from a single copy~\autocite{smithPCR,garibyanPCR}.
+PCR (Polymerase Chain Reaction) is a procedure that produces millions to billions of copies of a specific segment of DNA  from a single copy~\autocite{smithPCR,garibyanPCR}.
 This is known as \emph{amplifying} the DNA.
 PCR has many uses within the biological sciences; Mark R.\ Hughes, deputy director of the Human Genome Project, has claimed it is the most important scientific technology of the last hundred years~\autocite{powledgePCR}.
 It is central to the work in this thesis because it can detect the presence of SARS-CoV-2 in a sample taken from a human, most commonly a nose and/or throat swab.
@@ -52,9 +52,9 @@ There are four nucleotides in DNA (A, C, G, T) each of which forms a pair, known
 The choice of \emph{primers} specifies the exact DNA to amplify; they are the complementary DNA sequence to the start and end of the DNA sequence to be amplified~\autocite{garibyanPCR}.
 DNA \emph{polymerase} is an enzyme required to link individual nucleotides together~\autocite{garibyanPCR}.
 
-The process is a series of cycles, each cycle containing three steps~\autocite{powledgePCR,garibyanPCR}.
+The PCR process is a series of cycles, each cycle containing three steps~\autocite{powledgePCR,garibyanPCR}.
 The first step, \emph{denaturation}, heats the DNA causing its two strands to separate.
-The second step, \emph{annealing}, lowers the temperature, causing the primers to bind to the DNA.
+The second step, \emph{annealing}, lowers the temperature, causing the primers to bind to one of the strands of DNA.
 The final step, \emph{extension}, raises the temperature, causing the DNA polymerase to replicate the DNA sequence between the primers. 
 In the course of such a cycle, the amount of DNA doubles.
 Therefore, the number of DNA copies increases geometrically with the number of cycles completed.
@@ -71,7 +71,7 @@ All RT-PCR tests I consider in this thesis are quantitative real-time RT-PCR tes
 If there is more RNA present, reverse transcription creates proportionally more DNA.
 More initial DNA means fewer cycles until detection; that is, the Ct value is lower~\autocite{hanRTPCR}.
 The number of DNA copies doubles each cycle, therefore the log Ct value decreases linearly with the quantity of RNA or DNA in the original sample (see \cref{biology-data:fig:ct-calibration}).
-A \emph{standard curve} translates the Ct value to viral load for a given test.
+A \emph{standard curve}, also known as a \emph{calibration curve}, translates the Ct value to viral load for a given test~\autocite{bustinMIQE}.
 A standard curve is produced by measuring the Ct value using reference samples with known viral load, and, as seen in \cref{biology-data:fig:ct-calibration}, they vary between studies.
 \begin{figure}
     \centering
@@ -87,8 +87,8 @@ A standard curve is produced by measuring the Ct value using reference samples w
 
 An important concept throughout this thesis will be that of \emph{detectable} individuals.
 An individual is defined as detectable between the time they would first test positive on a perfect RT-PCR test (if tested) and the time they would stop doing so.
-It is not possible to conclusively determine whether an individual is detectable because perfect RT-PCR tests do not exist (see \cref{biology-data:sec:PCR}).
-However, viewing the number of RNA genome copies in an individual as a latent process this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the RT-PCR test (defined in \cref{biology-data:sec:measurement-error}).
+It is not possible to conclusively determine whether an individual is detectable because perfect RT-PCR tests do not exist.
+However, viewing the number of RNA genome copies in an individual as a latent process, this can then be defined as the time when the number of RNA genome copies is above the limit of detection of the RT-PCR test (defined in \cref{biology-data:sec:measurement-error}).
 % While this definition is not perfectly precise, it is clear enough for the purposes it used in this thesis.
 
 
@@ -181,11 +181,11 @@ Finally, the individual will test negative on an RT-PCR test.
 
 The time for each of these stages depends on various features of host and virus characteristics and has a large amount of variation.
 In this thesis, I focus on pre-Alpha variants of SARS-CoV-2 in unvaccinated individuals.
-The time from infection to infectiousness is known as the \emph{latent period}.
+The time from infection to infectiousness is known as the \emph{latent period}~\autocite{goughEstimation}.
 The length of the latent period is hard to estimate because we rarely observe either the time of infection or the start of infectiousness.
 Estimates of its length are based on careful contact tracing, where transmission times are thought to be known with a reasonable degree of certainty.
 These estimates vary but suggest a mean length of 3--4 days for pre-Alpha variants~\autocite[and references therein]{zhaoEstimating}.
-The time from infection to experiencing symptoms is known as the \emph{incubation period}; it is undefined for asymptomatic individuals.
+The time from infection to experiencing symptoms is known as the \emph{incubation period}; it is undefined for asymptomatic individuals~\autocite{portaEpiDictionary}.
 As the symptom onset time (when symptoms start) is often known, this is easier to estimate than the latent period.
 However, the unknown infection time still poses challenges, again requiring contact tracing data.
 Therefore, estimates are sensitive to the choice of data and statistical model.
@@ -194,7 +194,6 @@ Its mean length is around 6 days~\autocite{wuIncubation,quesadaIncubation,aleneS
 A host's \emph{viral load}, the quantity of viral particles in a host, is the underlying biological process driving the different periods and characteristics of an infection~\autocite{puhachSARSCoV2}.
 Any host's viral load is determined by the interaction of many biological processes, most prominently the virus's replication increasing the viral load and the host's immune response reducing the viral load~\autocite{keVivo}.
 Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining potential host cells, known as \emph{target cells}, to infect.
-Host cells which can potentially be infected are known as \emph{target cells}.
 The rate at which host cells are infected slows over time because there are fewer remaining target cells to infect.
 The host's immune system can slow this process by various mechanisms; the most relevant for SARS-CoV-2 is by making some target cells less susceptible to infection.
 A host's immune response is triggered by the viral load and becomes stronger as the viral load increases.
@@ -212,7 +211,7 @@ For all positive test results, the viral load was measured using the Ct value an
 Other data such as demography and symptoms were also collected, although I do not use this information.
 For further details see \textcite{singanayagamDuration,hakkiOnset}.
 
-Of the 738 contacts enrolled, 172 (23\%) had at least one positive test
+Of the 738 contacts enrolled, 172 (23\%) had at least one positive test.
 \Textcite{hakkiOnset} analysed the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
 They excluded the remaining 115 contacts with at least one positive RT-PCR test, ATACCC did not capture the phase of the infection with increasing viral load.
 This exclusion was to ensure viral load trajectories are identifiable.
