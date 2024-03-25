@@ -143,7 +143,7 @@ These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec
 \textcite{hakkiOnset} uses weakly informative priors, similar to \textcite{singanayagamCommunity}, see \cref{ATACCC:table:hakki-priors}.
 I reran \textcite{hakkiOnset}'s analysis using R~4.3.1~\autocite{R-4-3-1}.
 The inference was performed using RStan~2.32.3~\autocite{RStan-2-32-3} and Stan~2.32.2~\autocite{Stan-2-32-2}.
-Inference settings were the same as \textcite{hakkiOnset}, which included 8 chains with a total of 8000 iterations each with the first 3000 used as warm-up.
+Inference settings were the same as \textcite{hakkiOnset}, which included 8 chains with a total of \numprint{8000} iterations each with the first \numprint{3000} used as warm-up.
 \begin{table}
 \begin{tabular}{l c l l}
     Parameter description & Symbol & Distribution \\
@@ -239,7 +239,7 @@ Equivalent forms of $F_{D,g}$, such as the survival and hazard functions, can be
   Algorithm to calculate the Monte Carlo integral in \cref{ATACCC:eq:FDintegral}, producing the posterior distribution of $F_{D,g}(d)$.
   The posterior distribution is represented as a sample $F_{D,g}^{(1)}, \dots, F_{D,g}^{(N)}$.
   $\vec{\mu}_\phi^{(i)}$ and $\matr{\Sigma}_\phi^{(i)}$ denote the $i$th posterior sample of $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$ respectively, taken from the MCMC output.
-  $M$ is the number of individuals to draw, I found $M = 100,000$ produced stable estimates of the tail of $F_{D,g}(d)$ if $\dmax = 45$.
+  $M$ is the number of individuals to draw, I found $M =\numprint{100000}$ produced stable estimates of the tail of $F_{D,g}(d)$ if $\dmax = 45$.
  }
  \label{ATACCC:alg:MonteCarlo}
 \end{algorithm}

@@ -216,7 +216,7 @@ The poststratified posterior samples are now posterior samples from the posterio
 
 A slow increase in incidence is estimated to occur over the autumn 2020 period, peaking in late November in most regions (see \cref{transmission:fig:backcalc-regions}).
 An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
-All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5th Nov 2020~\autocite{ifgTimeline}.
+All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5 Nov 2020~\autocite{ifgTimeline}.
 
 During November, incidence starts rising, with regional heterogeneity in the timing of when this occurs (see \cref{transmission:fig:backcalc-regions}).
 The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocite{walkerTracking,daviesEstimated,lythgoeLineage}.
@@ -571,10 +571,10 @@ I transformed parameters with bounded supports to the real line to improve sampl
 Parameters which are constrained to the positive reals ($\sigma_\epsilon$, $\rho$, and $q_c$) were sampled on the log scale.
 Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) were sampled on the logit scale.
 
-All results are based on four Markov chains each of length 1,000,000 iterations.
-The first 500,000 were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
-This gives 5,000 posterior samples per region.
-This was further thinned to 2,000 samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
+All results are based on four Markov chains each of length \numprint{1000000} iterations.
+The first \numprint{500000} were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
+This gives \numprint{5000} posterior samples per region.
+This was further thinned to \numprint{2000} samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
 
 Following \textcite{birrellBayesian}, I reparameterize the model to improve identifiability.
 I parameterize $\beta_1$ in terms of the initial growth of the epidemic.
@@ -666,7 +666,7 @@ In particular, the October half-term school holiday is visible, especially in th
 
 Finally, I generated one dataset of test results for each parameter set.
 These were generated according to the likelihood, \cref{SEIR:eq:likelihood}.
-The number of daily tests was set to the mean of what CIS performed in the region over this period (1630), distributed across the population in proportion to its size.
+The number of daily tests was set to the mean of what CIS performed in the region over this period (\numprint{1630}), distributed across the population in proportion to its size.
 
 Having generated 100 datasets, I used the inference procedure in \cref{SEIR:sec:inference} to find the posterior distribution conditional on each dataset.
 Hence, I ended up with 100 parameter sets distributed according to the priors (the ``generative values"), with an associated dataset and posterior distribution for it.
@@ -789,7 +789,7 @@ For example, in the North East region, the 12--16 age group has its prevalence o
 
 All regions' MCMC chains converged, assessed using the Rhat statistic and ESS (as defined in \cref{E-MCMC:sec:convergence}).
 The highest Rhat was 1.01 for $\sigma_\epsilon$ in London.
-All parameters had ESS > 1000, except $\sigma_\epsilon$ and $\psi$ in London, which had ESS of 450 and 950 respectively.
+All parameters had ESS > \numprint{1000}, except $\sigma_\epsilon$ and $\psi$ in London, which had ESS of 450 and 950 respectively.
 
 \subsection{Discussion} \label{SEIR:sec:discussion}
 

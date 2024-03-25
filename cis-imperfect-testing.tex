@@ -61,7 +61,7 @@ This reproduced the CIS data more faithfully and exhibited the same issues when 
   \centering \includegraphics{cis-imperfect-testing/sim-single-positive-episodes}
   \caption[Single positive episodes in CIS simulation]{%
     Proportion of detected episodes which have a single positive episode.
-    y-axis is the number of simulations, out of 1000, with the indicated proportion.
+    y-axis is the number of simulations, out of \numprint{1000}, with the indicated proportion.
     Test sensitivity is $\psens$.
     The CIS data is shown as a vertical line.
   }
@@ -342,7 +342,7 @@ Therefore, I will apply this model to the real CIS data in the next section.
 \section{Application to CIS data} \label{imperf-test:sec:application}
 
 In this section I apply the approach described in this chapter to the CIS episodes dataset I described in \cref{perf-test:sec:data-notation}.
-This is the 4,800 CIS infection episodes first detected between 10th Oct 2020 and 6th Dec 2020 inclusive and have negatives bounding the start and end time of the episode.
+This is the \numprint{4800} CIS infection episodes first detected between 10 Oct 2020 and 6 Dec 2020 inclusive and have negatives bounding the start and end time of the episode.
 
 Unlike in the simulation studies, an uninformative prior on $\ntot$ led to implausible estimates of the duration distribution.
 The uninformative prior led to high posterior estimates of $\ntot$, and hence an implausibly large number of episodes with durations of less than five days.
@@ -350,7 +350,7 @@ Therefore, I based an informative prior for $\ntot$, $\ntot \sim \NBc(\mu, r)$ (
 \Textcite{birrellRTM2} estimated the total number of infections in England over the time period I consider, with posterior mean \numprint{4136368} and standard deviation \numprint{27932}.
 % This model gives a posterior mean of \numprint{4136368} cumulative infections in England in the time period I consider, with a posterior standard deviation of \numprint{27932}~\citePersonalComms{Paul Birrell}.
 \todo{Insert correct citation for RTM paper 2 once available}
-Approximating this distribution as a negative binomial and scaling the mean to the size of the CIS cohort gives the prior $\mu\inform = 25132$ and $r\inform = 22047)$.
+Approximating this distribution as a negative binomial and scaling the mean to the size of the CIS cohort gives the prior $\mu\inform = \numprint{25132}$ and $r\inform = \numprint{22047}$.
 
 With this prior, the model produces plausible estimates of the duration distribution (see \cref{imperf-test:fig:cis-estimates}).
 This estimate (blue) has more long episodes than the estimate in \cref{E-ATACCC} (red).

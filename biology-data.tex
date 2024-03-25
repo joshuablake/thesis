@@ -111,7 +111,7 @@ As with sensitivity, this is different to the \emph{clinical specificity} of the
 A positive result for an undetectable individual is a \emph{false positive}.
 
 False positives are very rare for SARS-CoV-2 RT-PCR tests.
-In summer 2020, the CIS performed 208,730 PCR tests and found only 159 positives~\autocite[section 5]{cisMethodsONS}.
+In summer 2020, the CIS performed\numprint{208730} PCR tests and found only 159 positives~\autocite[section 5]{cisMethodsONS}.
 If these were all false positives, then the test specificity would be 99.9\%.
 In reality, it is almost certain that some of these are true positives, and hence this is a lower-bound on the true test specificity.
 
@@ -200,29 +200,13 @@ The host's immune system can slow this process by various mechanisms; the most r
 A host's immune response is triggered by the viral load and becomes stronger as the viral load increases.
 A high viral load is associated with being more infectious, more likely to test positive on an RT-PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
 
-
-% Possible summaries
-% \begin{enumerate}
-%   \item \url{https://www.nature.com/articles/s41579-022-00822-w/figures/2}
-%   \item \url{https://www.nature.com/articles/s41576-021-00360-w/figures/1}
-%   \item \url{https://academic.oup.com/view-large/figure/305617142/ciaa1442_fig2.jpg}
-% \end{enumerate}
-
-
-% \section{Studies used ie this thesis} \label{biology-data:sec:studies}
-
-% In this section, I expand on the major two studies I use in this thesis (ATACCC and CIS).
-% Unlike many studies of SARS-CoV-2, these studies are not focused on specific groups such as healthcare workers or hospital patients.
-% Therefore, the results from these studies are more generalisable to the entire UK population.
-
-
 \section{Assessment of Transmission and Contagiousness of COVID-19 in Contacts} \label{biology-data:sec:ataccc}
 
 The ATACCC study was a longitudinal study of contacts reported to the NHS Test and Trace contact tracing service~\autocite{hakkiOnset}.
 Contacts were invited to participate if they were 5 years or older and  could be reached within 5 days of the index case's symptom onset date.
 ATACCC enrolled a total of 738 contacts across two waves.
-The first wave enrolled 393 contacts between 13th Sep 2020 and 31st Mar 2021, when pre-Alpha and Alpha variants were circulating.
-The second wave enrolled 345 contacts between 24th May 2021 and 228th Oct 2021, when the Delta variant was circulating.
+The first wave enrolled 393 contacts between 13 Sep 2020 and 31 Mar 2021, when pre-Alpha and Alpha variants were circulating.
+The second wave enrolled 345 contacts between 24 May 2021 and 28 Oct 2021, when the Delta variant was circulating.
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
 For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve (see \cref{biology-data:sec:PCR-process}).
 Other data such as demography and symptoms were also collected, although I do not use this information.
@@ -240,7 +224,7 @@ The CIS~\autocite{CIS} was set up in April 2020 to provide gold-standard measure
 It was a longitudinal study with a representative sample of private households, \ie excluding settings such as care homes and student halls.
 The dataset is globally unique in providing a representative, longitudinal, and large-scale study across the pandemic.
 Initially, it was limited to England, but expanded to cover the whole of the UK in September 2020.
-Enrolment was continuous until 31st Jan 2022, with data collected until 13th Mar 2023~\autocite{weiRisk}. 
+Enrolment was continuous until 31 Jan 2022, with data collected until 13 Mar 2023~\autocite{weiRisk}. 
 
 The CIS had a household-based design, meaning that households were invited to participate in the study.
 From households that participated, all individuals aged 2 and over were invited to participate.
@@ -250,14 +234,14 @@ In reality, visits were often not on this precise schedule, and occasionally mis
 A full description of the study can be found in the study protocol~\autocite{cisProtocol}.
 
 Up until July 2020, households were selected from those that had previously participated in an ONS survey~\autocite{CIStechData}.
-Around 50\% of households agreed to participate, with around 90\% of eligible individuals (96,113 in total) in these households contributing multiple swabs to the survey.
+Around 50\% of households agreed to participate, with around 90\% of eligible individuals (\numprint{96113} in total) in these households contributing multiple swabs to the survey.
 After July 2020, addresses were also randomly sampled from a database of all UK addresses held by the ONS.
-The response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (383,732 in total) contributed multiple swabs to the survey.
+The response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (\numprint{383732} in total) contributed multiple swabs to the survey.
 
 These rates of response raise the possibility of non-response bias.
 In particular, some demographic groups, such as young adults and individuals of non-White ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
 
-In this thesis, I focus on the period from Mon 31st Aug 2020 until Sun 24th Jan 2021 (see \cref{E-intro:sec:aims}).
+In this thesis, I focus on the period from Mon 31 Aug 2020 until Sun 24 Jan 2021 (see \cref{E-intro:sec:aims}).
 During the start of this period, the recruitment rate of CIS was expanded (see \cref{biology-data:fig:CIS-recruitment}(A)).
 Following this, the recruitment then decreases and stabilises, as does the rate of swabs taken (see \cref{biology-data:fig:CIS-recruitment}(B)).
 The recruitment pattern was chosen to hit targets regarding the fortnightly number of swabs.
@@ -441,7 +425,7 @@ Statistical disclosure control ensures that no individual can be identified from
 This means that data must be aggregated to counts of at least 5, and no individual-level data included.
 
 Analyses requiring more fine-grained stratification (such as that in \cref{biology-data:sec:MRP}) or linking data from the same individual over time (such as that in \cref{E-perf-test,E-imperf-test}) must be performed within the SRS.
-The SRS contains five 2.40\,GHz dual-core Intel Xeon E5-4650 processors and 164\,GB RAM.
+The SRS contains five \numprint[GHz]{2.40} dual-core Intel Xeon E5-4650 processors and \numprint[GB]{164} RAM.
 These computational resources are shared between all users of the CIS SRS project and due consideration must be given to other users.
 Processes which run for multiple days are liable to be cancelled.
 

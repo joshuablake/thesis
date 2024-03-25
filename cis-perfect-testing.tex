@@ -27,7 +27,7 @@
 
 When estimating incidence from prevalence, the mean duration, not its median, is the most important feature of the duration distribution~\autocite{freemanPrevalence}.
 Duration distributions tend to be right-skewed.
-Therefore, estimates of the mean would be sensitive to the tail of the duration distribution.
+Therefore, estimates of the mean can be sensitive to the tail of the duration distribution.
 
 In \cref{E-ATACCC} I estimated the duration distribution from the ATACCC dataset.
 However, this study suffered from a small sample size and only 20 days of follow-up, preventing accurate estimation of the tail.
@@ -57,8 +57,8 @@ The first complication in the analysis is that infection episodes can be undetec
 Undetected infection episodes are episodes with no associated positive tests.
 Therefore, there is no information directly observed about the episode; even the number that occur is latent.
 They occur when an episode starts and ends between tests (see \cref{perf-test:fig:truncation}).
-Undetected episodes are important because they are, on average, shorter than detected episodes; therefore, neglecting them would lead to a biased estimate of the survival distribution.
-To see why this is the case, consider the infection episode in figure \cref{perf-test:fig:truncation}.
+Undetected episodes are, on average, shorter than detected episodes; therefore, neglecting them would lead to a biased estimate of the survival distribution.
+To see why they are shorter, consider the infection episode in \cref{perf-test:fig:truncation}.
 Here two individuals are shown, with identical data collected for each of them (a series of negative
 tests).
 The first individual was never infected whereas the second individual has an undetected infection. 
@@ -66,10 +66,14 @@ The undetected infection episode begins at time 33 and has a 10-day duration.
 The individual would have been detected at their next test if their duration had instead been 24 days or more.
 The gap between tests in the CIS (up to 28 days, see \cref{E-intro:sec:cis}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
 Therefore, it is likely that many infections in the CIS cohort were undetected.
-This is because the interval between tests in the same individual (up to 28 days, see \cref{E-intro:sec:cis}) is longer than most infections (median 16 days, see \cref{E-ATACCC:sec:results}).
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{cis-perfect-testing/truncation}}
-  \caption[Undetected episodes in CIS data]{Graphical illustration of an undetected infection episode, represented by the shaded area. \label{perf-test:fig:truncation}}
+  \caption[Undetected episodes in CIS data]{%
+    Identical data for two individuals, with a series of negative tests.
+    Top individual remains uninfected, bottom individual has an undetected infection.
+    The shaded area represents when the individual is detectable.
+  }
+  \label{perf-test:fig:truncation}
 \end{figure}
 
 \subsection{Unobserved times for each episode's beginning and end} \label{perf-test:sec:interval-censoring}
@@ -128,22 +132,21 @@ These studies base their inference on a likelihood contribution for each detecte
 
 For this conditional likelihood to be valid, they assume this conditioning provides negligible information on the distribution of interest~\citePersonalComms{Nick Jewell}.
 This assumption performs well in these settings, when the length of the intervals is fairly constant.
-In particular, when the interval lengths are near-constant, $p(\text{episode $j$ detected} \mid b_j \in [l_j^{(b)}, r_j^{(b)}]) \approx p(\text{episode $j$ detected})$.
+A necessary condition for it to perform well, satisfied when the interval lengths are near-constant, is $p(\text{episode $j$ detected} \mid b_j \in [l_j^{(b)}, r_j^{(b)}]) \approx p(\text{episode $j$ detected})$.
 However, the interval lengths change from one to four weeks in the CIS (see \cref{E-intro:sec:cis}).
 
 Infection episodes in an individual's one-week testing period are over-represented in the detected infections.
 This is because more frequent testing will detect a higher proportion of infections.
-Therefore, for the average detected episode, $p(\text{episode $j$ detected} \mid b_j \in [l_j^{(b)}, r_j^{(b)}]) > p(\text{episode $j$ detected})$.
-Therefore, conditioning on $b_j \in [l_j^{(b)}, r_j^{(b)}]$ is inappropriate.
+Therefore, for the average detected episode, $p(\text{episode $j$ detected} \mid b_j \in [l_j^{(b)}, r_j^{(b)}]) > p(\text{episode $j$ detected})$ and conditioning on $b_j \in [l_j^{(b)}, r_j^{(b)}]$ is inappropriate.
 
 Doubly interval censored and truncated data are common when assessing the survival time of bird and insect nests~\autocite{heiseyABCs}.
 \textcite{heiseyModelling}, building on long-standing methodology~\autocite{dempsterMaximum,turnbullEmpirical}, develops a likelihood-based inference framework, allowing for arbitrary truncation patterns and double interval censoring.
 They apply it to a situation where the visit times (possible detection times) are common to all the individuals, simplifying the likelihood.
-I adapt this framework for CIS, when each individual has their own visit schedule (see section \cref{perf-test:sec:model}).
+I adapt this framework for CIS, when each individual has their own visit schedule (see \cref{perf-test:sec:model}).
 
 I use Bayesian inference for two reasons.
 First, the frequentist properties (\eg consistency and convergence rate) of proposed estimators are poorly understood~\autocite{sunAnalysis,dengNonparametric}.
-Second, a prior can include information from previous studies, such as from \cref{E-ATACCC}.
+Second, a prior can include information from previous studies, such as \cref{E-ATACCC}.
 Alternatively, the prior can favour a smoothly changing hazard, which is biologically sensible, and can overcome issues caused by the undetected episodes ~\autocite{caoBias}.
 
 Bayesian methods have been used for nest survival before~\autocite{heBayesiana,heBayesian,caoModeling} by augmenting the data with the unobserved times of infection.
@@ -153,23 +156,23 @@ This increases the dimensionality of the problem greatly, making it computationa
 
 \section{Modelling the duration}\label{perf-test:sec:model}
 
-In this section, I develop a statistical model accounting for double interval censoring and undetected episodes.
+In this section, I develop a computationally feasible statistical model accounting for double interval censoring and undetected episodes.
 In \cref{perf-test:sec:data-notation}, I introduce the data and notation, defining which quantities are observed and which are latent.
-Then, in \cref{perf-test:sec:episode-types}, I apply the framework of \textcite{heiseyModelling} to classify possible episode beginning and end types into \emph{admissible} episodes, which match the doubly interval censored pattern of the observations; \emph{undetected} episodes, which may have occurred but would have been undetected; and \emph{inadmissible} episodes, which the data rules out having occurred.
-The number of such episodes in each class is a random variable, with a multinomial distribution, conditional on the latent total number of infections (including undetected infections).
+Then, in \cref{perf-test:sec:episode-types}, I apply the framework of \textcite{heiseyModelling} which classifies possible episode beginning and end time into \emph{admissible} episodes, which match the doubly interval censored pattern of the observations; \emph{undetected} episodes, which may have occurred and been undetected; and \emph{inadmissible} episodes, which the data rules out having occurred.
+The number of such episodes in each class has a multinomial distribution conditional on the latent total number of infections (including undetected infections).
 
 In \cref{perf-test:sec:posterior-density}, I outline the form of the posterior density.
 The following subsections then derive its various components.
-Unlike in \textcite{heiseyModelling}, I must consider the probability of undetected episodes for each individual seperately because they have differing visit times.
+Unlike in \textcite{heiseyModelling}, I must consider the individual's probability of undetected episodes separately because they have differing visit times.
 In addition, I include the information from the individuals without a detected episode.
 
-Unlike prior work, I marginalise the likelihood over the number of undetected episodes.
+Unlike prior work, I marginalise the posterior density over the number of undetected episodes.
 This makes inference tractable using the large sample size and the computing resources available within the SRS (see \cref{E-biology-data:sec:SRS}).
 In particular, the posterior can be expressed within modern, high-performance Bayesian software such as Stan.
 
 \subsection{Data and notation} \label{perf-test:sec:data-notation}
 
-I analyse the 4,800 episodes first detected between 10th Oct 2020 and 6th Dec 2020 inclusive, with negatives bounding the start and end time of the episode.
+I analyse the \numprint{4800} episodes first detected between 10 Oct 2020 and 6 Dec 2020 inclusive, with negatives bounding the start and end time of the episode.
 This period is denoted as $t = 1, \dots, T$.
 A negative test before the start of the episode provides a lower bound on the episode's start time; otherwise, there is little information on its length.
 Similar information comes from the negative test after the end of the episode.
@@ -183,7 +186,7 @@ Index these individuals by $i = 1, \dots, \Ncis$ where $\Ncis$ is the total numb
 
 An individual $i$ has a \emph{test schedule} $\sched_i$.
 The test schedule $\sched_i$ is the set of times individual $i$ is tested at, from their last test prior to time 1 (if it exists) up until time $T$.
-These are all the times an infection episode can be detected at, plus one prior test
+These are all the times an infection episode can be detected at, plus one prior test.
 For example, for the individual in \cref{perf-test:sec:undetected}, $\sched_i = \{ 0, 7, 14, 21, 28, 56 \}$.
 Each individual has exactly one test schedule, but it is possible that $\sched_i = \sched_{i'}$ for $i \neq i'$.
 I assume that the test schedules are uninformative on all quantities of interest because they are part of the study design.
@@ -206,7 +209,7 @@ These latter two properties are what make the data doubly interval censored.
 
 \subsection{Types of episodes} \label{perf-test:sec:episode-types}
 
-To relate the possible value for $b_j$ and $e_j$, given a test schedule $\sched_{i(j)}$, to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie: are strict subsets of $T \times T$).
+To relate the possible value for $b_j$ and $e_j$, given a test schedule $\sched_{i(j)}$, to the data, I define three subsets partitioning the space of possible infection and recovery times (\ie are strict subsets of $T \times T$).
 Figure \ref{perf-test:fig:partitionSpace} shows this graphically.
 Each episode, whether detected or not, must fall into one of these three classes with a probability that is a function of the parameters of the survival function, $\vec{\vec{\theta}}$, specified in \cref{perf-test:sec:parameters-priors}.
 
@@ -594,11 +597,11 @@ where $\expit(x) = 1 / (1 + \exp(-x))$.
 I simulate a dataset of detected episodes with the same characteristics as that in the CIS by the following procedure.
 \begin{enumerate}
     \item Extract the test schedules for each individual who had at least one test during the period of interest.
-    \item Draw an episode start time, $b_{j}$ for each individual uniformly at random between 2nd July 2020 (100 days before the period where a detected episode would be included) and 6th December 2020 (the end of this period).
+    \item Draw an episode start time, $b_{j}$ for each individual uniformly at random between 2 July 2020 (100 days before the period where a detected episode would be included) and 6 December 2020 (the end of this period).
     \item Draw a duration of episode for each individual, $d_i$, based on the distribution described below. Then calculate the end of their infection episode, $e_{j} = b_{j} + d_i - 1$.
     \item Simulate the test results based on the test schedule, $b_{j}$, and $e_{j}$. Tests between $b_{j}$ and $e_{j}$ (inclusive) are positive, all other tests are negative.
     \item Discard episodes where there are no positive tests (\ie undetected episodes) and then apply the same inclusions/exclusions as in \cref{perf-test:sec:problem}.
-    \item Of these remaining episodes, sample 4,800 to match the sample size of the true dataset. This is needed because in step 2 the entire cohort was infected, while in the real study only an (unknown) portion is infected.
+    \item Of these remaining episodes, sample \numprint{4800} to match the sample size of the true dataset. This is needed because in step 2 the entire cohort was infected, while in the real study only an (unknown) portion is infected.
     \item For this final set of episodes, calculate $(l_j^{(b)}, r_j^{b}, l_j^{(e)}, r_j^{(e)})$ by taking the day after the last negative prior to any positives, the first positive, the last positive, and the day before the negative following the last positive respectively.
 \end{enumerate}
 
@@ -650,11 +653,11 @@ This meant that the prior was very diffuse.
 
 \subsection{Results} \label{perf-test:sec:results}
 
-Repeating the simulation showed negligible variation in the results (not shown) due to the large sample size (4800 detected infections).
+Repeating the simulation showed negligible variation in the results (not shown) due to the large sample size (\numprint{4800} detected infections).
 Therefore, I show and discuss results from only a single simulation.
 
 All analyses converged.
-Rhat were below 1.01, all parameters had an effective sample size of 1000, and there were no divergent transitions.
+Rhat were below 1.01, all parameters had an effective sample size of \numprint{1000}, and there were no divergent transitions.
 
 The true value of the survival function was generally well recovered (see \cref{perf-test:fig:survival-results}).
 This was especially true for the first 30 days of the distribution.
