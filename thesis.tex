@@ -200,11 +200,11 @@
 \myexternaldocument{thesis}
 
 \abstract{%
-    Surveillance is a crucial component to a pandemic response, informing public health and wider policy.
+    Surveillance is a crucial component of a pandemic response, informing public health and wider policy.
     Unfortunately, it is often subject to reporting and behavioural biases, reducing its robustness.
     % During the SARS-CoV-2 epidemic, the UK government funded two large-scale prevalence surveys with samples recruited randomly from the general population.
     % One of these, the CIS (Coronavirus Infection Survey), was a longitudinal survey run from April 2020 to March 2023.
-    The CIS (Coronavirus Infection Survey) was a large-scale prevalence survey, with participants recruited randomly from the general population, therefore avoiding these issues.
+    The CIS (Coronavirus Infection Survey) was a large-scale prevalence survey, with participants recruited randomly from the general population, thereby avoiding these issues.
 
     In this thesis, I consider how to best use the CIS data for surveillance.
     %, can be used for surveillance to perform more robust inference.
@@ -218,19 +218,19 @@
     % In \cref{ATACCC}, I extend a pre-existing model of how an individual's viral load changes over time to estimate the duration of positivity.
     % This model is fitted to data from the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study, a longitudinal study of viral load in contacts of individuals with confirmed SARS-CoV-2 infection.
     I use this detailed model to exploit frequent (daily) sampling of individuals in a cohort of contact traced individuals.
-    However, the cohort was small and follow-up short meaning that the tail of the duration distribution is poorly estimated.
+    However, the cohort was small and the follow-up time short meaning that the tail of the duration distribution is poorly estimated.
 
     % Therefore, in \cref{perf-test,imperf-test}, I combine the information from ATACCC with the larger CIS dataset.
     % I analyse the CIS in a survival analysis framework.
     To overcome this issue, I combine the information with the larger and longer CIS dataset.
-    The CIS data poses several challenges because it is double interval censored and some individuals in the cohort have infections that are never detected.
+    The CIS data poses several challenges because it is doubly interval censored and some individuals in the cohort have infections that are never detected.
     I apply a survival analysis framework to analyse this data, which had previously only been used in simpler settings.
     In addition, I develop novel methodology to incorporate false negatives into the framework.
     % The results showed that false negatives in the CIS data needed to be included in the model.
     % In \cref{imperf-test} I develop a novel methodology to do so.
     This results in an estimate of the full duration distribution in the general population, not previously available.
 
-    Finally, I use this estimate to estimate the incidence and transmission of SARS-CoV-2 in England.
+    Finally, I use this estimate to infer the incidence and transmission of SARS-CoV-2 in England from the CIS.
     I fully propagate the sampling error, accurately include the shape of the duration distribution, and estimate the quantities by age; previous work lacked at least one of these.
     Furthermore, I fit to only the CIS data, showing that such a survey is adequate to estimate these quantities.
     % without requiring an evidence synthesis approach previously used.
@@ -266,8 +266,8 @@
 
     In addition to the supervision and advice mentioned, several people contributed code or results to this work.
     Professor A.\ Sarah Walker created the episodes dataset in \cref{biology-data:sec:cis-episodes} and performed the initial survival analysis I use for a simulation study \cref{perf-test:sec:simulation-study}.
-    Dr Koen Pouwels provided code used as the basis of the positivity model in \cref{biology-data:sec:MRP}.
-    Dr Edwin van Leeuwen created the contact matrices and Dr Sanmitra Ghosh provided code for the MCMC sampler used in \cref{E-SEIR}.
+    Dr Koen Pouwels provided code I use as the basis of the positivity model in \cref{biology-data:sec:MRP}.
+    Dr Edwin van Leeuwen created the contact matrices and Dr Sanmitra Ghosh provided code for the MCMC sampler I use in \cref{E-SEIR}.
     Thank you all for your contributions.
 
     Of course, the support outside of work has been just as, if not more, important.
@@ -295,7 +295,7 @@
     Like much of the world, the events of early 2020 rapidly changed that.
     Following a brief interlude to provide rapid support to the response, the origins of this thesis emerged.
 
-    Several aspects of my work were done to support the ongoing response.
+    Several aspects of the work in this thesis were completed in support of the ongoing response.
     In particular, an earlier version of the backcalculation work was adopted by the Office for National Statistics to estimate incidence, published in their weekly online reports~\autocite{cisMethodsONS}.
     This method was also used for the analysis of several respiratory diseases over winter 2022/3~\autocite{dietzSARSCoV2final}.
 
