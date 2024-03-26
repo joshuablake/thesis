@@ -5,6 +5,7 @@ library(purrr)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
+set.seed(10)
 
 #############################################################################################
 ### LOAD THE ESTIMATES TO PLOT
@@ -32,3 +33,25 @@ ggsave(
     units = "cm",
     dpi = 300
 )
+
+cis_mean = posterior |>
+    filter(sensitivity == 0.8, survival_prior == "Informative", missed_model == "total", r == 22047)
+ataccc_mean = readRDS(here::here("ATACCC-distributions/posterior_samples.rds")) |>
+    group_by(.draw) |>
+    summarise(mean_surv = sum(S))
+cis_mean |>
+    sample_n(nrow(ataccc_mean)) |>
+    transmute(
+        cis = mean_surv,
+        ataccc = ataccc_mean$mean_surv,
+        increase = cis / ataccc,
+    ) |>
+    mean_qi() |>
+    select(!starts_with(".")) |>
+    pivot_longer(
+        everything(),
+        names_pattern = "([a-z]+)(\\.[a-z]+)?",
+        names_to = c("model", "statistic"),
+    ) |>
+    mutate(statistic = if_else(statistic == "", "Mean", statistic)) |>
+    pivot_wider(names_from = statistic, values_from = value)

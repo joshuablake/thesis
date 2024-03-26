@@ -187,3 +187,8 @@ ggsave(
     units = "cm",
     dpi = 300
 )
+
+posterior_draws |>
+    filter(sensitivity == 0.8, survival_prior == "Informative", time == 50, missed_model == "total") |>
+    filter(r == 22047) |>
+    mean_qi(S)

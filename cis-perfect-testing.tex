@@ -402,6 +402,7 @@ p_{ia}
 =& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \prob \left( l_{j(i)}^{(e)} - b + 1 \leq D_{j} \leq r_{j(i)}^{(e)} - b + 1 \right) \prob \left(B_{j} = b \right) &\text{by def of $D_{j}$} \\
 =& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b + 2) \right) \prob \left(B_{j} = b \right) &\text{by def of $S_{\vec{\theta}}$} \\
 \propto& \sum_{b = l_{j(i)}^{(b)}}^{r_{j(i)}^{(b)}} \left( S_{\vec{\theta}}(l_{j(i)}^{(e)} - b + 1) - S_{\vec{\theta}}(r_{j(i)}^{(e)} - b + 2) \right)
+\label{perf-test:eq:pia}
 \end{align}
 under the assumption of uniform probability of infection time.
 This is the standard form of the likelihood for doubly interval censored data without truncation~\autocite[e.g.][]{sunEmpirical}.
@@ -443,6 +444,7 @@ To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next 
 defining $\min \emptyset = \infty$; \ie $\tau_{\sched_i}(t) = \infty$ if there is no $t' \in \sched_i$ such that $t' \geq t$.
 The first condition can now be expressed as $e_j \geq b_j + \tau_{\sched_{i(j)}}(b_j)$.
 Equivalently, $d_j \geq \tau_{\sched_{i(j)}}(b_j) + 1$.
+The third condition can be expressed as $\tau_{\sched_{i(j)}}(b_j) < \infty$.
 
 
 % Then $\Omega_i$ can be written as:
@@ -453,8 +455,8 @@ Therefore, omitting the conditioning on $\vec{\theta}$ and $i(j) = i$:
 \begin{align}
 1 - p_{iu}
 &= 1 - \prob((B_{j}, E_{j}) \in \Omega_i) \\
-&= \prob(D_j \geq \tau_{\sched_{i}}(B_j)+ 1, B_j > \min \sched_{j}) \\
-&= \sum_{b = \min \sched_{i} + 1}^T \prob(D_j \geq \tau_{\sched_{i}}(b) + 1 \mid B_j = b) \prob(B_j = b)\\
+&= \prob(D_j \geq \tau_{\sched_{i}}(B_j)+ 1, \tau_{\sched_{i(j)}}(b_j) < \infty, B_j > \min \sched_{j}) \\
+&= \sum_{b = \min \sched_{i} + 1}^T \prob(D_j \geq \tau_{\sched_{i}}(b) + 1, \tau_{\sched_{i(j)}}(b_j) < \infty \mid B_j = b) \prob(B_j = b)\\
 &= \frac{1}{T} \sum_{b = \min \sched_{i} + 1}^T S_{\vec{\theta}}(\tau_{\sched_{i}}(b) + 1)
 \label{perf-test:eq:piu}
 \end{align}

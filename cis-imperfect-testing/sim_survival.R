@@ -6,12 +6,12 @@ library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
 
-base_plot = function(df, colour_curves_by, colour_key = NULL) {
+base_plot = function(df, colour_curves_by, colour_key = NULL, facet_suffix = "") {
     p = df |>
         mutate(
             sensitivity.model = factor(sensitivity.model),
             facet_label = latex2exp::TeX(glue::glue(
-                "({LETTERS[dense_rank(sensitivity.model)]})\\ $p_{{sens}} = {sensitivity.model}"
+                "({LETTERS[dense_rank(sensitivity.model)]})\\ $p_{{sens}}{facet_suffix} = {sensitivity.model}"
             ), output = "character")
         ) |>
         ggplot() +
@@ -67,7 +67,7 @@ ggsave(
 
 p_misspecified_sensitivity = tbl_posteriors |>
     filter(sensitivity.simulation == 0.8, survival_prior == "Combination") |>
-    base_plot(sensitivity.model, colour_key = expression(p[sens]))
+    base_plot(sensitivity.model, colour_key = expression(p[sens]^`(i)`), facet_suffix = "^{(i)}")
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.pdf"),
     plot = p_misspecified_sensitivity,
@@ -79,7 +79,7 @@ ggsave(
 
 p_variable_sensitivity = tbl_posteriors |>
     filter(is.na(sensitivity.simulation), survival_prior == "Combination") |>
-    base_plot(sensitivity.model, colour_key = expression(p[sens]))
+    base_plot(sensitivity.model, colour_key = expression(p[sens]^`(i)`), facet_suffix = "^{(i)}")
 ggsave(
     filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.pdf"),
     plot = p_variable_sensitivity,

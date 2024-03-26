@@ -27,6 +27,7 @@ The normalising constant, $C$, has a complex form and is rarely needed.
 \begin{tabular}{llp{3.5cm}lll}
 Name & Notation & Parameters & Mean & Variance & pmf \\
 \hline \\
+Bernoulli & $\Ber(p)$ & $0 \leq p \leq 1$ (probability of success) & $p$ & $p(1-p)$ & $p^x(1-p)^{1-x}$ \\
 Binomial & $\Bin(n, p)$ & $n \in \nats$ (number of trials, integer)\newline $0 \leq p \leq 1$ (probability of success) & $np$ & $np(1-p)$ & ${n \choose x}p^x(1-p)^{n-x}$ \\
 Poisson & $\Poi(\lambda)$ & $\lambda > 0$ (average rate) & $\lambda$ & $\lambda$ & $\frac{e^{-\lambda}\lambda^x}{x!}$ \\
 Negative Binomial (standard) & $\NBs(r, p)$ & $r > 0$ (number of failures until stopping)\newline $0 < p < 1$ (probability of success) & $\frac{pr}{1-p}$ & $\frac{pr}{(1-p)^2}$ & $\frac{\Gamma(x+r)}{x! \Gamma(r)} p^x (1-p)^r$ \\
