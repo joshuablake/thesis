@@ -82,7 +82,8 @@ ggsave(
     plot = p_coverage,
     width = 12,
     height = 10,
-    unit = "cm"
+    unit = "cm",
+    device = cairo_pdf
 )
 
 p_true_vs_posterior = posterior_intervals |>
@@ -115,7 +116,8 @@ ggsave(
     width = 20,
     height = 22,
     units = "cm",
-    dpi = 300
+    dpi = 300,
+    device = cairo_pdf
 )
 
 # Figure for combined posterior

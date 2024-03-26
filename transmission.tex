@@ -15,7 +15,7 @@ I take two approaches, backcalculation and a mechanistic model, both previously 
 First, in \cref{backcalc}, I use a backcalculation approach, based on \cref{E-inc-prev:eq:EPt}.
 This approach enables estimation of incidence within (sub)populations of England.
 There are several attractive features about this approach in the context here.
-The backcalculation approach makes no assumptions about how transmission occurs; the assumptions have the potential to introduce bias.
+The backcalculation approach makes few assumptions about how transmission occurs; the assumptions have the potential to introduce bias.
 It can also easily incorporate arbitrary covariates to adjust for non-response bias.
 The scale of the CIS and desire to correct for non-response bias presents challenges for this methodology, especially within the limited computation of the SRS environment.
 
@@ -31,7 +31,7 @@ Incidence and transmission have not previously been estimated from only SARS-CoV
 
 \section{Backcalculation} \label{backcalc}
 
-In this section, I will apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
+In this section, I apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
 I view the CIS as a series of daily, cross-sectional prevalence surveys.
 This is the same approach as previously used to estimate prevalence from the CIS (see \cref{E-biology-data:sec:MRP}).
 
@@ -56,13 +56,13 @@ The basis of the statistical model, in a Bayesian framework, would be as follows
     \rho &\dist F_\rho \\
     Y_{i,t} \mid \vec{P}, \rho &\dist \BB(n_{i,t}, P_{i,t}, \rho)
 \end{align}
-where $\vec{Z}$ is a vector such that $Z_{i,t}$ is the incidence proportion in stratum $i$ on day $t$, and has prior $F_Z$; $P_{i,t}$ is the prevalence in stratum $i$ on day $t$; $\rho$ is the overdispersion parameter of the beta-binomial distribution with prior $F_\rho$; $Y_{i,t}$ is the number of positive tests in stratum $i$ on day $t$; and $n_{i,t}$ is the number of tests in stratum $i$ on day $t$.
+where $\vec{Z}$ is a vector such that $Z_{i,t}$ is the incidence proportion in stratum $i$ on day $t$, with a joint prior $F_Z$; $P_{i,t}$ is the prevalence in stratum $i$ on day $t$; $\rho$ is the overdispersion parameter of the beta-binomial distribution with prior $F_\rho$; $Y_{i,t}$ is the number of positive tests in stratum $i$ on day $t$; and $n_{i,t}$ is the number of tests in stratum $i$ on day $t$.
 Fitting this model to a prevalence survey such as the CIS (\eg using MCMC) gives a posterior distribution of $\vec{Z}$, the target of inference.
 
-The relationship between $P$ and $Z$ is from \cref{E-inc-prev:eq:EPt}, although dividing both sides by $\Npop$ to have the values in terms of incidence proportion and prevalence rather than incidence and number of prevalent individuals.
+The relationship between $P$ and $Z$ is from \cref{E-inc-prev:eq:EPt}, although dividing both sides by the stratum's population (assumed constant) to have the values in terms of incidence proportion and prevalence rather than incidence and number of prevalent individuals.
 
 Specifying $F_Z$ would depend on the application of the approach, but should consider the need to provide structure to stabilise the problem (see \cref{E-intro:sec:disease-model}).
-In the context of the CIS, it needs to allow borrowing information across time and/or strata; this is required because some stratum and time combinations have few positives (fewer than five per day).
+In the context of the CIS, it needs to allow borrowing information across time and/or strata (see \cref{E-biology-data:sec:MRP}).
 
 The second approach, which I call the \emph{prevalence-inferred} approach takes a two-step approach.
 First, it uses the statistical model from \cref{E-biology-data:sec:MRP} to estimate prevalence.
@@ -83,9 +83,8 @@ A posterior sample for $\vec{P}$ can be transformed to a posterior sample for $\
 
 The incidence-inferred approach is more parsimonious in being a single step procedure.
 However, it poses several pragmatic challenges which means I favour the prevalence-inferred approach.
-Here I explain that further developments, beyond the scope of this thesis, would be required to use the incidence-inferred approach within the computational constraints of the SRS.
 
-It will be convenient to define a variable equating to the posterior initially estimated.
+It will be convenient to define a variable equating to the quantity initially estimated.
 Let $\pi_{i,t} = Z_{i,t}$ under the inference-inferred approach and $\pi_{i,t} = P_{i,t}$ is the prevalence.
 
 The chosen approach should have the following properties.
@@ -98,18 +97,18 @@ The chosen approach should have the following properties.
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
     \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias.
     \item Borrow information across the different covariates.
-        The borrowing should penalize changes in the distribution of incidence/prevalence across strata in the same geographic region being constant.
+        The borrowing should penalize changes in the distribution of incidence/prevalence across strata in the same geographic region.
         A constant distribution is predicted by the theoretical study of epidemics, for example the dynamics of stratified, mechanistic transmission models (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) over short periods of time with negligible behavioural and immunity changes.
     \item Be computationally efficient.
         The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
 \end{enumerate}
 
-A parsimonious model satisfying properties 1 and 2 is to specify $\logit(\pi_{i,t}) = g_\varphi(i, t)$, where $g$ is a function parameterised by $\varphi$ and the prior on $\varphi$ is specified to favour $d^2g/dt^2 = 0$, \ie favour linear growth in $\logit(\pi_{i,t}$.
+A parsimonious model satisfying properties 1 and 2 is to specify $\logit(\pi_{i,t}) = g_\varphi(i, t)$, where $g$ is a function parameterised by $\varphi$ and the prior on $\varphi$ is specified to favour $d^2g/dt^2 = 0$, \ie favour linear growth in $\logit(\pi_{i,t})$.
 The prior $F_Z$ or $F_P$ is now a prior on $\varphi$.
 The $\logit$ link function both limits $\pi_{i,t}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{i,t}$~\autocite{ealesAppropriately}.
 
 The logit transformation also allows property 4 to be conveniently satisfied using an additive model for $g_\varphi$.
-An additive model on the logit scale is multiplicative on the natural scale for the small values of $\pi_{i,t}$ which will be common.
+An additive model on the logit scale is approximately multiplicative on the natural scale for small values of $\pi_{i,t}$ (which will be common).
 
 This form of model includes the MRP prevalence model in \cref{E-biology-data:sec:MRP}.
 
@@ -120,11 +119,11 @@ This form of model includes the MRP prevalence model in \cref{E-biology-data:sec
 
 
 Properties 3 and 5 suggest the use of an approximate method for computing the posterior distribution.
-In particular, using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
-Instead, previous MRP implementations used INLA (see \cref{E-biology-data:sec:MRP}).
+In particular, using MCMC, sufficient covariates to adjust for the non-response bias, over a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
+Instead, previous MRP implementations for the CIS used INLA (see \cref{E-biology-data:sec:MRP}).
 
 INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models}); see \cref{E-transmission:sec:INLA} for further details on INLA and LGMs.
-The LGM framework requires that a transformation of $P_{i,t}$ is linear in $g_\varphi = \logit(\phi_{i,t})$.
+The LGM framework requires that a transformation of $P_{i,t}$ is linear in a vector of $g_{\varphi}(i, t)$s combining all $i$s and $t$s.
 
 If $\pi_{i,t} = P_{i,t}$ then this is trivially satisfied.
 However, if $\pi_{i,t} = Z_{i,t}$, then no such linear relationship exists.
@@ -198,14 +197,6 @@ Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_t = P_1 / \sum_{i=1}^{\dma
 
 Violation of assumptions in various parts of this procedure can lead to the second term in \cref{transmission:eq:forward-substitute} to be greater than the first, giving negative incidence.
 In this case, the incidence prior to day $t$ imply that the prevalence on day $t$ is higher than that predicted by the fitted regression model for this strata/day combination.
-There are two sets of assumptions which are most likely to be violated.
-
-The first set of assumptions is in estimating the survival function, $S(t)$, which is assumed to be known with no uncertainty in this procedure.
-However, \cref{E-imperf-test} showed that the estimate of $S(t)$ is sensitive to assumptions made, such as the assumed $\psens$ and strength of priors used.
-
-The second set of assumptions are in specifying the prior for $\vec{P}$.
-In particular, the prior places non-zero mass on prevalence values which imply negative incidence under the other model assumptions.
-Rectifying this assumption is challenging without switching to the inference-inferred approach, discussed further in \cref{backcalc:sec:results}.
 
 For each posterior sample of $\vec{Z}$, I poststratify it to the CIS target population and subpopulations of interest.
 This is done for each posterior sample using the methodology explained in \cref{E-biology-data:sec:MRP}.
@@ -214,13 +205,13 @@ The poststratified posterior samples are now posterior samples from the posterio
 
 \subsection{Results and discussion} \label{backcalc:sec:results}
 
-A slow increase in incidence is estimated to occur over the autumn 2020 period, peaking in late November in most regions (see \cref{transmission:fig:backcalc-regions}).
+A slow increase in incidence is estimated to occur over the autumn 2020 period, peaking in October in most regions (see \cref{transmission:fig:backcalc-regions}).
 An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
 All regions then decrease during November; this coincides with the national lockdown which came into force in England on 5 Nov 2020~\autocite{ifgTimeline}.
 
 During November, incidence starts rising, with regional heterogeneity in the timing of when this occurs (see \cref{transmission:fig:backcalc-regions}).
 The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocite{walkerTracking,daviesEstimated,lythgoeLineage}.
-There is evidence that when incidence starts increasing is correlated with when the Alpha variant's spread (see \cref{transmission:fig:backcalc-alpha}).
+There is evidence that when incidence starts increasing is correlated with the timing of the Alpha variant's spread (see \cref{transmission:fig:backcalc-alpha}).
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
     \includegraphics{transmission/backcalc-regions}
@@ -254,10 +245,10 @@ Many other explanations are possible, and further work is required to determine 
     \label{transmission:fig:backcalc-ages}
 \end{figure}
 
-An edge effect where a rapid rise is seen between day 1 and 2 is visible (see \cref{transmission:fig:backcalc-start-effect}).
+An edge effect, a rapid rise in incidence between days one and two, is visible (see \cref{transmission:fig:backcalc-start-effect}).
 This is due to the incorrect assumption that incidence is constant in the past.
 Changing this assumption (\eg to exponential growth) modifies the estimated value on the first day, but the rest of the series is insensitive to this change (not shown).
-Therefore, the first day's estimate is unreliable, and has been excluded from all other plots.
+Therefore, the first day's estimate is unreliable, and has been excluded from all other results.
 However, the rest of the series is robust to this assumption and hence reliable.
 \begin{figure}
     \centering \includegraphics{transmission/backcalc-start-effect}
@@ -267,10 +258,20 @@ However, the rest of the series is robust to this assumption and hence reliable.
     \label{transmission:fig:backcalc-start-effect}
 \end{figure}
 
+The issues with negative incidence are likely caused by issues with modelling assumptions.
+There are two sets of assumptions which are most likely to be violated.
+
+The first set of assumptions is in estimating the survival function, $S(t)$, which is assumed to be known with no uncertainty in this procedure.
+However, \cref{E-imperf-test} showed that the estimate of $S(t)$ is sensitive to assumptions made, such as the assumed $\psens$ and strength of priors used.
+
+The second set of assumptions are in specifying the prior for $\vec{P}$.
+In particular, the prior places non-zero mass on prevalence values which imply negative incidence under the other model assumptions.
+Rectifying this assumption is challenging without switching to the inference-inferred approach, discussed further in \cref{backcalc:sec:results}.
+
 Alternative inference techniques could allow more powerful modelling approaches, if they allowed a broader set of models than LGMs.
 In particular, the incidence-inferred approach could be adopted.
 This could allow more interpretable priors to be used because the infection process is the process that corresponds to biological and behavioural processes.
-Furthermore, the incidence proportion could be restricted to be non-negative, preventing the negative incidence seen in some strata.
+Furthermore, it would prevent the issues with negative incidence.
 
 Various alternative inference techniques could be considered.
 If the infection process is considered a Poisson process (defined in \cref{E-inc-prev:sec:poisson-process}), then, conditional on the process's intensity, there is independence between individuals' infection status.
@@ -291,7 +292,7 @@ In the mechanistic modelling literature, this part of the model is referred to a
 Having specified the full model (\cref{SEIR:sec:methods-application}), I conducted a simulation study to validate the inference process and identifiability (\cref{SEIR:sec:sim-study}), before applying the model to the CIS data (\cref{SEIR:sec:application}).
 In \cref{SEIR:sec:discussion}, I discuss the results; in \cref{transmission:sec:comparison} I compare the results to those in the previous section.
 
-In common with \cref{E-SEIR:sec:mechanistic-models}, the notation in this section differs slightly from the rest of the thesis.
+In common with \cref{E-SEIR:sec:mechanistic-models}, the notational conventions in this section differs slightly from the rest of the thesis.
 
 \subsection{Methods} \label{SEIR:sec:methods-application}
 
@@ -311,7 +312,7 @@ A parsimonious model is needed to parameterize the WAIFW matrix.
 In \cref{E-SEIR:sec:structured-populations}, I explained how the elements of the WAIFW matrix, $\matr{\beta}$ can be decomposed as $\beta_{aa'} = \kappa_{aa'} q_{aa'} N_{a'} / N_{a}$ where\todo{should I repeat these definitions? they already exist in ch 3}: $\kappa_{aa'}$ is the mean rate at which an individual in stratum $a'$ makes contact with individuals in stratum $a$; $q_{aa'}$ is the probability of transmission upon contact between an infectious individual in stratum $a'$ and a susceptible individual in stratum $a$; and $N_{a}$ is the total number of individuals in stratum $a$.
 For many epidemics, where the population behaviour is fairly constant over time, a constant $\matr{\beta}$ is a good approximation.
 However, in SARS-CoV-2, population behaviour changed dramatically, both spontaneously (\eg due to fear) and in response to government-imposed restrictions.
-Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \beta(t) \kappa_{aa'}(t) q_{aa'}(t) N_{a'} / N_a$; $N_a$ and $N_{a'}$ are constant because the change in the total population is negligible over the length of time considered here.
+Therefore, following \textcite{birrellRealtime}, I introduce a time-dependence giving: $\beta_{aa'}(t) = \kappa_{aa'}(t) q_{aa'}(t) N_{a'} / N_a$; $N_a$ and $N_{a'}$ are constant because the change in the total population is negligible over the length of time considered here.
 
 I take information on the contact rates, $\kappa_{aa'}(t)$, from several data sources, using the methodology of \textcite{vanleeuwenTime,vanleeuwenAugmenting}.
 %; these estimates have been used for previous modelling of the SARS-CoV-2 pandemic~\autocite{vanleeuwenTime,birrellRealtime}.
@@ -323,7 +324,7 @@ UKTUS asked a representative sample of the UK population about how much time the
 \Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
 These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
 Google mobility data are based on the location of Android users over time, relative to a pre-pandemic baseline.
-The mobility and school data are averaged over a week then used to down or up-weight the number of contacts in each setting, before combining contacts across settings to form $\kappa_{aa'}(t)$.
+The mobility and school data are averaged over a week down or up-weight the number of contacts in each setting, before combining contacts across settings to form $\kappa_{aa'}(t)$.
 $\kappa_{aa'}(t)$ is assumed to be piecewise constant, changing only at the start of each week.
 For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
 
@@ -388,10 +389,10 @@ Applying the package to the posterior mean of the distribution estimated in \cre
 \begin{table}
     \centering
     \begin{tabular}{c c c c c}
-        $l$ & $\omega_1$ & $\omega_{2}$ & $\omega_{3}$ & $\pi$ \\
+        $l$ & $\omega_1$ & $\omega_{2}$ & $\omega_{3}$ & $\chi$ \\
         3 & 0.0820 & 0.126 & 0.0223 & 0.00973  \\
     \end{tabular}
-    \caption{Parameter estimates for the EC distribution approximating the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
+    \caption{Parameter estimates for the phase-type distribution with the same first three moments as the posterior mean of the duration distribution estimated in \cref{E-imperf-test}.}
     \label{SEIR:table:ec-params}
 \end{table}
 % end table of ec params
@@ -439,8 +440,8 @@ Denoting the proportion of stratum $a$ in state $p_k$ as $p_{ka}(\tau)$, then $\
     \path  (S) edge node {$\lambda$} (P0)
           (P0) edge node {$\omega_0$} (P1)
           (P1) edge node {$\omega_1$} (P2)
-          (P2) edge node {$\pi \omega_{2}$} (P3)
-               edge [out=-45,in=-135] node[below] {$(1 - \pi) \omega_{2}$} (P4)
+          (P2) edge node {$\chi \omega_{2}$} (P3)
+               edge [out=-45,in=-135] node[below] {$(1 - \chi) \omega_{2}$} (P4)
           (P3) edge node {$\omega_{3}$} (P4);
     
     \node[draw, thick, inner sep=0.3cm, fit=(P1) (P3), fill=blue!10,opacity=0.2] {};
@@ -468,7 +469,7 @@ The full system of differential equations for each region is below.
     \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
     \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
     \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
-    \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t)
+    \frac{d\vec{p_3}(t)}{dt} &= \chi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t)
 \end{aligned}
 \label{SEIR:eq:fullODEs}
 \end{equation}
@@ -480,12 +481,115 @@ That is, if $\vec{x}_t$ is the system state at time $t$ for $t \in \{ 0, 0.5, 1,
 
 The mean prevalence on day $t$, used for the likelihood (see \cref{SEIR:eq:likelihood}), can be calculated as $\bar{p}_{at} = \frac{1}{2} \sum_{k=1}^l ( p_{kat} + p_{ka,t+1/2} )$.
 
+\subsubsection{Inference} \label{SEIR:sec:inference}
+
+Following \textcite{birrellBayesian}, I reparameterize the model to improve identifiability.
+I parameterize $\beta_1$ in terms of the initial growth of the epidemic.
+I also use a parsimonious parameterization of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
+
+Both reparameterizations rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}). During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
+That is:
+\begin{equation}
+\begin{aligned}
+\frac{d\vec{e_1}(t)}{dt} = \psi \vec{e_1}(t) \\
+\frac{d\vec{e_2}(t)}{dt} = \psi \vec{e_2}(t) \\
+\frac{d\vec{i_1}(t)}{dt} = \psi \vec{i_1}(t) \\
+\frac{d\vec{i_2}(t)}{dt} = \psi \vec{i_2}(t) \\
+\frac{d\vec{p_0}(t)}{dt} = \psi \vec{p_0}(t) \\
+\frac{d\vec{p_1}(t)}{dt} = \psi \vec{p_1}(t) \\
+\frac{d\vec{p_2}(t)}{dt} = \psi \vec{p_2}(t) \\
+\frac{d\vec{p_3}(t)}{dt} = \psi \vec{p_3}(t).
+\end{aligned}
+\label{SEIR:eq:exponential-growth}
+\end{equation}
+This follows directly from the ODEs if $\vec{s}$ is constant. 
+
+The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterization in terms of $\psi$ should be more computationally efficient.
+If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number $\R$ for an SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
+\begin{align}
+    R_{\psi} = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
+\end{align}
+
+Using the results of \cref{E-SEIR:sec:structured-populations}, $\R$ can also be written as $R_{\beta} = \beta_1 D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
+Hence setting $\beta_1 = R_\psi / D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ gives $R_\psi = R_\beta$.
+Using this expression, $\beta_1$ has been reparameterized in terms of $\psi$, $q_c$, and fixed quantities.
+
+To form a parsimonious parameterization of the initial state, first focus on the initial proportion of the population that is in the infectious compartments.
+Recall, from \cref{E-SEIR:sec:structured-populations}, that in the exponential growth phase, the relative proportion of each stratum that is infectious is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
+Introduce a model parameter $i^+$, the proportion of the population in either of the $i$ states at time 0 in the strata with the highest proportion infectious.
+Let $\vec{i}_0 = \vec{i}_1(0) + \vec{i}_2(0)$ be the total number of infectious individuals at time zero.
+Then:
+\begin{align}
+\vec{i_0} = \frac{i^+}{\max \vec{d}} \vec{d}.
+\label{SEIR:eq:i0}
+\end{align}
+
+Equating the expressions for $d\vec{i_2}/dt$ in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth} and setting $t=0$ to allow substituting in \cref{SEIR:eq:i0} gives:
+\begin{align}
+    \vec{i_1}(0) &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1}.
+\intertext{By definition of $\vec{i_0}$:}
+    \vec{i_2}(0) &= \vec{i_0} - \vec{i_1}(0).
+\end{align}
+
+Equating the expressions in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth}, gives the following solution for the initial state of several compartments.
+\begin{align}
+    \vec{e_2} &= \vec{i_1} \frac{\psi + 2\gamma}{2\sigma} \\
+    \vec{e_1} &= \vec{e_2} \frac{\psi + 2\sigma}{2\sigma} \\
+    \vec{p_0} &= \vec{e_1} \frac{\psi + 2\sigma}{\psi + \omega_0} \\
+    \vec{p_1} &= \vec{p_0} \frac{\omega_0}{\psi + \omega_1} \\
+    \vec{p_2} &= \vec{p_1} \frac{\omega_1}{\psi + \omega_{2}} \\
+    \vec{p_3} &= \vec{p_2} \frac{\pi \omega_{2}}{\psi + \omega_{3}}.
+\end{align}
+
+Define a parameter $\vec{\pi}$ as the proportion of each stratum without initial immunity, then $\vec{r}(0) = 1 - \vec{\pi}$.
+Finally, to ensure the population proportions sum to one, $\vec{s}(0) = \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2}$.
+
+I compute the posterior distribution using MCMC.
+Specifically, I use an adaptive random-walk Metropolis--Hastings algorithm (discussed in \cref{E-MCMC}).
+The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
+The adaptive algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, with the implementation based on \textcite{ghoshApproximate}'s work.
+Proposals are accepted or rejected using the standard Metropolis--Hastings (MH) acceptance probability.
+See \cref{SEIR:MCMC-algorithm} for full details.
+
+\begin{algorithm}
+ Set $\vec{X_0}$ to an initial value of the parameter vector \;
+ $\vec{\mu_0} = \vec{X_0}$ \;
+ $\matr{\Sigma_0} = \text{diag}(\vec{\mu_0})$ \;
+ $\lambda_0 = 1$ \;
+ \For{$i = 1, \dots, M$}{
+  sample $\vec{Y_}i \sim \N(\vec{\mu_{i-1}}, \lambda_{i-1}\matr{\Sigma_{i-1}})$\;
+  set $\vec{X_i}$ to $\vec{Y_i}$ or $\vec{X_{i-1}}$ using a MH acceptance step\;
+  update the proportion of proposals accepted so far, $\alpha$ \;
+  \eIf(\tcc{No adaptation for 200 iterations}){$i \leq 200$}{
+    $\lambda_i = \lambda_{i-1}$ \;
+    $\vec{\mu_i} = \vec{\mu_{i-1}}$ \;
+    $\matr{\Sigma_i} = \matr{\Sigma_{i-1}}$ \;
+   }{
+    $\gamma_i = (i - 200)^{-0.6}$ \;
+    $\log \lambda_i = \log \lambda_{i-1} + \gamma_i(\alpha - 0.234)$ \;
+    $\vec{\mu_i} = (1 - \gamma_i) \vec{\mu_{i-1}} + \gamma_i \vec{X_i}$ \;
+    $\matr{\Sigma_i} = (1 - \gamma_i) \matr{\Sigma_{i-1}} + \gamma_i (\vec{X_i} - \vec{\mu_i})(\vec{X_i} - \vec{\mu_i})^T$ \;
+  }
+ }
+ \caption{Algorithm for adaptive random-walk Metropolis--Hastings. $\vec{\mu_i}$ and $\matr{\Sigma_i}$ are an estimate of the mean and covariance of the posterior distribution using information up to iteration $i$. $\text{diag}(\vec{\mu_0})$ is the diagonal matrix with diagonal entries equal to $\vec{\mu_0}$. $\lambda_i$ is the scale parameter of the proposal distribution at iteration $i$, tuned to try and ensure an optimal proportion of proposals are accepted (23.4\%). $\gamma_i$ is the learning rate, which determines how much adaptation occurs. $\gamma_i \to 0$ as $i \to \infty$ so the rate of adaptation is \emph{vanishing}. Vanishing adaptation guarantees the algorithm converges to the target distribution~\autocite[section 3]{andrieuTutorial}.}
+ \label{SEIR:MCMC-algorithm}
+\end{algorithm}
+
+I transformed parameters with bounded supports to the real line to improve sampling efficiency.
+Parameters which are constrained to the positive reals ($\sigma_\epsilon$, $\rho$, and $q_c$) were sampled on the log scale.
+Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) were sampled on the logit scale.
+
+All results are based on four Markov chains each of length \numprint{1000000} iterations.
+The first \numprint{500000} were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
+This gives \numprint{5000} posterior samples per region.
+This was further thinned to \numprint{2000} samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
+
 \subsubsection{Priors} \label{SEIR:sec:priors}
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
 The parameters governing the duration of positivity ($\omega$s) were explained previously (see \cref{SEIR:table:ec-params}).
 The initial conditions and transition rate parameters are unidentifiable in an SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors or fixed values are used for them.
-$\sigma_\epsilon$ and $\rho$ are given priors that favour a simpler model.
+$\sigma_\epsilon$ and $\rho$ are given priors that favour parsimony.
 The prior on $\sigma_\epsilon$ is a penalized complexity prior, favouring a null model of constant values for $\beta(t)$~\autocite{simpsonPenalising}.
 The prior on $\rho$ favours a null model of a binomial likelihood.
 The remaining parameters have weakly informative priors.
@@ -519,123 +623,20 @@ I approximated the posterior of this proportion with a beta distribution to form
 \begin{tabular}{l|lllll}
          & 0--11 & 12--16 & 17--25 & 26--50 & 71+ \\
         \hline
-        East Midlands & $\BetaDist(8.5, 301)$ & $\BetaDist(18, 256)$ & $\BetaDist(19, 475)$ & $\BetaDist(20, 493)$ & $\BetaDist(5, 337)$ \\
-        East of England & $\BetaDist(7.9, 236)$ & $\BetaDist(21, 248)$ & $\BetaDist(35, 677)$ & $\BetaDist(26, 613)$ & $\BetaDist(5.6, 332)$ \\
-        London & $\BetaDist(9.7, 131)$ & $\BetaDist(50, 328)$ & $\BetaDist(154, 1331)$ & $\BetaDist(106, 990)$ & $\BetaDist(7.6, 204)$ \\
-        North East & $\BetaDist(6.1, 180)$ & $\BetaDist(12, 145)$ & $\BetaDist(14, 274)$ & $\BetaDist(14, 295)$ & $\BetaDist(4.2, 240)$ \\
-        North West & $\BetaDist(12, 252)$ & $\BetaDist(38, 353)$ & $\BetaDist(72, 885)$ & $\BetaDist(44, 695)$ & $\BetaDist(6.3, 264)$ \\
-        South East & $\BetaDist(8.9, 404)$ & $\BetaDist(17, 319)$ & $\BetaDist(20, 577)$ & $\BetaDist(19, 586)$ & $\BetaDist(4.4, 356)$ \\
-        South West & $\BetaDist(6.9, 415)$ & $\BetaDist(11, 277)$ & $\BetaDist(12, 556)$ & $\BetaDist(11, 559)$ & $\BetaDist(4, 492)$ \\
-        West Midlands & $\BetaDist(8, 167)$ & $\BetaDist(19, 151)$ & $\BetaDist(32, 475)$ & $\BetaDist(33, 504)$ & $\BetaDist(5.8, 241)$ \\
-        Yorkshire and The Humber & $\BetaDist(9.2, 314)$ & $\BetaDist(19, 242)$ & $\BetaDist(27, 589)$ & $\BetaDist(18, 474)$ & $\BetaDist(4.9, 316)$ \\
+        East Midlands & $\BetaDist(301, 8.5)$ & $\BetaDist(256, 18)$ & $\BetaDist(475, 19)$ & $\BetaDist(493, 20)$ & $\BetaDist(337, 5)$ \\
+        East of England & $\BetaDist(236, 7.9)$ & $\BetaDist(248, 21)$ & $\BetaDist(677, 35)$ & $\BetaDist(613, 26)$ & $\BetaDist(332, 5.6)$ \\
+        London & $\BetaDist(131, 9.7)$ & $\BetaDist(328, 50)$ & $\BetaDist(1331, 154)$ & $\BetaDist(990, 106)$ & $\BetaDist(204, 7.6)$ \\
+        North East & $\BetaDist(180, 6.1)$ & $\BetaDist(145, 12)$ & $\BetaDist(274, 14)$ & $\BetaDist(295, 14)$ & $\BetaDist(240, 4.2)$ \\
+        North West & $\BetaDist(252, 12)$ & $\BetaDist(353, 38)$ & $\BetaDist(885, 72)$ & $\BetaDist(695, 44)$ & $\BetaDist(264, 6.3)$ \\
+        South East & $\BetaDist(404, 8.9)$ & $\BetaDist(319, 17)$ & $\BetaDist(577, 20)$ & $\BetaDist(586, 19)$ & $\BetaDist(356, 4.4)$ \\
+        South West & $\BetaDist(415, 6.9)$ & $\BetaDist(277, 11)$ & $\BetaDist(556, 12)$ & $\BetaDist(559, 11)$ & $\BetaDist(492, 4)$ \\
+        West Midlands & $\BetaDist(167, 8)$ & $\BetaDist(151, 19)$ & $\BetaDist(475, 32)$ & $\BetaDist(504, 33)$ & $\BetaDist(241, 5.8)$ \\
+        Yorkshire and The Humber & $\BetaDist(314, 9.2)$ & $\BetaDist(242, 19)$ & $\BetaDist(589, 27)$ & $\BetaDist(474, 18)$ & $\BetaDist(316, 4.9)$ \\
     \end{tabular}
 \caption{Priors for $\vec{\pi}$, the proportion of the population without prior immunity, in each age group and region combination.}
 \label{SEIR:table:immunity-prior}
 \end{table}
 \end{landscape}
-
-\subsubsection{Inference} \label{SEIR:sec:inference}
-
-I compute the posterior distribution using MCMC.
-Specifically, I use an adaptive random-walk Metropolis--Hastings algorithm (discussed in \cref{E-MCMC}).
-The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
-The adaptive algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, with the implementation based on \textcite{ghoshApproximate}'s work.
-Proposals are accepted or rejected using the standard Metropolis--Hastings (MH) acceptance probability.
-See \cref{SEIR:MCMC-algorithm} for full details.
-
-\begin{algorithm}
- Set $\vec{X_0}$ to an initial value of the parameter vector \;
- $\vec{\mu_0} = \vec{X_0}$ \;
- $\matr{\Sigma_0} = \text{diag}(\vec{\mu_0})$ \;
- $\lambda_0 = 1$ \;
- \For{$i = 1, \dots, M$}{
-  sample $\vec{Y_}i \sim \N(\vec{\mu_{i-1}}, \lambda_{i-1}\matr{\Sigma_{i-1}})$\;
-  set $\vec{X_i}$ to $\vec{Y_i}$ or $\vec{X_{i-1}}$ using a MH acceptance step\;
-  update the proportion of proposals accepted so far, $\alpha$ \;
-  \eIf(\tcc{No adaptation for 200 iterations}){$i \leq 200$}{
-    $\lambda_i = \lambda_{i-1}$ \;
-    $\vec{\mu_i} = \vec{\mu_{i-1}}$ \;
-    $\matr{\Sigma_i} = \matr{\Sigma_{i-1}}$ \;
-   }{
-    $\gamma_i = (i - 200)^{-0.6}$ \;
-    $\log \lambda_i = \log \lambda_{i-1} + \gamma_i(\alpha - 0.234)$ \;
-    $\vec{\mu_i} = (1 - \gamma_i) \vec{\mu_{i-1}} + \gamma_i \vec{X_i}$ \;
-    $\matr{\Sigma_i} = (1 - \gamma_i) \matr{\Sigma_{i-1}} + \gamma_i (\vec{X_i} - \vec{\mu_i})(\vec{X_i} - \vec{\mu_i})^T$ \;
-  }
- }
- \caption{Algorithm for adaptive random-walk Metropolis--Hastings. $\vec{\mu_i}$ and $\matr{\Sigma_i}$ are an estimate of the mean and covariance of the posterior distribution using information up to iteration $i$. $\text{diag}(\vec{\mu_0})$ is the diagonal matrix with diagonal entries equal to $\vec{\mu_0}$. $\lambda_i$ is the scale parameter of the proposal distribution at iteration $i$, tuned to try and ensure an optimal proportion of proposals are accepted (23.4\%). $\gamma_i$ is the learning rate, which determines how much adaptation occurs. $\gamma_i \to 0$ as $i \to \infty$ so the rate of adaptation is \emph{vanishing}. Vanishing adaptation is required for the algorithm to converge to the target distribution~\autocite[section 3]{andrieuTutorial}.}
- \label{SEIR:MCMC-algorithm}
-\end{algorithm}
-
-I transformed parameters with bounded supports to the real line to improve sampling efficiency.
-Parameters which are constrained to the positive reals ($\sigma_\epsilon$, $\rho$, and $q_c$) were sampled on the log scale.
-Parameters which are constrained to the unit interval ($i^+$ and $\vec{\pi}$) were sampled on the logit scale.
-
-All results are based on four Markov chains each of length \numprint{1000000} iterations.
-The first \numprint{500000} were discarded as burn-in, with the remaining chains thinned to every 100th iteration.
-This gives \numprint{5000} posterior samples per region.
-This was further thinned to \numprint{2000} samples when calculating posterior predictive quantities (incidence and prevalence) due to their computational cost.
-
-Following \textcite{birrellBayesian}, I reparameterize the model to improve identifiability.
-I parameterize $\beta_1$ in terms of the initial growth of the epidemic.
-I also use a parsimonious parameterization of the initial conditions using the initial proportion of the population that are infectious and the initial proportion that are susceptible only.
-
-Both reparameterizations rely on an assumption that the epidemic is in a steady-state exponential growth phase at time 0 (see \cref{E-SEIR:sec:SIR}). During such an exponential growth phase, all components of the $\vec{e}$, $\vec{i}$ and $\vec{p}$ compartments grow at the same growth rate, $\psi$.
-That is:
-\begin{equation}
-\begin{aligned}
-\frac{d\vec{e_1}(t)}{dt} = \psi \vec{e_2}(t) \\
-\frac{d\vec{e_2}(t)}{dt} = \psi \vec{e_2}(t) \\
-\frac{d\vec{i_1}(t)}{dt} = \psi \vec{i_2}(t) \\
-\frac{d\vec{i_2}(t)}{dt} = \psi \vec{i_2}(t) \\
-\frac{d\vec{p_0}(t)}{dt} = \psi \vec{p_0}(t) \\
-\frac{d\vec{p_1}(t)}{dt} = \psi \vec{p_1}(t) \\
-\frac{d\vec{p_2}(t)}{dt} = \psi \vec{p_2}(t) \\
-\frac{d\vec{p_3}(t)}{dt} = \psi \vec{p_3}(t).
-\end{aligned}
-\label{SEIR:eq:exponential-growth}
-\end{equation}
-This follows directly from the ODEs if $\vec{s}$ is constant. 
-
-The growth rate $\psi$ is easily identifiable from the data, and therefore a parameterization in terms of $\psi$ should be more computationally efficient.
-If this is the initial exponential phase, when $\vec{s} \approx 1$, then the basic reproduction number $\R$ for an SEIR model is linked to this growth rate by~\autocite{birrellBayesian,wearingAppropriate}:
-\begin{align}
-    R_{(\psi)} = \frac{\psi \left( \frac{\psi}{2\sigma} + 1 \right)^2}{\gamma \left(1 - \frac{1}{\left(\frac{\psi}{2 \gamma} + 1 \right)^2} \right)} \label{SEIR:eq:rtoR}.
-\end{align}
-
-Using the results of \cref{E-SEIR:sec:structured-populations}, $\R$ can also be written as $R_{(\beta)} = \beta_1 D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ (recall that $D(\matr{\beta})$ denotes the dominant eigenvalue of $\matr{\beta}$).
-Hence setting $\beta_1 = R_\psi / D(\matr{\kappa}(t) \circ \matr{q} \circ \matr{N})$ gives $R_\psi = R_\beta$.
-Using this expression, $\beta_1$ has been reparameterized in terms of $\psi$, $q_c$, and fixed quantities.
-
-To form a parsimonious parameterization of the initial state, first focus on the initial proportion of the population that is in the infectious compartments.
-Recall, from \cref{E-SEIR:sec:structured-populations}, that in the exponential growth phase, the relative proportion of each stratum that is infectious is proportional to the dominant eigenvector of $\matr{\beta}$, which I denote $\vec{d}$.
-Introduce a model parameter $i^+$, the proportion of the population in either of the $i$ states at time 0 in the strata with the highest proportion infectious.
-Define the total number of infectious individuals at time 0 as $\vec{i_0}$.
-Then:
-\begin{align}
-\vec{i_0} = \vec{i_1}(0) + \vec{i_2}(0) = \frac{i^+}{\max \vec{d}} \vec{d}.
-\label{SEIR:eq:i0}
-\end{align}
-
-Equating the expressions for $d\vec{i_2}/dt$ in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth} and then setting $t=0$ to allow substituting in \cref{SEIR:eq:i0} gives:
-\begin{align}
-    \vec{i_1}(0) &= \vec{i_0} \left(1 + \frac{2\gamma}{\psi + 2\gamma} \right)^{-1}.
-\intertext{By definition of $\vec{i_0}$:}
-    \vec{i_2}(0) &= \vec{i_0} - \vec{i_1}(0).
-\end{align}
-
-A similar process, equating the expressions in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth}, gives the following solution for the initial state of these compartments.
-\begin{align}
-    \frac{d\vec{e_1}(t)}{dt} &= \vec{\lambda}(t) \circ \vec{s}(t) - 2\sigma \vec{e_1}(t) \\
-    \frac{d\vec{e_2}(t)}{dt} &= 2\sigma \vec{e_1}(t) - 2\sigma \vec{e_2}(t) \\
-    \frac{d\vec{p_0}(t)}{dt} &= \vec{\lambda} \circ \vec{s}(t) - \omega_0 \vec{p_0}(t) \\
-    \frac{d\vec{p_1}(t)}{dt} &= \omega_0 \vec{p_0}(t) - \omega_1 \vec{p_1}(t) \\
-    \frac{d\vec{p_2}(t)}{dt} &= \omega_1 \vec{p_1}(t) - \omega_{2} \vec{p_2}(t) \\
-    \frac{d\vec{p_3}(t)}{dt} &= \pi \omega_{2} \vec{p_2}(t) - \omega_{3} \vec{p_3}(t).
-\end{align}
-
-The definition of $\vec{\pi}$ as the proportion of the population without initial immunity gives $\vec{r}(0) = 1 - \vec{\pi}$.
-Finally, to ensure the population proportions sum to one, $\vec{s}(0) = \vec{\pi} - \vec{i_0} - \vec{e_1} - \vec{e_2}$.
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
 
@@ -654,7 +655,6 @@ This means that the simulations created realistic incidence and prevalence curve
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
     \thisfloatpagestyle{empty}
-    \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/sim/data}}
     \caption[Simulated data]{%
         (A) Incidence and (B) prevalence for the 100 simulated data sets as a proportion of each stratum.
@@ -666,7 +666,7 @@ In particular, the October half-term school holiday is visible, especially in th
 
 Finally, I generated one dataset of test results for each parameter set.
 These were generated according to the likelihood, \cref{SEIR:eq:likelihood}.
-The number of daily tests was set to the mean of what CIS performed in the region over this period (\numprint{1630}), distributed across the population in proportion to its size.
+The daily number of tests was set to the mean of what CIS performed in the region over this period (\numprint{1630}), distributed across the population in proportion to its size.
 
 Having generated 100 datasets, I used the inference procedure in \cref{SEIR:sec:inference} to find the posterior distribution conditional on each dataset.
 Hence, I ended up with 100 parameter sets distributed according to the priors (the ``generative values"), with an associated dataset and posterior distribution for it.
@@ -690,8 +690,6 @@ The same issue arises with the coverage for derived quantities incidence and pre
     \label{SEIR:fig:sim-coverage}
 \end{figure}
 \begin{figure}
-    \thisfloatpagestyle{empty}
-    \vspace{-3cm}
     \makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}}
     \caption[Coverage of simulation study (derived quantities)]{%
         Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for (A) incidence and (B) prevalence; see main text for full definition.
@@ -714,8 +712,6 @@ The lack of identifiability for $\vec{\pi}$ aligns with previous work showing th
         True vs posterior median parameter values for each parameter in each simulation.
         The black line shows the line $y = x$ which the dots would lie on if the parameter is fully recovered.
         The blue line is a linear regression line.
-        For $i^+$, $q_c$, and $\psi$, the posterior recovers the true values.
-        For $\vec{\pi}$ and $\rho$, the posterior median is very similar regardless of the true value.
     }
     \label{SEIR:fig:true-vs-posterior}
 \end{figure}
@@ -731,22 +727,21 @@ In Yorkshire and the Humber, the October peak is estimated to be greater than th
 \begin{figure}
     \includegraphics{SEIR/CIS/incidence}
     \caption[Posterior estimates of incidence]{%
-        Posterior estimates (95\% CrI) of incidence by region and age.
-        See main text for discussion.
+        Posterior estimates (95\% CrI) of incidence proportion by region and age.
     }
     \label{SEIR:fig:incidence}
 \end{figure}
 \begin{figure}
     \includegraphics{SEIR/CIS/p_peak}
     \caption[Posterior estimates of peak incidence timing]{%
-        Posterior probability of the peak incidence for each region and age combination occurring on each day.
+        Posterior probability of the peak incidence proportion for each region and age combination occurring on each day.
     }
     \label{SEIR:fig:peak-incidence}
 \end{figure}
 
 The $\beta_w$ parameters absorb all the time-varying changes in transmission not captured by Google mobility and school attendance data.
 They trend downwards up until early December, then they start increasing (see \cref{SEIR:fig:beta-walk}).
-Correlation is clear across the regions even though each region is estimated independently, suggesting underlying biological or epidemiological changes across regions as opposed to modelling assumptions.
+Correlation is clear across the regions even though each region is estimated independently, suggesting underlying biological or epidemiological changes across regions.
 
 \begin{figure}
     \includegraphics{SEIR/CIS/beta_walk}
@@ -794,7 +789,7 @@ All parameters had ESS > \numprint{1000}, except $\sigma_\epsilon$ and $\psi$ in
 \subsection{Discussion} \label{SEIR:sec:discussion}
 
 The results in this section show the feasibility of fitting a mechanistic model using only data on prevalence.
-If the distributions for length-of-stay in each compartment are known, then all other model parameters can  be estimated.
+If the distributions for length-of-stay in each compartment are known, then the transmission parameters can be estimated.
 This includes the age distribution of the infections and the components of transmission.
 
 % Unlike most prior work (see\todo{ref section with lit review}), this modelling is based on a data source that is representative of the general population.
@@ -802,7 +797,7 @@ This includes the age distribution of the infections and the components of trans
 % There is little-to-no ascertainment bias in the CIS, unlike sources relying on testing behaviour (in the UK, pillar 2 testing).
 % The CIS allows estimates of transmission in children, unlike sources relying on severe events that occur almost entirely in adults~\autocite{bhopalChildren}.
 Using a mechanistic model provides additional understanding, compared to the approach in \cref{E-backcalc}.
-For example, decomposing the change in transmission into changing contacts, $\matr{\kappa}(t)$, changing susceptibility $\vec{s}(t)$, and other unmeasured factors, $\beta(t)$.
+For example, decomposing the change in transmission into changing contacts, $\matr{\kappa}(t)$, changing susceptibility $\vec{s}(t)$, and other factors, $\beta(t)$.
 By understanding which of these components is changing, policies can be better targeted.
 If it is shown that $\beta(t)$ decreases, this implies that there is less transmission for the same number of contacts.
 % Such decreases might be beneficial as it allows society to operate in a more normal manner without increasing transmission.
@@ -823,14 +818,13 @@ Such a model would stratify positive tests in the CIS by pre-Alpha or Alpha vari
 Then, each variant would be explicitly included in the model to fit to this data.
 
 These hypotheses for the mechanism causing changes in $\beta_w$ are correlated across the country.
-This can explain that similar patterns emerge for $\beta_w$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these being estimated independently (\ie there is no model structure which favours correlated values).
+This can explain the similar patterns that emerge for $\beta_w$ in different regions (see \cref{SEIR:fig:beta-walk}), despite these being estimated independently (\ie there is no model structure which favours correlated values).
 These correlations could be exploited to improve the precision of estimates with a more complex model which borrows information across regions, \eg a hierarchical model.
 
 The current model could be more flexible with regards to the age distribution of infections.
 This would better exploit one of the strengths of the CIS: the availability of data  on all age groups.
 In some regions, there appears to be a trade-off between under and overfitting in different age groups (see \cref{SEIR:fig:prev}).
 For example, in the North East, most of the data points in the 12--16 age group are below the median posterior estimate, while most of the data points in the 17--25 age group are above the median posterior estimate.
-This implies that the data would allow identification of a more flexible age-based model.
 
 Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one parameter that affects the age distribution, $q_c$.
 Increasing the number of parameters in $\matr{\beta}$ would be the simplest approach to increase the model's flexibility.
@@ -893,13 +887,21 @@ This is because the model is not flexible enough to capture the true age distrib
 The overestimation of prevalence in the 12--16 age group and underestimation in the 17--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
 \begin{figure}
     \centering \includegraphics{transmission/compare-NE}
-    \caption[Comparing each models estimate of North East incidence by age.]{%
+    \caption[Comparing each models estimate of North East incidence proportion by age.]{%
         Incidence proportion in each age group in the North East estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
         For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
     }
     \label{transmission:fig:compare-NE}
 \end{figure}
+
+A limitation of both sets of results is neglecting false negative and false positive test results.
+Including these would increase the estimates of incidence because false negatives are more common than false positives (see \cref{biology-data:sec:measurement-error}).
+The observation model could be adapted to include these errors, but the results of \cref{imperf-test} suggest they may change over the course of an infection.
+
+An extension of either (or both) models into the rest of the epidemic would be useful.
+The main obstacle is knowledge of how the duration of positivity distribution changes, and the need to incorporate the changes into the model.
+The SEIR model would also need to include the effect of vaccination on transmission.
 
 
 \section{Conclusion}

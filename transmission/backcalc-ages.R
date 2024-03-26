@@ -11,7 +11,7 @@ p_age_base = readRDS(file.path(output_dir, "age.rds")) |>
     filter(daynr > 1) |>
     mutate(age_group = normalise_age_groups(age_group)) |>
     ggplot(aes(date, incidence, colour = age_group, fill = age_group)) +
-    stat_lineribbon(alpha = 0.3, .width = 0.95) +
+    stat_lineribbon(alpha = 0.3, .width = 0.95, linewidth = 0.5) +
     labs(
         x = "Date",
         y = "Incidence proportion",

@@ -5,12 +5,14 @@ library(patchwork)
 library(tidybayes)
 library(tidyr)
 source(here::here("utils.R"))
+source(here::here("transmission/utils.R"))
 
 truth = readr::read_csv(here::here("SEIR/sim/sim_output.csv"), show_col_types = FALSE)
 posterior_predictive = readr::read_csv(here::here("SEIR/sim/posteriors_predictive.csv"), show_col_types = FALSE)
 
 make_plot = function(x) {
     x |>
+        mutate(age = normalise_age_groups(age)) |>
         ggplot(aes(day, mean, colour = factor(.width), fill = factor(.width))) +
         geom_lineribbon(aes(ymin = lower, ymax = upper), alpha = 0.5) +
         geom_hline(aes(yintercept = .width)) +
@@ -74,5 +76,6 @@ ggsave(
     filename = "SEIR/sim/predictive_coverage.pdf",
     plot = p_combined,
     width = 15,
-    height = 15
+    height = 15,
+    device = cairo_pdf
 )

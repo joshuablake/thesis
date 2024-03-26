@@ -24,7 +24,7 @@ alpha_dates = tribble(
 incidence_plot = function(df) {
     df |>
         ggplot(aes(date, incidence)) +
-        stat_lineribbon(alpha = 0.3, .width = 0.95) +
+        stat_lineribbon(alpha = 0.3, .width = 0.95, linewidth = 0.5) +
         scale_y_continuous(labels = scales::label_percent()) +
         labs(
             x = "Date",

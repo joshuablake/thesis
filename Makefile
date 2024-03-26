@@ -162,7 +162,7 @@ SEIR/CIS/data.csv:
 SEIR/sim/%.csv:
 	scp hpc:/rds/user/jbb50/hpc-work/SEIR_model/EoE_fixed/*.csv SEIR/sim/
 
-SEIR/sim/predictive_coverage.pdf: SEIR/sim/predictive_check.R utils.R SEIR/sim/sim_output.csv SEIR/sim/posteriors_predictive.csv
+SEIR/sim/predictive_coverage.pdf: SEIR/sim/predictive_check.R transmission/utils.R utils.R SEIR/sim/sim_output.csv SEIR/sim/posteriors_predictive.csv
 	Rscript $<
 
 SEIR/sim/true_vs_posterior.pdf SEIR/sim/coverage.pdf: SEIR/sim/coverage.R utils.R SEIR/sim/posteriors_combined.csv SEIR/sim/true_vals.csv
