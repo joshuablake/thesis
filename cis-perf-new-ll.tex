@@ -1,0 +1,51 @@
+\documentclass[thesis.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Alternative derivation of \cref{E-perf-test:eq:multinomial}} \label{perf-test:sec:alt-likelihood}
+
+Denote the characteristics of episode $j$ as $\nu_j = (B_j, E_j, i(j))$.
+I now define a series of sets $\set{E}_1, \dots, \set{E}_{N_E}, \set{E}_u$ for an integer $N_E$ such that any possible $\nu_j$ is in exactly one of the classes and each set corresponds to the possible infection episdoes that lead to identical observations (conditional on the test schedules).
+
+If $\nu_j$ would be undetected then $\nu_j \in \set{E}_u$.
+Hence, $\prob(\nu_j \in \set{E}_u \mid \vec{\theta}) = p_u$.
+
+Otherwise, the sets are defined such that $\nu_j$ and $\nu_{j'}$ are in the same class if and only if $i(j) = i(j')$ and the episodes beginning and end times are censored to the same interval.
+If $i \in \set{D}$ then there is exactly one $k$ such that $\set{E}_k$ is identical to $i$'s admissible region $\alpha_i$.
+% In this case, I write $\alpha_{i(k)}$ to denote this admissible region. 
+
+More formally, the sets can be defined in terms of an equivalence relation $\equiv$.
+Define $\equiv$ such that $\nu_j \equiv \nu_{j'}$, where $j$ and $j'$ are arbitrary possible episodes (\ie these are episodes that, a priori, could have occurred but may or may not have done), if and only if either both $j$ and $j'$ would be undetected (as defined in \cref{E-perf-test:sec:prob-undetected}) or the following four conditions all hold.
+\begin{enumerate}
+    \item Both $\nu_j$ and $\nu_{j'}$ would be detected.
+    \item $i(j) = i(j')$.
+    \item $\tau_{\sched_{i(j)}}(B_j) = \tau_{\sched_{i(j')}}(B_{j'})$.
+    \item $\tau_{\sched_{i(j)}}(E_j) = \tau_{\sched_{i(j')}}(E_{j'})$.
+\end{enumerate}
+Then each $\set{E}_k$ is an equivalence class under this relation and the set of all possible $\nu_j$.
+
+Let $\xi_k$ denote $\prob(\nu_j \in \set{E}_k)$.
+Assume, for tractability, that the events $\nu_j \in \set{E}_k$ and $\nu_{j'} \in \set{E}_{k'}$ are independent for $j \neq j'$.
+Denote by $m_k$ then number of episodes in $\set{E}_k$.
+$\vec{m} = [m_1, \dots m_{N_E}, m_u]^T$ are the observations.
+Then:
+\begin{align}
+  \vec{m}
+  \mid \ntot, \vec{\theta}
+  \dist
+  \MN\left(
+    \ntot,
+    \frac{1}{\Ncis}
+    \begin{bmatrix}
+        \xi_1 \\ \xi_2 \\ \vdots \\ \xi_{N_E} \\ \xi_u
+    \end{bmatrix}
+  \right).
+  \label{perf-test:eq:alt-likelihood}
+\end{align}
+
+If the set $\set{E}_k$ aligns with some $\alpha_i$ then $m_k = 1$ and $\xi_k = p_{ia}$.
+Otherwise, for $k \neq u$, $m_k = 0$.
+Finally, $m_u = n_u$ and $\xi_u = p_u$.
+Therefore, the probability masses of \cref{perf-test:eq:alt-likelihood} and \cref{E-perf-test:eq:multinomial} match.
+
+\end{document}
