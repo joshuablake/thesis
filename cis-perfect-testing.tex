@@ -439,6 +439,7 @@ An episode $j$ in individual $i(j)$ is detected if and only if all the following
 To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
 \begin{align}
 \tau_{\sched_i}(t) &= \min \{ t' \in \sched_i : t' \geq t \} - t
+\label{perf-test:eq:tau-def}
 \end{align}
 defining $\min \emptyset = \infty$; \ie $\tau_{\sched_i}(t) = \infty$ if there is no $t' \in \sched_i$ such that $t' \geq t$.
 The first condition can now be expressed as $e_j \geq b_j + \tau_{\sched_{i(j)}}(b_j)$.
