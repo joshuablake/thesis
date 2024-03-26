@@ -4,7 +4,7 @@
 
 \chapter{Introduction} \label{intro}
 
-COVID-19, the disease caused by the virus SARS-CoV-2, is estimated to have killed approximately 15 million in the most acute phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
+Infection with the SARS-CoV-2 virus is estimated to have killed approximately 15 million in the most acute phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
 Beyond the lives lost, there were massive health, economic, and societal costs.
 
 History suggests severe pandemics are not rare (see \cref{intro:fig:pandemic-timeline}).
@@ -19,7 +19,7 @@ History suggests severe pandemics are not rare (see \cref{intro:fig:pandemic-tim
 \end{figure}
 Fully quantifying the burden of historical pandemics is challenging due to the absence of systematic records.
 However, our best records suggests that, since 1600, they have (on average) occurred every four years with a mean death toll of 5.6 million~\autocite{maraniNovelEpidemics}.
-Recent estimates suggest that the current mean impact of pandemics is over 2.5 million deaths per year~\autocite{madhavPandemicMortality}.
+Recent estimates suggest that the current impact of pandemics is on average of over 2.5 million deaths per year~\autocite{madhavPandemicMortality}.
 
 All pandemics start as an \emph{outbreak}, a sudden and unexpected rise in the number of people with a disease in a local area; if this spreads over a larger geographic area (\eg a country) it becomes an \emph{epidemic}; if it spreads globally then it is a \emph{pandemic}~\autocite{grennanPandemic}.
 The precise meaning of these terms varies, they are defined implicitly by their usage rather than formal definitions~\autocite{morensPandemic,doshiElusive}.
@@ -52,7 +52,7 @@ The \emph{effective reproduction number}, $\Re$, is the mean number of secondary
 In particular, it uses the behaviour and immunity status of the population at time $t$.
 With constant behaviour and a disease that grants immunity following infection, $\Re$ declines smoothly.
 $\Re$ describes the current dynamics of the epidemic: $\Re > 1$ means the epidemic is growing, $\Re < 1$ means it is shrinking, and $\Re = 1$ means it is stable.
-In simple epidemic models (see \cref{E-SEIR:sec:SIR}), $\Re$ is proportional to the product of the rate of contacts, the probability of transmission upon contact, and the proportion of the population that is susceptible.
+In simple epidemic models (see \cref{E-SEIR:sec:SIR}), $\Re$ is proportional to the product of the rate of contact, the probability of transmission upon contact, and the proportion of the population that is susceptible.
 Interventions act by reducing one of these components \eg masks reduce the probability of transmission and vaccination reduce the susceptible population.
 Therefore, $\Re$ informs the strength of intervention required to control the epidemic.
 
@@ -60,7 +60,7 @@ The \emph{control reproduction number}, $\Rc$, is the mean number of secondary i
 $\Rc$ is also known as the \emph{reproduction number excluding immunity}.
 It describes the effect on the epidemic of interventions (except vaccination) that are in place at time $t$.
 $\Rc$ is useful when comparing the effects of interventions at different points in time, when the immunity status of the population has changed.
-For example, when comparing the English lockdown in March 2020 and January 2021, there are two effects in play: there are more individuals with immunity in January 2021, and the lockdowns had different measures in place.
+For example, when comparing the English lockdown in March 2020 and January 2021, there are two effects in play: the number ofindividuals with immunity, higher in 2021; and the different measures already (?) in place when the lockdown was implemented???
 $\Rc$ quantifies the latter effect.
 
 These definitions ignore many complexities that arise when theoretically defining or practically estimating any of the reproduction numbers~\autocite{pellisEstimation}.
@@ -68,74 +68,68 @@ For example, effects due to seasonality, what a ``mean infection'' means in a he
 However, their intuitive simplicity and convenient properties in simple epidemic models mean that they are useful concepts for guiding policy.
 
 Reproduction numbers are strongly connected to \emph{growth rates}.
-If changes in behaviour and susceptibility are negligible, as they often are over short periods of time, epidemics grow (or shrink) exponentially.
-The rate of this exponential growth is its \emph{growth rate}, normally denoted $r$.
+If changes in behaviour and susceptibility are negligible, as they often are over short periods of time, epidemics grow (or shrink) exponentially, with a \emph{growth rate} $r$.
 For a given disease and population, an analogous growth rate can be defined for each definition of the reproduction number~\autocite{pellisEstimation,paragGrowthRates,wallingaGI}.
 The advantages of using the growth rates are that they are easier to estimate and capture how quickly spread happens in calendar time; however, they do not directly give the strength of intervention required to control the epidemic~\autocite{royalSocietyRnumber}.
 
 \subsection{Size of an epidemic}
 
-Growth rates and reproduction numbers only provide information on how an epidemic is changing.
-Yet the size of the epidemic is just as, if not more, important~\autocite{pellisEstimation}.
-\emph{Incidence} (the number of new infections in a given time period) is the primary metric for the magnitude of a pandemic.
-Incidence informs the short-term future burden of the disease, for example, the future number of severe events (hospitalisations or deaths).
-Incidence is translated into disease burden using a measure of severity; for example, the IFR (infection fatality rate), the proportion of infected individuals who die.
-Estimation of severity is beyond the scope of this thesis.
+Growth rates and reproduction numbers only provide information on whether how an epidemic is changing.
+The size of the epidemic is just as, if not more, important~\autocite{pellisEstimation}.
+\emph{Incidence}, the number of new infections in a given time period  is the primary metric for the magnitude of a pandemic.
+Incidence informs the short-term future burden of the disease, for example, the future number of severe events (hospitalisations or deaths) when combined with severity measures, such as the infection fatality rate (IFR), the proportion of infected individuals who die.
 
+\emph{Transmission} refers to the process by which an infectious individual generates new infections. Estimating transmission refers to inferring this process. Understanding components of transmission  (\it{e.g.} the number of contacts each individual makes per day) allow interventions to be targeted.
+and to forecast future incidence.
 
-\emph{Transmission} refers to the process by which an infectious disease generates new infections.
-Estimating transmission refers to inferring the parameters of this process.
-The components of transmission (\eg the number of contacts each individual makes per day) allow interventions to be targeted.
-They are also important for forecasting future incidence.
-
-\emph{Prevalence} is the proportion of the population with the disease at a given time.
-Whether a given individual is \emph{prevalent} (has the disease) is often measurable through diagnostic testing.
+\emph{Prevalence} is the proportion of the population with the disease at a given time .
+Whether a given individual is \emph{prevalent}, {\it{i.e.}} has the disease, is often measurable through diagnostic testing.
 Performing diagnostic tests in a sample of the population at a given point in time is known as a \emph{prevalence survey}.
 Prevalence surveys can estimate the population prevalence but are typically very expensive to power appropriately.
 Prevalence and incidence are strongly related, via the duration of an infection (see \cref{E-inc-prev}).
 
 % Severity does not feature in this thesis, but it is important to note that it is a key component of understanding the burden of a pandemic.\todo{maybe reword sentence}
 
-Collecting data that directly inform inference of the quantities in this section is expensive or impossible.
-Hence, they are typically inferred from other data sources through modelling.
+Collecting data that {\it directly} inform inference of the quantities in this section is challenging or prohibitively expensive .
+Hence, they are typically estimated from other data sources through appropriate inferential methodologies.{\color{red{refer to some papers examples:Phil O'neil, stats in medicine, 1990 on linking models to data; ; De Angelis, Presanis, 2018, Analysing Multiple Epidemic Data Sources. "Handbook of
+Infectious Disease Data Analysis", Held, L., Hens, N., O'Neill, P.D. and Wallinga, J. (Eds.).
+Chapman & Hall/CRC, 2019.}}}
 
 \section{Data sources}
 
-Data sources used for outbreak surveillance are often observational in nature.
+Data sources to inform outbreak surveillance are often observational in nature.
 Therefore, they suffer from biases that can be hard to understand and quantify~\autocite{shadboltChallenges}.
 These biases need to be accounted for when analysing the data.
 
-Here I discuss three types of data which are useful for surveillance: incidence-type, prevalence-type, and data from cohort studies.
+In what follows I discuss three types of data: incidence-type, prevalence-type, and data from specific studies.
 \emph{Incidence-type} and \emph{prevalence-type} data can inform estimation of incidence and transmission; however, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities.
-For example, the time between infection and symptom onset.
-These quantities can be estimated from other studies, \eg cohort studies.
+For example, the time between infection and symptom onset. These quantities can be estimated from other studies.
 
 \subsection{Incidence-type data}
 
-Incidence-type data originate from observations of the consequences of a disease, \eg the development of symptoms or admission to hospital.
-This type of data typically suffers from reporting biases, particularly that the proportion of infections which are counted can vary over time or within different subgroups of the population~\autocites[chapter 9]{lashModern}{shadboltChallenges}.
+Incidence-type data originate from observations of the consequences of an infection, \eg the development of symptoms or admission to hospital.
+This type of data typically suffers from reporting biases, particularly that the proportion of infections which are detected can vary over time or within different subgroups of the population~\autocites[chapter 9]{lashModern}{shadboltChallenges}.
 
-An example of incidence-type data are community testing, reliant on individuals presenting for a test.
+An example of incidence-type data is the number of cases identified through community testing, reliant on individuals presenting for a test.
 However, individuals' ability and willingness to be tested varies over time, which needs to be accounted for in order to perform unbiased inference.
 Unfortunately, data to estimate these changes is normally unavailable.
 
-Data on more severe symptoms are typically less affected by these biases.
+Data on severe disease is typically less affected by these biases.
 An extreme example is the development of AIDS following infection by HIV.
 Here, the disease is so severe that it is extremely unlikely for an individual to develop the disease without seeking healthcare~\autocite{evansCompleteness}.
 
-However, severe symptoms can be rare in some population subgroups (\eg young, otherwise healthy individuals infected with SARS-CoV-2~\autocite{wardSero,bhopalChildren}).
-This means that the observations do not provide much information on incidence in those subgroups.
+However, severe disease can be rare in some population subgroups (\eg young, otherwise healthy individuals infected with SARS-CoV-2~\autocite{wardSero,bhopalChildren}) and the resulting sparse data 
+ does not provide much information on incidence in those subgroups.
 Furthermore, the delay between infection and the severe event occurring means that recent infections cannot be estimated with much precision~\autocite{swallow2022challenges}.
 
 \subsection{Prevalence-type data}
 
-Prevalence-type data originate from observations of the number or proportion of a population in a specific \emph{disease state} at a specific time.
-Commonly used disease states are the presence or value of a biomarker or symptoms.
-For example, the number of hospital beds occupied by individuals with the disease or the proportion of the population with a marker of prior infection.
+Prevalence-type data originates from observations of the number or proportion of a population in a specific \emph{disease state} at a specific time.
+For example, the number of individuals hospitalised with the disease or the proportion of the population with a marker of prior infection.
 The issues associated with incidence-type data often also apply to prevalence-type data.
 
-Prevalence surveys are one form of prevalence-type data that can be unbiased.
-Here, a representative proportion of the population (or a subpopulation of interest) are tested for a marker of current infection.
+Prevalence surveys designed to draw random samples from the population are one form of prevalence-type data that can be unbiased.
+Here, a representative proportion of the population (or a sub-population of interest) are tested for a marker of current infection.
 For many diseases, prevalence is sufficiently low that this is prohibitively expensive to power.
 
 However, \emph{seroprevalence} surveys are more feasible.
