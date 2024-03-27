@@ -3,14 +3,17 @@ SHARED_DEPS = thesis.tex references.bib refs-custom.bib cam-thesis.cls latex.out
 INTRODUCTION_DEPS = introduction.tex MCMC-appendix.tex
 BIOLOGY_DATA_DEPS = biology-data.tex biology-data/natural-history.png biology-data/ct-calibration.jpg biology-data/CIS-positivity.pdf biology-data/CIS-num-tests.pdf biology-data/CIS-recruitment.pdf biology-data/STATS13734/data_viz.png
 INC_PREV_DEPS = incidence-prevalence.tex inc-prev/contact_matrices.png
-ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.pdf ATACCC/compare_hakki_modified.pdf ATACCC/mean_trajectories.pdf ATACCC/duration.pdf ATACCC/fits.pdf ATACCC/fit_individual_55.pdf
+ATACCC_DEPS = ATACCC.tex ATACCC-appendix-original-analysis.tex ATACCC/typical_trajectory.pdf ATACCC/compare_hakki_modified.pdf ATACCC/mean_trajectories.pdf ATACCC/duration.pdf ATACCC/fits.pdf ATACCC/appendix_fits.pdf ATACCC/fit_individual_55.pdf
 IMPERF_DEPS = cis-imperfect-testing.tex cis-imperfect-testing/test-sens-bound.pdf cis-imperfect-testing/sim-single-positive-episodes.pdf cis-imperfect-testing/sim-constant-sensitivity.pdf cis-imperfect-testing/sim-misspecified-sensitivity.pdf cis-imperfect-testing/sim-variable-sensitivity.pdf cis-imperfect-testing/CIS_perfect.pdf cis-imperfect-testing/CIS_final.pdf cis-imperfect-testing/CIS_vary.pdf cis-imperfect-testing/CIS_ntot.pdf
 PERF_DEPS = cis-perfect-testing.tex cis-perfect-testing/regions_diag.pdf cis-perfect-testing/double-interval-censor.pdf cis-perfect-testing/truncation.pdf cis-perfect-testing/flat-prior.pdf cis-perfect-testing/kt-prior.pdf cis-perfect-testing/rw2-prior.pdf cis-perfect-testing/vague-prior.pdf cis-perfect-testing/survival-results.pdf cis-perfect-testing/hazard-results.pdf cis-perfect-testing/ataccc-approximation-survival.pdf cis-perfect-testing/ataccc-approximation-hazard.pdf cis-perfect-testing/input-duration-dists.pdf
-TRANSMISSION_DEPS = transmission.tex transmission-appendix-plots.tex transmission-appendix-INLA.tex transmission-appendix-phase-type.tex SEIR/sim/data.pdf SEIR/sim/predictive_coverage.pdf SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.pdf SEIR/CIS/prev_main.pdf SEIR/CIS/prev_appendix.pdf SEIR/CIS/incidence.pdf SEIR/CIS/p_peak.pdf SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.pdf transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf transmission/backcalc-ages.pdf transmission/backcalc-start-effect.pdf transmission/compare-regions.pdf transmission/compare-NE.pdf
+TRANSMISSION_DEPS = transmission.tex appendix-plots.tex transmission-appendix-INLA.tex transmission-appendix-phase-type.tex SEIR/sim/data.pdf SEIR/sim/predictive_coverage.pdf SEIR/sim/coverage.pdf SEIR/sim/true_vs_posterior.pdf SEIR/CIS/prev_main.pdf SEIR/CIS/prev_appendix.pdf SEIR/CIS/incidence.pdf SEIR/CIS/p_peak.pdf SEIR/CIS/beta_walk.pdf SEIR/CIS/attack_rates.pdf transmission/backcalc-regions.pdf transmission/backcalc-alpha.pdf transmission/backcalc-ages.pdf transmission/backcalc-start-effect.pdf transmission/compare-regions.pdf transmission/compare-NE.pdf
 CONCLUSION_DEPS = conclusion.tex
 DISTRIBUTIONS_DEPS = distributions.tex
 
 thesis.pdf: $(SHARED_DEPS) $(INTRODUCTION_DEPS) $(BIOLOGY_DATA_DEPS) $(INC_PREV_DEPS) $(ATACCC_DEPS) $(PERF_DEPS) $(IMPERF_DEPS) $(TRANSMISSION_DEPS) $(DISTRIBUTIONS_DEPS) CollegeShields/*.eps
+	$(LATEX_CMD)
+
+appendix-plots.pdf: appendix-plots.tex SEIR/CIS/prev_appendix.pdf ATACCC/appendix_fits.pdf $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 latex.out/thesis.aux:
@@ -21,7 +24,7 @@ clean:
 
 .PHONY: FORCE
 
-all: thesis.pdf introduction.pdf biology-data.pdf incidence-prevalence.pdf ATACCC.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf transmission.pdf distributions.pdf
+all: thesis.pdf appendix-plots.pdf ATACCC-appendix-original-analysis.pdf ATACCC.pdf MCMC-appendix.pdf biology-data.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf conclusion.pdf distributions.pdf incidence-prevalence.pdf introduction.pdf transmission-appendix-INLA.pdf transmission-appendix-phase-type.pdf transmission.pdf 
 
 #####################################################
 ## INTRODUCTION CHAPTER
@@ -70,7 +73,7 @@ ATACCC-appendix-original-analysis.pdf: ATACCC-appendix-original-analysis.tex $(S
 ATACCC/compare_hakki_modified.pdf ATACCC/mean_trajectories.pdf: ATACCC/posteriors.R utils.R ATACCC/fit.rds ATACCC/fit2.rds
 	Rscript $<
 
-ATACCC/fits.pdf ATACCC/fit_individual_55.pdf: ATACCC/goodness_fit.R utils.R ATACCC/fit.rds ATACCC/data.rds
+ATACCC/fits.pdf ATACCC/appendix_fits.pdf ATACCC/fit_individual_55.pdf: ATACCC/goodness_fit.R utils.R ATACCC/fit.rds ATACCC/data.rds
 	Rscript $<
 
 ATACCC/duration.pdf: ATACCC/duration.R utils.R ATACCC-distributions/posterior_samples2.rds
@@ -130,9 +133,6 @@ cisRuns-output/%:
 ## TRANSMISSION CHAPTER
 
 transmission.pdf: $(TRANSMISSION_DEPS) $(SHARED_DEPS)
-	$(LATEX_CMD)
-
-transmission-appendix-plots.pdf: transmission-appendix-plots.tex SEIR/CIS/prev_appendix.pdf $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 transmission-appendix-INLA.pdf: transmission-appendix-INLA.tex $(SHARED_DEPS)

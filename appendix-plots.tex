@@ -6,7 +6,15 @@
 
 \begin{figure}
     \thisfloatpagestyle{empty}
-    \vspace{-3cm}
+    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{ATACCC/appendix_fits}}
+  \caption[Remaining ATACCC posterior predictive viral load fits]{
+    Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) from the model in \cref{E-ATACCC} for individuals not shown in \cref{E-ATACCC:fig:goodness-of-fits}, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative RT-PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value.
+  }
+    \label{ATACCC:fig:appendix-goodness-of-fits}
+\end{figure}
+
+\begin{figure}
+    \thisfloatpagestyle{empty}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_appendix}}
     \captionsetup{width=0.8\paperwidth}
     \captionof{figure}[Other SEIR prevalence goodness-of-fit]{%

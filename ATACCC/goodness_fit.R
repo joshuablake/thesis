@@ -81,29 +81,43 @@ ggsave(
   dpi = 300
 )
 
+produce_gof_plot = function(individuals) {
+  p_fits = posterior_summary |>
+    filter(i %in% individuals) |>
+    ggplot() +
+    geom_lineribbon(
+      aes(day, yrep, ymin = .lower, ymax = .upper),
+      show.legend = FALSE
+    ) +
+    geom_point(
+      aes(day, y, colour = result),
+      size = 0.7,
+      data = tbl_data |>
+        filter(i %in% individuals)
+    ) +
+    facet_wrap(~i, ncol = 5) +
+    theme_trajectory()
+}
+
 posterior_summary = posterior_predictive |>
   group_by(i, day) |>
   median_qi(yrep) 
 all_individuals = unique(posterior_summary$i)
 selected_individuals = all_individuals[all_individuals > 8 & all_individuals %% 2 == 1]
-p_fits = posterior_summary |>
-  filter(i %in% selected_individuals) |>
-  ggplot() +
-  geom_lineribbon(
-    aes(day, yrep, ymin = .lower, ymax = .upper),
-    show.legend = FALSE
-  ) +
-  geom_point(
-    aes(day, y, colour = result),
-    size = 0.7,
-    data = tbl_data |>
-      filter(i %in% selected_individuals)
-  ) +
-  facet_wrap(~i, ncol = 5) +
-  theme_trajectory()
+appendix_individuals = all_individuals[!all_individuals %in% selected_individuals]
+
 ggsave(
     filename = here::here("ATACCC/fits.pdf"),
-    plot = p_fits,
+    plot = produce_gof_plot(selected_individuals),
+    height = 15,
+    width = 15,
+    units = "cm",
+    dpi = 300
+)
+
+ggsave(
+    filename = here::here("ATACCC/appendix_fits.pdf"),
+    plot = produce_gof_plot(appendix_individuals),
     height = 15,
     width = 15,
     units = "cm",

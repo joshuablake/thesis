@@ -294,11 +294,13 @@ The median duration of RT-PCR positivity for the vaccinated population is 13 day
   \caption[Duration of RT-PCR positivity.]{Estimated distribution (survival function) of duration of RT-PCR positivity for the two populations. The vaccinated population have shorter durations of RT-PCR positivity.  \label{ATACCC:fig:duration}}
 \end{figure}
 
-The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits}).
+The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits,ATACCC:fig:appendix-goodness-of-fits}).
 Almost all test results are captured in the 95\% credible intervals.
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{ATACCC/fits}}
-  \caption[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for selected individuals, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative RT-PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value. \label{ATACCC:fig:goodness-of-fits}}
+  \caption[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for selected individuals, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative RT-PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value.
+  Remaining individuals shown in \cref{ATACCC:fig:appendix-goodness-of-fits}.
+  \label{ATACCC:fig:goodness-of-fits}}
 \end{figure}
 
 For individual-level parameters, both models had convergence issues in places (Rhat > 1.4 and ESS < 20).
