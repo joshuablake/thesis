@@ -197,9 +197,9 @@ Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_t = P_1 / \sum_{i=1}^{\dma
 Violation of assumptions in various parts of this procedure can lead to the second term in \cref{transmission:eq:forward-substitute} to be greater than the first, giving negative incidence.
 In this case, the incidence prior to day $t$ imply that the prevalence on day $t$ is higher than that predicted by the fitted regression model for this strata/day combination.
 
-For each posterior sample of $\vec{Z}$, I poststratify it to the CIS target population and subpopulations of interest.
-Specifically, define a (sub) population of interest as a set of strata $\set{S}$.
-Then the incidence proportion in the subpopulation on day $t$ is
+For each posterior sample of $\vec{Z}$, I poststratify it to the CIS target population and subpopulations of interest, using the same basic method as in \cref{E-biology-data:sec:MRP}.
+Specifically, define a (sub)population of interest as a set of strata $\set{S}$.
+Then the incidence proportion in the (sub)population on day $t$ is
 \begin{align}
 Z_t(\set{S})
 &= \frac{\sum_{j \in \set{S}} Z_{j,t} N_j}{\sum_{j \in \set{S}} N_j}

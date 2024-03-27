@@ -341,7 +341,14 @@ This step assumes that the estimates for each region can be considered independe
 
 The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
 To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
-For each posterior draw and day, the incidence proportion in the (sub)population is the weighted average of the incidence proportion in each stratum, where the weights are the number of individuals in that stratum.
+Denote these by $p^(j)_{t,i}$ for the $j$th sample where $i$ is a stratum, \ie some value of $a$, $e$, and $s$.
+Define a (sub) population of interest as a set of strata $\set{S}$.
+Then the prevalence in the (sub)population on day $t$ is
+\begin{align}
+p^{(j)}_t(\set{S})
+&= \frac{\sum_{i \in \set{S}} p_{t,i} N_j}{\sum_{i \in \set{S}} N_i}
+\end{align}
+where $N_j$ is the population size of stratum $j$.
 The population numbers for each stratum are provided by the Office for National Statistics.
 
 \subsection{Clustering} \label{biology-data:sec:clustering}
