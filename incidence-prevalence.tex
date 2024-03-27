@@ -591,6 +591,7 @@ Z_t
 &= \hat{P}_t - \sum_{i=1}^{t-1} S(t - i + 1) Z_i.
 \label{inc-prev:eq:forward-substitute}
 \end{align}
+where $S(t)$ for $t > \dmax$ is defined to be 0.
 
 % Numerical methods for solving systems of this form, that is solving for $\vec{Z}$ (non-random in this expression) for a known $\E (\vec{P} \mid \vec{Z} )$, are well-established~\autocite[e.g.][section 8.2]{highamAccuracy}.
 % However, these algorithms can be unstable, meaning that numerical errors are large.
