@@ -4,7 +4,7 @@
 
 \chapter{Creating RT-PCR positive states} \label{transmission:sec:phase-type}
 
-Deciding $l$ and the length of time each individual spends in each compartment is the most challenging part of formulating the observation model.
+Deciding $l$ and the length of time each individual spends in each compartment is the most challenging part of formulating the observation model in \cref{E-SEIR:sec:observation}.
 The class of distributions which can be represented as a series of compartments are known as \emph{phase-type} distributions.
 Discussions of general phase-type distributions are beyond the scope of this thesis; a review in a biological context can be found in \textcite{hobolthPhasetype}.
 I will restrict myself to the subset of phase-type distributions defined by \textcite{osogamiClosed} as Erlang-Coxian (EC) distributions.
@@ -80,15 +80,6 @@ They then prove that EC distributions have the following properties.
         Fewer phases is generally beneficial as it reduces the time and space complexity of working with the distribution.
     \item A $l$-phase EC distribution $P' \in \set{W'}$ with $l \leq w + 1$ can be found using a closed-form expression (given by \textcite{osogamiClosed}).
         This is beneficial because finding arbitrary members of $\set{W}$ is challenging.
-\end{itemize}
-
-A total of five parameters are required to specify a $l$-phase EC distribution.
-\begin{itemize}
-    \item $l$, the number of phases.
-    \item $\omega_Y$, the rate parameter of the Erlang distribution.
-    \item $\omega_{X1}$, the rate parameter of the first state after the Erlang distribution.
-    \item $\omega_{X2}$, the rate parameter of the second state after the Erlang distribution.
-    \item $\pi$, the probability of moving from the end state of the Erlang distribution to the second (as opposed to directly to the absorbing state).
 \end{itemize}
 
 \end{document}

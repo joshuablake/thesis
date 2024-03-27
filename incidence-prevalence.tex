@@ -582,7 +582,8 @@ Therefore, the system can be written in matrix form:
     \end{cases} \label{inc-prev:eq:Smatrix}
 \end{align}
 In \cref{E-backcalc}, I will need to solve for this system for $\vec{Z}$ given a known $\hat{P} = \E(\vec{P} \mid {Z})$.
-As $\matr{S}$ is lower-triangular, I use forward-substitution~\autocite{cormenMatrix}.
+Assuming $\vec{P}$ and $\vec{Z}$ have the same dimension then $\matr{S}$ is lower-triangular with strictly positive diagonal elements; therefore, $\matr{S}$ is invertible, and the system has a unique solution~\autocite[424]{bernsteinFacts}.
+The lower-triangular structure of $\matr{S}$ makes allows solving the system through forward-substitution, an efficient method that avoids explicit matrix inversion~\autocite{cormenMatrix}.
 Forward-substitution sequentially solves the $t$th element of $\vec{Z}$ ($t = 1, \dots, T$) by calculating:
 \begin{align}
 Z_t

@@ -51,7 +51,7 @@ However, the dimension of $\vec{x}$ is unrestricted, allowing a large number of 
 The low dimensionality of $\vec{\theta}$ is because the method requires numerical integration over it.
 The sparsity of $\matr{\Sigma}^{-1}$ allows for efficient computation.
 Sparsity is introduced by conditional independence structures of the latent field that are present in many models.
-For example, in the classic random effect setting, all random effects are independent conditional on the hyperparameters.
+For example, in the second-order random walk from \cref{biology-data:sec:MRP}, $w_t$ is independent from the rest of the parameters conditional on $w_{t-1}$, $w_{t-2}$, $w_{t+1}$, $w_{t+2}$.
 
 % \subsection{Application}
 
@@ -124,7 +124,7 @@ This is because, if $\vec{x} \mid \vec{y}, \vec{\theta}$ is then dominated by th
 
 Various methods exist to sample from the joint posterior of the hyperparameters and the latent variables, based on the INLA approximation.
 The joint posterior is not approximated by default.
-I used the one implemented in the R-INLA function \texttt{inla.posterior.sample}, described in \textcite[section 4]{chiuchioloJoint}.
+I use the implementation in the R-INLA function \texttt{inla.posterior.sample}, described in \textcite[section 4]{chiuchioloJoint}.
 
 This method incorporates the first three moments of each marginal distribution, and uses a skew Gaussian copula to approximate the joint distribution.
 

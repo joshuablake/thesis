@@ -4,7 +4,7 @@
 
 \chapter{Markov chain Monte Carlo} \label{MCMC}
 
-MCMC (Markov chain Monte Carlo) is a class of algorithms for sampling from a distribution where the normalising constant for the distribution is unknown.
+MCMC (Markov chain Monte Carlo) is a class of algorithms which can sample from a distribution where the normalising constant for the distribution is unknown.
 I use it to sample a set of parameters, say $\psi$ (which may be a scalar or vector), from a posterior distribution $p(\psi \mid y)$ where $y$ is the data (again, scalar or vector).
 MCMC algorithms produce a sample $\psi^1, \psi^2, \dots, \psi^M$ from $p(\psi \mid y)$ by constructing a Markov chain with $p(\psi \mid y)$ as its stationary distribution~\autocite[275]{gelmanBDA}.
 It can be proved that as $M\to\infty$, the sample tends towards a sample from the stationary distribution, \ie the target posterior.
@@ -28,7 +28,7 @@ The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further detail
  \label{inc-prev:algorithm:MH}
 \end{algorithm}
 
-The proposal distribution $q$ is most commonly a (possibly multivariate) normal distribution centred on $\psi$; this scheme is used in \cref{E-SEIR}.
+The proposal distribution $q$ is often a (possibly multivariate) normal distribution centred on $\psi$; this scheme is used in \cref{E-SEIR}.
 Tuning the proposal distribution to propose ``good'' moves is a key part of MCMC.
 The ideal proposal distribution is the posterior of interest, however, this is impossible because that is what MCMC is trying to estimate~\autocite[296]{gelmanBDA}.
 One alternative is \emph{adaptive} algorithms which tune the proposal distribution based on previous draws in an attempt to approximate the posterior; I use such a scheme in \cref{E-SEIR:sec:inference}.
