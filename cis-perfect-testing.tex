@@ -35,13 +35,13 @@ Therefore, model assumptions drive the estimated size of the tail.
 
 The CIS samples individuals less frequently, but has a large sample size (\numprint{4800} detected infection episodes) and up to years of follow-up.
 Therefore, it is suitable for estimating the tail of the duration distribution.
-In this chapter, I develop a method to estimate the duration distribution using CIS data, assuming the test has perfect sensitivity and specificity, {\it i.e.} there are no false negatives or positives.
+In this chapter, I develop a method to estimate the duration distribution using CIS data, assuming the test has perfect sensitivity and specificity, \ie there are no false negatives or positives.
 Formally, I aim to estimate the survival function $S(t)$ defined in \cref{inc-prev:sec:definitions}.
 
 In \cref{perf-test:sec:problem}, I describe the challenges analysing the data presents.
 This motivates using a survival analysis framework which I introduce in \cref{perf-test:sec:surv-analysis}, before deriving the statistical model for the CIS setting in \cref{perf-test:sec:model}.
 In \cref{perf-test:sec:parameters-priors}, I consider how to parameterize the survival function and choose its priors, including vague and smoothing priors as well as a prior constructed to include the information from \cref{E-ATACCC}.
-I evaluate the model and priors using a simulation study (\cref{perf-test:sec:simulation-study}), showing that they perform well.
+I evaluate the model and priors using a simulation study (\cref{perf-test:sec:simulation-study}), showing that they successfully recover $S(t)$.
 Finally, I discuss the results in \c{perf-test:sec:discussion}.
 
 \section{Problem description} \label{perf-test:sec:problem}
@@ -200,7 +200,7 @@ In addition, the individuals in the cohort experienced a total of $\nnodet$ unde
 $\nnodet$ is a latent quantity.
 The total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$ and I index them with $j = 1, \dots, \ntot$.
 
-Any infection episode, whether detected or not, is fully characterised for my purposes by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively, and $i(j)$ is the individual the episode occurred in.
+Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively, and $i(j)$ is the individual the episode occurred in.
 The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
 For all $j$, the exact values $b_j$ and $e_j$ are latent.
 If $j$ is undetected then $i(j)$ is also latent and nothing is known about $b_j$ or $e_j$.
@@ -255,9 +255,8 @@ Hence the following relations hold:
 \ntot
 &= \ndet + \nnodet + \sum_{i=1}^{\Ncis} n_{i\bar{a}} \\
 &= \sum_{i=1}^{\Ncis} n_{ia} + \sum_{i=1}^{\Ncis} n_{iu} + 0
-\intertext{and, for all $i$,}
-p_{ia} + p_{iu} + p_{i\bar{a}} &= 1.
 \end{align}
+and, for all $i$, $p_{ia} + p_{iu} + p_{i\bar{a}} = 1$.
 
 I will use these regions to form the data likelihood, conditional on $\ntot$.
 The definition of the admissible region relies on the test results.
@@ -273,7 +272,7 @@ I assume the individual in which an episode occurs is iid uniform across the coh
 Therefore, the conditional probabilities are multiplied by $1/\Ncis$ to form the unconditional probabilities.
 For example, the probability of an episode being in class $\alpha_i$ is $p_{ia} / \Ncis$.
 
-An episode occurs in one of the regions independently and with the same probability.
+These probabilities apply to each episode independently.
 Therefore:
 \begin{align}
   \begin{bmatrix}
@@ -327,17 +326,16 @@ Substituting \cref{perf-test:eq:augmented-likelihood} into \cref{perf-test:eq:po
 p(\vec{\theta} \mid \na)
 &\propto p(\vec{\theta}) \sum_{\ntot=\ndet}^\infty \left( p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{i \in \set{D}} p_{ia} \right) \\
 &= p(\vec{\theta}) \left( \prod_{i \in \set{D}} p_{ia} \right) \left( \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right) \label{perf-test:eq:posterior2}.
-\end{align}
-For convenience, define the summation term as:
-\begin{align}
-  \eta =  \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}.
-  \label{perf-test:eq:eta}
+\intertext{For convenience, define the summation term as:}
+\eta &= 
+\sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet}.
+\label{perf-test:eq:eta}
 \end{align}
 The rest of this section derives expressions for each of $p_{ia}$, $p_{u}$ and $\eta$.
 
 \subsection{Expression for $\eta$}
 
-I derive an analytical solution to $\eta$ under the prior $\ntot \dist \NBc(\mu, r)$.
+I derive an analytical solution to $\eta$ (defined in \cref{perf-test:eq:eta}) under the prior $\ntot \dist \NBc(\mu, r)$.
 I assume that $\vec{\theta}$, which are only the parameters of the survival distribution, has a prior independent of $\ntot$, the number of infections that occurred in the cohort.
 Therefore, $p(\ntot \mid \vec{\theta}) = p(\ntot)$.
 
