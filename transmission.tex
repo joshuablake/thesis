@@ -208,6 +208,8 @@ Z_t(\set{S})
 where $N_j$ is the population size of stratum $j$.
 The poststratified samples are now from the posterior of interest.
 
+The posterior samples of $\vec{P}$ are produced within the SRS and then extracted.
+I implement the calculation of $\vec{Z}$ and poststratification in R~4.2.0~\autocite{R-4-2-0} using the built in \texttt{forwardsolve} function, tidybayes~3.0.6~\autocite{tidybayes}, and the tidyverse set of packages~\autocite{tidyverse}.
 
 \subsection{Results and discussion} \label{backcalc:sec:results}
 
@@ -642,6 +644,12 @@ The remaining parameters have weakly informative priors.
 \label{SEIR:table:immunity-prior}
 \end{table}
 \end{landscape}
+
+\subsubsection{Implementation}
+
+I implemented the simulations study and inference code in Python~3.8.2~\autocite{python} using pandas~2.0.3~\autocite{pandas}, numpy~1.24.4~\autocite{numpy}, and scipy~1.10.1~\autocite{scipy}.
+The strata are larger than those in \cref{backcalc}, allowing the data to be extracted from the SRS.
+Therefore, inference was performed using the University of Cambridge high-performance cluster.
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
 
