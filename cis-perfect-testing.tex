@@ -200,10 +200,10 @@ In addition, the individuals in the cohort experienced a total of $\nnodet$ unde
 $\nnodet$ is a latent quantity.
 The total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$ and I index them with $j = 1, \dots, \ntot$.
 
-Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively, and $i(j)$ is the individual the episode occurred in.
+Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively; as $i(j)$ is the individual the episode occurred in it also identifies the test schedule.
 The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
 For all $j$, the exact values $b_j$ and $e_j$ are latent.
-If $j$ is undetected then $i(j)$ is also latent and nothing is known about $b_j$ or $e_j$.
+If $j$ is undetected then $i(j)$ is also latent and little is known about $b_j$ or $e_j$.
 If $j$ is detected, then $i(j)$ is known; $b_j \in [l_j^{(b)}, r_j^{(b)}]$; and $e_j \in [l_j^{(e)}, r_j^{(e)}]$.
 These latter two properties are what make the data doubly interval censored.
 
@@ -262,15 +262,14 @@ I will use these regions to form the data likelihood, conditional on $\ntot$.
 The definition of the admissible region relies on the test results.
 However the likelihood should be conditional only on $\vec{\theta}$, $\ntot$, and the test schedules.
 Therefore, this is not strictly correct.
-This issue can be rectified be considering the inadmissible region as many subregions each with an observed count of zero (sketched in \cref{perf-test:sec:alt-likelihood}).
-Count zero regions do not contribute to the probability meaning the result is the same.
-A formalisation of this approach requires much more complex notation for the same result; therefore, I prefer this presentation.
+This issue can be rectified be considering the inadmissible region as many subregions, which leads to the same result (sketched in \cref{perf-test:sec:alt-likelihood}).
+A full formalisation of the derivation in \cref{perf-test:sec:alt-likelihood} would require much more complex notation for the same result; therefore, I prefer the presentation to follow.
 
 % Any episode $j$ independently belongs to one of these classes.
-The probabilities $p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$ are conditional on the episode occurring in individual $i$.
+The probabilities $p_{iu}$, $p_{ia}$, and $p_{i\bar{a}}$ are calculated conditional on the episode occurring in individual $i$.
 I assume the individual in which an episode occurs is iid uniform across the cohort, that is $\prob(i(j) = i) = 1/\Ncis$.
-Therefore, the conditional probabilities are multiplied by $1/\Ncis$ to form the unconditional probabilities.
-For example, the probability of an episode being in class $\alpha_i$ is $p_{ia} / \Ncis$.
+Therefore, the conditional probabilities are multiplied by $1/\Ncis$ to form the probabilities .
+For example, $\prob((B_j, E_j) \in \alpha_i, i(j) = i \mid \vec\theta) = p_{ia} / \Ncis$.
 
 These probabilities apply to each episode independently.
 Therefore:
@@ -303,6 +302,7 @@ It can be written as follows.
 \begin{align}
 p(\vec{\theta} \mid \na)
 &\propto p(\vec{\theta}) p(\na \mid \vec{\theta}) \\
+&= p(\vec\theta) \sum_{\ntot= \ndet}^{\infty} p(\ntot, \na \mid \vec{\theta}) \\
 &= p(\vec{\theta}) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) p(\na \mid \ntot, \vec{\theta})
 \label{perf-test:eq:posterior1}
 \end{align}
@@ -335,8 +335,8 @@ The rest of this section derives expressions for each of $p_{ia}$, $p_{u}$ and $
 
 \subsection{Expression for $\eta$}
 
-I derive an analytical solution to $\eta$ (defined in \cref{perf-test:eq:eta}) under the prior $\ntot \dist \NBc(\mu, r)$.
-I assume that $\vec{\theta}$, which are only the parameters of the survival distribution, has a prior independent of $\ntot$, the number of infections that occurred in the cohort.
+I derive an analytical solution to $\eta$ (defined in \cref{perf-test:eq:eta}).
+I assume the prior $\ntot \dist \NBc(\mu, r)$, independently of \vec{\theta}, the parameters of the survival distribution.
 Therefore, $p(\ntot \mid \vec{\theta}) = p(\ntot)$.
 
 Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite; its use simplifies the derivation.
@@ -443,7 +443,7 @@ To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next 
 defining $\min \emptyset = \infty$; \ie $\tau_{\sched_i}(t) = \infty$ if there is no $t' \in \sched_i$ such that $t' \geq t$.
 The first condition can now be expressed as $e_j \geq b_j + \tau_{\sched_{i(j)}}(b_j)$.
 Equivalently, $d_j \geq \tau_{\sched_{i(j)}}(b_j) + 1$.
-The third condition can be expressed as $\tau_{\sched_{i(j)}}(b_j) < \infty$.
+The fourth condition can be expressed as $\tau_{\sched_{i(j)}}(b_j) < \infty$.
 
 
 % Then $\Omega_i$ can be written as:
