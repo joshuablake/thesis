@@ -4,6 +4,8 @@
 
 \chapter{Alternative derivation of \cref{E-perf-test:eq:multinomial}} \label{perf-test:sec:alt-likelihood}
 
+\section{Attempt 1}
+
 Denote the characteristics of episode $j$ as $\nu_j = (B_j, E_j, i(j))$.
 I now define a series of sets $\set{E}_1, \dots, \set{E}_{N_E}, \set{E}_u$ and an integer $N_E$ such that any possible $\nu_j$ is in exactly one of the classes and each set corresponds to the possible infection episdoes that lead to identical observations (conditional on the test schedules).
 
@@ -48,5 +50,60 @@ If the set $\set{E}_k$ aligns with some $\alpha_i$ then $m_k = 1$ and $\xi_k = p
 Otherwise, for $k \neq u$, $m_k = 0$.
 Finally, $m_u = n_u$ and $\xi_u = p_u$.
 Therefore, the probability masses of \cref{perf-test:eq:alt-likelihood} and \cref{E-perf-test:eq:multinomial} match.
+
+
+
+\section{Attempt 2}
+
+\subsection{Perfect testing}
+
+The test schedule $\sched_i$ is the set of times individual $i$ is tested at, starting from their last test prior to time 1, if it exists, or their time of enrolment otherwise.
+Note that $\sched_i$ includes any tests that occur after $T$.
+
+For a detected episode $j$, we observe $O_j = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{e}, i(j)]^T$.
+These are: the individual in which the episode occurs, denoted $i(j)$; the earliest and latest time the episode could have begun, $l_j^{(b)}$ and $r_j^{(b)}$ respectively; and the earliest and latest time the episode could have ended, $l_j^{(e)}$ and $r_j^{(e)}$ respectively.
+
+For an undetected episode $j$, there are no observations.
+In which case, define $O(j) = \emptyset$.
+
+Define an integer $D$ and $\set{D} = \vec{\nu}_1, \dots, \vec{\nu}_D$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{D}$ if and only if $j$ is a detected infection.
+For any $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$, $\vec{\nu} \in \set{D}$ if and only if the following conditions hold.
+\begin{enumerate}
+  \item $l^{(b)} - 1, r^{(b)}, l^{(e)}, r^{e} + 1 \in \sched_i$, that is individual $i$ was tested at all these times.
+  \item $r^{(b)} = \min\{t \in \sched_i \ssep t \geq l^{(b)}\}$, that is $r^{(b)}$ is the first time at or after $l^{(b)}$ that individual $i$ was tested.
+  \item $r^{(e)} = \min\{t \in \sched_i \ssep t > l^{(e)}\} - 1$, that is $r^{(e)}$ is the day before the next time after $l^{(e)}$ that individual $i$ was tested.
+  \item $1 \leq r^{(b)} \leq T$, that is the episode begins in the period of interest.
+\end{enumerate}
+Let $n_k$ denote the number of observations of $\vec{\nu}_k$, $\nnodet$ the latent number of undetected episodes, $\vec{n} = [n_1, \dots, n_D, \nnodet]^T$, and $\ntot = \sum_{i=1}^D n_i + \nnodet$.
+For $\vec{\nu}_k \in \set{D}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$, $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$, and $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
+Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
+Then:
+\begin{align}
+  \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
+\intertext{that is:}
+  p(\vec{n} \mid \ntot, \vec{\theta}) &= \frac{\ntot!}{\nnodet!\prod_{k=1}^D n_k!} p_u^{\nnodet} \prod_{k=1}^D p_k^{n_k}.
+  \label{perf-test:eq:multinomial-ll}
+\end{align}
+
+In the CIS data, each $n_k$ is either 0 or 1.
+Let $k \in \set{C}$ indicate that $n_k = 1$.
+Furthermore, note that the support of the multinomial distribution requires that $\nnodet = \ntot - \ndet$.
+Then \cref{perf-test:eq:multinomial-ll} simplifies to:
+\begin{align}
+  p(\vec{n} \mid \ntot, \vec{\theta})
+  &= \frac{\ntot!}{(\ntot - \ndet)!} p_u^{\ntot-\ndet} \prod_{k \in \set{C}} p_k.
+  \label{perf-test:eq:multinomial}
+\end{align}
+
+This is the previous likelihood where each $p_{ia}$ corresponds to a $p_k$ and $p_u$ is unchanged.
+
+\subsection{Imperfect testing}
+
+Just a sketch, probably ignore for now.
+
+\begin{itemize}
+  \item Add $\vec{y}_j$ as the observed test results for episode $j$ to $O(j)$ (as defined previously).
+  \item Modify $p_k$ and $p_u$ as done currently.
+\end{itemize}
 
 \end{document}

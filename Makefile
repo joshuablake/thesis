@@ -213,3 +213,6 @@ cis.pdf: cis.tex biology-data/STATS13734/data_viz.pdf $(SHARED_DEPS)
 
 paper-surv-analysis.pdf: paper-surv-analysis.tex $(IMPERF_DEPS) $(PERF_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
+
+cis-perf-new-ll.pdf: cis-perf-new-ll.tex $(SHARED_DEPS)
+	$(LATEX_CMD)
