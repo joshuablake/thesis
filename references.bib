@@ -141,6 +141,17 @@
   file = {C:\Users\Joshua\Documents\paper_pdfs\Andrieu_Thoms_2008_A tutorial on adaptive MCMC.pdf}
 }
 
+@incollection{angelisAnalysing,
+  title = {Analysing {{Multiple Epidemic Data Sources}}},
+  booktitle = {Handbook of {{Infectious Disease Data Analysis}}},
+  author = {Angelis, Daniela De and Presanis, Anne M.},
+  date = {2019},
+  publisher = {{Chapman and Hall/CRC}},
+  abstract = {One of the basic characteristics of infectious disease is that the transmission of infection from one individual to another requires a form of contact between those two individuals, and as a consequence the pattern of contacts in a population determines how diseases can spread through this population. And this contact pattern is often determined by the demographical characteristics of the individuals involved in the contact, such as their ages and gender. Here we show how social contact data can be used to estimate the pattern of infectious disease contact rates. Social contact data is different from the data discussed in previous chapters, and the typical challenge in analyzing this data is that we have to account for reciprocity (symmetry of the contact rates) and sparsity of data (there are many more contact rates than observations). Existing methods for doing this are reviewed. The methods are illustrated by using observed with contacts as measured in a random sample of the population of the Netherlands, structured by age and sex; the proxy measure of infectious contact is “talking to,” believed to be relevant for direct contact diseases such as influenza.},
+  isbn = {978-1-315-22291-2},
+  pagetotal = {32}
+}
+
 @book{autodiff,
   title = {Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation},
   shorttitle = {Evaluating Derivatives},
@@ -1358,16 +1369,20 @@
 
 @article{gosticPractical,
   title = {Practical Considerations for Measuring the Effective Reproductive Number, {{Rt}}},
-  author = {Gostic, Katelyn M. and McGough, Lauren and Baskerville, Edward B. and Abbott, Sam and Joshi, Keya and Tedijanto, Christine and Kahn, Rebecca and Niehus, Rene and Hay, James and De Salazar, Pablo M. and Hellewell, Joel and Meakin, Sophie and Munday, James and Bosse, Nikos I. and Sherrat, Katharine and Thompson, Robin N. and White, Laura F. and Huisman, Jana S. and Scire, Jérémie and Bonhoeffer, Sebastian and Stadler, Tanja and Wallinga, Jacco and Funk, Sebastian and Lipsitch, Marc and Cobey, Sarah},
-  date = {2020-08-28},
-  journaltitle = {medRxiv},
-  shortjournal = {medRxiv},
-  eprint = {32607522},
-  eprinttype = {pmid},
-  doi = {10/gg9dgb},
-  abstract = {Estimation of the effective reproductive number, Rt, is important for detecting changes in disease transmission over time. During the COVID-19 pandemic, policymakers and public health officials are using Rt to assess the effectiveness of interventions and to inform policy. However, estimation of Rt from available data presents several challenges, with critical implications for the interpretation of the course of the pandemic. The purpose of this document is to summarize these challenges, illustrate them with examples from synthetic data, and, where possible, make recommendations. For near real-time estimation of Rt, we recommend the approach of Cori et al. (2013), which uses data from before time t and empirical estimates of the distribution of time between infections. Methods that require data from after time t, such as Wallinga and Teunis (2004), are conceptually and methodologically less suited for near real-time estimation, but may be appropriate for retrospective analyses of how individuals infected at different time points contributed to spread. We advise against using methods derived from Bettencourt and Ribeiro (2008), as the resulting Rt estimates may be biased if the underlying structural assumptions are not met. Two key challenges common to all approaches are accurate specification of the generation interval and reconstruction of the time series of new infections from observations occurring long after the moment of transmission. Naive approaches for dealing with observation delays, such as subtracting delays sampled from a distribution, can introduce bias. We provide suggestions for how to mitigate this and other technical challenges and highlight open problems in Rt estimation., The effective reproductive number, Rt, is a key epidemic parameter used to assess whether an epidemic is growing, shrinking or holding steady. Rt estimates can be used as a near real-time indicator of epidemic growth or to assess the effectiveness of interventions. But due to delays between infection and case observation, estimating Rt in near real-time, and correctly inferring the timing of changes in Rt is challenging. Here, we provide an overview of challenges and best practices for accurate, timely Rt estimation.},
-  pmcid = {PMC7325187},
-  file = {C:\Users\Joshua\Documents\paper_pdfs\Gostic et al_2020_Practical considerations for measuring the effective reproductive number, Rt.pdf}
+  author = {Gostic, Katelyn M. and McGough, Lauren and Baskerville, Edward B. and Abbott, Sam and Joshi, Keya and Tedijanto, Christine and Kahn, Rebecca and Niehus, Rene and Hay, James A. and Salazar, Pablo M. De and Hellewell, Joel and Meakin, Sophie and Munday, James D. and Bosse, Nikos I. and Sherrat, Katharine and Thompson, Robin N. and White, Laura F. and Huisman, Jana S. and Scire, Jérémie and Bonhoeffer, Sebastian and Stadler, Tanja and Wallinga, Jacco and Funk, Sebastian and Lipsitch, Marc and Cobey, Sarah},
+  date = {2020-12-10},
+  journaltitle = {PLOS Computational Biology},
+  shortjournal = {PLOS Computational Biology},
+  volume = {16},
+  number = {12},
+  pages = {e1008409},
+  publisher = {Public Library of Science},
+  issn = {1553-7358},
+  doi = {10.1371/journal.pcbi.1008409},
+  abstract = {Estimation of the effective reproductive number Rt is important for detecting changes in disease transmission over time. During the Coronavirus Disease 2019 (COVID-19) pandemic, policy makers and public health officials are using Rt to assess the effectiveness of interventions and to inform policy. However, estimation of Rt from available data presents several challenges, with critical implications for the interpretation of the course of the pandemic. The purpose of this document is to summarize these challenges, illustrate them with examples from synthetic data, and, where possible, make recommendations. For near real-time estimation of Rt, we recommend the approach of Cori and colleagues, which uses data from before time t and empirical estimates of the distribution of time between infections. Methods that require data from after time t, such as Wallinga and Teunis, are conceptually and methodologically less suited for near real-time estimation, but may be appropriate for retrospective analyses of how individuals infected at different time points contributed to the spread. We advise caution when using methods derived from the approach of Bettencourt and Ribeiro, as the resulting Rt estimates may be biased if the underlying structural assumptions are not met. Two key challenges common to all approaches are accurate specification of the generation interval and reconstruction of the time series of new infections from observations occurring long after the moment of transmission. Naive approaches for dealing with observation delays, such as subtracting delays sampled from a distribution, can introduce bias. We provide suggestions for how to mitigate this and other technical challenges and highlight open problems in Rt estimation.},
+  langid = {english},
+  keywords = {Convolution,COVID 19,Distribution curves,Epidemiological methods and statistics,Epidemiology,Pandemics,Valleys,Virus testing},
+  file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Gostic et al_2020_Practical considerations for measuring the effective reproductive number, Rt.pdf;C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Gostic et al_2020_Practical considerations for measuring the effective reproductive number, Rt2.pdf}
 }
 
 @article{goudieJoining,
@@ -1390,7 +1405,7 @@
 
 @article{goughEstimation,
   title = {The Estimation of Latent and Infectious Periods},
-  author = {GOUGH, K. J.},
+  author = {Gough, K. J.},
   date = {1977-12-01},
   journaltitle = {Biometrika},
   shortjournal = {Biometrika},
@@ -2514,6 +2529,16 @@
   file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Nicholson et al_2022_Improving local prevalence estimates of SARS-CoV-2 infections using a causal.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\5MWD7TZ2\\s41564-021-01029-0.html}
 }
 
+@software{numpy,
+  title = {{{NumPy}}},
+  author = {{NumPy Developers}},
+  date = {2022},
+  url = {https://numpy.org/doc/1.24/index.html},
+  urldate = {2024-03-27},
+  version = {1.24.4},
+  file = {C:\Users\Joshua\Zotero\storage\7K7BKB69\index.html}
+}
+
 @article{nybergMisclassification,
   title = {Misclassification Bias in Estimating Clinical Severity of {{SARS-CoV-2}} Variants – {{Authors}}' Reply},
   author = {Nyberg, Tommy and Ferguson, Neil M. and Blake, Joshua and Hinsley, Wes and Bhatt, Samir and De Angelis, Daniela and Thelwall, Simon and Presanis, Anne M.},
@@ -2611,6 +2636,15 @@
   langid = {english},
   keywords = {Harvard School,Human Immunodeficiency Virus,Human Immunodeficiency Virus Infection,Latency Distribution,York City},
   file = {C:\Users\Joshua\Documents\paper_pdfs\Pagano et al_1992_The HIV Epidemic in New York City; Statistical Methods for Projecting AIDS.pdf}
+}
+
+@software{pandas,
+  title = {Pandas},
+  author = {{NumFOCUS}},
+  date = {2023},
+  url = {https://pandas.pydata.org/pandas-docs/version/2.0/user_guide/index.html},
+  urldate = {2024-03-27},
+  file = {C:\Users\Joshua\Zotero\storage\C8MQUI2A\index.html}
 }
 
 @article{panNote,
@@ -2887,6 +2921,15 @@
   pmcid = {PMC9562486},
   keywords = {⛔ No DOI found},
   file = {C:\Users\Joshua\Documents\paper_pdfs\Punchoo et al_2022_Laboratory considerations for reporting cycle threshold value in COVID-19.pdf}
+}
+
+@software{python,
+  title = {Python},
+  author = {{Python Software Foundation}},
+  date = {2019},
+  url = {https://docs.python.org/3.8/},
+  urldate = {2024-03-27},
+  abstract = {The official home of the Python Programming Language}
 }
 
 @article{quiltyQuarantine,
@@ -3207,6 +3250,16 @@
   abstract = {Traditional machine learning focuses on the situation where a fixed number of features are available for each data-point. For medical applications each individual patient will typically have a different set of clinical tests associated with them. This results in a varying number of observed per patient features. An important indicator of interest in medical domains is survival information. Survival data presents its own particular challenges such as censoring. The aim of this thesis is to explore how machine learning ideas can be transferred to the domain of clinical data analysis. We consider two primary challenges; firstly how survival models can be made more flexible through non-linearisation and secondly methods for missing data imputation in order to handle the varying number of observed per patient features. We use the framework of Gaussian process modelling to facilitate conflation of our approaches; allowing the dual challenges of survival data and missing data to be addressed. The results show promise, although challenges remain. In particular when a large proportion of data is missing, greater uncertainty in inferences results. Principled handling of this uncertainty requires propagation through any Gaussian process model used for subsequent regression.},
   langid = {english},
   file = {C\:\\Users\\Joshua\\Documents\\paper_pdfs\\Saul_2016_Gaussian process based approaches for survival analysis.pdf;C\:\\Users\\Joshua\\Zotero\\storage\\SREWQBTR\\17946.html}
+}
+
+@software{scipy,
+  title = {{{SciPy}}},
+  author = {{The SciPy community}},
+  date = {2023},
+  url = {https://docs.scipy.org/doc/scipy/},
+  urldate = {2024-03-27},
+  version = {1.10.1},
+  file = {C:\Users\Joshua\Zotero\storage\652MPYJG\scipy.html}
 }
 
 @report{scottCovid19,
@@ -3582,6 +3635,14 @@
   number = {57},
   pages = {2959},
   doi = {10.21105/joss.02959}
+}
+
+@software{tidybayes,
+  title = {Tidybayes: Tidy Data and Geoms for {{Bayesian}} Models},
+  author = {Kay, Matthew},
+  date = {2023},
+  doi = {10.5281/zenodo.1308151},
+  version = {3.0.6}
 }
 
 @article{tidyverse,
