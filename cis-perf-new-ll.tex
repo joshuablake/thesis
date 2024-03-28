@@ -7,12 +7,12 @@
 \section{Attempt 1}
 
 Denote the characteristics of episode $j$ as $\nu_j = (B_j, E_j, i(j))$.
-I now define a series of sets $\set{E}_1, \dots, \set{E}_{N_E}, \set{E}_u$ and an integer $N_E$ such that any possible $\nu_j$ is in exactly one of the classes and each set corresponds to the possible infection episdoes that lead to identical observations (conditional on the test schedules).
+I now define an integer $N_E$ and a series of sets $\set{E}_1, \dots, \set{E}_{N_E}, \set{E}_u$ such that any possible $\nu_j$ is in exactly one of the classes and each set corresponds to the possible infection episodes that would generate identical observations (conditional on the test schedules).
 
 Define $\set{E}_u$ such that $\nu_h \in \set{E}_u$ if and only if $\nu_j$ would be undetected (if it occurred).
 Hence, $\prob(\nu_j \in \set{E}_u \mid \vec{\theta}) = p_u$.
 
-Otherwise, the sets are defined such that $\nu_j$ and $\nu_{j'}$ are in the same class if and only if $i(j) = i(j')$ and the episodes beginning and end times are censored to the same interval.
+Otherwise, the sets are defined such that $\nu_j$ and $\nu_{j'}$ are in the same class if and only if $i(j) = i(j')$ and the episodes beginning and end times are censored to be in the same pair of intervals.
 If $i \in \set{D}$ then there is exactly one $k$ such that $\set{E}_k$ is identical to $i$'s admissible region $\alpha_i$.
 % In this case, I write $\alpha_{i(k)}$ to denote this admissible region. 
 
@@ -29,7 +29,7 @@ That is, taking any $k = 1, \dots, N_E, u$ then $\nu_j \in \set{E}_k$ and $\nu_{
 
 Let $\xi_k$ denote $\prob(\nu_j \in \set{E}_k)$.
 Assume, for tractability, that the events $\nu_j \in \set{E}_k$ and $\nu_{j'} \in \set{E}_{k'}$ are independent for $j \neq j'$.
-Denote by $m_k$ then number of episodes in $\set{E}_k$.
+Denote by $m_k$ the number of episodes in $\set{E}_k$.
 $\vec{m} = [m_1, \dots m_{N_E}, m_u]^T$ are the observations.
 Then:
 \begin{align}

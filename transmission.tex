@@ -7,35 +7,30 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-In this chapter, I use the estimate of the distribution of the duration of RT-PCR positivity from combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-intro:sec:cis}).
+In this chapter, I use the estimate of the distribution of the duration of RT-PCR positivity from the combination of information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-intro:sec:cis}).
 I will show that the CIS data are sufficient, demonstrating the value of surveys of this type for pandemic surveillance.
 
 I take two approaches, backcalculation and a mechanistic model, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
 
-I start with the backcalculation (\cref{backcalc}), based on \cref{E-inc-prev:eq:EPt}.
-This approach enables estimation of incidence within (sub)populations of England.
-There are several attractive features about this approach in the context here.
-The backcalculation approach makes few assumptions about how transmission occurs; stronger assumptions increase the potential for introduce bias.
-It can also easily incorporate arbitrary covariates to adjust for non-response bias.
+I start with the backcalculation (\cref{backcalc}), based on \cref{E-inc-prev:eq:EPt}, which enables estimation of incidence within (sub)populations of England.
+The approach makes few assumptions about how transmission occurs, decreasing the potential to introduce bias and can also easily incorporate arbitrary covariates to adjust for non-response bias.
 The scale of the CIS and desire to correct for non-response bias presents challenges for this methodology, especially within the limited computation of the SRS environment.
 
 In \cref{SEIR}, I use a mechanistic compartmental model, within the modelling framework introduced in \cref{E-SEIR:sec:mechanistic-models}.
-This approach enables estimating both incidence and components of transmission.
-Estimating transmission in addition to incidence answers important epidemiological questions, \eg whether changes in transmission can be explained by changes in contact rates.
-I develop a novel observation model to allow the transmission model to be fit to the CIS data.
+I estimate both incidence and several components of transmission.
+Estimating transmission from CIS data requires developing a novel observation model.
 
 Finally, in \cref{transmission:sec:comparison}, I compare the results of the two approaches.
 I show they give similar values, providing reassurance of the robustness of the results to modelling assumptions.
-Overall, there is a bias-variance trade-off between the models.
-Incidence and transmission have not previously been estimated from only SARS-CoV-2 prevalence surveys before.
+% Overall, there is a bias-variance trade-off between the models.
+% Incidence and transmission have not previously been estimated from only SARS-CoV-2 prevalence surveys before.
 
 \section{Backcalculation} \label{backcalc}
 
 In this section, I apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
-I view the CIS as a series of daily, cross-sectional prevalence surveys.
-This is the same approach as previously used to estimate prevalence from the CIS (see \cref{E-biology-data:sec:MRP}).
+I view the CIS as a series of daily, cross-sectional prevalence surveys, as previously used to estimate prevalence (see \cref{E-biology-data:sec:MRP}).
 
-An important consideration in this section is non-response bias.
+An important consideration is non-response bias in the CIS study.
 I correct for the non-response through the poststratification method introduced in \cref{E-biology-data:sec:MRP}.
 Poststratification requires estimates of incidence in each stratum, before combining them to the target population and subpopulations of interest.
 The strata are defined by at least age group, region, ethnicity, and sex due to differential non-response in the survey (see \cref{E-intro:sec:cis}).
@@ -43,13 +38,13 @@ The strata are defined by at least age group, region, ethnicity, and sex due to 
 \subsection{Approaches} \label{backcalc:sec:approach}
 
 In \cref{E-inc-prev:sec:observation-process}, I showed that a deterministic approximation to the relationship between true prevalence and incidence is a good approximation for estimating incidence.
-This relationship between incidence proportion and prevalence means that once one is inferred, the other is calculated via a deterministic function.
+This means that once one of the two quantities is inferred, the other can be calculated via a deterministic function.
 This gives two possible approaches for estimating incidence from prevalence data; in \cref{transmission:sec:backcalc-properties} I argue the second approach is more appropriate in this context.
 
 % \subsubsection{Possible approaches}
 
-The first approach, which I call the \emph{incidence-inferred} approach, is a single statistical model where incidence is inferred, with prevalence as a derived quantity.
-The basis of the statistical model, in a Bayesian framework, would be as follows.
+The first approach, which I call the \emph{incidence-inferred} approach, specifies a single statistical model including both incidence and prevalence.
+The basis of this statistical model, in a Bayesian framework, would be as follows:
 \begin{align}
     \vec{Z} &\dist F_Z \\
     P_{i,t}  &= \sum_{k=0}^{d_\text{max}-1} Z_{i,t-k} S(k+1) \\
@@ -57,11 +52,10 @@ The basis of the statistical model, in a Bayesian framework, would be as follows
     Y_{i,t} \mid \vec{P}, \rho &\dist \BB(n_{i,t}, P_{i,t}, \rho)
 \end{align}
 where $\vec{Z}$ is a vector such that $Z_{i,t}$ is the incidence proportion in stratum $i$ on day $t$, with a joint prior $F_Z$; $P_{i,t}$ is the prevalence in stratum $i$ on day $t$; $\rho$ is the overdispersion parameter of the beta-binomial distribution (see \cref{E-distributions}) with prior $F_\rho$; $Y_{i,t}$ is the number of positive tests in stratum $i$ on day $t$; and $n_{i,t}$ is the number of tests in stratum $i$ on day $t$.
-Fitting this model to a prevalence survey such as the CIS (\eg using MCMC) gives a posterior distribution of $\vec{Z}$, the target of inference.
-
+Fitting this model to a prevalence survey such as the CIS gives a posterior distribution of $\vec{Z}$, the target of inference.
 The relationship between $\vec{P}$ and $\vec{Z}$ is from \cref{E-inc-prev:eq:EPt}, although dividing both sides by the stratum's population (assumed constant) to have the values in terms of incidence proportion and prevalence rather than incidence and number of prevalent individuals.
 
-Specifying $F_Z$ would depend on the application of the approach, but should consider the need to provide structure to stabilise the problem (see \cref{E-intro:sec:disease-model}).
+Specifying $F_Z$ should consider the need to provide structure to stabilise the problem (see \cref{E-intro:sec:disease-model}).
 In the context of the CIS, it needs to allow borrowing information across time and/or strata (see \cref{E-biology-data:sec:MRP}).
 
 The second approach, which I call the \emph{prevalence-inferred} approach takes a two-step approach.
@@ -82,25 +76,25 @@ The transformation is based on \cref{inc-prev:eq:forward-substitute}, which give
 \subsection{Desirable properties} \label{transmission:sec:backcalc-properties}
 
 The incidence-inferred approach is more parsimonious in being a single step procedure.
-However, computational considerations mean I favour the prevalence-inferred approach.
+However, computational challenges make makes mean I favour the prevalence-inferred approach.
 
 It will be convenient to define a variable equating to the quantity initially estimated.
-Let $\pi_{i,t} = Z_{i,t}$ under the inference-inferred approach and $\pi_{i,t} = P_{i,t}$ is the prevalence.
+Let $\pi_{i,t} = Z_{i,t}$ under the inference-inferred approach and $\pi_{i,t} = P_{i,t}$ under the prevalence-inferred approach.
 
 The chosen approach should have the following properties.
 \begin{enumerate}
-    \item The prior should favour $\pi_{i,t}$ changing exponentially in $t$, \ie penalize changes from exponential growth.
+    \item The prior for $\pi_{i,t}$ should favour $\pi_{i,t}$ changing exponentially in $t$, \ie penalize changes from exponential growth.
         % Penalizing changes from continuous exponential growth is a natural formulation because mechanistic models predict exponential growth over short periods of time.
         Such penalization has previously been shown to improve estimates of SARS-CoV-2 prevalence by balancing over and under-fitting~\autocite{ealesAppropriately} and is the approach used for the CIS prevalence model (see \cref{E-biology-data:sec:MRP}).
     \item Limit estimates to epidemiologically and biologically plausible values.
         That is, incidence proportion and prevalence should be in the interval $[0, 1]$.
         % While incidence proportion can theoretically be greater than 1, this would imply that some individuals were infected multiple times in a day which is not biologically plausible.
-    \item Have sufficient parameters to incorporate all necessary covariates to correct for non-response bias.
+    \item Include sufficient parameters to incorporate all necessary covariates to correct for non-response bias.
     \item Borrow information across the different covariates.
         The borrowing should penalize changes in the distribution of incidence/prevalence across strata in the same geographic region.
         A constant distribution is predicted by the theoretical study of epidemics, for example the dynamics of stratified, mechanistic transmission models (such as the one introduced in \cref{E-SEIR:sec:structured-populations}) when behavioural and immunity changes are negligible.
     \item Be computationally efficient.
-        The model will be fit to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
+        The model will be fitted to granular data and therefore needs to be run within the SRS, with its computational limitations (see \cref{E-biology-data:sec:SRS}).
 \end{enumerate}
 
 A parsimonious model satisfying properties 1 and 2 is to specify $\logit(\pi_{i,t}) = g_{\vec{\varphi}}(i, t)$, where $g$ is a function parameterised by ${\vec{\varphi}}$ and the prior on ${\vec{\varphi}}$ is specified to favour $d^2g/dt^2 = 0$, \ie favour linear growth in $\logit(\pi_{i,t})$.
