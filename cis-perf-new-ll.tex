@@ -101,6 +101,14 @@ Then \cref{perf-test:eq:multinomial-ll} simplifies to:
 
 This is the previous likelihood where each $p_{ia}$ corresponds to a $p_k$ and $p_u$ is unchanged.
 
+\subsubsection{Deriving $p_k$}
+
+Decompose $p_k$ as $p_k = \prob(O(j) = \nu_k \mid \vec{\theta}) = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$ where $p_{ik} = \prob(O(j) = \nu_k \mid i(j) = i_k, \vec{\theta})$.
+This is valid as $\prob(O(j) = \nu_k \mid i(j) \neq i_k) = 0$ due to the condition here being equivalent to equating the two vectors' final elements.
+Assume that each infection episode occurs independently and with equal probability in any individual, \ie $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
+
+Then the derivation for $p_{ik}$ proceeds as per the derivation for $p_{ia}$ in the original version, except replacing $j(i)$s with $k$s.
+
 \subsection{Imperfect testing}
 
 Introducing false negatives means that $O(j)$ is now a random, even if $B_j$ and $E_j$ are known.
@@ -116,11 +124,6 @@ Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}
 \end{enumerate}
 The final two conditions are due the construction of the intervals as positive and negative tests bounding the beginning and end times of the episode.
 
-Just a sketch, probably ignore for now.
-
-\begin{itemize}
-  \item Add $\vec{y}_j$ as the observed test results for episode $j$ to $O(j)$ (as defined previously).
-  \item Modify $p_k$ and $p_u$ as done currently.
-\end{itemize}
+Similarly, let $p_k'$ and $p_{ik}'$ have the same definition as $p_k$ and $p_{ik}$ except replacing $O$ with $O'$ and $\vec{\nu}_k$ with $\vec{\nu}_k'$.
 
 \end{document}
