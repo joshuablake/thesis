@@ -935,7 +935,7 @@ Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded a
 
 \section{Duration distribution for simulation} \label{duration-ground-truth}
 
-To generate the durations, an assumption is required for the distribution of the duration of positivity.
+To generate the durations, an assumption is required for the distribution of the duration of detectability.
 I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to represent what is seen within CIS.
 The tail is modified based on a previously unpublished analysis of CIS data, without accounting for several of the issues previously described.
 Walker uses survival analysis to estimate the duration from CIS data.
@@ -964,7 +964,7 @@ f_S'(t) = \begin{cases}
 $$
 Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
 These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
-Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
+Individual $i$'s duration of detectability, $D_i$, is then an independent draw from this distribution.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/input-duration-dists}
   \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. See main text for details of each analysis. \label{perf-test:fig:duration-dist}}

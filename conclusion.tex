@@ -8,42 +8,41 @@
 \chapter{Conclusions} \label{conclusion}
 
 Pandemics will continue to pose a significant threat to public health for the foreseeable future.
-Therefore, there is a public health need to respond to pandemics.
-Such a response needs to be informed by monitoring.
-In this thesis, I have investigated one method of monitoring pandemics: prevalence surveys.
+Therefore, there is a need for a public health response to pandemics, informed by surveillance.
+In this thesis, I have investigated the potential of prevalence surveys, using the CIS as an example, to provide this information.
 
 \section{Main findings}
 
-In \cref{E-intro:sec:aims}, I posed the central question for this thesis: can prevalence surveys alone be used to infer incidence and transmission, and if so how?
+In \cref{E-intro:sec:aims}, I posed the central question for this thesis: can a prevalence survey \emph{alone} be sufficient to infer incidence and transmission and, if so, what method(s) are optimal?
 
-In \cref{E-transmission}, I found that this it is possible, developing two models that can infer incidence and transmission from prevalence surveys.
+In \cref{E-transmission}, I found that this it is possible by developing two models that can infer incidence and transmission from prevalence surveys.
+These did both rely on knowledge of the distribution of the duration of detectability, which can partially be inferred from the CIS.
 One model was phenomenological in nature and the other mechanistic.
 The phenomenological approach, based on the backcalculation framework, provides estimates of incidence and makes fewer assumptions about the infection process; however, the estimates are very uncertain.
 The mechanistic approach, based on an SEIR-type compartmental model, reduces the uncertainty and allows estimation of the components of transmission by making stronger assumptions about the infection process.
-Both sets of results highlighted the heterogeneity across regions and age groups in England.
 The choice of modelling approach should depend on the situation.
-The phenomenological approach is more robust when there are high levels of uncertainty; for example, early in an outbreak or in the presence of new variants the infectious period duration may not be known.
-However, the mechanistic approach provides more information.
+A phenomenological approach is more robust when there are high levels of uncertainty; for example, early in an outbreak or in the presence of new variants the infectious period duration may not be known.
+On the other hand, a mechanistic approach provides more information.
 Where possible, both methods should be implemented; discrepancies between results may highlight deficiencies in modelling assumptions.
 
-The work in \cref{E-transmission} relied on the theoretical work of \cref{E-inc-prev}.
-This work developed the backcalculation framework for the context of prevalence surveys for SARS-CoV-2.
-The major insight was the justification of the deterministic model framework and the importance of the distribution of the duration of positivity.
+The work in \cref{E-transmission} relied on the theoretical work of \cref{E-inc-prev}, adapting the backcalculation framework for the context of prevalence surveys for SARS-CoV-2.
+The major insight was the justification of a deterministic backcalculation and the importance of the distribution of the duration of detectability.
 
-These models both required knowledge of the distribution of the duration of positivity.
+Estimation of incidence and/or transmission required knowledge of the distribution of the duration of detectability.
 Estimating this distribution was the focus of most of this thesis.
-In \cref{E-perf-test,E-imperf-test}, I showed how this quantity could be estimated the CIS prevalence survey.
-This did require external information from the ATACCC study (the results of \cref{E-ATACCC}), demonstrating that the CIS's design is not sufficient for estimating transmission.
-However, future surveys may be able to avoid this issue (see \cref{conclusion:sec:future-work}).
+In \cref{E-perf-test,E-imperf-test}, I showed how this quantity could be estimated from the CIS prevalence survey.
+This did require external information from the ATACCC study and prior knowledge on the number of infections, demonstrating that some additional studies are required in addition to the CIS, at least with its current design.
 
-Prior to this thesis, the duration of positivity in the general population was not well understood (see \cref{E-intro:sec:previous-duration-estimates}).
+Prior to this thesis, the duration of detectability in the general population was not well understood (see \cref{E-intro:sec:previous-duration-estimates}).
 A particularly understudied area was quantifying the shape and size of the tail of the distribution, due to limited follow-up of individuals who test positive.
 
 Overall, I have found that representative prevalence surveys are a promising approach for pandemic surveillance.
-A well-designed survey is sufficient to estimate all the quantities of interest (as described in \cref{E-intro:sec:metrics}), except severity.
+A well-designed survey is sufficient to estimate incidence and transmission, although not currently the duration of detectability.
 
 
 \section{Future work} \label{conclusion:sec:future-work}
+
+\subsection{Joint modelling}
 
 A natural extension of the work in this thesis would be a joint model of duration and incidence.
 Such a model poses both identifiability and computational challenges.
@@ -56,9 +55,7 @@ These frameworks addressed the challenges by: taking approximations (\eg empiric
 However, the CIS is larger and incidence estimation desired at a more granular level than previously encountered.
 Furthermore, high-performance computing cannot be used within the SRS.
 
-A common theme in this thesis was computational challenges.
-The challenges could be addressed by more efficient MCMC algorithms, approximate methods, or alternate computing methods (\eg the use of GPUs).
-Alternate computing methods would require appropriate hardware within the SRS, which should be considered when choosing the design of future TREs.
+\subsection{Study design}
 
 The CIS was a household-based survey, but the household structure was not considered in this thesis.
 The household-based design is likely to induce clustering in results.
@@ -68,8 +65,8 @@ Other chapters did not consider clustering at all.
 Similarly, the treatment of a longitudinal survey as a cross-sectional survey in \cref{E-perf-test} may have underestimated the uncertainty in the results.
 More sophisticated incorporation of clustering, for instance using random effects for households and/or individuals, could be considered in future work.
 
-The challenges in estimating the distribution of the duration of positivity originated in the design of the studies used.
-Exploring the design of future studies to better estimate the distribution of the duration of positivity would be beneficial.
+The challenges in estimating the distribution of the duration of detectability originated in the design of the studies used.
+Exploring the design of future studies to better estimate the distribution of the duration of detectability would be beneficial.
 A particularly promising direction would be intensive follow-up of individuals following a positive test (\eg daily testing) until they have two or more negative tests.
 Intensive follow-up would increase the precision by which the end of the infection episode is known.
 Furthermore, it reduces the impact of false negatives because they are likely to be followed by a true positive.
@@ -81,7 +78,9 @@ Certain groups, such as younger individuals, were more likely to be infected.
 It is plausible that sampling in proportion to incidence would be beneficial.
 This is especially true if policy questions such as closing of schools are of importance.
 These questions could be investigated through simulation studies.
-In constructing such studies, it will be important to consider how these considerations might be different for different pathogens (\eg influenza, the most common source of respiratory pandemics) and tests (\eg rapid antigen tests, which have a shorter duration of positivity).
+In constructing such studies, it will be important to consider how these considerations might be different for different pathogens (\eg influenza, the most common source of respiratory pandemics) and tests (\eg rapid antigen tests, which have a shorter duration of detectability).
+
+\subsection{Other extensions}
 
 This thesis did not consider detection or early surveillance of emerging pandemics.
 Initial uncertainty about local transmission in the UK may have led to suboptimal decisions at the start of 2020~\autocite{pellisChallenges}.
@@ -97,6 +96,10 @@ The low number of positive cases in the CIS would make this challenging.
 In addition, the data would need to be linked to relevant records.
 Second, a transmission model, such as the one in \cref{E-SEIR}, could jointly model severe events and prevalence.
 Such an approach has previously been used~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2} but without the sophistication of the observation model developed in \cref{E-SEIR:sec:observation}.
+
+A common theme in this thesis was computational challenges.
+The challenges could be addressed by more efficient MCMC algorithms, approximate methods, or alternate computing methods (\eg the use of GPUs).
+Alternate computing methods would require appropriate hardware within the SRS, which should be considered when choosing the design of future TREs.
 
 \ifSubfilesClassLoaded{
   \listoftodos

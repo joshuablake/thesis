@@ -377,7 +377,7 @@ An advantage of this modelling approach is that it can be included without compl
 
 $p_0$ increases at the same rate as individuals flow into $e_1$.
 These individuals then transition into a set of compartments, $p_1, \dots, p_l$, each with their own transition rate.
-I will choose $l$ and the transition rates such that combined length of stay (\ie time from entry in $p_1$ until exit from $p_l$) approximates the duration of positivity distribution estimated in \cref{E-imperf-test}.
+I will choose $l$ and the transition rates such that combined length of stay (\ie time from entry in $p_1$ until exit from $p_l$) approximates the duration of detectability distribution estimated in \cref{E-imperf-test}.
 This idea extends the technique of having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}).
 While the use of exponential or Erlang (gamma distributions with integer first parameter) is common in the observation model of compartmental models~\autocite[e.g.][]{overtonEpiBeds}, the use of more flexible phase-type distributions, as here, has rarely, if ever, been used in practice~\autocite{hurtadoGLCT}.
 This broader class of distributions allows the model to capture the tail of the distribution, which is important when incidence suddenly decreases.
@@ -585,7 +585,7 @@ This was further thinned to \numprint{2000} samples when calculating posterior p
 \subsubsection{Priors} \label{SEIR:sec:priors}
 
 Priors for the parameters are given in \cref{SEIR:table:priors}.
-The parameters governing the duration of positivity were explained previously (see \cref{SEIR:table:ec-params}).
+The parameters governing the duration of detectability were explained previously (see \cref{SEIR:table:ec-params}).
 
 The initial conditions and transition rate parameters are unidentifiable in an SEIR model~\autocite{dankwaStructural}, therefore strongly informative priors or fixed values are used for them.
 
@@ -906,7 +906,7 @@ Including these would increase the estimates of incidence because false negative
 The observation model could be adapted to include these errors, but the results of \cref{imperf-test} suggest they may change over the course of an infection.
 
 An extension of either (or both) models into the rest of the epidemic would be useful.
-The main obstacle is knowledge of how the duration of positivity distribution changes, and the need to incorporate the changes into the model.
+The main obstacle is knowledge of how the duration of detectability distribution changes, and the need to incorporate the changes into the model.
 The SEIR model would also need to include the effect of vaccination on transmission.
 
 

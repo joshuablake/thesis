@@ -336,7 +336,7 @@ The rest of this section derives expressions for each of $p_{ia}$, $p_{u}$ and $
 \subsection{Expression for $\eta$}
 
 I derive an analytical solution to $\eta$ (defined in \cref{perf-test:eq:eta}).
-I assume the prior $\ntot \dist \NBc(\mu, r)$, independently of \vec{\theta}, the parameters of the survival distribution.
+I assume the prior $\ntot \dist \NBc(\mu, r)$ is independent of $\vec{\theta}$, the parameters of the survival distribution.
 Therefore, $p(\ntot \mid \vec{\theta}) = p(\ntot)$.
 
 Putting a negative binomial prior on $\ntot$ is equivalent to the following gamma-Poisson composite; its use simplifies the derivation.
@@ -613,7 +613,7 @@ I simulate a dataset of detected episodes with the same characteristics as that 
     \item For this final set of episodes, calculate $(l_j^{(b)}, r_j^{b}, l_j^{(e)}, r_j^{(e)})$ by taking the day after the last negative prior to any positives, the first positive, the last positive, and the day before the negative following the last positive respectively.
 \end{enumerate}
 
-Step 3 requires a distribution of the duration of positivity.
+Step 3 requires a distribution of the duration of detectability.
 I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to be consistent with the CIS.
 I modify the tail based on an unpublished analysis of CIS data~\citePersonalComms{A.\ Sarah Walker}.
 Walker uses survival analysis to estimate the duration from CIS data.
@@ -642,7 +642,7 @@ f_S'(t) = \begin{cases}
 $$
 Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
 These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
-Individual $i$'s duration of positivity, $D_i$, is then an independent draw from this distribution.
+Individual $i$'s duration of detectability, $D_i$, is then an independent draw from this distribution.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/input-duration-dists}
   \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. \label{perf-test:fig:duration-dist}}

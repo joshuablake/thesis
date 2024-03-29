@@ -318,7 +318,7 @@ I describe ATACCC in detail in \cref{E-biology-data:sec:ataccc} and use it to es
 
 The second study is the CIS (introduced in \cref{intro:sec:data-for-estimating}).
 In addition to its role as a prevalence survey, the CIS followed the same individuals over a long period of time (over a year in many cases), collecting longitudinal data.
-The large sample size and long follow-up allows estimation of the tails of the distribution of the duration of positivity.
+The large sample size and long follow-up allows estimation of the tails of the distribution of the duration of detectability.
 However, the lack of frequent testing (at most weekly) prohibits estimation of the viral load dynamics.
 In particular, the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
 I describe the CIS in detail in \cref{E-intro:sec:cis} and use it to estimate duration in \cref{E-perf-test,E-imperf-test}.
@@ -373,10 +373,10 @@ The observation model must now include the error arising from using a sample of 
 An early meta-analysis estimated that individuals test positive for SARS-CoV-2 for a mean of 14.6 days (95\% CI: 9.3--20.0 days)~\autocite{cevikShedding}.
 The longest reported duration was observed at 83 days, although beyond day 9 no live virus was detected, indicating that the individuals testing positive for longer than this were not infectious.
 However, most studies included in the meta-analysis involved hospitalised patients or had unclear inclusion criteria, and hence may not be representative of the general population.
-These summary estimates are insufficient for backcalculation, which requires a distribution of the duration of positivity.
+These summary estimates are insufficient for backcalculation, which requires a distribution of the duration of detectability.
 
 \Textcite{hellewellPCRSensitivity} estimated the probability of an individual testing positive each day after infection.
-This measure is highly related to the duration of positivity.
+This measure is highly related to the duration of detectability.
 However, the study's cohort consisted only of healthcare workers, \ie working-age adults, and included only 27 infections.
 Therefore, the data are not suitable for inferring the full distribution in the general population.
 
@@ -384,22 +384,22 @@ Therefore, the data are not suitable for inferring the full distribution in the 
 The situation in New Zealand, who were successfully pursuing a zero-COVID strategy at this time, means that the individuals in the study were unusual.
 For example, a third were travellers detected during their quarantine period on arrival to New Zealand but would have had negative RT-PCR tests before their departure.
 Furthermore, asymptomatic infections were excluded due to limitations of their methodology.
-Duration of positivity may be correlated with severity of symptoms, and hence this exclusion could bias their results.
+Duration of detectability may be correlated with severity of symptoms, and hence this exclusion could bias their results.
 
-\Textcite{ealesCharacterising} estimated the duration of positivity from REACT data.
+\Textcite{ealesCharacterising} estimated the duration of detectability from REACT data.
 Specifically, individuals who tested positive in round 8 of REACT (6th--22 Jan 2021) were invited to take two additional swab tests.
 Defining the time of the initial positive test at time 0, \textcite{ealesCharacterising} estimated the probability of remaining positive at each day after the initial positive test.
 They made a strong parametric assumption that the probability decreases exponentially, with a sensitivity analysis assuming a plateau before the decay.
 This assumption is necessary because they had at most 17 days of follow-up, and hence could not estimate the tail of the distribution.
-Overall, they estimate a median duration of 14.0 days (95\% CI: 12.9--15.4 days) with substantial positive correlation with each individual’s viral load at the time of the initial positive test (\ie a higher initial viral load was associated with a longer duration of positivity).
+Overall, they estimate a median duration of 14.0 days (95\% CI: 12.9--15.4 days) with substantial positive correlation with each individual’s viral load at the time of the initial positive test (\ie a higher initial viral load was associated with a longer duration of detectability).
 The individuals with the highest viral load individuals were estimated to have a median duration of 19.6 days (16.1--25.8 days).
 The association could be due to individuals with a higher initial viral load being (on average) more recently infected at the time of the initial positive test.
 The study design prohibits estimating how long before the initial positive test the infection occurred.
-The same issue means the study underestimates the duration of positivity.
+The same issue means the study underestimates the duration of detectability.
 
 For the purposes of this thesis, I require estimates applicable to the general population.
-There are no reliable estimates of the full distribution of the duration of positivity in a general population cohort available in the literature.
-Therefore, I estimate the duration of positivity from the ATACCC and CIS studies.
+There are no reliable estimates of the full distribution of the duration of detectability in a general population cohort available in the literature.
+Therefore, I estimate the duration of detectability from the ATACCC and CIS studies.
 
 
 \subsection{Existing estimation from prevalence surveys}
@@ -419,12 +419,12 @@ They do not fully propagate the uncertainty from the CIS prevalence estimates, c
 Several compartmental models incorporated data from SARS-CoV-2 prevalence surveys, alongside other data sources~\autocite{daviesAssociation,ironsEstimating,knockKey,nicholsonImproving,pooleyEstimation,birrellRTM2}.
 % These models incorporate prevalence survey data by adding additional compartments representing RT-PCR positive individuals, who may not be infectious (this is common, see \cref{E-biology-data}); except \textcite{nicholsonImproving} who have a more sophisticated approach (below) and \textcite{ironsEstimating}, who assume RT-PCR positivity coincides with infectiousness.
 % The length of stay in these compartments (the duration of time positive) is assumed to follow a gamma distribution, with the parameters estimated from external data or having at most one free parameter.
-Their model structure limits the form of the duration of positivity. 
+Their model structure limits the form of the duration of detectability. 
 They fit the models to prevalence survey data using a binomial likelihood where possible, although some approaches take a normal approximation.
 % These approaches are similar to how these models are fit to other data sources, such as hospital admissions or deaths.
 
 \Textcite{nicholsonImproving} fit a simple mechanistic model, notably without age structure, but have the most sophisticated observation model.
-They allow an arbitrary distribution of the duration of positivity, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:previous-duration-estimates} for discussion of the \textcite{hellewellPCRSensitivity} study).
+They allow an arbitrary distribution of the duration of detectability, based on the estimates of \textcite{hellewellPCRSensitivity} (see \cref{intro:sec:previous-duration-estimates} for discussion of the \textcite{hellewellPCRSensitivity} study).
 Furthermore, they incorporate the sensitivity and specificity of the RT-PCR test into their model.
 
 \Textcite{mccabeCISincidence}, adapting the methodology \textcite{ealesAppropriately} developed for REACT, estimate $\Re$ and the growth rate from the CIS data.
@@ -460,7 +460,7 @@ Additionally, incidence begins rising over this period, which is the period when
 The CIS began in April 2020, when incidence was falling due to the first lockdown in the UK.
 Incidence remained low and fairly flat in England over summer 2020, until it began rising in mid or late August.
 Finally, the period ends before the roll-out of the vaccine, which likely affects many important aspects of the analysis.
-In particular, the duration of positivity and the susceptibility of the population.
+In particular, the duration of detectability and the susceptibility of the population.
 Including both of these elements would require more complex modelling and including idiosyncratic features of the SARS-CoV-2 pandemic that are less generalisable to other diseases.
 
 A secondary aim of this thesis is to improve our understanding of the epidemic in England over this period, and our understanding of the SARS-CoV-2 virus more broadly.
@@ -475,7 +475,7 @@ A \emph{deterministic} backcalculation approach was used by \textcite{abbottCISi
 The deterministic approach models the prevalence at any time as a deterministic function of the incidence, rather than as a random variable.
 I show that this is a good approximation as long as the proportion of the population sampled is small.
 In particular, it does not require the prevalence or incidence to be large.
-The estimates I produce in \cref{E-backcalc} fully propagate the uncertainty from the prevalence estimation procedure and use estimates of the duration of positivity from a general population study, unlike prior work.
+The estimates I produce in \cref{E-backcalc} fully propagate the uncertainty from the prevalence estimation procedure and use estimates of the duration of detectability from a general population study, unlike prior work.
 
 In \cref{E-perf-test} I estimate the duration of RT-PCR-positivity from double censored data with arbitrary periods where infections could be undetected (a generalisation of truncation).
 This is based on the CIS data.
@@ -489,7 +489,7 @@ In order to do so, I propose a prior which appropriately discounts the informati
 
 
 Finally, in \cref{E-SEIR}, I describe a compartmental model for SARS-CoV-2 transmission, which I fit to CIS data.
-I allow a more flexible distribution of the duration of positivity than any of the papers discussed above, except \textcite{nicholsonImproving}, incorporating the skew of the distribution.
+I allow a more flexible distribution of the duration of detectability than any of the papers discussed above, except \textcite{nicholsonImproving}, incorporating the skew of the distribution.
 This distribution is based on data from a representative sample of the UK population, rather than convenience samples (see \cref{intro:sec:previous-duration-estimates}).
 Unlike \textcite{nicholsonImproving}, I include age-stratification in the transmission model, allowing estimation of how transmission varies by age.
 I use only data from the CIS and show this is sufficient for estimating incidence and transmission.
@@ -513,10 +513,10 @@ An index to the code and, where possible, data are available at \url{https://git
 I structured two elements of the code as R packages to enable their application to future contexts.
 
 First, the framework to simulate the CIS (used in \cref{E-imperf-test:sec:simulate,E-perf-test:sec:simulation-study}).
-The package enables customisation of various features of the study, for example the testing regime of the participants, the sensitivity of the tests, and the duration of positivity.
+The package enables customisation of various features of the study, for example the testing regime of the participants, the sensitivity of the tests, and the duration of detectability.
 This package would be particularly useful in answering questions regarding the design of future prevalence surveys, for example, how frequently individuals should be tested, or how many individuals should be tested.
 
-Second, the survival analysis framework used to infer the duration of positivity in \cref{E-perf-test,E-imperf-test}.
+Second, the survival analysis framework used to infer the duration of detectability in \cref{E-perf-test,E-imperf-test}.
 The framework allows the user to specify all the different analyses performed in these chapters in a simple interface. 
 Furthermore, adding new analyses, for example varying the priors or the inclusion of covariates, is straightforward.
 
@@ -531,17 +531,17 @@ The exceptions are the Markov chain Monte Carlo sampler used in \cref{E-SEIR}, t
 
 In \cref{E-biology-data}, I provide background information on the natural history of SARS-CoV-2, the RT-PCR testing process used to produce the data used throughout this thesis, and describe the two cohort studies used in this thesis.
 Then, in \cref{E-inc-prev}, I formally describe the stochastic processes which generate infections, prevalence, and the observations of prevalence.
-A key insight in this chapter is that the distribution of the duration of positivity is the key quantity linking incidence and prevalence.
+A key insight in this chapter is that the distribution of the duration of detectability is the key quantity linking incidence and prevalence.
 
 I then turn to estimating this distribution.
-I start, in \cref{E-ATACCC}, by estimating the duration of positivity from the ATACCC study.
+I start, in \cref{E-ATACCC}, by estimating the duration of detectability from the ATACCC study.
 This provides a reliable estimate of the bulk of the distribution (out to around 20 days) but shows that there is a significant tail.
 Estimating the tail requires a large sample size and long follow-up. 
 Therefore, I turn to the CIS data in \cref{E-perf-test,E-imperf-test}.
-In \cref{E-perf-test}, I provide a framework for estimating the duration of positivity from the CIS data, assuming perfect tests.
+In \cref{E-perf-test}, I provide a framework for estimating the duration of detectability from the CIS data, assuming perfect tests.
 However, the assumption of perfect tests is not realistic; in \cref{E-imperf-test}, I extend the framework to include false negatives.
 
-Having estimated the duration of positivity, next I estimate incidence and transmission from the CIS data in \cref{E-transmission}, thus fulfilling the primary aim of this thesis.
+Having estimated the duration of detectability, next I estimate incidence and transmission from the CIS data in \cref{E-transmission}, thus fulfilling the primary aim of this thesis.
 I use both a phenomenological and mechanistic transmission model, contrasting their results and discussing the advantages and disadvantages of each in this context.
 Finally, I conclude in \cref{E-conclusion}.
 
