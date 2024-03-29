@@ -157,30 +157,26 @@ This increases the dimensionality of the problem greatly, making it computationa
 
 In this section, I develop a computationally feasible Bayesian statistical model accounting for double interval censoring and undetected episodes.
 In \cref{perf-test:sec:data}, I introduce the data, defining which quantities are observed and which are latent.
-Then, in \cref{perf-test:sec:posterior}, I build a framework, using the concept of \textcite{heiseyModelling}.
-I classify episode based on the possible patterns of the doubly interval censored pattern of the observations; and an \emph{undetected} region, which lead to the episode being undetected.
-The number of such episodes in each region has a multinomial distribution conditional on the latent total number of infections (including undetected infections).
+In the remainder of the section, I derive the posterior density, adapting the general approach of \textcite{heiseyModelling}.
+I classify episodes based on how they would be observed (\ie the intervals that their beginning and end times would be censored to).
+These potential classification can then be compared to the actual observations.
 
-In \cref{perf-test:sec:posterior}, I outline the form of the posterior density.
-The following subsections then derive its various components.
-Unlike in \textcite{heiseyModelling}, I must consider the individual's probability of undetected episodes separately because they have differing visit times.
+Unlike in \textcite{heiseyModelling}, I must consider each individual's probability of undetected episodes separately because they are tested at different times.
 In addition, I include the information from the individuals without a detected episode.
-
-Unlike prior work, I marginalise the posterior density over the number of undetected episodes.
+Furthermore, I marginalise the posterior density over the number of undetected episodes.
 This makes inference tractable using the large sample size and the computing resources available within the SRS (see \cref{E-biology-data:sec:SRS}).
-In particular, the posterior can be expressed within modern, high-performance Bayesian software such as Stan.
+% In particular, the posterior can be expressed within modern, high-performance Bayesian software such as Stan.
 
 \subsection{Data} \label{perf-test:sec:data}
 
-I analyse the $\ndet = \numprint{4800}$ episodes with their first positive test between 10 Oct 2020 and 6 Dec 2020 inclusive, with negatives bounding the start and end time of the episode; I refer to these episodes as \emph{detected}.
-In \cref{perf-test:sec:prob-undetected} I formalise the conditions for an episode to be detected.
+I analyse the $\ndet = \numprint{4800}$ episodes with their first positive test between 10 Oct 2020 and 6 Dec 2020 inclusive, with negatives bounding the start and end time of the episode; I refer to these episodes as \emph{detected}; in \cref{perf-test:sec:prob-undetected} I formalise the conditions for an episode to be detected.
 Each day in this period is denoted as $t = 1, \dots, T$.
-A negative test before the start of the episode provides a lower bound on the episode's start time; otherwise, there is little information on its length.
-Similar information comes from the negative test after the end of the episode.
-A negligible number of episodes are missing a negative test after the end of the episode.
+I use these episodes because a negative test before the start of the episode provides a lower bound on the episode's start time; otherwise, there is little information on its length.
+Similar information comes from the negative test after the end of the episode, although a negligible number of episodes are missing a negative test after the end of the episode.
+How the episode data are constructed is detailed in \cref{E-biology-data:sec:cis-episodes}.
 
-I consider the cohort of $\Ncis = \numprint{437590}$ individuals who could have had a detected episode; this is a subset of the whole CIS cohort.
-To be considered, an individual must have at least one test between time 1 and $T$.
+I consider the cohort of $\Ncis = \numprint{437590}$ individuals who could have had a detected episode.
+This is the subset of the whole CIS cohort with at least one test between time 1 and $T$.
 I index these individuals by $i = 1, \dots, \Ncis$.
 
 An individual $i$ has a \emph{test schedule} $\sched_i$.
@@ -193,23 +189,21 @@ Therefore, I condition on them implicitly in all probabilities that follow.
 
 For any episode $j$, define $O(j)$ as the observations of that episode.
 Test results are deterministic based on the time of the test and the individual's infection status.
-Therefore, $O(j)$ is fully determined by the triplet $(B_j, E_j, i(j))$ consisting of $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
+Therefore, $O(j)$ is fully determined by the triplet $(b_j, e_j, i(j))$ consisting of $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
+The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
 
-For a detected episode, we have $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{e}, i(j)]^T$.
-These are: the individual in which the episode occurs, denoted $i(j)$; the earliest and latest time the episode could have begun, $l_j^{(b)}$ and $r_j^{(b)}$ respectively; and the earliest and latest time the episode could have ended, $l_j^{(e)}$ and $r_j^{(e)}$ respectively.
-How the episode data are constructed is detailed in \cref{E-biology-data:sec:cis-episodes}.
+If $j$ is detected, then $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{e}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)}$ and $r_j^{(b)}$ are the earliest and latest time the episode could have begun respectively; and $l_j^{(e)}$ and $r_j^{(e)}$ are the earliest and latest time the episode could have ended respectively.
 
-For an undetected episode $j$, there are no observations; in which case, define $O(j) = \emptyset$.
+If $j$ is undetected, there are no observations; in which case, define $O(j) = \emptyset$.
 Let $\nnodet$ denote the (latent) number of undetected episodes experienced across all $\Ncis$ individuals.
 Therefore, the total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$ and I index them with $j = 1, \dots, \ntot$.
 
-Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively; and $i(j)$ is the individual the episode occurred in.
-$i(j)$ identifies the test schedule.
-The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
-For all $j$, the exact values $b_j$ and $e_j$ are latent.
-If $j$ is undetected then $i(j)$ is also latent and little is known about $b_j$ or $e_j$.
-If $j$ is detected, then $i(j)$ is known; $b_j \in [l_j^{(b)}, r_j^{(b)}]$; and $e_j \in [l_j^{(e)}, r_j^{(e)}]$.
-These latter two properties are what make the data doubly interval censored.
+% Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively; and $i(j)$ is the individual the episode occurred in.
+% $i(j)$ identifies the test schedule.
+% For all $j$, the exact values $b_j$ and $e_j$ are latent.
+% If $j$ is undetected then $i(j)$ is also latent and little is known about $b_j$ or $e_j$.
+% If $j$ is detected, then $i(j)$ is known; $b_j \in [l_j^{(b)}, r_j^{(b)}]$; and $e_j \in [l_j^{(e)}, r_j^{(e)}]$.
+% These latter two properties are what make the data doubly interval censored.
 
 \subsection{Posterior density} \label{perf-test:sec:posterior}
 
@@ -221,7 +215,11 @@ The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-p
 
 Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_D}, \nnodet]^T$.
 Hence, $\ntot = \sum_{i=1}^{N_D} n_i + \nnodet$.
-For $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$; $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$; and $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
+
+Now define the probabilities of each possible outcome of $O(j)$.
+For detected outcomes, $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
+For undetected outcomes, let $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$.
+Together, $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
 Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
 Then:
 \begin{align}
@@ -236,14 +234,10 @@ Then:
 \caption[Episode regions]{%
   Each dot is a combination of $b_j$ and $e_j$ for an arbitrary individual $i$.
   Each box, bounded by dashed lines, are combinations giving $O(j) = \nu_k$, $k$ corresponding to the numeric label; labels are arbitrary but unique across all individuals.
-
   $i$ had negative tests at times 0, 7, 14, 56, and 84 (not shown) and positive tests at times 21 and 28.
-  
   The purple region corresponds to the doubly interval censored episode in this individual.
   That is, $n_8 = 1$ and $n_k = 0$ for $k = 1, \dots, 7, 9, \dots, 15$.
-  
   The red region corresponds to combinations giving $O(j) = \emptyset$.
-
   Impossible region violates $b_j \leq e_j$.
 }
 \label{perf-test:fig:partitionSpace}
@@ -364,7 +358,7 @@ Therefore:
   &= \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} (1 - \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta}))
   \label{perf-test:eq:pu}
 \end{align}
-assuming $P(i(j) = i \mid \vec{\theta})$ as before.
+assuming $P(i(j) = i \mid \vec{\theta}) = 1/\Ncis$ as before.
 Let $p_{iu} = \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta})$.
 Therefore, the crucial component is $1 - p_{iu}$.
 This is one minus the probability that an episode in individual $i$ was undetected, \ie the probability of the episode being detected.
@@ -376,9 +370,9 @@ An episode $j$ in individual $i(j)$ is detected if and only if all the following
       For individuals enrolled during the period considered ($\min \sched_{i(j)} > 0$), this ensures that the beginning of the episode is lower bounded; thereby adjusting for those who enrolled during the period being less likely to have a detected infection.
       For individuals enrolled prior to the period considered ($\min \sched_{i(j)} \leq 0$), this means that the episode was not detected prior to time 1.
     \item $b_j \leq T_{i(j)}$ where $T_{i(j)} = \max \{ t \in \sched_{i(j)} \ssep t \leq T \}$ is the last time that $i(j)$ is tested in the period, meaning that the test is detected within the period.
-    \item Individual $i(j)$ is tested at a time $t > e_j$, upper bounding the end of the episode.
-      Note that this could be after $T$, and hence it is not necessarily the case that $t \in \sched_{i(j)}$.
-      For episodes detected in the period I consider, this happens a negligible number of times, only in individuals lost to follow-up; therefore, I neglect this possibility.
+    \item $\exists t \in \sched_{i(j)}$ such that $t > e_j$, upper bounding the end of the episode.
+      For episodes detected in the period I consider, a negligible number of episodes are excluded due to this critera.
+      It only occurs in individuals lost to follow-up; therefore, I neglect this possibility.
       % For a new context, including recent infections, this condition could be relaxed by considering episodes that do not meet this criterion as right censored.
 \end{enumerate}
 
@@ -404,7 +398,7 @@ Therefore, omitting the conditioning on $\vec{\theta}$ and $i(j) = i$:
 1 - p_{iu}
 % &= 1 - \prob((B_{j}, E_{j}) \in \Omega_i) \\
 &= \prob(D_j \geq \tau_{\sched_{i}}(B_j)+ 1, \min \sched_{i(j)} < B_j \leq T_{i(j)}) \\
-&= \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} \prob(D_j \geq \tau_{\sched_{i}}(b) + 1, \tau_{\sched_{i(j)}}(b_j) < \infty \mid B_j = b) \prob(B_j = b)\\
+&= \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} \prob(D_j \geq \tau_{\sched_{i}}(b) + 1 \mid B_j = b) \prob(B_j = b)\\
 &= \frac{1}{T} \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} S_{\vec{\theta}}(\tau_{\sched_{i}}(b) + 1).
 \label{perf-test:eq:piu}
 \end{align}
@@ -650,6 +644,15 @@ Reasonable choices of the prior for the hazard are vague (although not flat) or 
 A smoothing prior performed poorly, although that may be influenced by the choice of hyperparameters.
 Reducing the amount of smoothing or type of smoothing may help.
 More flexible smoothing priors could be used, such as a Gaussian Process for additional flexibility and smoothing and different timescales~\autocite{saulGaussian}.
+
+The derivation in \cref{perf-test:sec:model} relied on an assumption that $O(j)$ and $O(j')$ occur independently for $j \neq j'$.
+This is not the case, as immunity means that an individual previously infected is less likely to be infected in the future.
+Additionally, the same individual cannot have multiple concurrent infections, due to the way that the episodes dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}) limiting certain combinations from occurring.
+In practice, this means that $n_k > 1$ cannot occur.
+The simulation study violated this assumption to a large extent: each individual could only have one infection.
+Despite this, the method performed well, recovering the true survival function.
+Therefore, it is unlikely that this assumption matters, possibly due to the large number of individuals without detected episodes.
+Further work could explore different assumptions, \eg a ``full immunity'' assumption meaning each individual has zero or one episode in the period.
 
 Various extensions could be worth exploring.
 Most importantly, including covariates (\eg age, immunity from vaccination and/or previous infection, or variant).

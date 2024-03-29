@@ -148,13 +148,12 @@ For tractability, I consider only tests between the negative tests providing an 
 
 To formalise this, define the relevant testing times for episode $j$ as $\sched'_j = \{ t \in \sched_{i(j)} \ssep r_j^{(b)} \leq t \leq r_j^{(e)} + 1 \}$ and let $m_j$ denote the size of this set.
 Denote the elements of $\sched'_j$ by $t_{j,1} < \dots < t_{j,m_j}$.
-The new observation vector for $j$ is $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with $y_{j,l}$ being the test result at time $t_{j,l}$.
+The new observation vector for $j$ is $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j \in \{ 0, 1 \}^{m_j}$, with $y_{j,l}$ being the test result at time $t_{j,l}$.
 
 
 Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_{D'}} \}$ where $\vec{\nu}'_k \in \set{D}'_k$ if and only if $\vec{\nu}'_k = [\vec{\nu}_k, \vec{y}_k]^T$ would be a detected observation, equivalent to satisfying all the following conditions.
 \begin{enumerate}
   \item $\vec{\nu}_k \in \set{D}$.
-  \item $\vec{y}_k \in \{0, 1\}^{m_k}$.
   \item The elements of $\vec{y}_k$ corresponding to the tests at times $r_k^{(b)}$ (its first element) and $l_k^{(e)}$ (its penultimate element) are 1.
   \item The element of $\vec{y}_k$ corresponding to the test at time $r_k^{(e)} + 1$ (its last element) is 0.
 \end{enumerate}
@@ -165,10 +164,8 @@ As before, $p'_k = 1/\Ncis p'_{ik}$ and $p'_u = 1/\Ncis \sum_{i=1}^{\Ncis} p'_{i
 
 \subsection{Deriving $p'_{ik}$} \label{imperf-test:sec:modifying-p_ia}
 
-I will modify $p_{ik}$ to form $p_{ik}' = \prob(O'(j) = \nu'_k \mid i(j) = i_k, \vec{\theta})$, which allows the negative test following the last positive to be a false negative.
-If it is a false negative, then I will consider the episode's end right censored.
-However, if it is a true negative, then the episode's end is interval censored, as previously.
-A mixture of these scenarios forms the episode's likelihood contribution, with the mixture probability determined by the test sensitivity.
+I will modify $p_{ik}$ to form $p_{ik}' = \prob(O'(j) = \nu'_k \mid i(j) = i_k, \vec{\theta})$, taking into account false negatives.
+I consider a mixture of two scenarios, whether the final test in $\sched'_{i(j)}$ is a false positive, with the mixture probability determined by the test sensitivity.
 
 Similar likelihoods have previously appeared in the literature~\autocite[e.g.][eq.\ (2)]{piresIntervalMisclassify}.
 However, this prior work was for singly interval censored data; incorporating the double interval censored nature of the CIS data involves summing over the possible episode start times.
@@ -186,7 +183,7 @@ True negatives occur with probability 1, and hence this test does not contribute
 As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_k, l^{(e)}_k]$, a period starting and ending with a positive test.
 This includes all $t \in \sched'_{i(j)}$ except $t = r_k^{(e)}+1$.
 Therefore, the test results $\vec{y}_k$, except the test at $r_k^{(e)}+1$, are either true positives or false negatives.
-This gives $t_+ = \sum_{l=1}^{m_k-1} y_{k,l}(t)$ true positives and $f_- = m_k - 1 - t_{k,+}$ false negatives.
+This gives $t_+ = \sum_{l=1}^{m_k-1} y_{k,l}(t)$ true positives and $f_- = \sum_{l=1}^{m_k-1} (1 - y_{k,l}(t))$ false negatives.
 
 Consider the negative test at $r_k^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
 It is a false negative if and only if the episode ends after the test, \ie $E_j > r_k^{(e)}$.
@@ -242,7 +239,7 @@ p_{ik}'
 
 \subsection{Deriving $p'_{iu}$} \label{imperf-test:sec:modifying-p_iu}
 
-I now modify $p_{iu}$ to form $p_{iu}' = \prob(O'(j) = \emptyset \mid i(j) = i_k, \vec{\theta})$, which allows the negative test following the last positive to be a false negative.
+I now modify $p_{iu}$ to form $p_{iu}' = \prob(O'(j) = \emptyset \mid i(j) = i_k, \vec{\theta})$ to take into account false negatives.
 Several mechanisms for episodes being undetected were considered when deriving $p_{iu}$ in \cref{E-perf-test:sec:prob-undetected}.
 I now consider the additional mechanisms arising due to false negatives.
 Specifically, episode $j$ could be undetected if the first test after $b_j$ is a false negative and then there are no subsequent positive tests.
