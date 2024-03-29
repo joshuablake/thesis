@@ -42,7 +42,7 @@ In \cref{perf-test:sec:problem}, I describe the challenges analysing the data pr
 This motivates using a survival analysis framework which I introduce in \cref{perf-test:sec:surv-analysis}, before deriving the statistical model for the CIS setting in \cref{perf-test:sec:model}.
 In \cref{perf-test:sec:parameters-priors}, I consider how to parameterize the survival function and choose its priors, including vague and smoothing priors as well as a prior constructed to include the information from \cref{E-ATACCC}.
 I evaluate the model and priors using a simulation study (\cref{perf-test:sec:simulation-study}), showing that they successfully recover $S(t)$.
-Finally, I discuss the results in \c{perf-test:sec:discussion}.
+Finally, I discuss the results in \cref{perf-test:sec:discussion}.
 
 \section{Problem description} \label{perf-test:sec:problem}
 
@@ -105,7 +105,6 @@ An event is \emph{interval censored} if it is known to have occurred within an i
 If both the initiating and terminating event are interval censored, the data are \emph{doubly interval censored}.
 To handle doubly interval censored data, the times need to be jointly modelled~\autocite[and references therein]{liSemiparametric}.
 
-Another important concepts typical of survival data is truncation, which refers to ...?
 Sometimes, only intervals satisfying some property are recorded.
 In this case, data are \emph{truncated}.
 \emph{Left truncation} is when only events lasting longer than a minimum amount of time are observed.
@@ -262,7 +261,7 @@ I will use these regions to form the data likelihood, conditional on $\ntot$.
 The definition of the admissible region relies on the test results.
 However the likelihood should be conditional only on $\vec{\theta}$, $\ntot$, and the test schedules.
 Therefore, this is not strictly correct.
-This issue can be rectified be considering the inadmissible region as many subregions, which leads to the same result (sketched in \cref{perf-test:sec:alt-likelihood}).
+This issue can be rectified by considering the inadmissible region as many subregions, which leads to the same result (sketched in \cref{perf-test:sec:alt-likelihood}).
 A full formalisation of the derivation in \cref{perf-test:sec:alt-likelihood} would require much more complex notation for the same result; therefore, I prefer the presentation to follow.
 
 % Any episode $j$ independently belongs to one of these classes.
@@ -554,7 +553,7 @@ Firstly, the model structure from \cref{E-ATACCC} leads to the posterior distrib
 The prior used in this analysis should preserve this correlation.
 Secondly, the uncertainty in the estimates from \cref{E-ATACCC} is underestimated because it extrapolates beyond the data using strong model assumptions (see \cref{E-ATACCC:sec:discussion}).
 %Furthermore, there are differences in the study design and laboratories used between the two studies (see \cref{E-intro:sec:studies}) which may mean that results do not generalise between the studies.
-I form the prior to include this prior information into the CIS analysis two steps.
+I form the prior to include this prior information into the CIS analysis in two steps.
 
 I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as $\logit{\vec{h}} \dist \MNorm(\vec{\mu}_A, \matr{\Sigma}_A)$ where $\vec{h}$ is the hazard, and $\vec{\mu}_A$ and $\matr{\Sigma}_A$ are the mean and covariance matrix computed from the samples of $\logit{\vec{h}}$ derived using the method of \cref{ATACCC:sec:duration}.
 Using a multivariate normal, as opposed to multiple univariate distribution for each $h_t$, preserves the correlation between the hazards.

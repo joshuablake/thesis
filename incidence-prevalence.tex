@@ -164,7 +164,7 @@ This relaxes the assumption of independent increments in the counting process fo
 
 Deterministic models are also known as \emph{mean-field} models because they represent the mean behaviour of a corresponding stochastic model.
 When the number of infectious individuals is large, the law of large numbers implies that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
-The approximation works especially well if used to make infernce based on noisy observations of the system, when the observation noise dominates is much larger than the infection process noise; I make a formalisation of this argument to justify a mean-field approximation of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
+The approximation works especially well if used to make inference based on noisy observations of the system, when the observation noise is much larger than the infection process noise; I make a formalisation of this argument to justify a mean-field approximation of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
 
 The remainder of this section uses only deterministic models.
 This choice is appropriate for the context of this thesis because there were many individuals infectious with SARS-CoV-2 in this time period.
@@ -312,7 +312,7 @@ A few properties and assumptions of the SIR model are worth noting.
 The basic SIR model is the deterministic approximation of a stochastic model where the duration of time in the infectious compartment is exponentially distributed~\autocite[96]{keelingModeling}.
 This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocite{lloydRealistic,wearingAppropriate}.
 A standard extension to the SIR model is to instead assume a gamma distribution~\autocite[94]{keelingModeling,andersonSpread}.
-The extension adds adding multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
+The extension adds multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
 The ODEs are now:
 \begin{align}
 \frac{ds(t)}{dt} &= -\lambda(t) s(t)\\
@@ -426,7 +426,7 @@ Now assume that there is a constant probability of transmission upon contact bet
 Therefore, the mean rate of infections in strata $a$ per day caused by this infectious individual is $\kappa_{aa'} s_a(t) q_{aa'}$ per day.
 Multiplying by the number of infectious individuals in strata $a'$, $N_{a'} i_{a'}(t)$, and dividing by the size of strata $a$, $N_a$, gives $\kappa_{aa'} q_{aa'} s_a(t) \frac{1}{N_a} N_{a'} i_{a'}(t)$ where $i_{a'}(t) = \sum_{j=1}^n i_{j,a'}$ is the total proportion of stratum $a'$ that is infectious, regardless of which compartment they are in.
 The constant terms here are absorbed into the WAIFW matrix, hence $\beta_{aa'} = \kappa_{aa'} q_{aa'} \frac{1}{N_a} N_{a'}$~\autocite[section 9.2]{diekmannMathematical}.
-This gives the total force of infection on strata $a$ from all strata is, therefore, $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$ as above.
+This gives the total force of infection on strata $a$ from all strata is $\lambda_a(t) = \sum_{a' \in \set{A}} \beta_{aa'} i_{a'}(t)$ as above.
 If all $\beta_{aa'}$ are equal, then the model is equivalent to the homogeneous model (\ie without any structure).
 The rate at which individuals move between the susceptible and exposed compartments is now $\vec{s}(t) \circ \vec\lambda(t)$, where $\circ$ denotes element-wise multiplication.
 
@@ -452,7 +452,7 @@ Respiratory diseases can be spread by conversational contacts, which show very c
 In particular, the contacts are \emph{associative} (contacts are more likely between individuals of similar ages) and younger age groups have more contacts; this will tend to concentrate the epidemic in these younger age groups~\autocite[67]{keelingModeling}.
 \begin{figure}
   \makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{inc-prev/contact_matrices}}
-  \caption[Age-based contact matrices]{Number of contacts reported between age groups in two contact surveys: (A) number of contacts reported in the POLYMOD survey~\autocite{mossongSocial}; (B) number of contacts reported in the BBC Pandemic survey~\autocite{klepacContacts}, which only collected data on those aged over 12. A clear diagonal, showing associative mixing is visible, and children have more contacts. Parallel diagonals off the main diagonal show mixing between parents and their children. Figure adapted from \textcite{klepacContacts}, licensed under \href{https://creativecommons.org/licenses/by-nc-nd/4.0/}{CC BY-NC-ND 4.0.}}
+  \caption[Age-based contact matrices]{Number of contacts reported between age groups in two contact surveys: (A) number of contacts reported in the BBC Pandemic survey~\autocite{klepacContacts}, which only collected data on those aged over 12; (B) number of contacts reported in the POLYMOD survey~\autocite{mossongSocial}. A clear diagonal, showing associative mixing is visible, and children have more contacts. Parallel diagonals off the main diagonal show mixing between parents and their children. Figure adapted from \textcite{klepacContacts}, licensed under \href{https://creativecommons.org/licenses/by-nc-nd/4.0/}{CC BY-NC-ND 4.0.}}
   \label{SEIR:fig:age-contacts}
 \end{figure}
 
@@ -624,7 +624,7 @@ The survey design considered here reflects the CIS, although it would be applica
 On day $t$ (for $t = 1, \dots, T$), a prevalence survey such as the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
 Therefore, I model the number of positive tests, $Y_t$, as $Y_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$.
 The conditioning on $n_t$ and $\Npop$ is implicit in what follows.
-These quantities are fixed by the study design and population choice, and hence I assume independent of independent of $P_t$ and $Z_t$.
+These quantities are fixed by the study design and population choice, and hence I assume independent of $P_t$ and $Z_t$.
 
 The $Y_t$s are conditionally independent, given the population prevalences at each time, $\vec{P} = (P_1, \dots, P_t)^T$. 
 %For now, I assume that the sample is chosen uniformly at random from the population of interest.
