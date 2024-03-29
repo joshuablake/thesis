@@ -115,12 +115,13 @@ Introducing false negatives means that $O(j)$ is now a random, even if $B_j$ and
 Define the relevant testing times for episode $j$ as $\sched'_j = \{ t \in \sched_{i(j)} \ssep r_j^{(b)} \leq t \leq r_j^{(e)} + 1 \}$, let $m_j$ denote the size of this set.
 Let $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with the $l$th element of of $\vec{y}_j$ being the test result at the chronologically $l$th time $t \in \sched'_j$.
 $O'(j)$ is the observed data for episode $j$.
-Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_D} \}$ where $\vec{\nu}'_j \in \set{D}'_j$ if and only if $\vec{\nu}'_j = [\vec{\nu}_j, \vec{y}_j]^T$ could be a detected observation, equivalent to satisfying all the following conditions.
+
+Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_{D'}} \}$ where $\vec{\nu}'_k \in \set{D}'_k$ if and only if $\vec{\nu}'_k = [\vec{\nu}_k, \vec{y}_k]^T$ could be a detected observation, equivalent to satisfying all the following conditions.
 \begin{enumerate}
-  \item $\vec{\nu}_j \in \set{D}$.
-  \item $\vec{y}_j \in \{0, 1\}^{m_j}$.
-  \item The elements of $\vec{y}_j$ corresponding to the tests at times $r_j^{(b)}$ (its first element) and $l_j^{(e)}$ (its penultimate element) are 1.
-  \item The element of $\vec{y}_j$ corresponding to the test at time $r_j^{(e)} + 1$ (its last element) is 0.
+  \item $\vec{\nu}_k \in \set{D}$.
+  \item $\vec{y}_k \in \{0, 1\}^{m_k}$.
+  \item The elements of $\vec{y}_k$ corresponding to the tests at times $r_k^{(b)}$ (its first element) and $l_k^{(e)}$ (its penultimate element) are 1.
+  \item The element of $\vec{y}_k$ corresponding to the test at time $r_k^{(e)} + 1$ (its last element) is 0.
 \end{enumerate}
 The final two conditions are due the construction of the intervals as positive and negative tests bounding the beginning and end times of the episode.
 
