@@ -16,28 +16,8 @@ Let $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$ be an arbitrary vector
 \end{enumerate}
 
 
-\subsubsection{Deriving $p_k$}
-
-
-Then the derivation for $p_{ik}$ proceeds as per the derivation for $p_{ia}$ in the original version, except replacing $j(i)$s with $k$s.
-
 \subsection{Imperfect testing}
 
-Introducing false negatives means that $O(j)$ is now random, even if $B_j$ and $E_j$ are known.
-Define the relevant testing times for episode $j$ as $\sched'_j = \{ t \in \sched_{i(j)} \ssep r_j^{(b)} \leq t \leq r_j^{(e)} + 1 \}$, let $m_j$ denote the size of this set.
-Let $t_{j,1} < \dots < t_{j,m_j}$ be the elements of $sched'_j$.
-Let $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with $y_{j,l}$ being the test result at time $t_{j,l}$.
-$O'(j)$ is the observed data for episode $j$.
 
-Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_{D'}} \}$ where $\vec{\nu}'_k \in \set{D}'_k$ if and only if $\vec{\nu}'_k = [\vec{\nu}_k, \vec{y}_k]^T$ could be a detected observation, equivalent to satisfying all the following conditions.
-\begin{enumerate}
-  \item $\vec{\nu}_k \in \set{D}$.
-  \item $\vec{y}_k \in \{0, 1\}^{m_k}$.
-  \item The elements of $\vec{y}_k$ corresponding to the tests at times $r_k^{(b)}$ (its first element) and $l_k^{(e)}$ (its penultimate element) are 1.
-  \item The element of $\vec{y}_k$ corresponding to the test at time $r_k^{(e)} + 1$ (its last element) is 0.
-\end{enumerate}
-The final two conditions are due the construction of the intervals as positive and negative tests bounding the beginning and end times of the episode.
-
-Similarly, let $p_k'$ and $p_{ik}'$ have the same definition as $p_k$ and $p_{ik}$ except replacing $O$ with $O'$ and $\vec{\nu}_k$ with $\vec{\nu}_k'$.
 
 \end{document}
