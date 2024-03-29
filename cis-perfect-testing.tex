@@ -229,14 +229,22 @@ Then:
   \label{perf-test:eq:multinomial-ll}
 \end{align}
 \begin{figure}
-\includegraphics[width=\textwidth]{cis-perfect-testing/regions_diag}
-\caption[Admissible, inadmissible, and undetected regions]{%
-  The regions for individual $i$.
-  $i$'s first test was at time 0 and negative, with subsequent negative tests at times 7, 14, and 56, and positive tests at times 21 and 28.
-  Inadmissible regions are unshaded.
-  The grey (impossible) region covers the cases in which recovery occurs prior to infection.
-  \label{perf-test:fig:partitionSpace}
+\makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{cis-perfect-testing/regions_diag}}
+\thisfloatpagestyle{empty}
+\caption[Episode regions]{%
+  Each dot is a combination of $b_j$ and $e_j$ for an arbitrary individual $i$.
+  Each box, bounded by dashed lines, are combinations giving $O(j) = \nu_k$, $k$ corresponding to the numeric label; labels are arbitrary but unique across all individuals.
+
+  $i$ had negative tests at times 0, 7, 14, 56, and 84 (not shown) and positive tests at times 21 and 28.
+  
+  The purple region corresponds to the doubly interval censored episode in this individual.
+  That is, $n_8 = 1$ and $n_k = 0$ for $k = 1, \dots, 7, 9, \dots, 15$.
+  
+  The red region corresponds to combinations giving $O(j) = \emptyset$.
+
+  Impossible region violates $b_j \leq e_j$.
 }
+\label{perf-test:fig:partitionSpace}
 \end{figure}
 
 In the CIS data, each $n_k$ ($k \neq u$) is observed as either 0 or 1.
