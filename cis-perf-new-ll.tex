@@ -2,111 +2,22 @@
 
 \begin{document}
 
-\chapter{Alternative derivation of \cref{E-perf-test:eq:multinomial}} \label{perf-test:sec:alt-likelihood}
+\chapter{Additional details of derivations in \cref{E-perf-test} and \cref{E-imperf-test}}
 
-\section{Attempt 1}
+\section{Defining possible observations} \label{perf-test:sec:conditions-nu-E}
 
-Denote the characteristics of episode $j$ as $\nu_j = (B_j, E_j, i(j))$.
-I now define an integer $N_E$ and a series of sets $\set{E}_1, \dots, \set{E}_{N_E}, \set{E}_u$ such that any possible $\nu_j$ is in exactly one of the classes and each set corresponds to the possible infection episodes that would generate identical observations (conditional on the test schedules).
-
-Define $\set{E}_u$ such that $\nu_h \in \set{E}_u$ if and only if $\nu_j$ would be undetected (if it occurred).
-Hence, $\prob(\nu_j \in \set{E}_u \mid \vec{\theta}) = p_u$.
-
-Otherwise, the sets are defined such that $\nu_j$ and $\nu_{j'}$ are in the same class if and only if $i(j) = i(j')$ and the episodes beginning and end times are censored to be in the same pair of intervals.
-If $i \in \set{D}$ then there is exactly one $k$ such that $\set{E}_k$ is identical to $i$'s admissible region $\alpha_i$.
-% In this case, I write $\alpha_{i(k)}$ to denote this admissible region. 
-
-More formally, the sets can be defined in terms of an equivalence relation $\equiv$ and two arbitrary possible episodes $j$ and $j'$.
-Define $\nu_j \equiv \nu_{j'}$ to hold if and only if either both $j$ and $j'$ would be undetected (as defined in \cref{E-perf-test:sec:prob-undetected}) or the following four conditions all hold.
+Let $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$ be an arbitrary vector of possible observations, $\vec{\nu} \in \set{E}$ if and only if all the following conditions hold.
 \begin{enumerate}
-    \item Both $\nu_j$ and $\nu_{j'}$ would be detected.
-    \item $i(j) = i(j')$.
-    \item $\tau_{\sched_{i(j)}}(B_j) = \tau_{\sched_{i(j')}}(B_{j'})$, where $\tau$ is as defined in \cref{perf-test:eq:tau-def}.
-    \item $\tau_{\sched_{i(j)}}(E_j) = \tau_{\sched_{i(j')}}(E_{j'})$.
+  \item $l^{(b)} 1, r^{(b)}, l^{(e)}, r^{e} + 1 \in \sched_{i}$, that is individual ${i}$ was tested at all these times.
+  \item $l^{(b)} \leq r^{(b)} \leq l^{(e)} \leq r^{(e)}$.
+  \item $r^{(b)} = \min\{t \in \sched_{i} \ssep t \geq l^{(b)}\}$, that is $r^{(b)}$ is the first time at or after $l^{(b)}$ that individual ${i}$ was tested.
+  \item $r^{(e)} = \min\{t \in \sched_{i} \ssep t > l^{(e)}\} - 1$, that is $r^{(e)}$ is the day before the next time after $l^{(e)}$ that individual ${i}$ was tested.
+  \item $1 \leq r^{(b)} \leq T$, that is the episode begins in the period of interest.
 \end{enumerate}
-Then each $\set{E}_k$ is an equivalence class under this relation and the set of all possible $\nu_j$.
-That is, taking any $k = 1, \dots, N_E, u$ then $\nu_j \in \set{E}_k$ and $\nu_{j'} \in \set{E}_k$ if and only if $\nu_j \equiv \nu_{j'}$.
 
-Let $\xi_k$ denote $\prob(\nu_j \in \set{E}_k)$.
-Assume, for tractability, that the events $\nu_j \in \set{E}_k$ and $\nu_{j'} \in \set{E}_{k'}$ are independent for $j \neq j'$.
-Denote by $m_k$ the number of episodes in $\set{E}_k$.
-$\vec{m} = [m_1, \dots m_{N_E}, m_u]^T$ are the observations.
-Then:
-\begin{align}
-  \vec{m}
-  \mid \ntot, \vec{\theta}
-  \dist
-  \MN\left(
-    \ntot,
-    \frac{1}{\Ncis}
-    \begin{bmatrix}
-        \xi_1 \\ \xi_2 \\ \vdots \\ \xi_{N_E} \\ \xi_u
-    \end{bmatrix}
-  \right).
-  \label{perf-test:eq:alt-likelihood}
-\end{align}
-
-If the set $\set{E}_k$ aligns with some $\alpha_i$ then $m_k = 1$ and $\xi_k = p_{ia}$.
-Otherwise, for $k \neq u$, $m_k = 0$.
-Finally, $m_u = n_u$ and $\xi_u = p_u$.
-Therefore, the probability masses of \cref{perf-test:eq:alt-likelihood} and \cref{E-perf-test:eq:multinomial} match.
-
-
-
-\section{Attempt 2}
-
-\subsection{Perfect testing}
-
-The test schedule $\sched_i$ is the set of times individual $i$ is tested at, starting from their last test prior to time 1, if it exists, or their time of enrolment otherwise.
-Note that $\sched_i$ includes any tests that occur after $T$.
-
-For any episode $j$, define $O(j)$ as the observations of that episode.
-Test results are deterministic based on the time of the test and the individual's infection status.
-Therefore, $O(j)$ is fully determined by the triplet $(B_j, E_j, i(j))$, $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
-
-For a detected episode, we have $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{e}, i(j)]^T$ (see \cref{E-biology-data:sec:cis-episodes}).
-These are: the individual in which the episode occurs, denoted $i(j)$; the earliest and latest time the episode could have begun, $l_j^{(b)}$ and $r_j^{(b)}$ respectively; and the earliest and latest time the episode could have ended, $l_j^{(e)}$ and $r_j^{(e)}$ respectively.
-
-For an undetected episode $j$, there are no observations; in which case, define $O(j) = \emptyset$.
-
-Define an integer $N_D$ and $\set{D} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_D} \}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{D}$ if and only if $j$ is a detected infection.
-REF FIG 5.3 HERE
-Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{e}_k, i_k]^T$ be an arbitrary vector if possible observations, $\vec{\nu}_k \in \set{D}$ if and only if all the following conditions hold.
-\begin{enumerate}
-  \item $l^{(b)}_k - 1, r^{(b)}_k, l^{(e)}_k, r^{e}_k + 1 \in \sched_{i_k}$, that is individual ${i_k}$ was tested at all these times.
-  \item $l^{(b)}_k \leq r^{(b)}_k \leq l^{(e)}_k \leq r^{(e)}_k$.
-  \item $r^{(b)}_k = \min\{t \in \sched_{i_k} \ssep t \geq l^{(b)}_k\}$, that is $r^{(b)}_k$ is the first time at or after $l^{(b)}_k$ that individual ${i_k}$ was tested.
-  \item $r^{(e)}_k = \min\{t \in \sched_{i_k} \ssep t > l^{(e)}_k\} - 1$, that is $r^{(e)}_k$ is the day before the next time after $l^{(e)}_k$ that individual ${i_k}$ was tested.
-  \item $1 \leq r^{(b)}_k \leq T$, that is the episode begins in the period of interest.
-\end{enumerate}
-Let $n_k$ denote the number of observations of $\vec{\nu}_k$, $\nnodet$ the latent number of undetected episodes, $\vec{n} = [n_1, \dots, n_D, \nnodet]^T$, and $\ntot = \sum_{i=1}^{N_D} n_i + \nnodet$.
-For $\vec{\nu}_k \in \set{D}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$, $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$, and $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
-Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
-Then:
-\begin{align}
-  \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
-\intertext{that is:}
-  p(\vec{n} \mid \ntot, \vec{\theta}) &= \frac{\ntot!}{\nnodet!\prod_{k=1}^{N_D} n_k!} p_u^{\nnodet} \prod_{k=1}^{N_D} p_k^{n_k}.
-  \label{perf-test:eq:multinomial-ll}
-\end{align}
-
-In the CIS data, each $n_k$ ($k \neq u$) is observed as either 0 or 1.
-Define $C = \{ k \ssep n_k = 1 \}$.
-Furthermore, note that the support of the multinomial distribution requires that $\nnodet = \ntot - \ndet$.
-Then \cref{perf-test:eq:multinomial-ll} simplifies to:
-\begin{align}
-  p(\vec{n} \mid \ntot, \vec{\theta})
-  &= \frac{\ntot!}{(\ntot - \ndet)!} p_u^{\ntot-\ndet} \prod_{k \in \set{C}} p_k.
-  \label{perf-test:eq:multinomial}
-\end{align}
-
-This is the previous likelihood where each $p_{ia}$ corresponds to a $p_k$ and $p_u$ is unchanged.
 
 \subsubsection{Deriving $p_k$}
 
-Decompose $p_k$ as $p_k = \prob(O(j) = \nu_k \mid \vec{\theta}) = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$ where $p_{ik} = \prob(O(j) = \nu_k \mid i(j) = i_k, \vec{\theta})$.
-This is valid as $\prob(O(j) = \nu_k \mid i(j) \neq i_k) = 0$ due to the condition here being equivalent to equating the two vectors' final elements.
-Assume that each infection episode occurs independently and with equal probability in any individual, \ie $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
 
 Then the derivation for $p_{ik}$ proceeds as per the derivation for $p_{ia}$ in the original version, except replacing $j(i)$s with $k$s.
 
