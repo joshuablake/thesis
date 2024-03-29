@@ -69,7 +69,7 @@ These are: the individual in which the episode occurs, denoted $i(j)$; the earli
 
 For an undetected episode $j$, there are no observations; in which case, define $O(j) = \emptyset$.
 
-Define an integer $N_D$ and $\set{D} = \vec{\nu}_1, \dots, \vec{\nu}_{N_D}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{D}$ if and only if $j$ is a detected infection.
+Define an integer $N_D$ and $\set{D} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_D} \}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{D}$ if and only if $j$ is a detected infection.
 For any $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$, $\vec{\nu} \in \set{D}$ if and only if all the following conditions hold.
 \begin{enumerate}
   \item $l^{(b)} - 1, r^{(b)}, l^{(e)}, r^{e} + 1 \in \sched_i$, that is individual $i$ was tested at all these times.
@@ -103,8 +103,18 @@ This is the previous likelihood where each $p_{ia}$ corresponds to a $p_k$ and $
 
 \subsection{Imperfect testing}
 
-Introducing false negatives means that $O(j)$ is now a random variable because the test results between the start and the end of the episode could contain false negatives.
-Therefore, the 
+Introducing false negatives means that $O(j)$ is now a random, even if $B_j$ and $E_j$ are known.
+Define the relevant testing times for episode $j$ as $\sched'_j = \{ t \in \sched_{i(j)} \ssep r_j^{(b)} \leq t \leq r_j^{(e)} + 1 \}$, let $m_j$ denote the size of this set.
+Let $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with the $l$th element of of $\vec{y}_j$ being the test result at the chronologically $l$th time $t \in \sched'_j$.
+$O'(j)$ is the observed data for episode $j$.
+Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_D} \}$ where $\vec{\nu}'_j \in \set{D}'_j$ if and only if $\vec{\nu}'_j = [\vec{\nu}_j, \vec{y}_j]^T$ could be a detected observation, equivalent to satisfying all the following conditions.
+\begin{enumerate}
+  \item $\vec{\nu}_j \in \set{D}$.
+  \item $\vec{y}_j \in \{0, 1\}^{m_j}$.
+  \item The elements of $\vec{y}_j$ corresponding to the tests at times $r_j^{(b)}$ (its first element) and $l_j^{(e)}$ (its penultimate element) are 1.
+  \item The element of $\vec{y}_j$ corresponding to the test at time $r_j^{(e)} + 1$ (its last element) is 0.
+\end{enumerate}
+The final two conditions are due the construction of the intervals as positive and negative tests bounding the beginning and end times of the episode.
 
 Just a sketch, probably ignore for now.
 
