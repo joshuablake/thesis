@@ -70,13 +70,14 @@ These are: the individual in which the episode occurs, denoted $i(j)$; the earli
 For an undetected episode $j$, there are no observations; in which case, define $O(j) = \emptyset$.
 
 Define an integer $N_D$ and $\set{D} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_D} \}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{D}$ if and only if $j$ is a detected infection.
-For any $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$, $\vec{\nu} \in \set{D}$ if and only if all the following conditions hold.
+REF FIG 5.3 HERE
+Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{e}_k, i_k]^T$ be an arbitrary vector if possible observations, $\vec{\nu}_k \in \set{D}$ if and only if all the following conditions hold.
 \begin{enumerate}
-  \item $l^{(b)} - 1, r^{(b)}, l^{(e)}, r^{e} + 1 \in \sched_i$, that is individual $i$ was tested at all these times.
-  \item $l^{(b)} \leq r^{(b)} \leq l^{(e)} \leq r^{(e)}$.
-  \item $r^{(b)} = \min\{t \in \sched_i \ssep t \geq l^{(b)}\}$, that is $r^{(b)}$ is the first time at or after $l^{(b)}$ that individual $i$ was tested.
-  \item $r^{(e)} = \min\{t \in \sched_i \ssep t > l^{(e)}\} - 1$, that is $r^{(e)}$ is the day before the next time after $l^{(e)}$ that individual $i$ was tested.
-  \item $1 \leq r^{(b)} \leq T$, that is the episode begins in the period of interest.
+  \item $l^{(b)}_k - 1, r^{(b)}_k, l^{(e)}_k, r^{e}_k + 1 \in \sched_{i_k}$, that is individual ${i_k}$ was tested at all these times.
+  \item $l^{(b)}_k \leq r^{(b)}_k \leq l^{(e)}_k \leq r^{(e)}_k$.
+  \item $r^{(b)}_k = \min\{t \in \sched_{i_k} \ssep t \geq l^{(b)}_k\}$, that is $r^{(b)}_k$ is the first time at or after $l^{(b)}_k$ that individual ${i_k}$ was tested.
+  \item $r^{(e)}_k = \min\{t \in \sched_{i_k} \ssep t > l^{(e)}_k\} - 1$, that is $r^{(e)}_k$ is the day before the next time after $l^{(e)}_k$ that individual ${i_k}$ was tested.
+  \item $1 \leq r^{(b)}_k \leq T$, that is the episode begins in the period of interest.
 \end{enumerate}
 Let $n_k$ denote the number of observations of $\vec{\nu}_k$, $\nnodet$ the latent number of undetected episodes, $\vec{n} = [n_1, \dots, n_D, \nnodet]^T$, and $\ntot = \sum_{i=1}^{N_D} n_i + \nnodet$.
 For $\vec{\nu}_k \in \set{D}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$, $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$, and $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
@@ -90,7 +91,7 @@ Then:
 \end{align}
 
 In the CIS data, each $n_k$ ($k \neq u$) is observed as either 0 or 1.
-Let $k \in \set{C}$ indicate that $n_k = 1$.
+Define $C = \{ k \ssep n_k = 1 \}$.
 Furthermore, note that the support of the multinomial distribution requires that $\nnodet = \ntot - \ndet$.
 Then \cref{perf-test:eq:multinomial-ll} simplifies to:
 \begin{align}
@@ -111,9 +112,10 @@ Then the derivation for $p_{ik}$ proceeds as per the derivation for $p_{ia}$ in 
 
 \subsection{Imperfect testing}
 
-Introducing false negatives means that $O(j)$ is now a random, even if $B_j$ and $E_j$ are known.
+Introducing false negatives means that $O(j)$ is now random, even if $B_j$ and $E_j$ are known.
 Define the relevant testing times for episode $j$ as $\sched'_j = \{ t \in \sched_{i(j)} \ssep r_j^{(b)} \leq t \leq r_j^{(e)} + 1 \}$, let $m_j$ denote the size of this set.
-Let $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with the $l$th element of of $\vec{y}_j$ being the test result at the chronologically $l$th time $t \in \sched'_j$.
+Let $t_{j,1} < \dots < t_{j,m_j}$ be the elements of $sched'_j$.
+Let $O'(j) = [O(j), \vec{y}_j]^T$ where $\vec{y}_j$ is a binary vector of length $m_j$, with $y_{j,l}$ being the test result at time $t_{j,l}$.
 $O'(j)$ is the observed data for episode $j$.
 
 Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}'_1, \dots, \vec{\nu}'_{N_{D'}} \}$ where $\vec{\nu}'_k \in \set{D}'_k$ if and only if $\vec{\nu}'_k = [\vec{\nu}_k, \vec{y}_k]^T$ could be a detected observation, equivalent to satisfying all the following conditions.
