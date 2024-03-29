@@ -72,12 +72,13 @@ The interpretation of $K(t)$ is the number of events, here infections, which hav
 In the context of a disease, the counting process can be discretised into the incidence on day $t$ as $Z_t = K(t) - K(t-1)$, where $t$ is an integer.
 I will explain two approaches to modelling the infection process.
 
-First, in \cref{inc-prev:sec:poisson-process}, as a \emph{Poisson process}.
+First, in \cref{inc-prev:sec:poisson-process}, I introduce a phenomenological model where the infection process is a \emph{Poisson process}.
 A Poisson process is a widely used type of counting process both within and outside of epidemiology.
 It makes no direct assumptions on the underlying biological or epidemiological process and is therefore a flexible model.
 
 Afterwards, in \cref{SEIR:sec:mechanistic-models}, I introduce \emph{mechanistic models}.
 Mechanistic models explicitly describe the population and transmission between individuals.
+In particular, they include the feedback loop inherent in infectious diseases, where increased infections at a time $t$ lead to more infections at times $> t$.
 They vary greatly in their details and realism~\autocite{murilloMultiscale}.
 
 \subsection{Poisson processes} \label{inc-prev:sec:poisson-process}
@@ -130,7 +131,7 @@ Infectious diseases generate feedback loops because stochastically high or low i
 % This can be seen most obviously in the event of a super-spreading event, when many .
 % If a super-spreading event occurs, then many more individuals than suggested by the process intensity will be infected.
 % These additional infections will propagate the epidemic further, increasing the intensity at future times.
-Point processes can be generalised to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
+Counting processes can be generalised to \emph{branching processes} to account for this feedback~\autocite[246]{yanDistribution}, although these are beyond the scope of this thesis.
 
 Both overdispersion and feedback loops violate the properties of a Poisson process.
 Despite these issues, near-unbiased inference on the incidence is still produced using the Poisson process model, although the uncertainty in the estimates may be understated~\autocite{beckerDependent}.

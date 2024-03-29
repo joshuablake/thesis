@@ -61,15 +61,15 @@ $\Rc$ is also known as the \emph{reproduction number excluding immunity}.
 It describes the effect on the epidemic of interventions (except vaccination) that are in place at time $t$.
 $\Rc$ is useful when comparing the effects of interventions at different points in time, when the immunity status of the population has changed.
 
-To see the differing uses of the reproduction numbers, consider the difference in the epidemic in England in March 2020, just following the start of the first lockdown, and in January 2021 just following the start of the third lockdown.
-These times have (at least) three epidemiologically relevant differences: (1) in January 2021 the Alpha variant was circulating which is more transmissible than the original variant present in March 2020; (2) the population behaved differently because the exact meaning of ``lockdown'' differed and attitudes had changed; (3) in January 2021, some individuals had immunity due to either prior infection or the start of the vaccination roll-out.
-The original and Alpha variants have different values for $\R$, isolating effect 1.
-$\Rc$ differs during the two periods, including effects 1 and 2.
-$\Re$ includes all these effects, as well as any others.
+% To see the differing uses of the reproduction numbers, consider the difference in the epidemic in England in March 2020, just following the start of the first lockdown, and in January 2021 just following the start of the third lockdown.
+% These times have (at least) three epidemiologically relevant differences: (1) in January 2021 the Alpha variant was circulating which is more transmissible than the original variant present in March 2020; (2) the population behaved differently because the exact meaning of ``lockdown'' differed and attitudes had changed; (3) in January 2021, some individuals had immunity due to either prior infection or the start of the vaccination roll-out.
+% The original and Alpha variants have different values for $\R$, isolating effect 1.
+% $\Rc$ differs during the two periods, including effects 1 and 2.
+% $\Re$ includes all these effects, as well as any others.
 
-These definitions ignore many complexities that arise when theoretically defining or practically estimating any of the reproduction numbers~\autocite{pellisEstimation}.
-For example, how to average across seasonal effects and a heterogeneous population, and the lack of a ground truth for these numbers in almost all situations.
-However, their intuitive simplicity and convenient properties in simple epidemic models mean that they are useful concepts for guiding policy.
+% These definitions ignore many complexities that arise when theoretically defining or practically estimating any of the reproduction numbers~\autocite{pellisEstimation}.
+% For example, how to average across seasonal effects and a heterogeneous population, and the lack of a ground truth for these numbers in almost all situations.
+% However, their intuitive simplicity and convenient properties in simple epidemic models mean that they are useful concepts for guiding policy.
 
 Reproduction numbers are strongly connected to \emph{growth rates}.
 If changes in behaviour and susceptibility are negligible, as they often are over short periods of time, epidemics grow (or shrink) exponentially, with a \emph{growth rate} $r$.
@@ -90,17 +90,12 @@ Estimating transmission refers to inferring this process. Understanding this pro
 
 \emph{Prevalence} is the proportion of the population with the disease at a given time (see \cref{E-inc-prev:sec:definitions} for a formal definition).
 Whether a given individual is \emph{prevalent}, \ie has the disease, is often measurable through diagnostic testing.
-Prevalence can be estimated through a \emph{prevalence survey}.
-A prevalence survey is a designed study which performs diagnostic testing of a sample of the population; they are typically very expensive to power appropriately.
 Prevalence and incidence are strongly related, via the duration of an infection (see \cref{E-inc-prev}).
 
 % Severity does not feature in this thesis, but it is important to note that it is a key component of understanding the burden of a pandemic.\todo{maybe reword sentence}
 
 Collecting data that \emph{directly} inform inference of the quantities in this section is challenging or prohibitively expensive.
-Hence, they are typically estimated from other data sources through appropriate ???? methodologies.
-{\color{red}{refer to some papers examples:Phil O'neil, stats in medicine, 1990 on linking models to data; De Angelis, Presanis, Analysing Multiple Epidemic Data Sources. "Handbook of
-Infectious Disease Data Analysis", Held, L., Hens, N., O'Neill, P.D. and Wallinga, J. (Eds.).
-Chapman & Hall/CRC, 2019.}}
+Hence, they are typically estimated from other data sources through appropriate statistical methods~\autocite{heldHandbook,oneillIntroduction}.
 
 \section{Data sources}
 
@@ -108,10 +103,10 @@ Data sources to inform outbreak surveillance are often observational in nature, 
 Therefore, they suffer from biases that can be hard to understand and quantify~\autocite{shadboltChallenges}.
 These biases need to be accounted for when analysing the data.
 
-In what follows I discuss three types of data: incidence-type, prevalence-type, and data from specific studies.
-\emph{Incidence-type} and \emph{prevalence-type} data can inform estimation of incidence and transmission; however, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities.
+In what follows I discuss three types of data: incidence-type, prevalence-type, and data from longitudinal studies.
+\emph{Incidence-type} and \emph{prevalence-type} data can inform estimation of incidence and transmission.
+However, this estimation almost always relies on prior knowledge of epidemiological and/or biological quantities, typically estimated from longitudinal studies.
 For example, the time between infection and symptom onset.
-These quantities can be estimated from other studies.
 
 \subsection{Incidence-type data}
 
@@ -135,20 +130,21 @@ Prevalence-type data originate from observations of the number or proportion of 
 For example, the number of individuals in hospital with the disease or the proportion of the population with a marker of prior infection.
 The same issues associated with incidence-type data often also apply to prevalence-type data.
 
-Prevalence surveys are one source of prevalence-type data that can be unbiased.
+Prevalence can be estimated through a \emph{prevalence survey}.
+A prevalence survey is a designed study which performs diagnostic testing of a sample of the population; they are typically very expensive to power appropriately.
+On the other hand, they are a source of prevalence-type data that can be unbiased.
 For instance, testing a representative proportion of the population (or a subpopulation of interest) for a marker of current infection.
-For many diseases, prevalence is sufficiently low that this is prohibitively expensive to power.
 
 However, \emph{seroprevalence} surveys are more feasible.
 Seroprevalence is the proportion of individuals in the population which have antibodies against a particular infection, indicating that the individual was previously infected~\autocite{cdcSeroprevalence}.
 Many more individuals have ever been infected than are currently infected, therefore, seroprevalence surveys can be powered much more cheaply~\autocite{wuSeroprevSimulation}.
 However, seroprevalence is a delayed measure because there is a lag between an individual being infected and them developing antibodies.
 
-\subsection{Other studies}
+\subsection{Longitudinal studies}
 
 Other epidemiological and/or biological quantities are normally required to estimate transmission.
 These include the duration of different disease states or the distribution of the time between infection events~\autocite{wallingaGI,dankwaStructural}.
-Specific studies, \eg longitudinal studies that follow  individuals over time, allow  estimation of many of these quantities.
+Longitudinal studies, that follow the same individuals over time, allow estimation of many of these quantities.
 
 Well-designed cohort studies can provide direct estimates of incidence and/or prevalence in the cohort~\autocite[chapter 7]{lashModern}.
 However, recruiting a representative sample of the population is challenging, and the results of these studies are often not generalisable to the whole population.
@@ -167,25 +163,22 @@ A common model is the Poisson process, and the intensity of the process is the t
 
 Next, are semi-mechanistic models.
 These relate incidence in the past to current (and future) incidence but do not explicitly represent the susceptible population.
-These include components of the transmission process  but do not explicitly describe the process.
 A common type of semi-mechanistic models is that based on a \emph{renewal equation}~\autocite{bhattSemimechanistic,fraserRenewal} of the most form:
 \begin{align}
     Z(t) &= \int_{0}^{t} \beta(t,\tau) Z(t-\tau) d \tau
     \label{intro:eq:renewal}
 \end{align}
 where $Z(t)$ is the expected incidence at time $t$ and $\beta(t, \tau)$ is the expected rate at which an individual infected $\tau$ time units ago infects individuals at calendar time $t$.
-Therefore, the renewal equation relates incidence in the past to incidence in the future.
-This partially describes the transmission process, hence the name semi-mechanistic.
-The effective reproduction number is $\Re = \int_0^\infty \beta(t, \tau) d\tau$.
+The model parameters can be used to define an effective reproduction number as either $\Re = \int_0^\infty \beta(t, \tau) d\tau$ or $\Re = \int_0^\infty \beta(t+\tau, \tau) d\tau$~\autocite{gosticPractical}.
 % A scaled measure of $I(t)$ (\eg hospital admissions or community test results) allows estimating $\beta$.
 % The most common implementations are the R packages EpiNow2~\autocite{EpiNow2} and EpiEstim~\autocite{EpiEstim}.
-Renewal equations do not feature further in this thesis; for further details, including practical considerations when using them as the basis for inference, see \textcite{nashEstimating,gosticPractical}.
+Renewal equations do not feature further in this thesis; for further details, including practical considerations when using them as the basis for inference, see \textcite{thompsonImproved,gosticPractical}.
 
 Finally, mechanistic models are the most complex models, representing the transmission process in varying levels of detail.
 \emph{Compartmental} models, the most common type of mechanistic model, split the population into compartments, each representing a different state of the disease.
 The \emph{dynamics} of the epidemic are represented by the transitions between compartments (for more details see \cref{E-SEIR:sec:mechanistic-models}).
 Simple mechanistic models use a homogeneous population, with individuals differing only due to their disease state, and exponential distributions for the time in each disease state.
-More complex models relax these assumptions to incorporate heterogeneity, \eg through stratification.
+More complex models relax these assumptions to incorporate more flexible definitions and/or heterogeneity (see \cref{SEIR:sec:mechanistic-models}).
 % Mathematically, the dynamics are described by ODEs (ordinary differential equations) or SDEs (stochastic differential equations).
 % Unlike renewal equations, there are not widely-used implementations of compartmental models.
 % A commonly used frameork is the SEIR (susceptible, exposed, infectious, recovered) model.
@@ -215,11 +208,7 @@ A large forwards error means that the computed value is far from the true soluti
 
 Applying \cref{intro:eq:disease-model} requires knowledge of the delay function, $f$.
 Typically, this is either the time to an event or the duration of a disease stage.
-Time series data on $W_t$ cannot identify $f$, instead external information needs incorporating~\autocite{swallow2022challenges}.  This generally comes from longitudinal studies where the occurrence of the infection's sequelae is monitored in a cohort of individuals ({\it e.g.} Collaborative Group on AIDS Incubation and HIV Survival including the CASCADE EC
-Concerted Action (2000). Time from HIV- 1
-seroconversion to AIDS and death in 13,000 individuals before the widespread use of
-highly active anti-retroviral therapy: effect of age at seroconversion and exposure
-category. Lancet 355, 1131-1137.)
+Time series data on $W_t$ cannot identify $f$, instead external information needs incorporating~\autocite{swallow2022challenges}, most commonly longitudinal studies.
 
 Two approaches are commonly used to estimate the duration of a disease stage: either modelling an underlying biomarker or modelling the duration directly, for instance, in a \emph{survival analysis} framework.~\autocite[e.g.][]{sweetingEstimating}.
 
@@ -246,7 +235,7 @@ The committee peer-reviewed these estimates to provide quality assurance and for
 The consensus value was published on the Government's website and informed its response to the pandemic~\autocite{govRnumber}.
 
 The nowcasting estimates were based on mechanistic and semi-mechanistic models with a wide variety of data sources.
-The mechanistic models, in  particular, commonly incorporated multiple data sources \textcite{birrellEvidence}.
+The mechanistic models, in  particular, commonly incorporated multiple data sources.
 The models used were reviewed by \textcite{royalSocietyRnumber} (see appendix 2 of that review for details of the specific implementations).
 
 Additionally, these models were used to explore policy scenarios.
@@ -280,7 +269,7 @@ In addition to the problem of the delay between infection and antibody response,
 The extraordinary impact of SARS-CoV-2 led the UK Government to fund two large prevalence surveys in representative samples of the general population.
 These were designed to avoid the biases of community testing and attempt to observe the general population.
 These surveys use RT-PCR (reverse transcription polymerase chain reaction, described in detail in \cref{E-biology-data:sec:PCR}) testing to detect the presence of the virus in a swab from an individual.
-The first survey was the  Coronavirus (COVID-19) Infection Survey (CIS), run by the Office for National Statistics (ONS)~\autocite{CIS,cisMethodsONS}.
+The first survey was the CIS (Coronavirus (COVID-19) Infection Survey), run by the ONS (Office for National Statistics)~\autocite{CIS,cisMethodsONS}.
 The CIS was a longitudinal household study, testing a large number of individuals weekly or monthly for SARS-CoV-2 infection (see \cref{E-intro:sec:cis} for a detailed description).
 
 A second prevalence survey, known as the REal-time Assessment of Community Transmission (REACT)~\autocite{rileyResurgence,rileyREACT},
@@ -291,28 +280,19 @@ A major advantage of the CIS over REACT is that the CIS had continual data colle
 This meant that using REACT data to infer transmission in these periods required strong model assumptions.
 A particular instance of this is that a peak in transmission in late December 2020 occurred between rounds of the REACT survey, challenging analysis of the REACT data at that time~\autocite{rileyREACTround8}.
 
-\subsubsection{Other studies}
+\subsubsection{Longitudinal studies}
 
-Many ad hoc studies to estimate a wide variety of epidemiological and biological quantities of the SARS-CoV2 virus were carried out throughout the pandemic.
+Many longitudinal studies to estimate a wide variety of epidemiological and biological quantities of the SARS-CoV2 virus were carried out throughout the pandemic.
+These include the CIS, previously mentioned.
 % In addition to population-level surveillance, cohort studies help understand other aspects of the pathogen~\autocite{royalSocietyRnumber}.
 % For example, contact tracing data can inform how likely it is for transmission to occur in different settings and/or between different groups of people.
-One of the study, which  I will use in what follows, is the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study~\autocite{singanayagamCommunity,hakkiOnset}.
+
+One of the studies, which I use in this thesis, is the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study~\autocite{singanayagamCommunity,hakkiOnset}.
 In ATACCC, daily testing of a small number of individuals with short follow-up was performed.
 These individuals were recruited from contacts of known infections reported to NHS Test and Trace.
 The density of this sampling allows for reliable estimates of how the viral load (the amount of virus in an individual) varies over time and other quantities of interest, most importantly the duration of detectability (how long an individual is RT-PCR positive for).
 However, the results from ATACCC are of limited value because of the small sample size and the short follow-up; prohibiting estimation of how quantities vary over long infections.
 I describe ATACCC in detail in \cref{E-biology-data:sec:ataccc} and use it to estimate the duration of detectability in \cref{E-ATACCC}.
-
-The second study is the CIS (introduced in \cref{intro:sec:data-for-estimating}).
-In addition to its role as a prevalence survey, the CIS followed the same individuals over a long period of time (over a year in many cases), collecting longitudinal data.
-The large sample size and long follow-up allows estimation of the tails of the distribution of the duration of detectability.
-However, the lack of frequent testing (at most weekly) prohibits estimation of the viral load dynamics.
-In particular, the vast majority of detected infections had only one or two positive tests, and hence the viral load trajectory of these infections cannot be estimated.
-I describe the CIS in detail in \cref{E-intro:sec:cis} and use it to estimate duration in \cref{E-perf-test,E-imperf-test}.
-
-Early on in the epidemic, incidence could be estimated directly from the longitudinal survey data by considering the proportion of the cohort that tested negative then positive at consecutive tests~\autocite{onsIncidenceOld}.
-However, the method was abandoned in autumn 2020 when the testing was too infrequent to ensure that all infections were captured (\ie tested positive at least once).
-
 
 \section{Thesis context}
 
@@ -320,6 +300,10 @@ The massive impact of the SARS-CoV-2 pandemic led to data collection on a scale 
 Analysis of this data was carried out rapidly, to provide the timely results needed to inform the ongoing and evolving response.
 Therefore, a deep understanding of the potential of each data source was not possible.
 In this thesis I investigate the potential of the CIS as a single source of information for incidence and transmission estimation.
+
+All inference in this thesis is Bayesian.
+Including prior information allows identifiability in situations where this would not otherwise be possible and allows for combining knowledge from multiple sources.
+Additionally, many previous studies I build on used Bayesian inference.
 
 In the following subsections, I introduce the most relevant related work, carried out both prior to the pandemic and during its course.
 
@@ -374,11 +358,12 @@ To do so, I will combine the information from the ATACCC and CIS studies.
 
 Several previous studies have used SARS-CoV-2 prevalence surveys to estimate incidence and/or transmission.
 
-\Textcite{abbottCISincidence} applied the backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK. They used the summary statistics of prevalence from the CIS  published regularly on the ONS website as data (CHECK), specifically the prevalence's posterior point estimate and bounds of the 95\% credible interval. From these summary statistics, they derive a normally-distributed likelihood, independent for each day.
+\Textcite{abbottCISincidence} applied the backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
+They used summary statistics of prevalence estimates from the CIS, taken from the ONS website, as data; specifically, the prevalence's posterior point estimate and bounds of the 95\% credible interval.
+From these summary statistics, they derive a normally-distributed likelihood, independent for each day.
 They used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing as $f$ in their observation model; these estimates are based on a longitudinal study in healthcare workers (see \cref{intro:sec:previous-duration-estimates}).
 % They fit to summary statistics of the CIS data, using a daily, independent normal likelihood with parameters estimated from the posterior point estimate and 95\% credible interval published by the ONS.
-
-\Textcite{colmanAscertainment} used similar methodology to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
+\Textcite{colmanAscertainment} used a similar method to estimate the \emph{ascertainment rate} of community testing (the proportion of all infections that community testing detected).
 % Their methodology was similar to \textcite{abbottCISincidence}, including using estimates of $f$ from \textcite{hellewellPCRSensitivity}.
 % Rather than using a smooth prior to provide stability, as \textcite{abbottCISincidence} do, \textcite{colmanAscertainment} assume the ascertainment rate is piecewise constant.
 % They do not fully propagate the uncertainty from the CIS prevalence estimates, considering only the bounds of the 95\% confidence intervals the ONS publishes for prevalence.
@@ -432,24 +417,26 @@ The results of the analyses I perform in pursuit of the primary aim will natural
 
 This thesis makes several methodological contributions.
 \begin{enumerate}
-    \item In \cref{E-inc-prev:sec:observation-process}, I provide a theoretic justification for the use of a \emph{deterministic} backcalculation for prevalence surveys. A deterministic approach approximates the prevalence at any time as a deterministic function of the incidence, rather than as a random variable.
-    A deterministic backcalculation has previously been used to analyse the CIS data (\eg by \textcite{abbottCISincidence}); however, no justification for the approach was provided.
-    In \cref{E-inc-prev:sec:observation-process} I show that this is a good approximation as long as the proportion of the population sampled is small.
+    \item In \cref{E-inc-prev:sec:observation-process}, I provide a theoretic justification for the use of a \emph{deterministic} backcalculation for prevalence surveys.
+    A deterministic approach approximates the prevalence at any time as a deterministic function of the incidence, rather than as a random variable.
+    This approximation has previously been used to analyse the CIS data (\eg by \textcite{abbottCISincidence}); however, no justification for the approach was provided.
+    In \cref{E-inc-prev:sec:observation-process} I show that it is a good approximation as long as the proportion of the population sampled is small.
     In particular, the accuracy of the approximation does not require the prevalence or incidence to be large.
     
     \item In \cref{E-perf-test}, I investigate estimating the duration of detectability using the CIS data.
     The CIS data are doubly interval censored with arbitrary periods where infections could be undetected.
-    While a statistical framework for this case exists, it had to be generalised to deal with the CIS design.
-    To improve estimation, I propose a novel prior to integrate information from the ATACCC study into this analysis.
+    I develop a statistical framework to account for these issues.
+    To improve estimation, I propose a novel prior to integrate information from my analysis of the ATACCC study into this analysis, accounting for model uncertainty.
     
     \item In \cref{E-imperf-test}, I further extend the framework above to account for false negatives.
     A particular challenge with these analyses is that they must be performed within a trusted research environment with limited computational resources.
 
-    \item In \cref{E-backcalc}, I use a deterministic backcalculation to estimate incidence with full propagation of the uncertainty from the prevalence estimation.
-    Furthermore, I use the estimate of the duration of detectability from a general population study estimated in previous chapter.
+    \item In \cref{E-backcalc}, I use a deterministic backcalculation to estimate incidence, including full propagation of the uncertainty from the prevalence estimation.
+    Furthermore, I use my estimate of the duration of detectability from general population studies.
     
     \item In \cref{E-SEIR}, I develop a compartmental model for SARS-CoV-2 transmission, relying \emph{only} on CIS data. 
-    This uses a distribution of duration of detectability derived by translating the estimates in \cref{E-imperf-test} into a progression through model states via an Erlang-Coxian formulation. I include age-stratification in the transmission model, allowing estimation of age-specific transmission.
+    I translate my estimate of the distribution of the duration of detectability into a progression through model states through an Erlang---Coxian distribution; this distribution is more flexible than standard approaches in the infectious disease literature.
+    I include age-stratification in the transmission model, allowing estimation of age-specific transmission.
     I show the CIS data are sufficient for estimating incidence and transmission.
 \end{enumerate}
 
@@ -460,13 +447,14 @@ The secondary aim of this thesis is providing new estimates to improve our under
 In \cref{E-imperf-test}, I generate estimates of the duration of RT-PCR-positivity in the general population.
 These estimates could inform public health policy, for example, in interpreting RT-PCR test results or formulating quarantine policies.
 
-In \cref{E-transmission}, I estimate incidence and transmission of SARS-CoV-2 in England over the period WHICH.
+In \cref{E-transmission}, I estimate incidence and transmission of SARS-CoV-2 in England over the period.
 These estimates contribute to the literature reconstructing the SARS-CoV-2 epidemic in England.
 Understanding the dynamics of past infection is important for informing the response to future pandemics, and the future burden of SARS-CoV-2.
 
 \subsection{Software and data availability}
 
-To carry out the work in this thesis I developed bespoke code. To ensure the methodology developed can be easily adopted by others, the code used for the analyses is available online.
+To carry out the work in this thesis I developed bespoke code.
+To ensure the methodology developed can be easily adopted by others, this code is available online.
 An index to the code and, where possible, data are available at \url{https://github.com/joshuablake/thesis-index}.
 I structured two elements of the code as R packages to enable their application to future contexts.
 
