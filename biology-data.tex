@@ -13,8 +13,7 @@
 \chapter{SARS-CoV-2: biology and data} \label{biology-data}
 
 SARS-CoV-2 is closely related to previous coronaviruses that have caused outbreaks in humans, including SARS-CoV and MERS-CoV.
-Coronaviruses are RNA (Ribonucleic acid) viruses.
-RNA viruses use RNA, rather than DNA (Deoxyribonucleic acid), as their genetic material.
+Coronaviruses are RNA (Ribonucleic acid) viruses which means they use RNA, rather than DNA (Deoxyribonucleic acid), as their genetic material.
 RNA viruses, which include influenza, mutate rapidly and are the most likely class of viruses to cause pandemics~\autocite{woolhouseRNA}.
 
 The initial and most sensitive diagnostic test for SARS-CoV-2 uses RT-PCR, which I explain in \cref{biology-data:sec:PCR}.
@@ -56,7 +55,7 @@ The PCR process is a series of cycles, each cycle containing three steps~\autoci
 The first step, \emph{denaturation}, heats the DNA causing its two strands to separate.
 The second step, \emph{annealing}, lowers the temperature, causing the primers to bind to one of the strands of DNA.
 The final step, \emph{extension}, raises the temperature, causing the DNA polymerase to replicate the DNA sequence between the primers. 
-In the course of such a cycle, the amount of DNA doubles.
+In the course of such a cycle, the amount of target DNA doubles.
 Therefore, the number of DNA copies increases geometrically with the number of cycles completed.
 
 \emph{Quantitative real-time (RT-)PCR} gives a measurement of the amount of the target DNA sequence present in the original sample~\autocite{yangPCRdiagnostics}.
@@ -96,7 +95,7 @@ However, viewing the number of RNA genome copies in an individual as a latent pr
 
 Like any diagnostic test, PCR tests are not perfect.
 The quantitative result (the Ct value) has random variation even if the sample has the same initial amount of DNA or RNA present, and the qualitative result (positive or negative) can be wrong.
-Errors arise from a variety of sources, including the sampling/swabbing process and batch effects in the RT-PCR process~\autocite{hanRTPCR}.
+Random variation arises from a variety of sources, including the sampling/swabbing process and batch effects in the RT-PCR process~\autocite{hanRTPCR}.
 
 The \emph{analytical sensitivity} of the test is the minimum number of copies of the target RNA material in the sample that the test can detect, typically expressed as the \emph{limit of detection}~\autocite{bustinMIQE}.
 The limit of detection is the lowest concentration of the target RNA material that can be reliably detected using the procedure; below this level there is a substantial (generally, >5\%) chance that errors in the process cause the amplification procedure to fail~\autocite{forootanLOD}.
@@ -111,7 +110,7 @@ As with sensitivity, this is different to the \emph{clinical specificity} of the
 A positive result for an undetectable individual is a \emph{false positive}.
 
 False positives are very rare for SARS-CoV-2 RT-PCR tests.
-In summer 2020, the CIS performed\numprint{208730} PCR tests and found only 159 positives~\autocite[section 5]{cisMethodsONS}.
+In summer 2020, the CIS performed \numprint{208730} PCR tests and found only 159 positives~\autocite[section 5]{cisMethodsONS}.
 If these were all false positives, then the test specificity would be 99.9\%.
 In reality, it is almost certain that some of these are true positives, and hence this is a lower-bound on the true test specificity.
 
@@ -222,9 +221,9 @@ I will revisit and extend their analysis in \cref{E-ATACCC}.
 
 The CIS~\autocite{CIS} was set up in April 2020 to provide gold-standard measurements of the prevalence of SARS-CoV-2 in the community.
 It was a longitudinal study with a representative sample of private households, \ie excluding settings such as care homes and student halls.
-The dataset is globally unique in providing a representative, longitudinal, and large-scale study across the pandemic.
 Initially, it was limited to England, but expanded to cover the whole of the UK in September 2020.
 Enrolment was continuous until 31 Jan 2022, with data collected until 13 Mar 2023~\autocite{weiRisk}. 
+The dataset is globally unique in providing a representative, longitudinal, and large-scale study across the pandemic.
 
 The CIS had a household-based design, meaning that households were invited to participate in the study.
 From the households that participated, all individuals aged 2 and over were invited to participate.
@@ -234,9 +233,9 @@ In reality, visits were often not on this precise schedule, and occasionally mis
 A full description of the study can be found in the study protocol~\autocite{cisProtocol}.
 
 Up until July 2020, households were selected from those that had previously participated in an ONS survey~\autocite{CIStechData}.
-Around 50\% of households agreed to participate, with around 90\% of eligible individuals (\numprint{96113} in total) in these households contributing multiple swabs to the survey.
+In this initial phase, around 50\% of households agreed to participate, with around 90\% of eligible individuals (\numprint{96113} in total) in these households contributing multiple swabs to the survey.
 After July 2020, addresses were also randomly sampled from a database of all UK addresses held by the ONS.
-The response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (\numprint{383732} in total) contributed multiple swabs to the survey.
+In this phase, response rate was lower, with only 12\% of households agreeing to participate, from which 86\% of eligible individuals (\numprint{383732} in total) contributed multiple swabs to the survey.
 
 These rates of response raise the possibility of non-response bias.
 In particular, some demographic groups, such as young adults and individuals of non-White ethnicity, were underrepresented among those who responded~\autocite{pouwelsCommunity}.
@@ -293,7 +292,7 @@ These are the geographic areas used throughout the major CIS analyses in England
 
 \subsection{Adjustment for non-response and data sparsity} \label{biology-data:sec:MRP}
 
-If the CIS was truly a random sample, an unbiased estimator of the positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
+If the CIS was truly a random sample, an unbiased estimator of the population positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
 However, in practice, two issues arise with this.
 First, the non-response (discussed above) causes bias.
 Second, the number of positives on any day is low, especially among any specific subpopulation (\eg age group or region) increases variance.
@@ -309,7 +308,6 @@ These are combined by taking a weighted average across the strata, where a strat
 The poststratification step corrects for non-response bias.
 
 I modified the regression component of a pre-existing version of a MRP model for the CIS~\autocite{pouwelsMRPvaccination}, as recommended by that model's author for the specific context of this thesis~\citePersonalComms{Koen Pouwels}.
-As in prior work~\autocite{pouwelsMRPvaccination}, I used INLA for inference, implemented in R-INLA (see \cref{E-transmission:sec:INLA}).
 For a day $t$, age group $a$, ethnicity $e$, and sex $s$ the regression model is:
 \begin{align}
     \logit(p_{taes}) &= \beta + \beta_s + \beta_{w(e)} + u_a + v_e + w_t + l_{a,t} \\
@@ -341,15 +339,15 @@ This step assumes that the estimates for each region can be considered independe
 
 The final step is poststratifying the incidence proportion to the CIS target population and subpopulations of interest.
 To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
-Denote these by $p^(j)_{t,i}$ for the $j$th sample where $i$ is a stratum, \ie some value of $a$, $e$, and $s$.
+Denote these by $p^{(j)}_{t,i}$ for the $j$th sample where $i$ is a stratum, \ie some value of $a$, $e$, and $s$.
 Define a (sub) population of interest as a set of strata $\set{S}$.
 Then the prevalence in the (sub)population on day $t$ is
 \begin{align}
 p^{(j)}_t(\set{S})
-&= \frac{\sum_{i \in \set{S}} p_{t,i} N_j}{\sum_{i \in \set{S}} N_i}
+&= \frac{\sum_{i \in \set{S}} p^{(j)}_{t,i} N_i}{\sum_{i \in \set{S}} N_i}
 \end{align}
-where $N_j$ is the population size of stratum $j$.
-The population numbers for each stratum are provided by the Office for National Statistics.
+where $N_i$ is the population size of stratum $i$.
+The population numbers for each stratum are provided by the ONS.
 
 \subsection{Clustering} \label{biology-data:sec:clustering}
 
@@ -401,11 +399,10 @@ The test at $t$, in the pre-Omicron era (prior to December 2021), is defined as 
 
 A negative between two positive tests, when those positives are part of the same infection episode, is known as an \emph{intermittent negative}.
 Intermittent negatives are the clearest example of a false negative.
-I will generally consider that intermittent negatives are uninformative on the duration of detectability, and hence exclude them from several analyses.
 
 The crucial features of an infection episode are the start and end times of the infection.
-Ignoring misclassified test results, latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
-Similarly, the latent end time of infection episode $i$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
+Ignoring misclassified test results, the latent start time of infection episode $j$, $B_j$, can be bounded as between the day after the last negative test, $l_j^{(b)}$, and the day of the first positive test, $r_j^{(b)}$.
+Similarly, the latent end time of infection episode $j$, $E_j$, can be bounded as between the day of the last positive test, $l_j^{(e)}$, and the day before the following negative test, $r_j^{(e)}$.
 
 A sample of 500 randomly selected infection episodes (selected from the episodes used in the analyses in this thesis) have their test results shown in \cref{biology-data:fig:episodes}.
 The number of tests within an episode, their length, and other characteristics vary greatly.
@@ -424,7 +421,7 @@ The number of tests within an episode, their length, and other characteristics v
 \subsection{Computational limitations and privacy protection} \label{biology-data:sec:SRS}
 
 For privacy reasons, the CIS data are stored in the ONS's SRS (Secure Research Service)~\autocite{onsSRS}.
-The SRS is a Trusted Research Environment (TRE) that allows researchers to access sensitive data in a secure environment.
+The SRS is a TRE (Trusted Research Environment) that allows researchers to access sensitive data in a secure environment.
 The SRS gives accredited researchers working on projects in the public interest access to granular data which cannot be legally shared publicly.
 
 Statistical disclosure controls must be applied to any data or results to be extracted from the SRS.
