@@ -135,7 +135,7 @@ Furthermore, it does not require low test sensitivities early in the infection, 
 \section{Likelihood modification for false negatives} \label{imperf-test:sec:modelling}
 
 In this section, I introduce a simple model of false negatives (\ie allowing $\psens < 1$) into the likelihood derived in \cref{E-perf-test:sec:model}.
-The simple model, including a constant test sensitivity, means the likelihood remains tractable.
+Using a simple model, in particular a constant test sensitivity, means the likelihood remains tractable.
 
 I start, in \cref{imperf-test:sec:notation}, by introducing some additional notation needed.
 I then modify the components of the likelihood in \cref{imperf-test:sec:modifying-p_ia} and \cref{imperf-test:sec:modifying-p_iu} to incorporate false negatives.
@@ -161,7 +161,7 @@ Defining analogous variables to \cref{E-perf-test}, let $\set{D}' = \{ \vec{\nu}
 The final two conditions are due the construction of the intervals as positive and negative tests bounding the beginning and end times of the episode.
 
 Similarly, let $p_k'$, $p_{ik}'$, $p_u$, and $p_{iu}$ have the same definition as $p_k$, $p_{ik}$, $p_u$, and $p_{iu}$ respectively except replacing $O$ with $O'$ and $\vec{\nu}_k$ with $\vec{\nu}_k'$, and conditioning on $\psens$.
-As before, $p'_k = 1/\Ncis p'_{i_kk}$ and $p'_u = 1/\Ncis \sum_{i=1}^{\Ncis} p'{iu}$.
+As before, $p'_k = 1/\Ncis p'_{ik}$ and $p'_u = 1/\Ncis \sum_{i=1}^{\Ncis} p'_{iu}$.
 
 \subsection{Deriving $p'_{ik}$} \label{imperf-test:sec:modifying-p_ia}
 
@@ -186,7 +186,7 @@ True negatives occur with probability 1, and hence this test does not contribute
 As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_k, l^{(e)}_k]$, a period starting and ending with a positive test.
 This includes all $t \in \sched'_{i(j)}$ except $t = r_k^{(e)}+1$.
 Therefore, the test results $\vec{y}_k$, except the test at $r_k^{(e)}+1$, are either true positives or false negatives.
-This gives $t_+ = \sum_{l=1}^{m_k} y_{k,l}(t)$ true positives and $f_- = m_k - t_{k,+}$ false negatives.
+This gives $t_+ = \sum_{l=1}^{m_k-1} y_{k,l}(t)$ true positives and $f_- = m_k - 1 - t_{k,+}$ false negatives.
 
 Consider the negative test at $r_k^{(e)}+1$, the first negative after the start of the episode which may be a false negative.
 It is a false negative if and only if the episode ends after the test, \ie $E_j > r_k^{(e)}$.
