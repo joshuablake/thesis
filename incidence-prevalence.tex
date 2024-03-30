@@ -643,20 +643,21 @@ Starting with the variances, by the law of total variance:
     &= \var\left( n_t \frac{P_t}{\Npop} \mid \vec{Z} \right) + \E\left( n_t \frac{P_t}{\Npop} \left(1 - \frac{P_t}{\Npop} \right) \mid \vec{Z} \right) &Y_t \mid \vec{P} \dist \Bin \\
     &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t^2 \mid \vec{Z} \right) \\
     &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \left(\E\left(P_t \mid \vec{Z} \right) ^ 2 + \V(P_t \mid \vec{X})\right) \\
-    &= \frac{n_t(n_t - 1)}{\Npop^2} \var\left(P_t \mid \vec{Z} \right) + n_t \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop}\left(1 - \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop} \right) \\
+    &= \frac{n_t(n_t-1)}{\Npop} \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t \mid \vec{Z} \right) ^ 2.
+    \label{inc-prev:eq:VY1}
 \end{align}
-In the contexts I consider $n_t << \Npop$ because $\Npop$ is the population of England (around 56 million) while $n_t$ is the daily sample size (10s of thousands).
+In the CIS $n_t << \Npop$ because $\Npop$ is the population of England (around 56 million) while $n_t$ is the daily sample size (10s of thousands).
 Therefore:
 \begin{align}
     \frac{n_t(n_t - 1)}{\Npop^2} \var\left(P_t \mid \vec{Z} \right)
     &<< \frac{n_t}{\Npop} \var\left(P_t \mid \vec{Z} \right) \\
-    &\leq \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:boundVPt}} \\ 
-    &\leq \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) \left(1 - \frac{\E(P_t \mid \vec{Z}}{\Npop} \right) &\text{as $P_t \leq \Npop$.}
-\end{align}
-Combining these results:
-\begin{align}
+    &\leq \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:boundVPt}}.
+\intertext{Therefore:}
+\frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) &\approx\frac{n_t(n_t-1)}{\Npop} \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right).
+\intertext{Substitute into \cref{inc-prev:eq:VY1}:}
   \var\left( Y_t \mid \vec{Z} \right)
-    &\approx \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop}\left(1 - \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop} \right) \\
+    &\approx \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t \mid \vec{Z} \right) ^ 2 \\
+    &= n_t \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop} \left(1 - \frac{\E\left(P_t \mid \vec{Z} \right)}{\Npop} \right) \\
     &= \V(Y_t \mid P_t = \E(P_t \mid \vec{Z}))
 \end{align}
 which is the required result.
