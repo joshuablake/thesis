@@ -25,7 +25,7 @@ backcalc_prevalence_summary = readRDS(here::here("transmission", "outputs", "reg
     group_by(date, region) |>
     median_qi(incidence, prevalence, .simple_names = FALSE) |>
     ungroup() |>
-    mutate(Model = "Backcalculation")
+    mutate(Model = "Phenomenological")
 
 p_compare = bind_rows(
     seir_incidence_summary |>

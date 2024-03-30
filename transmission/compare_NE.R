@@ -16,7 +16,7 @@ backcalc_prevalence_summary = readRDS(here::here("transmission", "outputs", "reg
     group_by(date, age_group) |>
     median_qi(incidence, prevalence, .simple_names = FALSE) |>
     ungroup() |>
-    mutate(Model = "Backcalculation", age_group = normalise_age_groups(age_group))
+    mutate(Model = "Phenomenological", age_group = normalise_age_groups(age_group))
 
 seir_incidence_summary = load_seir_predictive() |>
     filter(region == "North East") |>
