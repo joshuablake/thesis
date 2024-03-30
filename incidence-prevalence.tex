@@ -627,6 +627,7 @@ The incidence back to day $-\dmax$ will affect $P_1$ and therefore need to be in
 This section argues that $p(\vec{y} \mid \vec{Z}) \approx \prob(\vec{X} = \vec{y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z}))$.
 As the $y_t$s are independent conditional on $\vec{P}$, it follows that $p(\vec{y} \mid \vec{Z}) \approx \prod_t \prob(Y_t = y_t \mid P_t = \E(P_t \mid \vec{Z}))$.
 This relationship will make inference for $\vec{Z}$ much simpler because the latent vector $\vec{P}$ and the dependence of the $y_t$s can be ignored.
+Intuitively, this means that the variance due to the observation process is negligible compared to the variance due to the prevalence process.
 
 The basis of the argument is that the first two moments of $\vec{y} \mid \vec{Z}$ and $\vec{X} \mid \vec{P} = \E(\vec{P} \mid \vec{Z})$ have negligible difference.
 The first moment follows directly from the tower property of expectations.
