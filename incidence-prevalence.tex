@@ -7,33 +7,25 @@
 
 \chapter{Data generating process} \label{inc-prev}
 
-This chapter formally defines incidence and prevalence, and the relationship between these quantities.
+This chapter formally defines incidence and prevalence, and the relationship between them and prevalence survey data.
 In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
 
 I start by defining these terms in \cref{inc-prev:sec:definitions}.
-I then move on to explaining the three processes that are involved: the \emph{infection process}, the \emph{prevalence process}, and the \emph{observation process}.
-These are the mathematical description of an infection model, disease model, and observation model respectively.
+I then move on to explaining the three processes that link the incidence, prevalence, and the data: the \emph{infection process}, the \emph{prevalence process}, and the \emph{observation process}.
 
-The infection process (\cref{inc-prev:sec:infection-process}) models how infections arise.
-The concepts here are well-established within infectious disease epidemiology.
-
-The prevalence process (\cref{inc-prev:sec:prevalence-process}) describes the relationship between incidence and prevalence.
-Here, I adapt previous work to the SARS-CoV-2 context.
-
-The observation process (\cref{inc-prev:sec:observation-process}) describes the relationship between prevalence and the observed data, ultimately allowing inference of incidence based on this data.
-In particular, I include the sampling mechanism of a population prevalence survey, guided by the design of the CIS.
+In (\cref{inc-prev:sec:infection-process}) I introduce the infection process, describing the infections' generating mechanism; in (\cref{inc-prev:sec:prevalence-process}) the prevalence process, which generates prevalence from the incidence; and in (\cref{inc-prev:sec:observation-process}), the observation process, which generates the data from the prevalence through the sampling mechanism of a population prevalence survey, guided by the design of the CIS.
 
 \Cref{inc-prev:sec:conclusion} concludes the chapter.
 
 \section{Definitions} \label{inc-prev:sec:definitions}
 
-I use discrete time in this chapter, except in \cref{SEIR:sec:mechanistic-models}.
-I use days; however, the results generalise in the obvious way to other time units.
+I use discrete time in this chapter, except in \cref{SEIR:sec:mechanistic-models}, with the time unit of a day. However, results generalise in the obvious way to other time units.
 I choose discrete time for pragmatic reasons.
 Most epidemiological data are only available at daily granularity or, when more granular data exists, is often unreliable.
-Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection); these variations are not of interest in most contexts.
+Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection), but these variations are not of interest in most contexts.
 
-\emph{Incidence} on day $t$, $Z_t$, is the number of people in a given population who become infected on day $t$; when expressed as a proportion of the population it is the \emph{incidence proportion}~\autocite[89]{lashModern}, $Z_t/\Npop$, where $\Npop$ is the number of people in the population.
+\emph{Incidence} $Z_t$, is the number of people in a given population who become infected on day $t$.
+When expressed as a proportion of the population it is the \emph{incidence proportion}~\autocite[89]{lashModern}, $Z_t/\Npop$, where $\Npop$ is the size of the population.
 
 \emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
 I refer to individuals with the disease as \emph{prevalent} individuals.
@@ -48,33 +40,34 @@ I denote the number of prevalent individuals on day $t$ as $P_t$; hence, the pre
 The duration distribution I will be concerned with is the distribution of the duration of detectability.
 Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$ (as in \cref{E-biology-data:sec:cis-episodes}).
 I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$; therefore, with a duration $D_i = E_i - B_i + 1$.
-I model the $D_i$s as a discrete iid (independent and identically distributed) random variable; extending the methodology to account for covariates is left to further work.
+I model the $D_i$s as a discrete iid (independent and identically distributed) random variables; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
-The distribution of $D_i$ can be expressed as the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
+The distribution of $D_i$ can be expressed through the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
 Alternatively, the \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
 %(a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
 The \emph{hazard} on day $d$ is the probability of recovering on day $d$ conditional on still being positive on day $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
 Throughout this thesis, the survival function will be the primary quantity of interest, and normally parameterized in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
 
 Since $D_i$ is a discrete random variable, $0 \leq f_D(d) \leq 1$ for all $d$ and $\sum_{k=1}^{\dmax} f_D(k) = 1$.
-This implies that $F_D(d) \in [0, 1]$ and increases monotonically.
+By definition, $F_D(d) \in [0, 1]$ and increases monotonically.
 Therefore, $S(d) \in [0, 1]$ and decreases monotonically.
 Similarly, $\lambda(d) \in [0,1]$, but can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
 The lack of monotonicity or sum constraint on the hazard makes it an attractive parameterization for inference~\autocite{heBayesian}.
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
-The infection process is the mathematical description of how infections occur.
-It is a \emph{counting} process, where each infection is an event.
 
-A counting process is a random function of continuous time $K(t)$.
+The infection process describes how infections occur.
+It is typically represented as a \emph{counting} process, where each infection is an event.
+
+A counting process is a stochastic process represented by a random function of continuous time $K(t)$.
 $K(t)$ must take non-negative integer values and be monotonically increasing in $t$.
 The interpretation of $K(t)$ is the number of events, here infections, which have occurred in the interval $(-\infty, t]$~\autocite[244]{yanDistribution}.
 In the context of a disease, the counting process can be discretised into the incidence on day $t$ as $Z_t = K(t) - K(t-1)$, where $t$ is an integer.
 I will explain two approaches to modelling the infection process.
 
-First, in \cref{inc-prev:sec:poisson-process}, I introduce a phenomenological model where the infection process is a \emph{Poisson process}.
+First, in \cref{inc-prev:sec:poisson-process}, I introduce phenomenological models, where the infection process is a \emph{Poisson process}.
 A Poisson process is a widely used type of counting process both within and outside of epidemiology.
-It makes no direct assumptions on the underlying biological or epidemiological process and is therefore a flexible model.
+It makes no explicit assumptions on the underlying biological or epidemiological mechanism and can be a flexible model.
 
 Afterwards, in \cref{SEIR:sec:mechanistic-models}, I introduce \emph{mechanistic models}.
 Mechanistic models explicitly describe the population and transmission between individuals.
@@ -86,17 +79,18 @@ They vary greatly in their details and realism~\autocite{murilloMultiscale}.
 A commonly used counting process for infectious disease epidemiology is the time inhomogeneous Poisson process~\autocite[e.g., in the context of HIV,][]{brookmeyerMethod,paganoHIV,rosenbergBackcalculation,brookmeyerBackcalculation}.
 % A time-homogenous Poisson process is the special case where $\nu(r)$ is constant.
 Extensions to this model, which I do not consider here, have incorporated covariates, such as geography or age~\autocite[e.g.][]{diggleModeling}.
+The Poisson process has two key properties.
 
-The first defining property of a Poisson process is that the counts are Poisson distributed.
+First, the Poisson process has counts that are Poisson distributed.
 Formally, $K(s) - K(t) \dist \Poi\left(\int^s_t \nu(r) dr \right)$ where $\nu(r) \geq 0$ is the \emph{intensity} of the infection process at time $r$~\autocite[244]{yanDistribution}.
 
-The other defining property of a Poisson process is that it has \emph{independent increments}.
+Second, the Poisson process has \emph{independent increments}.
 A counting process has independent increments if the number of events in disjoint intervals are independent conditional on the intensity~\autocite[244]{yanDistribution}.
 That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)$ are independent.
 In the context of a Poisson process, the independent increment property implies that, conditional on $\nu(r)$, the number of infections in disjoint intervals are independent.
 Hence, $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
 
-The target of inference can be either the process's intensity or the counts of the specific realisation that occurred.
+In an epidemic, there are two features of a Poisson process: the underlying process intensity, $\nu(r)$, and the single realisation that occurred, $K(t)$; either of these can be the target of inference.
 The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic~\autocite{beckerDependent,brookmeyerMethod}.
 
 Two features of a Poisson process are violated for epidemics.
@@ -105,7 +99,7 @@ Epidemics commonly exhibit \emph{overdispersion} and have feedback loops~\autoci
 Overdispersion means that $\V(Z_t) > \E(Z_t)$.
 In a Poisson process $Z_t$ has a Poisson distribution, hence, $\V(Z_t) = \E(Z_t)$.
 Therefore, an overdispersed epidemic modelled as a Poisson process will be less variable than the realised epidemic.
-Overdispersion is common in infectious diseases, especially for coronaviruses such as SARS-CoV-2~\autocite{endoEstimating,adamClustering,mccloskeySARS}.
+Overdispersion is common in infectious diseases, especially for coronaviruses such as SARS-CoV-2, where some individuals infect many more than others~\autocite{endoEstimating,adamClustering,mccloskeySARS}.
 
 % A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
 % A super-spreading event is an event where many more people than average are infected.
@@ -139,35 +133,28 @@ Despite these issues, near-unbiased inference on the incidence is still produced
 
 \subsection{Mechanistic models} \label{SEIR:sec:mechanistic-models}
 
-Now I will introduce mechanistic models, in particular the class of mechanistic transmission models known as \emph{compartmental} models.
+Now I will introduce mechanistic models, in particular the class of mechanistic transmission models known as \emph{compartmental} models~\autocite{andersonInfectious,keelingModeling}.
 Compartmental models are the most widely used class of mechanistic infectious disease models.
-A compartmental model is named because they place every member of the population under study into a compartment; each compartment representing a disease state (\eg susceptible).
+A compartmental model categorises every member of the population under study into a compartment; each compartment representing a disease state (\eg susceptible).
 I will describe these models using the notation of the field, which differs in conventions from the rest of this thesis.
 In particular, upper case or lower case will no longer be used to distinguish between random variables and their realisations, which instead is clear by context.
 
 A compartmental model consists of a state vector $\vec{x}(t)$ and a set of parameters $\vec{\theta}$~\autocite{birrellEvidence,dukicTracking,corbellaThesis}.
 The elements of $\vec{x}(t)$ are the latent proportion of the population (or number of individuals) in each compartment at time $t$.
 The parameters $\vec{\theta}$ determine, along with the model structure, how the state vector changes over time.
-% Inference about $\vec{x}(t)$ and $\vec{\theta}$ is requires linking to data, $\vec{y}$, via an observation model, $p(\vec{y}(t) \mid \vec{x}, \vec{\theta})$ where $\vec{x}$ denotes conditioning on $\vec{x}(t)$ for all $t$~\autocite{birrellEvidence} (see \cref{SEIR:sec:observation}).
-% That is, the observation model specifies the likelihood of the data given the model state.
-
 Compartmental models can be \emph{deterministic} or \emph{stochastic}.
-Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \vec{x}(0), \theta) = 0$~\autocite{birrellEvidence}.
-% In most situations, the function is not analytically-tractable and requires numeric methods to solve.
-%The transmission model corresponds to the infection process (see \cref{E-inc-prev:sec:infection-process}).
-%There remains randomness in the observation model (described in \cref{SEIR:sec:observation}).
 
-Stochastic models specify a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$ where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters~\autocite{birrellEvidence,dukicTracking,corbellaThesis,keelingModeling}.
-Stochastic models are most commonly specified in discrete time, using a Markov assumption.
-A common simplification is to use discrete time and a Markov assumption, \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$~\autocite{birrellEvidence}.
-This relaxes the assumption of independent increments in the counting process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
+Stochastic models are specified by a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$, where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters~\autocite{birrellEvidence,dukicTracking,corbellaThesis,keelingModeling}.
+A common simplification is to use discrete time and a Markov assumption, \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ respectively; the Markov assumption means that the state at time $t$ only depends on the state at time $t-1$~\autocite{birrellEvidence}.
+$x(t)$ and $x(t-1$ are now dependent, relaxing the assumption of independent increments in the Poisson process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
 
+Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \vec{x}(0), \theta) = \matr{0}$~\autocite{birrellEvidence}.
 Deterministic models are also known as \emph{mean-field} models because they represent the mean behaviour of a corresponding stochastic model.
 When the number of infectious individuals is large, the law of large numbers implies that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
 The approximation works especially well if used to make inference based on noisy observations of the system, when the observation noise is much larger than the infection process noise; I make a formalisation of this argument to justify a mean-field approximation of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
 
 The remainder of this section uses only deterministic models.
-This choice is appropriate for the context of this thesis because there were many individuals infectious with SARS-CoV-2 in this time period.
+This choice is appropriate for the context of this thesis because there were many individuals infectious with SARS-CoV-2 in the time period considered in this thesis.
 Hence, further details on stochastic models are outside the scope of this thesis; a wealth of introductory texts with further details on stochastic models are available, I recommend \textcite[chapter 6]{keelingModeling}.
 
 % This section discusses deterministic models whose evolution is specified by a system of ODEs, $d\vec{x}/dt$.
@@ -214,7 +201,7 @@ Hence, further details on stochastic models are outside the scope of this thesis
 
 The simplest compartmental model for a disease which confers immunity is the SIR (susceptible-infectious-recovered) model~\autocite[15]{keelingModeling}, depicted in \cref{SEIR:fig:SIR}.
 The name SIR derives from the structure of the model.
-In particular, the model divides the population (assumed closed, an assumption discussed later) into one of three compartments: susceptible, infectious, or recovered.
+In particular, the model divides the population (assumed closed, an assumption discussed later) into one of three compartments: Susceptible, Infectious, or Recovered.
 % The state of the system is the proportion of the population in each compartment.
 In the SIR model, individuals are assumed to be homogeneous except for their disease state, \ie they are otherwise identical.
 
@@ -233,15 +220,16 @@ The SIR model is described by the following system of ODEs (ordinary differentia
 \frac{dr(t)}{dt} &= \gamma i(t)
 \end{align}
 where $\lambda(t) = \beta i(t)$, is the \emph{force of infection}: the risk of infection for a susceptible individual at time $t$~\autocite[17]{keelingModeling}.
-The dynamics of the model are described by the parameters $\vec{\theta} = (\beta, \gamma)^T$.
-$\beta$ is the transmission rate, absorbing several terms as described below.
-$\gamma$ is the recovery rate, the rate that infectious individuals that recover; hence, $1/\gamma$ is the mean infectious period~\autocite[367]{keelingModeling}.
-These parameters are assumed to be constant.
+The dynamics of the model are described by the parameters $\vec{\theta} = (\beta, \gamma)^T$, where
+$\beta$ is the transmission rate, absorbing several terms as described below;
+$\gamma$ is the recovery rate, the rate that infectious individuals that recover.
+Hence, $1/\gamma$ is the mean infectious period~\autocite[367]{keelingModeling}.
+These parameters are assumed to be constant over time.
 
 % The term $\beta s(t)i(t)$ is the rate at which susceptible individuals (as a proportion of the total population size) are infected~\autocite[18]{keelingModeling}.
 % Susceptible individuals move from the $s(t)$ to $i(t)$ when they are infected.
 The expression for the force of infection, $\lambda(t)$ can be arrived at by considering a single infectious individual~\autocite[214]{kretzschmarMathematical}.
-Assume this individual comes into contact with other individuals in the population at a mean rate of $\kappa$.
+Assume this individual comes into contact with other individuals in the population at a mean rate of $\kappa$ per day.
 Further, assume the population is \emph{well-mixed}, meaning that each contact is with an individual chosen uniformly at random from the population, implied by assuming a homogeneous population.
 For such a randomly selected individual, the probability that they are susceptible is $s(t)$.
 % Each of the infectious individual's contacts is therefore with a susceptible individual with probability $s(t)$, by the well-mixed assumption.
@@ -271,12 +259,13 @@ A few properties and assumptions of the SIR model are worth noting.
     Third, births and deaths of individuals are negligible over the length of time considered.
     Model extensions allow these factors in contexts where they are relevant~\autocites[26]{keelingModeling}[214]{kretzschmarMathematical}.
     \item There is no analytical solution to the system of ODEs.
-      Solving the system requires numerical methods~\autocite[25]{keelingModeling}.
-    \item As noted previously, solving the system of ODEs requires the parameters $\vec{\theta}$ and the initial state of the system, $\vec{x}(0)$.
+      Solving the system requires numerical methods~\autocite[25]{keelingModeling}, and uses the parameters, $\vec{\theta}$, and initial state of the system, $\vec{x}(0)$.
     \item The model assumes immunity lasts until the end of the period considered~\autocite[61]{andersonInfectious}.
-    In many contexts, including here, this assumption is justified because the period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
+    In many contexts, including this thesis, this assumption is justified because the period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
     For longer time periods, the model can be expanded to include waning immunity~\autocite[40]{keelingModeling}.
-    \item The incidence proportion on day $t$ is defined as $Z_t / \Npop = s(t) - s(t+1)$. However, this will not in general give an integer value to $Z_t$. In practice, this is not an issue since a continuous approximation for the incidence will suffice.
+    \item A discretised incidence proportion for day $t$ can be defined as $Z_t / \Npop = s(t) - s(t+1)$.
+        However, this will not in general give an integer value to $Z_t$.
+        In practice, this is not an issue since a continuous approximation for the incidence will suffice.
 \end{itemize}
 
 
@@ -305,7 +294,7 @@ A few properties and assumptions of the SIR model are worth noting.
           (I4) edge node {$n\gamma$} (R);
 \end{tikzpicture}
 }
-  \caption[The SIR model with non-exponential infectious period]{Schematic of the SIR model with non-exponential infectious period. The infectious period is modified by having multiple I states.}
+  \caption[The SIR model with non-exponential infectious period]{Schematic of the SIR model with non-exponential infectious period. The infectious period is modified by having $n$ I states.}
   \label{SEIR:fig:SIR-gamma}
 \end{figure}
 

@@ -7,12 +7,12 @@
 
 \chapter{Estimating transmission} \label{transmission}
 
-In this chapter, I use the estimate of the distribution of the duration of RT-PCR positivity from the combination of information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-intro:sec:cis}).
+In this chapter, I use the estimate of the distribution of the duration of RT-PCR positivity based on combining information from the ATACCC and CIS studies (see \cref{E-imperf-test:sec:conclusion}) to investigate the feasibility of estimating incidence and transmission of SARS-CoV-2 from only the CIS data (described in \cref{E-intro:sec:cis}).
 I will show that the CIS data are sufficient, demonstrating the value of surveys of this type for pandemic surveillance.
 
-I take two approaches, backcalculation and a mechanistic model, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
+I take two approaches, one phenomenological and one mechanistic, both previously discussed in \cref{E-inc-prev:sec:infection-process}.
 
-I start with the backcalculation (\cref{backcalc}), based on \cref{E-inc-prev:eq:EPt}, which enables estimation of incidence within (sub)populations of England.
+I start with the phenomenological approach (\cref{backcalc}), based on \cref{E-inc-prev:eq:EPt}, which enables estimation of incidence within (sub)populations of England.
 The approach makes few assumptions about how transmission occurs, decreasing the potential to introduce bias and can also easily incorporate arbitrary covariates to adjust for non-response bias.
 The scale of the CIS and desire to correct for non-response bias presents challenges for this methodology, especially within the limited computation of the SRS environment.
 
@@ -25,7 +25,7 @@ I show they give similar values, providing reassurance of the robustness of the 
 % Overall, there is a bias-variance trade-off between the models.
 % Incidence and transmission have not previously been estimated from only SARS-CoV-2 prevalence surveys before.
 
-\section{Backcalculation} \label{backcalc}
+\section{Phenomenological approach} \label{backcalc}
 
 In this section, I apply the theory introduced in \cref{E-inc-prev} to estimate incidence.
 I view the CIS as a series of daily, cross-sectional prevalence surveys, as previously used to estimate prevalence (see \cref{E-biology-data:sec:MRP}).
@@ -56,10 +56,10 @@ Fitting this model to a prevalence survey such as the CIS gives a posterior dist
 The relationship between $\vec{P}$ and $\vec{Z}$ is from \cref{E-inc-prev:eq:EPt}, although dividing both sides by the stratum's population (assumed constant) to have the values in terms of incidence proportion and prevalence rather than incidence and number of prevalent individuals.
 
 Specifying $F_Z$ should consider the need to provide structure to stabilise the problem (see \cref{E-intro:sec:disease-model}).
-In the context of the CIS, it needs to allow borrowing information across time and/or strata (see \cref{E-biology-data:sec:MRP}).
+In the context of the CIS, it needs to allow borrowing information across time and/or strata (see \cref{E-biology-data:sec:MRP}), which is required because for some stratum/time combinations the data become very sparse.
 
 The second approach, which I call the \emph{prevalence-inferred} approach takes a two-step approach.
-First, it uses the statistical model from \cref{E-biology-data:sec:MRP} to estimate prevalence.
+First, it estimates prevalence using the statistical model from \cref{E-biology-data:sec:MRP}.
 Then, it transforms the posterior distribution of prevalence to a posterior distribution of incidence using the forward substitution as in \cref{inc-prev:eq:forward-substitute}.
 At a high-level, the statistical model is:
 \begin{align}
@@ -76,10 +76,9 @@ The transformation is based on \cref{inc-prev:eq:forward-substitute}, which give
 \subsection{Desirable properties} \label{transmission:sec:backcalc-properties}
 
 The incidence-inferred approach is more parsimonious in being a single step procedure.
-However, computational challenges make makes mean I favour the prevalence-inferred approach.
+However, computational challenges make the prevalence-inferred approach more appealing.
 
-It will be convenient to define a variable equating to the quantity initially estimated.
-Let $\pi_{i,t} = Z_{i,t}$ under the inference-inferred approach and $\pi_{i,t} = P_{i,t}$ under the prevalence-inferred approach.
+It will be convenient to define a variable equating to the quantity initially estimated: let $\pi_{i,t} = Z_{i,t}$ under the inference-inferred approach and $\pi_{i,t} = P_{i,t}$ under the prevalence-inferred approach.
 
 The chosen approach should have the following properties.
 \begin{enumerate}
@@ -102,9 +101,9 @@ The prior $F_Z$ or $F_P$ is now a prior on ${\vec{\varphi}}$.
 The $\logit$ link function both limits $\pi_{i,t}$ to the interval $[0, 1]$, and logit-linear growth approximates exponential growth for small $\pi_{i,t}$~\autocite{ealesAppropriately}.
 
 The logit transformation also allows property 4 to be conveniently satisfied using an additive model for $g_{\vec{\varphi}}$.
-An additive model on the logit scale is approximately multiplicative on the natural scale for small values of $\pi_{i,t}$ (which will be common).
+An additive model on the logit scale is approximately multiplicative on the natural scale for small values of $\pi_{i,t}$, which will be common.
 
-This form of model includes the MRP prevalence model in \cref{E-biology-data:sec:MRP}.
+This form of the model includes the MRP prevalence model in \cref{E-biology-data:sec:MRP}.
 
 % Combined with property 4, the form of $g$ the null model is $g_\varphi(i, t) = \varphi_0 + \varphi_1 t + f(i)$ where $a_0$ and $a_t$ are model parameters and $f$ is a function to be specified; that is, changes away from this model should be penalized.
 
@@ -217,7 +216,7 @@ There is weak evidence that when incidence starts increasing is correlated with 
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
     \includegraphics{transmission/backcalc-regions}
-    \caption[Incidence estimated using backcalculation by region]{%
+    \caption[Incidence estimated using the phenomenological approach by region]{%
         Incidence proportion for (A) all of England and (B) its component regions.
     }
     \label{transmission:fig:backcalc-regions}
@@ -241,7 +240,7 @@ Alternatively, it could be a consequence of schools remaining open in the Novemb
 Many other explanations are possible, and further work is required to determine causality.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{transmission/backcalc-ages}}
-    \caption[Incidence estimated using backcalculation by age group]{%
+    \caption[Incidence estimated using the phenomenological approach by age group]{%
         Incidence proportion for each age group, on both natural and log scales.
     }
     \label{transmission:fig:backcalc-ages}
@@ -254,7 +253,7 @@ Therefore, the first day's estimate is unreliable, and has been excluded from al
 However, the rest of the series is robust to this assumption.
 \begin{figure}
     \centering \includegraphics{transmission/backcalc-start-effect}
-    \caption[Edge effects in backcalculation method]{%
+    \caption[Edge effects in the phenomenological approach method]{%
         First seven days of incidence proportion estimate for the whole of England, highlighting the edge effect.
     }
     \label{transmission:fig:backcalc-start-effect}
@@ -860,15 +859,15 @@ Mechanistic models require explicit representation of this immunity.
 
 \Cref{transmission:fig:compare-regions} compares the regional incidence estimates between the two models in this chapter.
 Generally, the estimates agree with the SEIR model having much narrower credible intervals.
-The largest discrepancy is that the backcalculation model estimates a second peak in mid-January in several regions (most clearly in London, North West, and the East of England).
+The largest discrepancy is that the phenomenological approach model estimates a second peak in mid-January in several regions (most clearly in London, North West, and the East of England).
 However, except in London, the credible intervals still overlap.
-This is a specific case of a larger pattern: the SEIR model produces smoother estimates of incidence than the backcalculation model.
+This is a specific case of a larger pattern: the SEIR model produces smoother estimates of incidence than the phenomenological model.
 \begin{figure}
     \centering \includegraphics{transmission/compare-regions}
     \caption[Comparing each models estimate of regional incidence.]{%
         Incidence proportion in England and each region estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
-        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the phenomenological results.
     }
     \label{transmission:fig:compare-regions}
 \end{figure}
@@ -882,7 +881,7 @@ Adjusting for more covariates would require further stratifying the population a
 This trade-off based on the strength of assumptions has long been known to apply in the backcalculation context~\autocite[e.g.][section 8.3]{brookmeyerBackcalculation}.
 The SEIR model can be viewed as a backcalculation method where the transmission part of the model is a smoothing method.
 
-The backcalculation method benefits from being able to be implemented in a fast, approximate inference package (R-INLA) that easily scales to many parameters, including random effects.
+The phenomenological method benefits from being able to be implemented in a fast, approximate inference package (R-INLA) that easily scales to many parameters, including random effects.
 Therefore, it is far more flexible and can easily include time-varying effects, ethnicity, etc.
 The SEIR model is limited by the inference procedure and the requirement to solve an ODE to evaluate the likelihood.
 To incorporate a more flexible model, and reduce its bias, a more efficient inference procedure would be required.
@@ -890,13 +889,13 @@ To incorporate a more flexible model, and reduce its bias, a more efficient infe
 Many of these issues are clearly demonstrated by the estimates for the North East (see \cref{transmission:fig:compare-NE}).
 I previously observed the quality of the SEIR model's fit is variable between different age groups (see \cref{SEIR:fig:prev,SEIR:fig:prev-appendix}).
 This is because the model is not flexible enough to capture the true age distribution of infections.
-The overestimation of prevalence in the 12--16 age group and underestimation in the 17--25 age group is reflected when comparing incidence estimates to those from the backcalculation model, which have reduced bias.
+The overestimation of prevalence in the 12--16 age group and underestimation in the 17--25 age group is reflected when comparing incidence estimates to those from the phenomenological model, which have reduced bias.
 \begin{figure}
     \centering \includegraphics{transmission/compare-NE}
     \caption[Comparing each models estimate of North East incidence proportion by age.]{%
         Incidence proportion in each age group in the North East estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
-        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the backcalculation results.
+        For the SEIR model, newly RT-PCR positive (entrances into the P1 compartment), rather than incidence (entrances into the E compartment) are shown for comparability with the phenomenological results.
     }
     \label{transmission:fig:compare-NE}
 \end{figure}
