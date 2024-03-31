@@ -20,7 +20,7 @@
 # *.ps
 # *.eps
 /*.pdf
-/final_versions/*.pdf
+/final_versions/**
 CollegeShields/*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
