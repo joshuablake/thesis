@@ -343,7 +343,7 @@ This prior encodes that behaviour changes smoothly over time.
 where $\tilde{w}(t)$ is the week number of time $t$, with week 1 being the first week considered.
 Two hyperparameters will be inferred: $\beta_1$, the initial value of the random walk; and $\sigma_\epsilon$, the standard deviation of the random walk (see \cref{SEIR:sec:priors}).
 $\beta(t)$ is the only time-varying fitted parameter.
-Therefore, in practice, it will also absorb other effects such as any error in $\matr{\kappa}$.
+Therefore, in practice, it will also absorb other effects such as any error in $\matr{\kappa}(t)$.
 
 % $K_{ij}$ and $\beta_{ij}$ appear only as a product and therefore are not individually identifiable.
 % Normally, $K_{ij}$ is assumed to be known, for example from a previous contact survey~\autocite[such as][]{mossongSocial}.
@@ -836,10 +836,10 @@ For example, in the North East, most of the data points in the 12--16 age group 
 Currently, the age distribution of infections is determined by $\matr{\beta}$, and to a lesser extent $\vec{\pi}$, the former of which only contains one fitted parameter that affects the age distribution, $q_c$.
 Increasing the number of parameters in $\matr{\beta}$ would be the simplest approach to increase the model's flexibility.
 
-The only component of $\matr{\beta}$ that allows age-dependent heterogeneity in the temporal changes is $\matr{\kappa}$.
+The only component of $\matr{\beta}$ that allows age-dependent heterogeneity in the temporal changes is $\matr{\kappa}(t)$.
 It is plausible that this would not capture all behavioural changes.
 For example, the introduction and relaxation of control measures within schools.
-$\matr{\kappa}$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
+$\matr{\kappa}(t)$ only captures changes in in-school transmission through changes in school attendance, not incorporating the probability of transmission, which could be modelled as changes in $q_{aa}$ for $a$ of school age.
 Similarly, there is evidence that $q_c$ is different for Alpha and pre-Alpha variants~\autocite{zhuRole}, which could again motivate these changing over time.
 
 The weekly patterns in incidence are a limitation of the current parameterization.
