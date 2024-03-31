@@ -69,7 +69,7 @@ The stability of estimates considers the error arising from only using a finite 
 Autocorrelation means that estimates using the sample have higher variance than if it were an iid sample from the posterior~\autocite[286]{gelmanBDA}.
 The \emph{effective sample size} corrects for the autocorrelation.
 The effective sample size can be interpreted as the number of iid samples that would have the same variance as the MCMC sample~\autocites[286]{gelmanBDA}{vehtariRhat}.
-Various techniques have been proposed for computing the effective sample size, I will follow the approach of \textcite{vehtariRhat}, implemented in RStan~\autocite{RStan-2-32-3}.
+Various techniques have been proposed for computing the effective sample size, I follow the approach of \textcite{vehtariRhat}, implemented in RStan~\autocite{RStan-2-32-3}.
 
 \section{Improving MCMC efficiency} \label{MCMC:sec:improving}
 
@@ -83,7 +83,7 @@ The Metropolis--Hastings algorithm is then used to accept or reject the proposed
 
 The \emph{No U-Turn Sampler} (NUTS)~\autocite{hoffmanNUTS} is a variant of HMC that automatically tunes the Hamiltonian dynamics hyperparameters.
 NUTS has been implemented in a variety of software packages making it easy to apply to arbitrary posterior distributions.
-I will make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
+I make use of the implementation in the package \emph{Sampling through adaptive neighborhoods} (Stan)~\autocite{Stan-2-32-2}.
 Stan implements \emph{automatic differentiation}~\autocite{griewankAutoDiff} to calculate the gradient of the posterior density without any user input.
 Automatic differentiation uses the chain rule to calculate the gradient of a function from its code by breaking it down into a series of elementary operations, for which the gradient is known~\autocite{autodiff}.
 For a more detailed introduction to HMC, NUTS, and Stan see \textcite[chapter 12]{gelmanBDA}.

@@ -95,7 +95,7 @@ Similarly, for the end of the infection episode, $e_j \in [l_j^{(e)}, r_j^{(e)}]
 
 In survival analysis, the interest is in estimating the distribution of the interval between an \emph{initiating event} and a \emph{terminating event}.
 In the current context, the initiating event is the episode's start; the terminating event is the episode's end.
-I start by introducing the relevant, standard concepts in survival analysis; a wide range of texts cover them including \textcite[chapter 1]{bogaertsSurvival}.
+I start by introducing the relevant, standard concepts in survival analysis; a wide range of texts cover these concepts including \textcite[chapter 1]{bogaertsSurvival}.
 
 A common issue is that the initiating and/or terminating events are not known exactly.
 This is known as the event being \emph{censored}.
@@ -119,7 +119,7 @@ However, the situation is subtly different from the standard truncation situatio
 In the standard situation, nothing is known about the unrecorded intervals.
 But in CIS, individuals in which undetected infections occurred are enrolled in the study.
 Therefore, we know the times that they were tested.
-This provides information on how long their infections may have occurred.
+This provides information on how long their infections may have been.
 I refer to these events as ``undetected'', rather than truncated, to emphasise this difference.
 
 \Textcite{sunAnalysis,bogaertsSurvival} review methods for doubly interval censored data.
@@ -164,7 +164,7 @@ These potential classification can then be compared to the actual observations.
 Unlike in \textcite{heiseyModelling}, I must consider each individual's probability of undetected episodes separately because they are tested at different times.
 In addition, I include the information from the individuals without a detected episode.
 Furthermore, I marginalise the posterior density over the number of undetected episodes.
-This makes inference tractable using the large sample size and the computing resources available within the SRS (see \cref{E-biology-data:sec:SRS}).
+This makes inference tractable using the large sample size and limited computing resources available within the SRS (see \cref{E-biology-data:sec:SRS}).
 % In particular, the posterior can be expressed within modern, high-performance Bayesian software such as Stan.
 
 \subsection{Data} \label{perf-test:sec:data}
@@ -180,8 +180,7 @@ This is the subset of the whole CIS cohort with at least one test between time 1
 I index these individuals by $i = 1, \dots, \Ncis$.
 
 An individual $i$ has a \emph{test schedule} $\sched_i$.
-The test schedule $\sched_i$ is the set of times individual $i$ is tested at, starting from their last test prior to time 1, if it exists, or their time of enrolment otherwise.
-Note that $\sched_i$ includes any tests that occur after $T$.
+The test schedule $\sched_i$ is the set of times individual $i$ is tested at, starting from their last test prior to time 1, if it exists, or their time of enrolment otherwise; note that $\sched_i$ includes any tests that occur after $T$.
 For example, for the individual in \cref{perf-test:fig:double-interval-censor}, $\sched_i = \{ 0, 7, 14, 21, 28, 56 \}$.
 Each individual has exactly one test schedule, but it is possible that $\sched_i = \sched_{i'}$ for $i \neq i'$.
 I assume that the test schedules are uninformative on all quantities of interest because they are part of the study design.
@@ -217,10 +216,11 @@ Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote t
 Hence, $\ntot = \sum_{i=1}^{N_D} n_i + \nnodet$.
 
 Now define the probabilities of each possible outcome of $O(j)$.
-For detected outcomes, $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
+For detected outcomes, \ie $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
 For undetected outcomes, let $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$.
 Together, $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
 Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
+
 Then:
 \begin{align}
   \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
@@ -326,7 +326,7 @@ p(\vec{\theta} \mid \na)
 Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ are the observations of episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{e}_k, i_k]^T$.
 
 Decompose $p_k$ as $p_k = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$
-where $p_{ik} = \prob(O(j) = \nu_k \mid i(j) = i_k, \vec{\theta})$.
+where $p_{ik} = \prob(O(j) = \vec{\nu}_k \mid i(j) = i_k, \vec{\theta})$.
 % This is valid as $\prob(O(j) = \nu_k \mid i(j) \neq i_k) = 0$ due to the condition here being equivalent to equating the two vectors' final elements.
 Assume that each infection episode occurs independently and with equal probability in any individual, \ie $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
 
@@ -378,7 +378,7 @@ An episode $j$ in individual $i(j)$ is detected if and only if all the following
 
 % An episode is undetected if and only if no tests are performed during the episode or if there was no negative test prior to the episode.
 % Equivalently, that the first test at or after $b$ is after $e$, or that there is no negative test prior to $b$.
-To formalise this, first define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
+First define $\tau_{\sched_i}(t)$ as the time until the next test at or after time $t$ in the schedule $\sched_i$:
 \begin{align}
 \tau_{\sched_i}(t) &= \min \{ t' \in \sched_i : t' \geq t \} - t
 \label{perf-test:eq:tau-def}
@@ -412,7 +412,7 @@ Substituting into \cref{perf-test:eq:pu}:
 \section{Parameterisation and priors for the survival function} \label{perf-test:sec:parameters-priors}
 
 In this section I specify the form of $S_{\vec{\theta}}(t)$.
-I parameterize $S$ in terms of the hazard $S_{\vec{\theta}}(t) = \prod_{i=1}^{t-1} (1 - \lambda(i))$ (see \cref{E-inc-prev:sec:definitions}).
+I parameterize $S$ in terms of the hazard $S_{\vec{\theta}}(t) = \prod_{i=1}^{t-1} (1 - \lambda_{i})$ (see \cref{E-inc-prev:sec:definitions}).
 Therefore, $\vec{\theta} = [\lambda_1, \dots, \lambda_{\dmax-1}]^T$.
 
 Priors cannot be vague on both the hazard and the survival, the implications of which I consider in what follows.
@@ -464,7 +464,7 @@ They serve the same purpose as a penalized likelihood, which is often used in th
 Many possible forms of smoothing priors exist, including splines, Gaussian Processes, and random walks.
 I use a second-order random walk (RW2) because it is simple and produces sensible prior predictive distributions.
 
-RW2 prior encodes that the hazard should be linearly changing with some random changes at each time step.
+An RW2 prior encodes that the hazard should be linearly changing with some random changes at each time step.
 Specifically, the difference on the logit scale between $\lambda_t$ to $\lambda_{t+1}$ is the difference between $\lambda_{t-1}$ and $\lambda_t$ plus some normally distributed noise.
 Formally:
 \begin{align}
@@ -510,7 +510,7 @@ The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazar
 \end{figure}
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}
-  \caption[Approximating the ATACCC posterior survival as a logit-normal]{Comparison of the posterior estimate of the survival from \cref{E-ATACCC} and its approximation with a logit-normal distribution (median and central 95\% interval). The survival is a function of all the hazards up until that point, therefore the correlation between the hazards must be well-approximated to have these agree. \label{perf-test:fig:approximate-ATACCC-survival}}
+  \caption[Approximating the ATACCC posterior survival]{Comparison of the posterior estimate of the survival from \cref{E-ATACCC} and its approximation with a logit-normal distribution (median and central 95\% interval). The survival is a function of all the hazards up until that point, therefore the correlation between the hazards must be well-approximated to have these agree. \label{perf-test:fig:approximate-ATACCC-survival}}
 \end{figure}
 
 Having approximated the estimate as a multivariate normal, I add additional uncertainty using a discrete Beta process.
@@ -522,7 +522,7 @@ It is:
   \alpha_t &= k_t h_t + \alpha_0 \\
   \beta_t &= k_t (1 - h_t) + \beta_0
 \end{align}
-where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters; and, as before, $h_t$ is an estimate of the hazard at time $t$ from \cref{E-ATACCC}.
+where $k_t$, $\alpha_0$, and $\beta_0$ are hyperparameters.
 An intuition for what this distribution represents derives from a conjugate model for $\lambda_t$ with a beta prior and a binomial likelihood.
 If $\lambda_t$ is given the prior distribution $\text{Beta}(\alpha_0, \beta_0)$, and we then have $k_t$ observations with $k_t h_t$ successes, then the posterior distribution for $\lambda_t$ is $\text{Beta}(\alpha_t, \beta_t)$ (as defined above).
 
@@ -547,7 +547,7 @@ k_t = \begin{cases}
 I simulate a dataset of detected episodes with the same characteristics as that in the CIS by the following procedure.
 \begin{enumerate}
     \item Extract the test schedules for each individual who had at least one test during the period of interest.
-    \item Draw an episode start time, $b_{j}$ for each individual uniformly at random between 2 July 2020 (100 days before the period where a detected episode would be included) and 6 December 2020 (the end of this period).
+    \item Draw an episode start time, $b_{j}$ for each individual uniformly at random between 2 July 2020 ($t = -100$) and 6 December 2020 ($t = T$).
     \item Draw a duration of episode for each individual, $d_i$, based on the distribution described below. Then calculate the end of their infection episode, $e_{j} = b_{j} + d_i - 1$.
     \item Simulate the test results based on the test schedule, $b_{j}$, and $e_{j}$. Tests between $b_{j}$ and $e_{j}$ (inclusive) are positive, all other tests are negative.
     \item Discard episodes where there are no positive tests (\ie undetected episodes) and then apply the same inclusions/exclusions as in \cref{perf-test:sec:problem}.
@@ -557,7 +557,7 @@ I simulate a dataset of detected episodes with the same characteristics as that 
 
 Step 3 requires a distribution of the duration of detectability.
 I base this assumption on the estimate from \cref{E-ATACCC} with an inflated tail to be consistent with the CIS.
-I modify the tail based on an unpublished analysis of CIS data~\citePersonalComms{A.\ Sarah Walker}.
+I modify the tail based on an unpublished analysis of the CIS data~\citePersonalComms{A.\ Sarah Walker}.
 Walker uses survival analysis to estimate the duration from CIS data.
 This analysis assumes the initiating event is known, and equal to the episode’s detection time. 
 It assumes the final event is interval censored between the time of the final positive test and the subsequent negative test, or right censored if a negative test has not yet been observed.
@@ -590,14 +590,14 @@ Individual $i$'s duration of detectability, $D_i$, is then an independent draw f
   \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. \label{perf-test:fig:duration-dist}}
 \end{figure}
 
+The prior on the total number of infections was centred on the true value with a dispersion parameter of 1.
+
 \subsection{Implementation}
 
 I implemented the simulation in R~4.2.0~\autocite{R-4-2-0} using tidyverse~2.0.0~\autocite{tidyverse}.
 
 I implemented the inference in Stan via RStan~2.21.8~\autocite{rstan2-21-8} using default settings.
 Convergence was assessed using Rhat and ESS as described in \cref{E-MCMC:sec:convergence}, and all runs checked for divergent transitions.
-
-The prior on the total number of infections was centred on the true value with a dispersion parameter of 1.
 This meant that the prior was very diffuse.
 
 
@@ -642,12 +642,12 @@ Unfortunately, false negatives do occur in the CIS data.
 
 Reasonable choices of the prior for the hazard are vague (although not flat) or informative.
 A smoothing prior performed poorly, although that may be influenced by the choice of hyperparameters.
-Reducing the amount of smoothing or type of smoothing may help.
+Reducing the amount of smoothing or changing the type of smoothing may help.
 More flexible smoothing priors could be used, such as a Gaussian Process for additional flexibility and smoothing and different timescales~\autocite{saulGaussian}.
 
 The derivation in \cref{perf-test:sec:model} relied on an assumption that $O(j)$ and $O(j')$ occur independently for $j \neq j'$.
 This is not the case, as immunity means that an individual previously infected is less likely to be infected in the future.
-Additionally, the same individual cannot have multiple concurrent infections, due to the way that the episodes dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}) limiting certain combinations from occurring.
+Additionally, the same individual cannot have multiple detected concurrent infections, due to the way that the episodes dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}); this limits certain combinations from occurring.
 In practice, this means that $n_k > 1$ cannot occur.
 The simulation study violated this assumption to a large extent: each individual could only have one infection.
 Despite this, the method performed well, recovering the true survival function.
@@ -658,7 +658,6 @@ Various extensions could be worth exploring.
 Most importantly, including covariates (\eg age, immunity from vaccination and/or previous infection, or variant).
 Immunity in particular affects the duration substantially, although age and variant may also make a contribution~\autocite{hakkiOnset,russellWithinhost}.
 Covariates can be included with a variety of models, the simplest being a proportional hazards model.
-A major challenge here is that the calculation of $p_t$ is greatly complicated because it is no longer linear in the survival function.
 
 The prior would likely be more important if the number of detected infections was smaller.
 Therefore, exploring its impact could be important for future surveys.

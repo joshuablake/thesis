@@ -13,7 +13,7 @@
 \chapter{SARS-CoV-2: biology and data} \label{biology-data}
 
 SARS-CoV-2 is closely related to previous coronaviruses that have caused outbreaks in humans, including SARS-CoV and MERS-CoV.
-Coronaviruses are RNA (Ribonucleic acid) viruses which means they use RNA, rather than DNA (Deoxyribonucleic acid), as their genetic material.
+Coronaviruses are RNA (Ribonucleic acid) viruses, which means they use RNA, rather than DNA (Deoxyribonucleic acid), as their genetic material.
 RNA viruses, which include influenza, mutate rapidly and are the most likely class of viruses to cause pandemics~\autocite{woolhouseRNA}.
 
 The initial and most sensitive diagnostic test for SARS-CoV-2 uses RT-PCR, which I explain in \cref{biology-data:sec:PCR}.
@@ -34,9 +34,9 @@ It is central to the work in this thesis because it can detect the presence of S
 \subsection{Reverse transcription}
 
 SARS-CoV-2 is an RNA virus, but PCR amplifies DNA.
-Therefore, before using PCR process to detect SARS-CoV-2, the RNA must be converted to DNA.
+Therefore, before using the PCR process to detect SARS-CoV-2, the RNA must be converted to DNA.
 This process is known as \emph{reverse transcription}.
-In reverse transcription, a naturally occurring enzyme known as reverse transcriptase generates cDNA (complementary DNA) from the RNA in the sample~\autocite{valasekPower}.
+In reverse transcription, a naturally occurring enzyme known as \emph{reverse transcriptase} generates cDNA (complementary DNA) from the RNA in the sample~\autocite{valasekPower}.
 Any sequence of cDNA has a one-to-one correspondence with a sequence of RNA.
 The cDNA can then be used in the standard PCR process.
 
@@ -195,8 +195,8 @@ Any host's viral load is determined by the interaction of many biological proces
 Viral replication requires the virus to infect a host cell and then use the host cell's machinery to produce more virus; as more host cells are infected this process slows because there are fewer remaining potential host cells, known as \emph{target cells}, to infect.
 The host's immune system can modify this process by various mechanisms; the most relevant for SARS-CoV-2 is by making some target cells temporarily immune from infection.
 The immune system response contribution to the reduction in target cells is several orders of magnitude larger than the reduction in target cells due to viral replication.
+The response is triggered by the viral load and becomes stronger as the viral load increases.
 The rate at which host cells are infected slows over time because there are fewer remaining target cells to infect.
-A host's immune response is triggered by the viral load and becomes stronger as the viral load increases.
 A high viral load is associated with being more infectious, more likely to test positive on an RT-PCR test, and the start of symptoms~\autocite{puhachSARSCoV2,keVivo}.
 
 \section{Assessment of Transmission and Contagiousness of COVID-19 in Contacts} \label{biology-data:sec:ataccc}
@@ -208,7 +208,7 @@ The first wave enrolled 393 contacts between 13 Sep 2020 and 31 Mar 2021, when p
 The second wave enrolled 345 contacts between 24 May 2021 and 28 Oct 2021, when the Delta variant was circulating.
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
 For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve (see \cref{biology-data:sec:PCR-process}).
-Other data such as demography and symptoms were also collected, although I do not use this information.
+Other data such as demography and symptoms were also collected.
 For further details see \textcite{singanayagamDuration,hakkiOnset}.
 
 Of the 738 contacts enrolled, 172 (23\%) had at least one positive test.
@@ -249,7 +249,7 @@ Because testing becomes less frequent after the first 4 weeks, some continuous r
 \begin{figure}
   \centering \includegraphics{biology-data/CIS-recruitment}
   \caption[CIS swab numbers]{%
-    Number of swabs taken by the CIS in the period considered in this thesis (Sep 2020 until Jan 2021).
+    Number of swabs taken by the CIS up until Jan 2021.
     (A) Only enrolment (\ie first) swabs for each individual.
     (B) Total swabs.
     Note the differing y-axis scales.
@@ -284,7 +284,7 @@ The age groups used have varied slightly for different CIS analyses~\autocite[e.
 I will use the age groups: 0--11 (pre-school and primary school), 12--16 (compulsory secondary school), 17--25 (adolescents and young adults who may remain in formal education), 26--50 (younger working age adults), 51--70 (older working age adults), and 71+ (elderly).
 
 I use two levels of ethnic grouping.
-Broad groupings (White and non-White), because the White population makes up a large majority of the UK.
+Broad groupings (White and non-White), because the White population makes up over 80\% of the UK.
 I also use more granular ethnicities (Asian, Black, Mixed, White, and Other).
 
 The geographic areas I will adopt are the nine standard regions of England (International Territorial Level 1, previously Nomenclature of Territorial Units for Statistics 1); these are: North East, North West, Yorkshire and the Humber (commonly abbreviated to Yorkshire), East Midlands, West Midlands, East, London, South East, and South West~\autocite{onsRegions}.
@@ -292,7 +292,7 @@ These are the geographic areas used throughout the major CIS analyses in England
 
 \subsection{Adjustment for non-response and data sparsity} \label{biology-data:sec:MRP}
 
-If the CIS was truly a random sample, an unbiased estimator of the population positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
+If the CIS was truly a sample representative of the general population, an unbiased estimator of the population positivity rate would be the proportion of positive tests in the sample; I refer to this estimator as the unadjusted positivity rate.
 However, in practice, two issues arise with this.
 First, the non-response (discussed above) causes bias.
 Second, the number of positives on any day is low, especially among any specific subpopulation (\eg age group or region) increases variance.
@@ -341,7 +341,7 @@ The final step is poststratifying the incidence proportion to the CIS target pop
 To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
 Denote these by $p^{(j)}_{t,i}$ for the $j$th sample where $i$ is a stratum, \ie some value of $a$, $e$, and $s$.
 Define a (sub) population of interest as a set of strata $\set{S}$.
-Then the prevalence in the (sub)population on day $t$ is
+Then the poststratified prevalence in the (sub)population on day $t$ is
 \begin{align}
 p^{(j)}_t(\set{S})
 &= \frac{\sum_{i \in \set{S}} p^{(j)}_{t,i} N_i}{\sum_{i \in \set{S}} N_i}
@@ -366,7 +366,7 @@ As $\rho \to \infty$, the distribution tends towards the uniform distribution on
 
 \Cref{biology-data:fig:CIS-positivity} shows estimates from this model compared to the unadjusted positivity rate.
 Both show similar trends.
-The MRP estimate is normally greater than the uncorrected positivity rate because the underrepresented demographic groups tended to have higher positivity rates.
+The MRP estimate is normally greater than the unadjusted positivity rate because the underrepresented demographic groups tended to have higher positivity rates.
 
 \begin{figure}
   \centering \includegraphics[width=\textwidth]{biology-data/CIS-positivity}

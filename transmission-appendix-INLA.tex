@@ -17,7 +17,7 @@ The standard implementation of INLA is the R-INLA package~\autocite{RINLA}.
 
 An LGM is a model for a series of observations $\vec{y} = [y_1, \dots, y_n]^T$.
 Each observation has an associated linear predictor $\vec{\eta} = [\eta_1, \dots, \eta_n]^T$.
-The linear predictor and, optionally, some hyperparameters $\vec{\theta}$ give the conditional independence structure:
+The linear predictor and, optionally, some hyperparameters $\vec{\theta}$ have the conditional independence structure:
 \begin{align}
     \pi(\vec{y} \mid \vec{\eta}, \vec{\theta}) = \prod_{i=1}^n \pi(y_i \mid \eta_i, \vec{\theta}).
 \end{align}
@@ -30,7 +30,7 @@ An LGM introduces a latent field $\vec{x}$ with a multivariate Gaussian distribu
 where $\Sigma(\vec{\theta})$ is the covariance matrix formed as a deterministic transformation of the hyperparameters.
 The linear predictors must be able to be expressed as a linear transformation of the latent field, \ie $\vec{\eta} = \matr{A} \vec{x}$ for some pre-specified matrix $\matr{A}$.
 For the linear regression model, $\matr{A} = \matr{X}$, $\vec{x} = \vec{\beta}$, and $\matr{\Sigma}(\vec{\theta})$ would be a fixed diagonal matrix specifying the prior on the regression coefficients.
-In the (generalised) linear model case $\vec{\theta}$ is fixed; however, LGMs allow an arbitrary prior distribution on $\vec{\theta}$ which means that some elements of $\vec{x}$ can be random effects (or more complex structures).
+In the (generalised) linear model case $\matr{\Sigma(\vec{\theta})}$ is fixed; however, LGMs allow an arbitrary prior distribution on $\vec{\theta}$ which means that some elements of $\vec{x}$ can be random effects (or more complex structures).
 
 In summary, the full specification of an LGM is:
 \begin{align}

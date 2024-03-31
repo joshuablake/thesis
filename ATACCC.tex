@@ -17,7 +17,6 @@ Next, I describe the model of \textcite{hakkiOnset} in detail, which applies the
 This modification is based on an earlier analysis using a preliminary version of the dataset, described in \cref{ATACCC:sec:original-analysis}.
 I convert the model and parameter estimates of the biomarker's trajectory to a duration of RT-PCR positivity (\cref{ATACCC:sec:duration}).
 Finally, I discuss the results (\cref{ATACCC:sec:discussion}).
-I will refine this estimate in the following chapters before its use in estimating transmission in \cref{E-transmission}.
 
 \section{Background} \label{ATACCC:sec:background}
 
@@ -44,8 +43,6 @@ Random effects represent the within-individual correlation while borrowing infor
 Measurements of viral load from the same individual are correlated.
 A random effect means that these measurements share parameter(s), providing correlation.
 However, the random effect(s) for each individual is drawn towards a common mean, allowing information on their value to be shared between individuals.
-
-Following much of the literature mentioned previously, I will take a Bayesian approach in this chapter.
 Bayesians often refer to random effect models as hierarchical or multilevel models because they can be interpreted as placing a prior at two levels of a parameter hierarchy~\autocite[chapter 5]{gelmanBDA}.
 % $\phi_j$ would be referred to as the bottom level of the hierarchy, with $\mu$ and $\sigma$ being the top level.
 % More complex models could have more levels, for instance if the individuals are grouped into subpopulations.
@@ -68,14 +65,14 @@ The observation model includes the possibility of false positive and negatives, 
 % The limit of detection means that viral loads below a certain threshold are not detected by the RT-PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient MCMC implementation of the NUTS algorithm (see \cref{E-MCMC}).
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient implementation of the NUTS algorithm (see \cref{E-MCMC}).
 The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
-This leads to the following model for the viral load (see \cref{ATACCC:fig:viral-load-model} for examples):
+This leads to the following model for the viral load (see \cref{ATACCC:fig:viral-load-model}):
 \begin{align}
 v_i(t) = v_{\max,i} \frac{a_i+b_i}{b_ie^{-a_i(t-\tau_{\max,i})} + a_ie^{b_i(t-\tau_{max,i})}}. \label{ATACCC:eq:viral-load}
 \end{align}
-Time, $t$, is continuous and defined uniquely for each individual such that $t = 0$ at the time that individual $i$ was first tested.
+Time, $t$, is continuous and defined for individual $i$ such that $i$s first test is at $t = 0$.
 $v_{\max,i}$ is the maximum viral load, which occurs at time $\tau_{\max,i}$.
 As $\lvert t - \tau_{\max} \rvert$ becomes large, the viral load trajectory tends towards exponential growth (before the peak) or decline (after the peak) in viral load at rates $a_i$ and $b_i$ respectively.
 % Before the peak, this is because $b(t-\tau_{\max,i})$ is small and hence $a\exp(b(t-\tau_{\max,i}))$ is negligible.
@@ -97,7 +94,7 @@ This time is based on logistical and behavioural factors such as delays in the N
   \label{ATACCC:fig:viral-load-model}
 \end{figure}
 
-The noise in the RT-PCR is modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
+The noise in the RT-PCR test result is modelled by assuming each measurement of log viral load has an iid error distributed $\N(0, \sigma_v^2)$.
 Measurements are left censored at the limit of detection, $\vlod$, meaning that any observation which would give a log viral load of less than $\vlod$ is instead observed as negative.
 False positives and negatives are modelled by allowing a test failure with probability $\rho$.
 Test failures are modelled as producing a log viral load reading drawn from $\N(x_0, \sigma_0^2)$.
@@ -115,8 +112,7 @@ p(y_{i,t} \mid \cdot) &= \begin{cases}
 \end{align}
 where $f_N(y \mid \mu, \sigma^2)$ and $F_N(y \mid \mu, \sigma^2)$ are the pdf and cdf at $y$ of a normal distribution with mean $\mu$ and variance $\sigma^2$ respectively.
 The first term on each line is the likelihood contribution from test failures, either a false positive (top line) or false negative (bottom line).
-The second term on the first line is the likelihood of the observed log viral load from non-failed test results.
-The second term on the bottom line is the likelihood of the negative (censored) tests from non-failed test results.
+The second term is the likelihood contribution from non-failed test results, either measurements of viral load (top line) or negative results (bottom line).
 
 Conditional on all parameters, the observations are assumed independent.
 Because $v_i$ is a deterministic transform of $\vec{\phi}_i$ and $\tau_{\max,i}$, the observations are independent conditional on the model parameters, and the full likelihood is the product of the likelihoods of each observation.
@@ -128,7 +124,7 @@ My focus is on the first group since they most closely correspond to the infecti
 
 Biological plausibility requires constraining $\vec{\phi}_i$ to positive real values.
 Each $\vec{\phi}_i$ is modelled as a log-normal random effects by using the hierarchical prior $\vec{\phi}_i \dist \LN(\vec{\mu}_{\phi,g(i)}, \matr{\Sigma}_\phi)$ where $g(i)$ is the group of individual $i$.
-$\vec{\mu}_{\phi,g} = (\mu_{v_{\max},g}, \mu_{a,g}, \mu_{b,g})^T$ is a vector of the population means of the log-parameters.
+$\vec{\mu}_{\phi,g} = [\mu_{v_{\max},g}, \mu_{a,g}, \mu_{b,g}]^T$ is a vector of the population means of the log-parameters.
 As the random effects have a log-normal, rather than normal, distribution $\exp(\vec{\mu}_{\phi,g})$ is the population median of the parameter value but not the mean.
 The covariance matrix $\matr{\Sigma}_\phi$ controls the variability of the population and allows for the parameters to be correlated.
 For example, an individual with a high peak viral load may also clear the virus slowly because both have an underlying cause of a weak immune system.
@@ -172,7 +168,7 @@ The model of \textcite{hakkiOnset} did not converge fully (see \cref{ATACCC:sec:
 In particular, the Rhat values, traceplots, and effective sample size for the parameters of the observation model ($x_0$, $\sigma_0$, and $\rho$) were poor.
 
 Based on the fit to the data achieved when implementing an earlier version of the model (see \cref{ATACCC:sec:original-analysis}), I hypothesised that the cause of this was overcomplicating the model for test failures.
-Specifically, excluding false positives from the model still explains the data well (the results in \cref{fig:paper:duration,ATACCC:fig:goodness-of-fits} do not allow false negatives but fit the data well).
+Specifically, excluding false positives from the model still explains the data well (see \cref{ATACCC:fig:goodness-of-fits}).
 Furthermore, a prior that false negatives and false positives are equally likely is not supported by other information (see \cref{biology-data:sec:measurement-error}).
 Therefore, I simplified the model for test failures to only false negatives.
 % These false negatives could represent a variety of scenarios, such as poor swabbing technique.

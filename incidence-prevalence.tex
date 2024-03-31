@@ -11,9 +11,7 @@ This chapter formally defines incidence and prevalence, and the relationship bet
 In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
 
 I start by defining these terms in \cref{inc-prev:sec:definitions}.
-I then move on to explaining the three processes that link the incidence, prevalence, and the data: the \emph{infection process}, the \emph{prevalence process}, and the \emph{observation process}.
-
-In (\cref{inc-prev:sec:infection-process}) I introduce the infection process, describing the infections' generating mechanism; in (\cref{inc-prev:sec:prevalence-process}) the prevalence process, which generates prevalence from the incidence; and in (\cref{inc-prev:sec:observation-process}), the observation process, which generates the data from the prevalence through the sampling mechanism of a population prevalence survey, guided by the design of the CIS.
+I then explain the three relevant models: one for the infection process (\cref{inc-prev:sec:infection-process}); one for the prevalence process, the relevant disease model (\cref{inc-prev:sec:prevalence-process}) linking infections to prevalence; and finally the observation process for a prevalence survey like the CIS (\cref{inc-prev:sec:observation-process}).
 
 \Cref{inc-prev:sec:conclusion} concludes the chapter.
 
@@ -29,12 +27,12 @@ When expressed as a proportion of the population it is the \emph{incidence propo
 
 \emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
 I refer to individuals with the disease as \emph{prevalent} individuals.
-Whether an individual is prevalent is often expensive or error-prone to measure and hence is a latent quantity.
-Furthermore, what is meant by ``having'' a disease can depend on context; for example, it could be the presence of symptoms, the ability to transmit, or detectable status (the difference between these was discussed in \cref{E-biology-data:sec:natural-history})
+What is meant by ``having'' a disease can depend on context; for example, it could be the presence of symptoms, the ability to transmit, or detectable status (the difference between these was discussed in \cref{E-biology-data:sec:natural-history})
 Within this thesis, I define an individual as prevalent on day $t$ if they are detectable (detectable is defined in \cref{E-biology-data:sec:detectable}).
 I assume that an individual's prevalent status cannot change over the course of a day.
 Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$; hence, the prevalence is $P_t/\Npop$.
+$P_t$ corresponds with $W_t$ in \cref{E-intro:eq:disease-model}.
 
 \emph{Duration}, or \emph{time-to-event}, distributions are expressed in several equivalent ways~\autocite[17]{sunStatisticala}.
 The duration distribution I will be concerned with is the distribution of the duration of detectability.
@@ -45,13 +43,13 @@ The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where
 The distribution of $D_i$ can be expressed through the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
 Alternatively, the \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
 %(a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
-The \emph{hazard} on day $d$ is the probability of recovering on day $d$ conditional on still being positive on day $d$: $\lambda(d) = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
-Throughout this thesis, the survival function will be the primary quantity of interest, and normally parameterized in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda(i))$.
+The \emph{hazard} on day $d$ is the probability of recovering on day $d$ conditional on still being positive on day $d$: $\lambda_{d} = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
+Throughout this thesis, the survival function will be the primary quantity of interest, and normally parameterized in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda_{i})$.
 
 Since $D_i$ is a discrete random variable, $0 \leq f_D(d) \leq 1$ for all $d$ and $\sum_{k=1}^{\dmax} f_D(k) = 1$.
 By definition, $F_D(d) \in [0, 1]$ and increases monotonically.
 Therefore, $S(d) \in [0, 1]$ and decreases monotonically.
-Similarly, $\lambda(d) \in [0,1]$, but can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
+Similarly, $\lambda_{d} \in [0,1]$, but can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
 The lack of monotonicity or sum constraint on the hazard makes it an attractive parameterization for inference because these constraints are challenging to implement in many inference frameworks~\autocite{heBayesian}.
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
@@ -67,12 +65,9 @@ I will explain two approaches to modelling the infection process.
 
 First, in \cref{inc-prev:sec:poisson-process}, I introduce phenomenological models, where the infection process is a \emph{Poisson process}.
 A Poisson process is a widely used type of counting process both within and outside of epidemiology.
-It makes no explicit assumptions on the underlying biological or epidemiological mechanism and can be a flexible model.
 
 Afterwards, in \cref{SEIR:sec:mechanistic-models}, I introduce \emph{mechanistic models}.
-Mechanistic models explicitly describe the population and transmission between individuals.
-In particular, they include the feedback loop inherent in infectious diseases, where increased infections at a time $t$ lead to more infections at times $> t$.
-They vary greatly in their details and realism~\autocite{murilloMultiscale}.
+Unlike phenomenological models, they include the feedback loop inherent in infectious diseases, where increased infections at a time $t$ lead to more infections at times $> t$.
 
 \subsection{Poisson processes} \label{inc-prev:sec:poisson-process}
 
@@ -211,16 +206,17 @@ Individuals in the infectious compartment can infect others, and eventually reco
 The proportion of the population that is infectious at time $t$ is $i(t)$.
 Individuals in the recovered compartment are immune to the disease and cannot be infected again.
 The proportion of the population that have recovered by time $t$ is $r(t)$.
-The model's state is $\vec{x}(t) = (s(t), i(t), r(t))^T$.
+The model's state is $\vec{x}(t) = [s(t), i(t), r(t)]^T$.
 
 The SIR model is described by the following system of ODEs (ordinary differential equations)~\autocite[19]{keelingModeling}:
 \begin{align}
 \frac{ds(t)}{dt} &= -\lambda(t) s(t) \\
 \frac{di(t)}{dt} &= \lambda(t) s(t) - \gamma i(t) \\
-\frac{dr(t)}{dt} &= \gamma i(t)
+\frac{dr(t)}{dt} &= \gamma i(t) \\
+\lambda(t) &= \beta i(t)
 \end{align}
-where $\lambda(t) = \beta i(t)$, is the \emph{force of infection}: the risk of infection for a susceptible individual at time $t$~\autocite[17]{keelingModeling}.
-The dynamics of the model are described by the parameters $\vec{\theta} = (\beta, \gamma)^T$, where
+where $\lambda(t)$, is the \emph{force of infection}: the risk of infection for a susceptible individual at time $t$~\autocite[17]{keelingModeling}.
+The dynamics of the model are described by the parameters $\vec{\theta} = [\beta, \gamma]^T$, where
 $\beta$ is the transmission rate, absorbing several terms as described below;
 $\gamma$ is the recovery rate, the rate that infectious individuals that recover.
 Hence, $1/\gamma$ is the mean infectious period~\autocite[367]{keelingModeling}.
@@ -263,7 +259,7 @@ A few properties and assumptions of the SIR model are worth noting.
     \item The model assumes immunity lasts until the end of the period considered~\autocite[61]{andersonInfectious}.
     In many contexts, including this thesis, this assumption is justified because the period is shorter than the length of immunity conferred~\autocite{milneImmunity}.
     For longer time periods, the model can be expanded to include waning immunity~\autocite[40]{keelingModeling}.
-    \item A discretised incidence proportion for day $t$ can be defined as $Z_t / \Npop = s(t) - s(t+1)$.
+    \item A discretised incidence proportion for day $t$ ($t$ an integer) can be defined as $Z_t / \Npop = s(t) - s(t+1)$.
         However, this will not in general give an integer value to $Z_t$.
         In practice, this is not an issue since a continuous approximation for the incidence will suffice.
 \end{itemize}
@@ -298,7 +294,7 @@ A few properties and assumptions of the SIR model are worth noting.
   \label{SEIR:fig:SIR-gamma}
 \end{figure}
 
-The basic SIR model is the deterministic approximation of a stochastic model where the duration of time in the infectious compartment is exponentially distributed~\autocite[96]{keelingModeling}.
+The basic SIR model is the mean-field approximation of a stochastic model where the duration of time in the infectious compartment is exponentially distributed~\autocite[96]{keelingModeling}.
 This is an unrealistic assumption for most diseases and would lead to underestimating of the reproduction number~\autocite{lloydRealistic,wearingAppropriate}.
 A standard extension to the SIR model is to instead assume a gamma distribution~\autocite[94]{keelingModeling,andersonSpread}.
 The extension adds multiple infectious compartments, shown in \cref{SEIR:fig:SIR-gamma}.
@@ -383,7 +379,7 @@ Similar to the infectious period, the latent period can be modelled as a gamma d
 where $1/\sigma$ is the mean duration of the latent period.
 The latent period is distributed $\GamDist(m, m\sigma)$ and the infectious period is still distributed $\GamDist(n, n\gamma)$.
 
-The reproduction number in terms of the parameters is unchanged by this extension, \ie $\R = \beta / \gamma$, however, the growth rate in the exponential phase will be slower than before~\autocite[41]{keelingModeling}.
+The reproduction number in terms of the parameters is unchanged by this extension, \ie $\R = \beta / \gamma$, however, the growth rate in the initial exponential phase is slower than before~\autocite[41]{keelingModeling}.
 
 \subsubsection{Structured populations} \label{SEIR:sec:structured-populations}
 
@@ -395,9 +391,9 @@ I will assume that the disease progression (\ie length of the exposed and infect
 Stratification requires two major  model changes: extension of the state vector and a description of the between-strata interactions.
 
 The state vector is now a vector of vectors, one for each of the compartments.
-For example, in the basic SIR model, $\vec{x}(t) = (\vec{s}(t), \vec{i}(t), \vec{r}(t))^T$.
+For example, in the basic SIR model, $\vec{x}(t) = [\vec{s}(t), \vec{i}(t), \vec{r}(t)]^T$.
 The $a$th element of each vector ($a \in \set{A}$) is the proportion of strata $a$ in that compartment.
-For example, $\vec{s}(t) = (s_1(t), \dots, s_A(t))^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
+For example, $\vec{s}(t) = [s_1(t), \dots, s_A(t)]^T$ where $s_a(t)$ is the proportion of the $a$th strata that are susceptible at time $t$.
 Hence, $N_a s_a(t)$ is the number of susceptible people in stratum $a$, where $N_a$ is the number of individuals in stratum $a$.
 These vectors replace the scalars in the previous equations.
 Other, equivalent formulations of this model exist within the literature.
@@ -405,7 +401,8 @@ For example, defining $s_a$ as the proportion of the total population that are b
 
 The interactions between strata are included by replacing the scalar $\beta$ with a WAIFW (\emph{Who Acquires Infection From Whom}) matrix, $\matr{\beta}$~\autocite[58]{keelingModeling}.
 The force of infection is now a vector, defined as $\vec\lambda(t) = \matr{\beta} \sum_{j=1}^n \vec{i}_j(t)$ where $\vec{i}_j$ is a vector such that $i_{j,a}$ is the proportion of stratum $a$ in the $j$th infectious state.
-Their interpretation can be arrived at by considering a single infectious individual in strata $a'$, analogous to the single stratum case.
+
+$\vec{\lambda}_t$ can be arrived at by considering a single infectious individual in strata $a'$, analogous to the single stratum case.
 Assume any such individual comes into contact with individuals in strata $a$ at a rate $\kappa_{aa'}$ per day.
 % Further, assume that each contact is with an individual chosen uniformly at random from within the strata.
 % For such a randomly selected individual, the probability that they are susceptible is $s_a(t)$.
@@ -426,15 +423,16 @@ A common assumption is symmetry, \ie $\beta_{aa'} = \beta_{a'a}$.
 The choice of assumptions depends on the context, including the disease being studied and the data available.
 
 Reproduction numbers in models with structured populations are more complex than the homogeneous case.
-The WAIFM allows calculation of the number of secondary infections generated by a single infection in the $a$th strata,  this follows directly from its definition as $\frac{1}{\gamma} \sum_{a' \in \set{A}} \beta_{aa'}$. 
+The WAIFM allows calculation of the number of secondary infections generated by a single infection in the $a$th strata,  this follows directly from its definition as $\frac{1}{\gamma} \sum_{a' \in \set{A}} \beta_{a'a}$. 
 However, how to average these contributions to calculate the basic reproduction number is not obvious.
+
 The standard solution to this was proposed by \textcite{diekmannDefinition} (see \textcite[chapter 7]{diekmannMathematical} for a gentler, but still rigorous, explanation).
 First, they show that the distribution of infections across the strata during the initial period of exponential growth (when $\vec{s} \approx \vec{1}$) relies only on $\matr{\beta}$, and not the starting conditions.
 This distribution is proportional to the \emph{dominant eigenvector} (the eigenvector corresponding to the largest eigenvalue) of $\matr{\beta}$.
 Denote by $D(\matr{\beta})$ the \emph{dominant eigenvalue} (the largest eigenvalue) of $\matr{\beta}$.
 The basic reproduction number is then defined as $\R = D(\matr{\beta}) / \gamma$.
 This $\R$ keeps the same interpretation as in the homogeneous case, \ie the average number of secondary infections caused by a single infection in a fully susceptible population, where the average is taken over the distribution implied by the dominant eigenvector.
-The important threshold that exponential growth occurs if and only if $\R > 1$ remains.
+The important threshold that, in the mean-field approximation, exponential growth occurs if and only if $\R > 1$ remains.
 
 Age-based contact patterns are important for the transmission dynamics of respiratory diseases~\autocite{birrellBayesian,jacksonEffects}.
 Respiratory diseases can be spread by conversational contacts, which show very clear age patterns (see \cref{SEIR:fig:age-contacts}).
@@ -447,6 +445,7 @@ In particular, the contacts are \emph{associative} (contacts are more likely bet
 
 \section{Prevalence process} \label{inc-prev:sec:prevalence-process}
 
+The prevalence process is the disease model (see \cref{E-intro:sec:disease-model}) relating incidence and prevalence.
 The relationship between incidence and prevalence can be derived by considering the probability that an individual is prevalent at any time following an infection.
 %I define the period the individual is prevalent for as their \emph{infection episode}.
 %I index infection episodes with $i$.
@@ -455,7 +454,7 @@ The relationship between incidence and prevalence can be derived by considering 
 %The duration of the infection episode, the number of days for which they are prevalent, is $D_i = E_i - B_i + 1$.
 %I assume that the $D_i$s are iid, with a discrete distribution defined by $\prob(D_i = d) = f_D(d)$ for $d = 1, \dots, d_\text{max}$, for some maximum episode length $d_\text{max}$, and $\prob(D_i = d) = 0$ otherwise.
 %Denote by $F_D$ the cdf of $D_i$, that is $F_D(d) = \prob(D_i \leq d)$.
-From this, we can derive the relationship between incidence and prevalence.
+In what follows, I use this to derive the relationship between incidence and prevalence.
 
 Denote by $R_{t,t'}$ the number of infection episodes with $B_i=t$ and $E_i=t'$.
 For any infection beginning at $t$, the probability that it ends at $t'$ is $\prob(E_i = t' \mid B_i = t) = \prob(D_i = t' - t + 1 \mid B_i = t) = f_D(t' - t + 1)$.
@@ -493,7 +492,7 @@ The zeroes in \cref{inc-prev:eq:Ptt-to-R} determine the sum's limits.
 
 In general, all the random variables in this section are dependent.
 This is because they are linked by the $Z_t$s, which are themselves dependent (as explained in \cref{inc-prev:sec:infection-process}).
-However, if we condition on the vector of incidence, $\vec{Z} = (Z_1, Z_2, \dots)^T$, then we will induce some independence.
+However, if we condition on the vector of incidence, $\vec{Z} = [Z_1, Z_2, \dots]^T$, then we will induce some independence.
 This reduces the stochasticity to only that attributable to the prevalence process.
 In particular, because the duration of infection episodes is independent, $R_{t_z,t_p}$ and $R_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$; importantly, this holds even if $t_p = t_p'$.
 Therefore, $P_{t_z,t_p}$ and $P_{t_z',t_p'}$ will be independent if $t_z \neq t_z'$.
@@ -558,7 +557,7 @@ The independence structure simplifies the second moment.
 % However, unlike the previous model, conditioning only on $B_i$ is not sufficient for $Z_i(t)$ and $Z_i(t')$ to be independent because each $Z_i(t)$ provides information on $E_i(t)$ (in particular, $Z_i(t) = 1$ implies $E_i > t$).
 % For SARS-CoV-2, the latter model is more appropriate, although, as we shall see, the assumption that $\psens$ is independent of $t$ is violated.
 
-The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation in the same form as \cref{E-intro:eq:disease-model} with $\zeta = 1$.
+The expectation in \cref{inc-prev:eq:EPt} is a discrete convolution equation in the same form as \cref{E-intro:eq:disease-model} with $\zeta = 1$ and $f(i) = S(i+1)$.
 % The equation is of the same form as the equation used for HIV/AIDS backcalculation, as well as being found in many other fields~\autocite[and references therein]{brookmeyerBackcalculation}.
 
 Considering multiple values of $t$ makes \cref{inc-prev:eq:EPt} into a system of simultaneous equations.
@@ -571,6 +570,7 @@ Therefore, the system can be written in matrix form:
         0 & \text{otherwise.}
     \end{cases} \label{inc-prev:eq:Smatrix}
 \end{align}
+where $\vec{P} = [P_1, P_2, \dots]$.
 In \cref{E-backcalc}, I will need to solve for this system for $\vec{Z}$ given a known $\hat{P} = \E(\vec{P} \mid {Z})$.
 Assuming $\vec{P}$ and $\vec{Z}$ have the same dimension then $\matr{S}$ is lower-triangular with strictly positive diagonal elements; therefore, $\matr{S}$ is invertible, and the system has a unique solution~\autocite[424]{bernsteinFacts}.
 The lower-triangular structure of $\matr{S}$ makes allows solving the system through forward-substitution, an efficient method that avoids explicit matrix inversion~\autocite{cormenMatrix}.
@@ -608,30 +608,27 @@ The variance in \cref{inc-prev:eq:boundVPt} is upper bounded by \cref{inc-prev:e
 The previous sections have explained the processes leading to the population prevalence.
 However, we do not directly observe the population prevalence but a sample of it.
 The sampling is described mathematically by the observation process.
-The survey design considered here reflects the CIS, although it would be applicable to many prevalence surveys.
+I consider the CIS's study design, ignoring the household-based element, although it would be applicable to many prevalence surveys.
 
-On day $t$ (for $t = 1, \dots, T$), a prevalence survey such as the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
-Therefore, I model the number of positive tests, $Y_t$, as $Y_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$.
-The conditioning on $n_t$ and $\Npop$ is implicit in what follows.
+On day $t$ (for $t = 1, \dots, T$), the CIS samples $n_t$ individuals at random from the population of interest and tests if they are prevalent.
+Therefore, I model the number of positive tests, $Y_t$, as $Y_t \mid P_t, n_t, \Npop \dist \Bin(n_t, P_t/\Npop)$; the conditioning on $n_t$ and $\Npop$ is implicit in what follows.
 These quantities are fixed by the study design and population choice, and hence I assume independent of $P_t$ and $Z_t$.
 
-The $Y_t$s are conditionally independent, given the population prevalences at each time, $\vec{P} = (P_1, \dots, P_t)^T$. 
+The $Y_t$s are conditionally independent, given the population prevalences at each time, $\vec{P}$.
 %For now, I assume that the sample is chosen uniformly at random from the population of interest.
 %Assume that the surveys are independent of each other and $\vec{Z}$, conditional on the population prevalence at that time.
 %The population prevalence is a latent quantity.
 I will use prevalence surveys to infer incidence.
-I base this inference on the likelihood, $p(\vec{y} \mid \vec{Z})$.
-Here $\vec{y} = (y_1, \dots, y_T)$ is the vector of observed number of positive tests in the prevalence survey on each day and $\vec{Z} = (Z_{-\dmax}, Z_{-\dmax+1} \dots, Z_T)$ is the vector of incidence on each day.
-The incidence back to day $-\dmax$ will affect $P_1$ and therefore need to be included in $\vec{Z}$. 
+I base this inference on the likelihood, $p(\vec{y} \mid \vec{Z})$, where $\vec{y} = [y_1, \dots, y_T]$ is the vector of observed number of positive tests in the prevalence survey on each day.
 
-This section argues that $p(\vec{y} \mid \vec{Z}) \approx \prob(\vec{X} = \vec{y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z}))$.
+This section argues that $p(\vec{y} \mid \vec{Z}) \approx \prob(\vec{Y} = \vec{y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z}))$.
 As the $y_t$s are independent conditional on $\vec{P}$, it follows that $p(\vec{y} \mid \vec{Z}) \approx \prod_t \prob(Y_t = y_t \mid P_t = \E(P_t \mid \vec{Z}))$.
-This relationship will make inference for $\vec{Z}$ much simpler because the latent vector $\vec{P}$ and the dependence of the $y_t$s can be ignored.
+This relationship makes likelihood-based inference for $\vec{Z}$ much simpler because the latent vector $\vec{P}$ and the dependence of the $y_t$s can be ignored.
 Intuitively, this means that the variance due to the observation process is negligible compared to the variance due to the prevalence process.
 
-The basis of the argument is that the first two moments of $\vec{y} \mid \vec{Z}$ and $\vec{X} \mid \vec{P} = \E(\vec{P} \mid \vec{Z})$ have negligible difference.
+The basis of the argument is that the first two moments of $\vec{y} \mid \vec{Z}$ and $\vec{Y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z})$ have negligible difference.
 The first moment follows directly from the tower property of expectations.
-The majority of the argument is to show that the variance-covariance matrix $\V(\vec{X} \mid \vec{Z}) \approx \V(\vec{X} \mid \vec{P} = \E(P \mid Z))$.
+The majority of the argument is to show that the variance-covariance matrix $\V(\vec{Y} \mid \vec{Z}) \approx \V(\vec{Y} \mid \vec{P} = \E(P \mid Z))$.
 There are two steps to this argument.
 I start with the diagonal elements, the variances.
 I show that $\V(Y_t \mid \vec{Z}) \approx \V(Y_t \mid \vec{P} = \E(\vec{P} = \vec{Z}))$.
@@ -643,7 +640,7 @@ Starting with the variances, by the law of total variance:
     &= \var\left[\E\left( Y_t \mid \vec{Z}, \vec{P} \right) \mid \vec{Z} \right] + \E\left[\var\left( Y_t \mid \vec{Z}, \vec{P} \right) \mid \vec{Z} \right] \\
     &= \var\left( n_t \frac{P_t}{\Npop} \mid \vec{Z} \right) + \E\left( n_t \frac{P_t}{\Npop} \left(1 - \frac{P_t}{\Npop} \right) \mid \vec{Z} \right) &Y_t \mid \vec{P} \dist \Bin \\
     &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t^2 \mid \vec{Z} \right) \\
-    &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \left(\E\left(P_t \mid \vec{Z} \right) ^ 2 + \V(P_t \mid \vec{X})\right) \\
+    &= \left( \frac{n_t}{\Npop} \right)^2 \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \left(\E\left(P_t \mid \vec{Z} \right) ^ 2 + \V(P_t \mid \vec{Z})\right) \\
     &= \frac{n_t(n_t-1)}{\Npop} \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t \mid \vec{Z} \right) ^ 2.
     \label{inc-prev:eq:VY1}
 \end{align}

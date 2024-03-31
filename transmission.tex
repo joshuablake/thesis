@@ -113,10 +113,10 @@ This form of the model includes the MRP prevalence model in \cref{E-biology-data
 
 Properties 3 and 5 suggest the use of an approximate method for computing the posterior distribution.
 A particular issue is that using MCMC, sufficient covariates to adjust for the non-response bias, and a period of more than 6--8 weeks leads to a model that is computationally prohibitive ~\citePersonalComms{Koen Pouwels}.
-Instead, previous MRP implementations for the CIS used INLA (see \cref{E-biology-data:sec:MRP}).
+Instead, previous MRP implementations for the CIS used INLA (as in \cref{E-biology-data:sec:MRP}).
 
 INLA-based inference can only be applied to LGMs (\emph{Latent Gaussian Models}); see \cref{E-transmission:sec:INLA} for further details on INLA and LGMs.
-The LGM framework requires that a transformation of $P_{i,t}$ is linear in $\vec{g} = [g_{{\vec{\varphi}}}(1, 1), \dots, g_{{\vec{\varphi}}}(1, T), \dots, g_{{\vec{\varphi}}}(2, 1), \dots, g_{{\vec{\varphi}}}(I, T)$ where $I$ and $T$ are the number of strata and days respectively.
+The LGM framework requires that a transformation of $P_{i,t}$ is linear in $\vec{g} = [g_{{\vec{\varphi}}}(1, 1), \dots, g_{{\vec{\varphi}}}(1, T), \dots, g_{{\vec{\varphi}}}(2, 1), \dots, g_{{\vec{\varphi}}}(I, T)]^T$ where $I$ and $T$ are the number of strata and days respectively.
 
 If $\pi_{i,t} = P_{i,t}$ then this is trivially satisfied.
 However, if $\pi_{i,t} = Z_{i,t}$, then no such linear relationship exists.
@@ -143,14 +143,14 @@ Z_{i,t}
 \label{transmission:eq:forward-substitute}
 \end{align}
 Dividing each side of \cref{inc-prev:eq:forward-substitute} by the total number of individuals in each stratum transforms the number of prevalent individuals to prevalence and incidence to incidence proportion.
-The algorithm uses a deterministic relationship between incidence and prevalence within a stratum, as \cref{E-inc-prev:sec:observation-process} justifies; \ie, the estimate of the incidence is negligibly affected by approximating the distribution $\vec{P} \mid \vec{Z}$ by its mean.
+The algorithm uses a mean-field approximation to the relationship between incidence and prevalence within a stratum, as \cref{E-inc-prev:sec:observation-process} justifies.
 
 \begin{algorithm}
     \For{$j = 1, \dots, 500$}{
       Set $\vec{P}^{(j)}$ to a posterior sample of $\vec{P}$ \;
       \For{each stratum $i$}{
         \For{$t = -\dmax, \dots, 0$}{
-            $Z^{(j)}_{i,t} = P^{(j)}_{i,1} / \sum_{k=1}^{\dmax} S(k)$
+            Set $Z^{(j)}_{i,t} = P^{(j)}_{i,1} / \sum_{k=1}^{\dmax} S(k)$ \;
         }
         \For{$t = 1, \dots, T$}{
             Set $Z^{(j)}_{i,t} = P^{(j)}_{i,t} - \sum_{k=-\dmax}^{t-1} S(t - k + 1) Z^{(j)}_{i,k}$ \;
@@ -189,6 +189,7 @@ Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_t = P_1 / \sum_{i=1}^{\dma
 
 Violation of assumptions in various parts of this procedure can lead to the second term in \cref{transmission:eq:forward-substitute} to be greater than the first, giving negative incidence.
 In this case, the incidence prior to day $t$ imply that the prevalence on day $t$ is higher than that predicted by the fitted regression model for this strata/day combination.
+In this case, I replace the negative value for $Z_{i,t}$ with zero.
 
 For each posterior sample of $\vec{Z}$, I poststratify it to the CIS target population and subpopulations of interest, using the same basic method as in \cref{E-biology-data:sec:MRP}.
 Specifically, define a (sub)population of interest as a set of strata $\set{S}$.
@@ -237,7 +238,7 @@ The incidence proportion in the 17--25 age group decreases faster than other age
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
 Alternatively, it could be a consequence of schools remaining open in the November lockdown; 20--24 year olds rarely interact with school-aged children (see \cref{E-SEIR:fig:age-contacts})
-Many other explanations are possible, and further work is required to determine causality.
+Further work is required to determine causality.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{transmission/backcalc-ages}}
     \caption[Incidence estimated using the phenomenological approach by age group]{%
@@ -253,7 +254,7 @@ Therefore, the first day's estimate is unreliable, and has been excluded from al
 However, the rest of the series is robust to this assumption.
 \begin{figure}
     \centering \includegraphics{transmission/backcalc-start-effect}
-    \caption[Edge effects in the phenomenological approach method]{%
+    \caption[Edge effects in the phenomenological approach]{%
         First seven days of incidence proportion estimate for the whole of England, highlighting the edge effect.
     }
     \label{transmission:fig:backcalc-start-effect}
@@ -287,6 +288,7 @@ The application of this framework follows \textcite{birrellRealtime}.
 The largest modification from the generic framework presented in \cref{E-SEIR} is the parameterization of the WAIFW matrix (\cref{SEIR:sec:WAIFW-application}).
 A novel approach (\cref{SEIR:sec:observation}) links this transmission model to the CIS prevalence data; the approach is generalisable to other studies collecting representative prevalence data, \eg REACT.
 In the mechanistic modelling literature, this part of the model is referred to as the observation model, however, in the terminology of \cref{E-inc-prev}, it includes both the prevalence process and the observation process.
+
 Having specified the full model (\cref{SEIR:sec:methods-application}), I conducted a simulation study to validate the inference process and identifiability (\cref{SEIR:sec:sim-study}), before applying the model to the CIS data (\cref{SEIR:sec:application}).
 In \cref{SEIR:sec:discussion}, I discuss the results; in \cref{transmission:sec:comparison} I compare the results to those in the previous section.
 
@@ -396,7 +398,7 @@ Applying the package to the posterior mean of the distribution estimated in \cre
 % end table of ec params
 
 I link the modelled proportion of individuals that are RT-PCR positive to the data using a beta-binomial likelihood (as discussed in \cref{E-biology-data:sec:clustering}).
-If on each day $t$, each stratum $i$ is observed to have $y_{at}$ positives out of $n_{at}$ tests, then the likelihood is:
+If on each day $t$, each stratum $a$ is observed to have $y_{at}$ positives out of $n_{at}$ tests, then the likelihood is:
 \begin{align}
     \prod_{a,t} \BB (y_{at} \mid n_{at}, \bar{p}_{at}, \rho)
     \label{SEIR:eq:likelihood}
@@ -528,7 +530,7 @@ Equating the expressions for $d\vec{i}_2/dt$ in \cref{SEIR:eq:fullODEs} and \cre
     \vec{i}_2(0) &= \vec{i}_0 - \vec{i}_1(0).
 \end{align}
 
-Equating the expressions in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth}, gives the following solution for the initial state of several compartments.
+Equating the expressions in \cref{SEIR:eq:fullODEs} and \cref{SEIR:eq:exponential-growth}, gives the following solution for the initial state of most of the compartments.
 \begin{align}
     \vec{e}_2(0) &= \vec{i}_1(0) \frac{\psi + 2\gamma}{2\sigma} \\
     \vec{e}_1(0) &= \vec{e}_2(0) \frac{\psi + 2\sigma}{2\sigma} \\
@@ -545,7 +547,7 @@ I compute the posterior distribution using MCMC.
 Specifically, I use an adaptive random-walk Metropolis--Hastings algorithm (discussed in \cref{E-MCMC}).
 The proposal distribution is a multivariate normal that adapts to the covariance of the posterior.
 The adaptive algorithm is based on \textcite[algorithm 4]{andrieuTutorial}, with the implementation based on \textcite{ghoshApproximate}'s work.
-Proposals are accepted or rejected using the standard Metropolis--Hastings (MH) acceptance probability.
+Proposals are accepted or rejected using the standard Metropolis--Hastings acceptance probability.
 See \cref{SEIR:MCMC-algorithm} for full details.
 
 \begin{algorithm}
@@ -646,7 +648,7 @@ Therefore, inference was performed using the University of Cambridge high-perfor
 
 \subsection{Simulation study} \label{SEIR:sec:sim-study}
 
-I ran a simulation study to study the inference procedure's performance and the model's practical identifiability.
+I ran a simulation study to investigate the inference procedure's performance and the model's practical identifiability.
 I generated 100 simulated datasets representing the East of England using the following procedure.
 
 First, I drew 100 parameter sets drawn from the priors (see \cref{SEIR:table:priors}), except that the prior on $\psi$ was $\LN(0.048, 0.0035)$.
@@ -655,7 +657,7 @@ The weakly informative prior, used for the main analysis, allows a wide range of
 The prior for $\vec{\pi}$ was the same as the East of England.
 
 Next, I solved the ODE system in \cref{SEIR:eq:fullODEs} for each parameter set.
-All other aspects of the ODEs, including the data-informed contact matrices, $\matr{\kappa}$, are as previously described in this section.
+All other aspects of the ODEs, including the data-informed contact matrices, $\matr{\kappa}(t)$, are as previously described in this section.
 Population sizes were those of the East of England, and the time period the same as the main analysis.
 This means that the simulations created realistic incidence and prevalence curves (see \cref{SEIR:fig:sim-data}).
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
@@ -675,7 +677,7 @@ These were generated according to the likelihood, \cref{SEIR:eq:likelihood}.
 The daily number of tests was set to the mean of what CIS performed in the region over this period (\numprint{1630}), distributed across the population in proportion to its size.
 
 Having generated 100 datasets, I used the inference procedure in \cref{SEIR:sec:inference} to find the posterior distribution conditional on each dataset.
-Hence, I ended up with 100 parameter sets distributed according to the priors (the ``generative values"), with an associated dataset and posterior distribution for it.
+Hence, I ended up with 100 parameter sets distributed according to the priors (the ``generative values''), with an associated dataset and posterior distribution for it.
 
 To check the performance of the inference procedure, I calculated the coverage of the 50\%, 75\%, and 95\% central credible intervals for each posterior distribution.
 Define coverage for a parameter as the proportion of credible intervals for that parameter containing the generative value.
@@ -705,7 +707,7 @@ The same issue arises with the coverage for derived quantities incidence and pre
 \end{figure}
 
 
-In this set-up, the parameters $i^+$, $q_c$, and $\psi$ are fully identified; $\pi_0$ is not identified at all; the other parameters are partially identified, their posterior has moved away from the prior but there is insufficient information in the data to fully overcome the prior (see \cref{SEIR:fig:true-vs-posterior}).
+In this set-up, the parameters $i^+$, $q_c$, and $\psi$ are fully identified; $\pi_0$ and $\rho$ are not identified at all; the other parameters are partially identified, their posterior has moved away from the prior but there is insufficient information in the data to fully overcome the prior (see \cref{SEIR:fig:true-vs-posterior}).
 The ability to identify $q_c$ is an advantage of using data which includes measurements on children, unlike data on hospitalisations or deaths.
 
 For $\vec{\pi}$ and $\rho$, the correlation between the posterior median and the generative value is weak (see \cref{SEIR:fig:true-vs-posterior}).
@@ -765,7 +767,7 @@ The attack rate is highest in the 12--16 age group in the North West at 68\% (95
 Some of these infections occurred prior to the period covered by this study; during the period of this study 23\% (95\% CrI: 21--24\%) of the population in the North West aged 11--16 was infected.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/attack_rates}}
-    \caption{Posterior median and 95\% CrI of the attack rate in each region and age group.}
+    \caption[Posterior estimates of the attack rate.]{Posterior median and 95\% CrI of the attack rate in each region and age group.}
     \todo[inline]{Maybe compare this to blood donors, as used in the prior.}
     \label{SEIR:fig:attack-rates}
 \end{figure}
@@ -872,7 +874,7 @@ This is a specific case of a larger pattern: the SEIR model produces smoother es
     \label{transmission:fig:compare-regions}
 \end{figure}
 
-These patterns can be interpreted as an instance of the common bias---variance trade-off.
+These patterns can be interpreted as an instance of the common bias--variance trade-off.
 The SEIR model imposes stronger assumptions about the epidemic dynamics.
 The assumptions reduce the variance of the estimates, including by making them smoother, but if the assumptions are incorrect, bias is introduced.
 Furthermore, the SEIR model does not fully adjust for the non-response bias.
