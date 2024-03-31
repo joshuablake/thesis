@@ -8,18 +8,16 @@
 \chapter{Data generating processes} \label{inc-prev}
 
 This chapter formally defines incidence and prevalence, and the relationship between them and prevalence survey data.
-In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major aim of this thesis.
+In the course of explaining this relationship, it will become clear that the duration of RT-PCR positivity, and its distribution in the population, is the vital parameter which will allow estimation of incidence from prevalence, a major component of the aim of this thesis.
 
 I start by defining these terms in \cref{inc-prev:sec:definitions}.
-I then explain the three relevant models: one for the infection process (\cref{inc-prev:sec:infection-process}); one for the prevalence process, the relevant disease model (\cref{inc-prev:sec:prevalence-process}) linking infections to prevalence; and finally the observation process for a prevalence survey like the CIS (\cref{inc-prev:sec:observation-process}).
-
-\Cref{inc-prev:sec:conclusion} concludes the chapter.
+I then explain the three relevant models: one for the infection process (\cref{inc-prev:sec:infection-process}); one for the prevalence process, the relevant disease model that links infections to prevalence (\cref{inc-prev:sec:prevalence-process}); and finally the observation process for a prevalence survey like the CIS (\cref{inc-prev:sec:observation-process}).
 
 \section{Definitions} \label{inc-prev:sec:definitions}
 
-I use discrete time in this chapter, except in \cref{SEIR:sec:mechanistic-models}, with the time unit of a day. However, results generalise in the obvious way to other time units.
+I use discrete time in this chapter, except in \cref{SEIR:sec:mechanistic-models}, with the time unit of a day; results generalise in the obvious way to other time units.
 I choose discrete time for pragmatic reasons.
-Most epidemiological data are only available at daily granularity or, when more granular data exists, is often unreliable.
+Most epidemiological data are only available at daily granularity or, when more granular data exists, are often unreliable.
 Furthermore, within-day patterns produce variations in transmission (\eg due to sleep) and data (\eg due to logistical considerations around collection), but these variations are not of interest in most contexts.
 
 \emph{Incidence} $Z_t$, is the number of people in a given population who become infected on day $t$.
@@ -27,14 +25,14 @@ When expressed as a proportion of the population it is the \emph{incidence propo
 
 \emph{Prevalence} of a disease on day $t$, is the proportion of people with the disease on that day~\autocite[90]{lashModern}.
 I refer to individuals with the disease as \emph{prevalent} individuals.
-What is meant by ``having'' a disease can depend on context; for example, it could be the presence of symptoms, the ability to transmit, or detectable status (the difference between these was discussed in \cref{E-biology-data:sec:natural-history})
+What is meant by ``having'' a disease can depend on context; for example, it could be the presence of symptoms, the ability to transmit, or detectable status (the difference between these was discussed in \cref{E-biology-data:sec:natural-history}).
 Within this thesis, I define an individual as prevalent on day $t$ if they are detectable (detectable is defined in \cref{E-biology-data:sec:detectable}).
 I assume that an individual's prevalent status cannot change over the course of a day.
 Therefore, prevalence is constant over any single day $t$.
 I denote the number of prevalent individuals on day $t$ as $P_t$; hence, the prevalence is $P_t/\Npop$.
-$P_t$ corresponds with $W_t$ in \cref{E-intro:eq:disease-model}.
+$P_t$ corresponds to $W_t$ in \cref{E-intro:eq:disease-model}.
 
-\emph{Duration}, or \emph{time-to-event}, distributions are expressed in several equivalent ways~\autocite[17]{sunStatisticala}.
+\emph{Duration}, or \emph{time-to-event}, distributions can be expressed in several equivalent ways~\autocite[17]{sunStatisticala}.
 The duration distribution I will be concerned with is the distribution of the duration of detectability.
 Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$ (as in \cref{E-biology-data:sec:cis-episodes}).
 I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$; therefore, with a duration $D_i = E_i - B_i + 1$.
@@ -50,7 +48,7 @@ Since $D_i$ is a discrete random variable, $0 \leq f_D(d) \leq 1$ for all $d$ an
 By definition, $F_D(d) \in [0, 1]$ and increases monotonically.
 Therefore, $S(d) \in [0, 1]$ and decreases monotonically.
 Similarly, $\lambda_{d} \in [0,1]$, but can otherwise vary arbitrarily (\ie there is no monotonic or sum constraint).
-The lack of monotonicity or sum constraint on the hazard makes it an attractive parameterization for inference because these constraints are challenging to implement in many inference frameworks~\autocite{heBayesian}.
+The lack of monotonicity or sum constraint on the hazard makes it an attractive parameterization for inference because these constraints are challenging to enforce in many inference frameworks~\autocite{heBayesian}.
 
 \section{Infection process} \label{inc-prev:sec:infection-process}
 
@@ -85,7 +83,7 @@ That is, for any $t_1 < t_2 < t_3 < t_4$, $K(t_2) - K(t_1)$ and $K(t_4) - K(t_3)
 In the context of a Poisson process, the independent increment property implies that, conditional on $\nu(r)$, the number of infections in disjoint intervals are independent.
 Hence, $Z_t$ and $Z_{t'}$ are independent for $t \neq t'$.
 
-In an epidemic, there are two features of a Poisson process: the underlying process intensity, $\nu(r)$, and the single realisation that occurred, $K(t)$; either of these can be the target of inference.
+In an epidemic, there are two relevant quantities of a Poisson process: the underlying process intensity, $\nu(r)$, and the single realisation that occurred, $K(t)$; either of these can be the target of inference.
 The realised counts are normally of greater interest because we care about the realised epidemic, not what may happen if there were future realisations of the same epidemic~\autocite{beckerDependent,brookmeyerMethod}.
 
 Two features of a Poisson process are violated for epidemics.
@@ -98,7 +96,7 @@ Overdispersion is common in infectious diseases, especially for coronaviruses su
 
 % A common cause of overdispersion is super-spreading events~\autocite{lloyd-smithSuperspreading}.
 % A super-spreading event is an event where many more people than average are infected.
-% That is, $Z_t >> \E(Z_t)$ for some $t$ during which a super-spreading event occurs.
+% That is, $Z_t \gg \E(Z_t)$ for some $t$ during which a super-spreading event occurs.
 % Coronaviruses, such as SARS-CoV-2, have particularly high overdispersion~\autocite{endoEstimating,adamClustering}{mccloskeySARS}.
 % An infamous example of a SARS-CoV-2 super-spreading event was the Skagit County choir practice in March 2020~\autocite{hamnerHigh}.
 % One infected individual is thought to have infected at least 32 further individuals during a single choir practice.
@@ -141,12 +139,12 @@ Compartmental models can be \emph{deterministic} or \emph{stochastic}.
 
 Stochastic models are specified by a probability distribution for the current state $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta})$, where $\set{H}_t = \{ \vec{x}(t') \ssep t' < t \}$ is the epidemic's history and $\vec{\theta}$ are model parameters~\autocite{birrellEvidence,dukicTracking,corbellaThesis,keelingModeling}.
 A common simplification is to use discrete time and a Markov assumption, \ie $\vec{x}(t)$ is only defined for integer $t$ and $p(\vec{x}(t) \mid \set{H}_t, \vec{\theta}) = p(\vec{x}(t) \mid \vec{x}(t-1), \vec{\theta})$ respectively; the Markov assumption means that the state at time $t$ only depends on the state at time $t-1$~\autocite{birrellEvidence}.
-$x(t)$ and $x(t-1$ are now dependent, relaxing the assumption of independent increments in the Poisson process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
+$x(t)$ and $x(t-1)$ are now dependent, relaxing the assumption of independent increments in the Poisson process formulation of the infection process (see \cref{E-inc-prev:sec:infection-process}).
 
-Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \vec{x}(0), \theta) = \matr{0}$~\autocite{birrellEvidence}.
+Deterministic models are defined by the state vector $\vec{x}(t)$ being a deterministic function of the parameters $\vec{\theta}$ and the initial state $\vec{x}(0)$; equivalently, $\var(\vec{x}(t) \mid \vec{x}(0), \vec\theta) = \matr{0}$~\autocite{birrellEvidence}.
 Deterministic models are also known as \emph{mean-field} models because they represent the mean behaviour of a corresponding stochastic model.
 When the number of infectious individuals is large, the law of large numbers implies that the mean-field behaviour is a good approximation of the fully stochastic model~\autocite[20]{diekmannMathematical}.
-The approximation works especially well if used to make inference based on noisy observations of the system, when the observation noise is much larger than the infection process noise; I make a formalisation of this argument to justify a mean-field approximation of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
+The approximation works especially well if used to make inference based on noisy observations of the system, when the observation noise is much larger than the infection process noise; I make a formalisation of this form of argument to justify a mean-field approximation of the prevalence process in \cref{E-inc-prev:sec:observation-process}.
 
 The remainder of this section uses only deterministic models.
 This choice is appropriate for the context of this thesis because there were many individuals infectious with SARS-CoV-2 in the time period considered in this thesis.
@@ -626,7 +624,7 @@ As the $y_t$s are independent conditional on $\vec{P}$, it follows that $p(\vec{
 This relationship makes likelihood-based inference for $\vec{Z}$ much simpler because the latent vector $\vec{P}$ and the dependence of the $y_t$s can be ignored.
 Intuitively, this means that the variance due to the observation process is negligible compared to the variance due to the prevalence process.
 
-The basis of the argument is that the first two moments of $\vec{y} \mid \vec{Z}$ and $\vec{Y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z})$ have negligible difference.
+The basis of the argument is that the first two moments of $\vec{Y} \mid \vec{Z}$ and $\vec{Y} \mid \vec{P} = \E(\vec{P} \mid \vec{Z})$ have negligible difference.
 The first moment follows directly from the tower property of expectations.
 The majority of the argument is to show that the variance-covariance matrix $\V(\vec{Y} \mid \vec{Z}) \approx \V(\vec{Y} \mid \vec{P} = \E(P \mid Z))$.
 There are two steps to this argument.
@@ -644,11 +642,11 @@ Starting with the variances, by the law of total variance:
     &= \frac{n_t(n_t-1)}{\Npop} \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right)  - \frac{n_t}{\Npop^2} \E\left(P_t \mid \vec{Z} \right) ^ 2.
     \label{inc-prev:eq:VY1}
 \end{align}
-In the CIS $n_t << \Npop$ because $\Npop$ is the population of England (around 56 million) while $n_t$ is the daily sample size (10s of thousands).
+In the CIS $n_t \ll \Npop$ because $\Npop$ is the population of England (around 56 million) while $n_t$ is the daily sample size (10s of thousands).
 Therefore:
 \begin{align}
     \frac{n_t(n_t - 1)}{\Npop^2} \var\left(P_t \mid \vec{Z} \right)
-    &<< \frac{n_t}{\Npop} \var\left(P_t \mid \vec{Z} \right) \\
+    &\ll \frac{n_t}{\Npop} \var\left(P_t \mid \vec{Z} \right) \\
     &\leq \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) &\text{by \cref{inc-prev:eq:boundVPt}}.
 \intertext{Therefore:}
 \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right) &\approx\frac{n_t(n_t-1)}{\Npop} \var\left(P_t \mid \vec{Z} \right) + \frac{n_t}{\Npop} \E\left(P_t \mid \vec{Z} \right).
@@ -660,7 +658,7 @@ Therefore:
 \end{align}
 which is the required result.
 
-A similar argument will show that the correlation between $y_t$ and $y_{t'}$ ($t \neq t'$) is negligible.
+A similar argument will show that the correlation between $Y_t$ and $Y_{t'}$ ($t \neq t'$) is negligible.
 The basic structure of this argument is as the previous one.
 The result follows because the observation noise dominates, and this is uncorrelated.
 In the following, all are implicitly conditioned on $\vec{Z}$.
@@ -671,7 +669,7 @@ However, for clarity I omit the conditioning from the notation.
   &= \frac{\lvert \E(\cov(Y_t, Y_{t'} \mid \vec{P})) + \cov(\E(Y_t \mid \vec{P}), \E(Y_{t'} \mid \vec{P})) \rvert}{\sqrt{\var(Y_t) \var(Y_{t'})}} &\text{by law of total covariance} \\
   &= \frac{\lvert 0 + \cov(n_t P_t / \Npop, n_{t'} P_{t'} / \Npop) \rvert}{\sqrt{\var(Y_t) \var(Y_{t'})}} \\
   &= \frac{n_t n_{t'} \lvert \cov(P_t, P_{t'}) \rvert}{\Npop^2 \sqrt{\var(Y_t) \var(Y_{t'})}}  \\
-  &<< \frac{n_t n_{t'} \lvert \cov(P_t, P_{t'}) \rvert}{\Npop^2 \sqrt{\var(P_t) \var(P_{t'})}} &\text{as $\V(Y_t) >> \V(P_t)$} \\
+  &\ll \frac{n_t n_{t'} \lvert \cov(P_t, P_{t'}) \rvert}{\Npop^2 \sqrt{\var(P_t) \var(P_{t'})}} &\text{as $\V(Y_t) \gg \V(P_t)$} \\
   &= \frac{n_t n_{t'}}{\Npop^2} \lvert \cor(P_t, P_{t'}) \rvert &\text{by def of $\cor$}\\
   &\leq \frac{n_t n_{t'}}{\Npop^2} &\text{as $\lvert \cor(\cdot) \rvert \leq 1$}.
 \end{align}
