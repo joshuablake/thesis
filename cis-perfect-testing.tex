@@ -191,7 +191,7 @@ Test results are deterministic based on the time of the test and the individual'
 Therefore, $O(j)$ is fully determined by the triplet $(b_j, e_j, i(j))$ consisting of $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
 The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
 
-If $j$ is detected, then $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{e}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)}$ and $r_j^{(b)}$ are the earliest and latest time the episode could have begun respectively; and $l_j^{(e)}$ and $r_j^{(e)}$ are the earliest and latest time the episode could have ended respectively.
+If $j$ is detected, then $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)}$ and $r_j^{(b)}$ are the earliest and latest time the episode could have begun respectively; and $l_j^{(e)}$ and $r_j^{(e)}$ are the earliest and latest time the episode could have ended respectively.
 
 If $j$ is undetected, there are no observations; in which case, define $O(j) = \emptyset$.
 Let $\nnodet$ denote the (latent) number of undetected episodes experienced across all $\Ncis$ individuals.
@@ -207,7 +207,7 @@ Therefore, the total number of infection episodes in the cohort is $\ntot = \nde
 \subsection{Posterior density} \label{perf-test:sec:posterior}
 
 Define an integer $N_E$ and $\set{E} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_E} \}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{E}$ if and only if $j$ is a detected infection.
-Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{e}_k, i_k]^T$ be an arbitrary vector of possible observations, visualised in \cref{perf-test:fig:partitionSpace}; the conditions for $\vec{\nu}_k \in \set{E}$ are in \cref{perf-test:sec:conditions-nu-E}.
+Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ be an arbitrary vector of possible observations, visualised in \cref{perf-test:fig:partitionSpace}; the conditions for $\vec{\nu}_k \in \set{E}$ are in \cref{perf-test:sec:conditions-nu-E}.
 
 The target of inference is $\vec{\theta}$, the parameters of the survival function $S_{\vec{\theta}}(t)$.
 The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-priors}.
@@ -233,7 +233,7 @@ Then:
 \thisfloatpagestyle{empty}
 \caption[Episode regions]{%
   Each dot is a combination of $b_j$ and $e_j$ for an arbitrary individual $i$.
-  Each box, bounded by dashed lines, are combinations giving $O(j) = \nu_k$, $k$ corresponding to the numeric label; labels are arbitrary but unique across all individuals.
+  Each box, bounded by dashed lines, are combinations giving $O(j) = \vec{\nu}_k$, $k$ corresponding to the numeric label; labels are arbitrary but unique across all individuals.
   $i$ had negative tests at times 0, 7, 14, 56, and 84 (not shown) and positive tests at times 21 and 28.
   The purple region corresponds to the doubly interval censored episode in this individual.
   That is, $n_8 = 1$ and $n_k = 0$ for $k = 1, \dots, 7, 9, \dots, 15$.
@@ -263,7 +263,7 @@ p(\vec{\theta} \mid \na)
 &= p(\vec\theta) \sum_{\ntot= \ndet}^{\infty} p(\ntot, \na \mid \vec{\theta}) \\
 &= p(\vec{\theta}) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) p(\na \mid \ntot, \vec{\theta}) \\
 &= p(\vec{\theta}) \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \prod_{k \in \set{D}} p_k &\text{by \cref{perf-test:eq:multinomial}} \\
-&= p(\vec{\theta}) \left( \prod_{k \in \set{D}} p_k \right) \left( \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right)
+&= p(\vec{\theta}) \left( \prod_{k \in \set{D}} p_k \right) \left( \sum_{\ntot=\ndet}^\infty p(\ntot \mid \vec{\theta}) \frac{\ntot!}{(\ntot - \ndet)!} \pnodet^{\ntot - \ndet} \right).
 \label{perf-test:eq:posterior1}
 \intertext{For convenience, define the summation term as:}
 \eta &= 
@@ -323,20 +323,20 @@ p(\vec{\theta} \mid \na)
 
 \subsection{Deriving $p_k$}
 
-Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ are the observations of episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{e}_k, i_k]^T$.
+Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ are the observations of episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$.
 
 Decompose $p_k$ as $p_k = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$
 where $p_{ik} = \prob(O(j) = \vec{\nu}_k \mid i(j) = i_k, \vec{\theta})$.
 % This is valid as $\prob(O(j) = \nu_k \mid i(j) \neq i_k) = 0$ due to the condition here being equivalent to equating the two vectors' final elements.
 Assume that each infection episode occurs independently and with equal probability in any individual, \ie $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
 
-If $i(j) = i_k$ then the event $O(j) = \vec{\nu}_k$ occurs if and only if the episode starts in the interval $[l^{(b)}_k, r^{(b)}_k]$ and ends in the interval $[l^{(e)}_k, r^{e}_k]$.
+If $i(j) = i_k$ then the event $O(j) = \vec{\nu}_k$ occurs if and only if the episode starts in the interval $[l^{(b)}_k, r^{(b)}_k]$ and ends in the interval $[l^{(e)}_k, r^{(e)}_k]$.
 Omitting the conditioning on $\vec{\theta}$ and $i(j) = i$, this gives:
 \begin{align}
 p_{ik}
 =& \prob \left( l_k^{(b)} \leq B_{j} \leq r_k^{(b)}, l_k^{(e)} \leq E_{j} \leq r_k^{(e)} \right) \\
 =& \prob \left( l_k^{(e)} \leq E_{j} \leq r_k^{(e)} \mid l_k^{(b)} \leq B_{j} \leq r_k^{(b)} \right) \times\prob \left( l_k^{(b)} \leq B_{j} \leq r_k^{(b)} \right) \\
-=& \sum_{b = l_k^{(l)}}^{r_k^{(b)}} \prob \left( l_k^{(e)} \leq E_{j} \leq r_k^{(e)} \mid B_{j} = b \right) \prob \left(B_{j} = b \right) \\
+=& \sum_{b = l_k^{(b)}}^{r_k^{(b)}} \prob \left( l_k^{(e)} \leq E_{j} \leq r_k^{(e)} \mid B_{j} = b \right) \prob \left(B_{j} = b \right) \\
 =& \sum_{b = l_k^{(b)}}^{r_k^{(b)}} \prob \left( l_k^{(e)} - b + 1 \leq D_{j} \leq r_k^{(e)} - b + 1 \right) \prob \left(B_{j} = b \right) &\text{by def of $D_{j}$} \\
 =& \sum_{b = l_k^{(b)}}^{r_k^{(b)}} \left( S_{\vec{\theta}}(l_k^{(e)} - b + 1) - S_{\vec{\theta}}(r_k^{(e)} - b + 2) \right) \prob \left(B_{j} = b \right) &\text{by def of $S_{\vec{\theta}}$} \\
 \propto& \sum_{b = l_k^{(b)}}^{r_k^{(b)}} \left( S_{\vec{\theta}}(l_k^{(e)} - b + 1) - S_{\vec{\theta}}(r_k^{(e)} - b + 2) \right)
@@ -359,7 +359,7 @@ Therefore:
   \label{perf-test:eq:pu}
 \end{align}
 assuming $P(i(j) = i \mid \vec{\theta}) = 1/\Ncis$ as before.
-Let $p_{iu} = \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta})$.
+Let $p_{iu} = \prob(O(j) = \emptyset \mid i(j) = i, \vec{\theta})$.
 Therefore, the crucial component is $1 - p_{iu}$.
 This is one minus the probability that an episode in individual $i$ was undetected, \ie the probability of the episode being detected.
 
@@ -399,7 +399,7 @@ Therefore, omitting the conditioning on $\vec{\theta}$ and $i(j) = i$:
 % &= 1 - \prob((B_{j}, E_{j}) \in \Omega_i) \\
 &= \prob(D_j \geq \tau_{\sched_{i}}(B_j)+ 1, \min \sched_{i(j)} < B_j \leq T_{i(j)}) \\
 &= \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} \prob(D_j \geq \tau_{\sched_{i}}(b) + 1 \mid B_j = b) \prob(B_j = b)\\
-&= \frac{1}{T} \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} S_{\vec{\theta}}(\tau_{\sched_{i}}(b) + 1).
+&\propto \sum_{b = \min \sched_{i} + 1}^{T_{i(j)}} S_{\vec{\theta}}(\tau_{\sched_{i}}(b) + 1).
 \label{perf-test:eq:piu}
 \end{align}
 

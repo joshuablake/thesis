@@ -4,9 +4,9 @@
 
 \chapter{Defining possible observations} \label{perf-test:sec:conditions-nu-E}
 
-Let $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{e}, i]^T$ be an arbitrary vector of possible observations, $\vec{\nu} \in \set{E}$ if and only if all the following conditions hold.
+Let $\vec{\nu} = [l^{(b)}, r^{(b)}, l^{(e)}, r^{(e)}, i]^T$ be an arbitrary vector of possible observations, $\vec{\nu} \in \set{E}$ if and only if all the following conditions hold.
 \begin{enumerate}
-  \item $l^{(b)} 1, r^{(b)}, l^{(e)}, r^{e} + 1 \in \sched_{i}$, that is individual ${i}$ was tested at all these times.
+  \item $l^{(b)} 1, r^{(b)}, l^{(e)}, r^{(e)} + 1 \in \sched_{i}$, that is individual ${i}$ was tested at all these times.
   \item $l^{(b)} \leq r^{(b)} \leq l^{(e)} \leq r^{(e)}$.
   \item $r^{(b)} = \min\{t \in \sched_{i} \ssep t \geq l^{(b)}\}$, that is $r^{(b)}$ is the first time at or after $l^{(b)}$ that individual ${i}$ was tested.
   \item $r^{(e)} = \min\{t \in \sched_{i} \ssep t > l^{(e)}\} - 1$, that is $r^{(e)}$ is the day before the next time after $l^{(e)}$ that individual ${i}$ was tested.
