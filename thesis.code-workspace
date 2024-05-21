@@ -82,7 +82,7 @@
 			{
 				"name": "make",
 				"command": "make",
-				"args": ["%DOCFILE%.pdf", "--directory=%WORKSPACE_FOLDER%"]
+				"args": ["%DOCFILE%.pdf", "--directory=%DIR%"]
 			},
 			{
 				"name": "latexrun",
