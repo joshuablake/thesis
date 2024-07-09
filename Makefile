@@ -216,3 +216,19 @@ paper-surv-analysis.pdf: paper-surv-analysis.tex $(IMPERF_DEPS) $(PERF_DEPS) $(S
 
 cis-perf-new-ll.pdf: cis-perf-new-ll.tex $(SHARED_DEPS)
 	$(LATEX_CMD)
+
+
+
+#####################################################
+## DIFFS
+
+diff: thesis-diff.pdf thesis-diff-list.pdf
+
+thesis-diff.pdf: thesis-diff.tex FORCE
+	$(LATEX_CMD)
+
+thesis-diff.tex: thesis.pdf
+	latexdiff ../thesis-repos/orig-submission/thesis.tex thesis.tex --flatten --math-markup=3 > thesis-diff.tex
+
+thesis-diff-list.pdf: generate_changes_report.py thesis-diff.tex
+	python3 $< thesis-diff.tex $@

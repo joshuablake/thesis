@@ -317,3 +317,6 @@ CIS-intro-extraction/
 ## Files for misc purposes
 tmp*.tex
 *.docx
+
+## Intermediatary files for diff
+thesis-diff.tex
