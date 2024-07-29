@@ -201,7 +201,7 @@ where $Z_t$ is the incidence at time $t$; $\zeta$ is the proportion of infection
 $f$ is an example of a \emph{delay function}, and $f$ is commonly the pdf of a distribution, or a transformation of it.
 
 Solving \cref{intro:eq:disease-model} for $Z$ is an ill-posed problem.
-The forwards error of the solution is large when $\max_{i > 0} f(i) / f(0)$~\autocite[chapter 8.2]{highamAccuracy}.
+The forwards error of the solution is large when $\max_{i > 0} f(i) / f(0)$~\autocite[chapter 8.2]{highamAccuracy} is large.
 A large forwards error means that the computed value is far from the true solution~\autocite[6--9]{highamAccuracy}; this is avoided by either using an approach which gives a large $f(0)$ or smoothing $Z_t$.
 
 \section{Observation models}
