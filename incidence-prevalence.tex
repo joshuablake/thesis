@@ -34,7 +34,7 @@ $P_t$ corresponds to $W_t$ in \cref{E-intro:eq:disease-model}.
 
 \emph{Duration}, or \emph{time-to-event}, distributions can be expressed in several equivalent ways~\autocite[17]{sunStatisticala}.
 The duration distribution I will be concerned with is the distribution of the duration of detectability.
-Consider an individual $i$ infected on day $B_i$ that is prevalent during the interval $[B_i, E_i]$ (as in \cref{E-biology-data:sec:cis-episodes}).
+Consider an individual $i$ infected on day $B_i$ that is prevalent during the inclusive interval $[B_i, E_i]$ (as in \cref{E-biology-data:sec:cis-episodes}); if $B_i = E_i$ then $i$ is prevalent for exactly one day during which they are detectable.
 I define this period as an \emph{infection episode}, beginning on day $B_i$ and ending on day $E_i$; therefore, with a duration $D_i = E_i - B_i + 1$.
 I model the $D_i$s as a discrete iid (independent and identically distributed) random variables; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
