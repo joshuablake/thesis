@@ -188,7 +188,7 @@ Each individual has exactly one test schedule, but it is possible that $\sched_i
 I assume that the test schedules are uninformative on all quantities of interest because they are part of the study design.
 Therefore, I condition on them implicitly in all probabilities that follow.
 
-For any episode $j$, define $O(j)$ as the observations of that episode.
+For any episode $j$, define $O(j)$ as the observations of that episode; $j = 1, \dots, \ntot$ where $\ntot$ is the total number of infection episodes in the cohort.
 Test results are deterministic based on the time of the test and the individual's infection status.
 Therefore, $O(j)$ is fully determined by the triplet $(b_j, e_j, i(j))$ consisting of $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
 The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
@@ -197,7 +197,7 @@ If $j$ is detected, then $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(
 
 If $j$ is undetected, there are no observations; in which case, define $O(j) = \emptyset$.
 Let $\nnodet$ denote the (latent) number of undetected episodes experienced across all $\Ncis$ individuals.
-Therefore, the total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$ and I index them with $j = 1, \dots, \ntot$.
+Therefore, the total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$.
 
 % Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively; and $i(j)$ is the individual the episode occurred in.
 % $i(j)$ identifies the test schedule.
