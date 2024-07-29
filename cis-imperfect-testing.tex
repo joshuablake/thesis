@@ -152,7 +152,7 @@ Denote the elements of $\sched'_k$ by $t_{k,1} < \dots < t_{k,m_k}$.
 Let $\set{E}' = \{ \vec{\nu}_1', \dots, \vec{\nu}_{N_E'}' \}$ be a new set of possible observations of detected episodes, including the pattern of positive and negative tests.
 Represent the observations such that for any $\vec{\nu}_k' \in \set{E}'$, $\vec{\nu}_k' = [\vec{\nu}_{k}, \vec{y}_k]^T$, where $\vec{y}_k \in \{ 0, 1 \}^{m_k}$ with $y_{k,l}$ being the test result at time $t_{k,l}$.
 
-$\vec{\nu}'_k \in \set{E}'$ occurs if and only if all the following conditions are met.
+The elements of $\set{E}'$ are all $\vec{\nu}_k'$ such that:
 \begin{enumerate}
   \item $\vec{\nu}_k \in \set{E}$.
   \item The elements of $\vec{y}_k$ corresponding to the tests at times $r_k^{(b)}$ and $l_k^{(e)}$ are positive, \ie $y_{k,1} = y_{k,m_k-1} = 1$.
