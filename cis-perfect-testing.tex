@@ -38,7 +38,7 @@ Therefore, it is suitable for estimating the tail of the duration distribution.
 In this chapter, I develop a method to estimate the duration distribution using CIS data, assuming the test has perfect sensitivity and specificity, \ie there are no false negatives or positives.
 Formally, I aim to estimate the survival function $S(t)$ defined in \cref{inc-prev:sec:definitions}.
 
-In \cref{perf-test:sec:problem}, I describe the challenges analysing the data presents.
+In \cref{perf-test:sec:problem}, I describe the challenges presented by analysing the data.
 This motivates using a survival analysis framework which I introduce in \cref{perf-test:sec:surv-analysis}, before deriving the statistical model for the CIS setting in \cref{perf-test:sec:model}.
 In \cref{perf-test:sec:parameters-priors}, I consider how to parameterize the survival function and choose its priors, including vague and smoothing priors as well as a prior constructed to include the information from \cref{E-ATACCC}.
 I evaluate the model and priors using a simulation study (\cref{perf-test:sec:simulation-study}), showing that they successfully recover $S(t)$.
