@@ -378,6 +378,7 @@ An advantage of this modelling approach is that it can be included without compl
 
 $p_0$ increases at the same rate as individuals flow into $e_1$.
 These individuals then transition into a set of compartments, $p_1, \dots, p_l$, each with their own transition rate.
+Individuals in compartments $p_1, \dots, p_l$ are detectable; exiting compartment $p_l$ corresponds to the end of the detectable period.
 I will choose $l$ and the transition rates such that combined length of stay (\ie time from entry in $p_1$ until exit from $p_l$) approximates the duration of detectability distribution estimated in \cref{E-imperf-test}.
 This idea extends the technique of having multiple exposed or latent compartments (introduced in \cref{E-SEIR:sec:non-exponential}).
 While the use of exponential or Erlang (gamma distributions with integer first parameter) is common in the observation model of compartmental models~\autocite[e.g.][]{overtonEpiBeds}, the use of more flexible phase-type distributions, as here, has rarely, if ever, been used in practice~\autocite{hurtadoGLCT}.
