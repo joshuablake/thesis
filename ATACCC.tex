@@ -65,7 +65,7 @@ The observation model includes the possibility of false positive and negatives, 
 % The limit of detection means that viral loads below a certain threshold are not detected by the RT-PCR test.
 % They can be represented as a censoring of the viral load at the limit of detection.
 
-Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient implementation of the NUTS algorithm (see \cref{E-MCMC}).
+Several features of the \textcite{hakkiOnset} model can be motivated by the desire to apply Stan, a modern and convenient implementation of the NUTS (the No U-Turn Sampler) algorithm (see \cref{E-MCMC}).
 The first of these is using a continuous viral load trajectory rather than the more common piecewise linear model.
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
 This leads to the following model for the viral load (see \cref{ATACCC:fig:viral-load-model}):
@@ -244,12 +244,12 @@ Equivalent forms of $F_{D,g}$, such as the survival and hazard functions, can be
 \end{algorithm}
 
 Applying \cref{ATACCC:alg:MonteCarlo} produces a sample of the posterior distribution of $F_{D,g}(d)$.
-One sample is produced for each iteration of the MCMC output used to estimate $\vec{\mu}_{\phi,g}$ and $\matr{\Sigma}_\phi$.
+One sample is produced for each iteration of the MCMC (Markov Chain Monte Carlo) output used to estimate $\vec{\mu}_{\phi,g}$ and $\matr{\Sigma}_\phi$.
 
 \section{Results} \label{ATACCC:sec:results}
 
 
-The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
+The original \textcite{hakkiOnset} model has convergence issues (Rhat > 1.07 and ESS (Effective Sample Size) < 100) for the parameters of the test failure distribution, $\sigma_0$ and $\rho$.
 The simplified model I proposed in \cref{ATACCC:sec:observation-modification} solved this issue, meaning that this analysis converged.
 
 The two models give very similar estimates for the population-level parameters (see \cref{ATACCC:fig:compare-hakki-modified}).

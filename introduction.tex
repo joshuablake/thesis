@@ -4,7 +4,7 @@
 
 \chapter{Introduction} \label{intro}
 
-Infection with the SARS-CoV-2 virus is estimated to have killed approximately 15 million in the most acute phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
+Infection with the SARS-CoV-2 (Severe Acute Respiratory Syndrome CoronaVirus 2) virus is estimated to have killed approximately 15 million in the most acute phase (to the end of 2021) and 30 million in total~\autocite{whoCOVIDExcess,economistCOVIDExcess}.
 Beyond the lives lost, there were massive health, economic, and societal costs.
 
 History suggests severe pandemics are not rare (see \cref{intro:fig:pandemic-timeline}).
@@ -118,7 +118,7 @@ An example of incidence-type data is the number of cases identified through comm
 Individuals' ability and willingness to be tested varies over time, which needs to be accounted for in order to perform unbiased inference.
 
 Data on the severe consequences of an infection are typically less affected by biases.
-An extreme example is the development of AIDS following infection by HIV.
+An extreme example is the development of AIDS (Acquired ImmunoDeficiency Syndrome) following infection by HIV (Human Immunodeficiency Virus).
 Here, the disease is so severe that it is extremely unlikely for an individual to develop the disease without seeking healthcare~\autocite{evansCompleteness}.
 
 However, severe consequences can be rare in some population subgroups (\eg young, otherwise healthy individuals infected with SARS-CoV-2~\autocite{wardSero,bhopalChildren}), meaning they rarely appear in these data.
@@ -198,7 +198,7 @@ In discrete time, it is:
     \label{intro:eq:disease-model}
 \end{align}
 where $Z_t$ is the incidence at time $t$; $\zeta$ is the proportion of infections that result in the consequence of interest; and, conditional on being observed, $f(i)$ describes the (discretised) probability that an infection is included in the count $W_t$ at $i$ time units after the infection.
-$f$ is an example of a \emph{delay function}, and $f$ is commonly the pdf of a distribution, or a transformation of it.
+$f$ is an example of a \emph{delay function}, and $f$ is commonly the pdf (probability density function) of a distribution, or a transformation of it.
 
 Solving \cref{intro:eq:disease-model} for $Z$ is an ill-posed problem.
 The forwards error of the solution is large when $\max_{i > 0} f(i) / f(0)$~\autocite[chapter 8.2]{highamAccuracy} is large.
@@ -277,7 +277,7 @@ In addition to the problem of the delay between infection and antibody response,
 
 The extraordinary impact of SARS-CoV-2 led the UK Government to fund two large prevalence surveys in representative samples of the general population.
 These were designed to avoid the biases of community testing and observe the general population.
-These surveys use RT-PCR (reverse transcription polymerase chain reaction, described in detail in \cref{E-biology-data:sec:PCR}) testing to detect the presence of the virus in a swab from an individual.
+These surveys use RT-PCR (Real-Time Polymerase Chain Reaction, described in detail in \cref{E-biology-data:sec:PCR}) testing to detect the presence of the virus in a swab from an individual.
 The first survey was the CIS (Coronavirus (COVID-19) Infection Survey), run by the ONS (Office for National Statistics)~\autocite{CIS,cisMethodsONS}.
 The CIS was a longitudinal, household-based study, testing a large number of individuals weekly or monthly for SARS-CoV-2 infection (see \cref{E-intro:sec:cis} for a detailed description).
 
@@ -291,13 +291,13 @@ A particular instance of this is that a peak in prevalence in late December 2020
 \subsubsection{Longitudinal studies}
 
 Many longitudinal studies were conducted throughout the pandemic.
-They aimed to estimate a wide variety of epidemiological and biological quantities of the SARS-CoV2 virus.
+They aimed to estimate a wide variety of epidemiological and biological quantities of the SARS-CoV-2 virus.
 These include the CIS, previously mentioned.
 % In addition to population-level surveillance, cohort studies help understand other aspects of the pathogen~\autocite{royalSocietyRnumber}.
 % For example, contact tracing data can inform how likely it is for transmission to occur in different settings and/or between different groups of people.
 
 Another study, which I use in this thesis, is the ATACCC (Assessment of Transmission and Contagiousness of COVID-19 in Contacts) study~\autocite{singanayagamCommunity,hakkiOnset}.
-ATACCC recruited individuals from contacts of known infections reported to NHS Test and Trace, and collected data on them for 20 days.
+ATACCC recruited individuals from contacts of known infections reported to NHS (the National Health Service) Test and Trace, and collected data on them for 20 days.
 This included daily RT-PCR tests, which allowed quantification of their viral load (the amount of virus in an individual), a biomarker.
 The density of the sampling allows for modelling the trajectory of viral load to estimate the duration of detectability (how long an individual is RT-PCR positive for).
 However, the results from ATACCC are of limited value because of the small sample size and the short follow-up; prohibiting estimation of how quantities vary over long infections.
