@@ -227,7 +227,7 @@ Equivalent forms of $F_{D,g}$, such as the survival and hazard functions, can be
 \begin{algorithm}
 \For{$i = 1, \dots, N$}{
   \For{$j = 1, \dots, M$}{
-    Sample an individual-level random effects vector $\vec{\phi}_{i,j} \dist \LN(\vec{\mu}_{\phi,g}, \matr{\Sigma}_\phi)$ \;
+    Sample an individual-level random effects vector $\vec{\phi}_{i,j} \dist \LN(\vec{\mu}_{\phi,g}^{(i)}, \matr{\Sigma}^{(i)}_\phi)$ \;
     Calculate $d_{i,j}$ using \cref{ATACCC:eq:di} \;
   }
   \For{$d = 1, \dots, \dmax$}{
