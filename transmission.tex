@@ -208,8 +208,8 @@ I implement the calculation of $\vec{Z}$ and poststratification in R~4.2.0~\auto
 \subsection{Results and discussion} \label{backcalc:sec:results}
 
 A slow increase in incidence is estimated to occur over the autumn 2020 period, peaking in October in most regions (see \cref{transmission:fig:backcalc-regions}).
-An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(C) and (D) respectively); these regions show no consistent increase or decrease in incidence during October.
-All regions then decrease during November; partially coincidng with the national lockdown in force in England between 5 Nov and 2 Dec 2020~\autocite{ifgTimeline}.
+An exception is the North East and East of England regions (see \cref{transmission:fig:backcalc-regions}(B)); these regions show no consistent increase or decrease in incidence during October.
+All regions then decrease during November; partially coinciding with the national lockdown in force in England between 5 Nov and 2 Dec 2020~\autocite{ifgTimeline}.
 
 During November, incidence starts rising, with regional heterogeneity in the timing of when this occurs (see \cref{transmission:fig:backcalc-regions}).
 The most explored explanation for this is the emergence of the Alpha variant, which was more transmissible than previous variants and emerged at different times across the country~\autocite{walkerTracking,daviesEstimated,lythgoeLineage}.
@@ -237,7 +237,7 @@ Except the 17--25 age group, all age groups show similar trends (\ie parallel li
 The incidence proportion in the 17--25 age group decreases faster than other age groups during November.
 There are many plausible explanations for this effect.
 The higher incidence in this age group prior to November means it could be an immunity effect.
-Alternatively, it could be a consequence of schools remaining open in the November lockdown; 20--24 year olds rarely interact with school-aged children (see \cref{E-SEIR:fig:age-contacts})
+Alternatively, it could be a consequence of schools remaining open in the November lockdown; 20--24 year olds rarely interact with school-aged children (see \cref{E-SEIR:fig:age-contacts}).
 Further work is required to determine causality.
 \begin{figure}
     \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{transmission/backcalc-ages}}
@@ -324,7 +324,7 @@ UKTUS asked a representative sample of the UK population about how much time the
 \Textcite{birrellRealtime} then modify these contact rates based on measured changes in time use during the pandemic.
 These changes are measured using Google mobility data~\autocite{googleCOVID19} and school attendance data~(unpublished).
 Google mobility data are based on the location of Android users over time, relative to a pre-pandemic baseline.
-The mobility and school data are averaged over a week down or up-weight the number of contacts in each setting, before combining contacts across settings to form $\kappa_{aa'}(t)$.
+The mobility and school data are averaged over a week, used to down or up-weight the number of contacts in each setting, and then combined across settings to form $\kappa_{aa'}(t)$.
 $\kappa_{aa'}(t)$ is assumed to be piecewise constant, changing only at the start of each week.
 For further details see \textcite{vanleeuwenAugmenting} and \textcite[supplementary material]{birrellRealtime}.
 

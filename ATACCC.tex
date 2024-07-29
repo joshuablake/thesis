@@ -70,7 +70,7 @@ The first of these is using a continuous viral load trajectory rather than the m
 As NUTS uses gradient information, it is more efficient when the model is differentiable.
 This leads to the following model for the viral load (see \cref{ATACCC:fig:viral-load-model}):
 \begin{align}
-v_i(t) = v_{\max,i} \frac{a_i+b_i}{b_ie^{-a_i(t-\tau_{\max,i})} + a_ie^{b_i(t-\tau_{max,i})}}. \label{ATACCC:eq:viral-load}
+v_i(t) = v_{\max,i} \frac{a_i+b_i}{b_ie^{-a_i(t-\tau_{\max,i})} + a_ie^{b_i(t-\tau_{\max,i})}}. \label{ATACCC:eq:viral-load}
 \end{align}
 Time, $t$, is continuous and defined for individual $i$ such that $i$s first test is at $t = 0$.
 $v_{\max,i}$ is the maximum viral load, which occurs at time $\tau_{\max,i}$.

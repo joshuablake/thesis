@@ -112,12 +112,12 @@ For example, the time between infection and symptom onset.
 \subsection{Incidence-type data}
 
 Incidence-type data originate from observations of the consequences of an infection, \eg the development of symptoms or admission to hospital.
-This type of data typically suffers from reporting biases, most problematically that the proportion of infections detected varying over time or within different subgroups of the population~\autocites[chapter 9]{lashModern}{shadboltChallenges}.
+This type of data typically suffers from reporting biases, most problematically that the proportion of infections detected varies over time or within different subgroups of the population~\autocites[chapter 9]{lashModern}{shadboltChallenges}.
 
 An example of incidence-type data are the number of cases identified through community testing, which relies on individuals presenting for a test.
 Individuals' ability and willingness to be tested varies over time, which needs to be accounted for in order to perform unbiased inference.
 
-Data on the severe consequences of an infection typically less affected by biases.
+Data on the severe consequences of an infection are typically less affected by biases.
 An extreme example is the development of AIDS following infection by HIV.
 Here, the disease is so severe that it is extremely unlikely for an individual to develop the disease without seeking healthcare~\autocite{evansCompleteness}.
 
@@ -202,7 +202,7 @@ $f$ is an example of a \emph{delay function}, and $f$ is commonly the pdf of a d
 
 Solving \cref{intro:eq:disease-model} for $Z$ is an ill-posed problem.
 The forwards error of the solution is large when $\max_{i > 0} f(i) / f(0)$~\autocite[chapter 8.2]{highamAccuracy} is large.
-A large forwards error means that the computed value is far from the true solution~\autocite[6--9]{highamAccuracy}; this is avoided by either using an approach which gives a large $f(0)$ or smoothing $Z_t$.
+A large forwards error means that the computed value is far from the true solution~\autocite[6--9]{highamAccuracy}; this is avoided by either using an approach which gives a large $f(0)$ or by smoothing $Z_t$.
 
 \section{Observation models}
 
@@ -367,7 +367,7 @@ To do so, I will combine the information from the ATACCC and CIS studies.
 
 Several previous studies have used SARS-CoV-2 prevalence surveys to estimate incidence and/or transmission.
 
-\Textcite{abbottCISincidence} applied the backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
+\Textcite{abbottCISincidence} applied backcalculation to CIS data to estimate the incidence of SARS-CoV-2 in the UK.
 They used summary statistics of prevalence estimates from the CIS, taken from the ONS website, as data; specifically, the prevalence's posterior point estimate and bounds of the 95\% credible interval.
 From these summary statistics, they derive a normally-distributed likelihood, independent for each day.
 They used \textcite{hellewellPCRSensitivity}'s estimates of the sensitivity of testing as $f$ in their observation model; these estimates are based on a longitudinal study in healthcare workers (see \cref{intro:sec:previous-duration-estimates}).

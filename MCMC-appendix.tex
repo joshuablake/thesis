@@ -20,7 +20,7 @@ The full algorithm is given in \cref{inc-prev:algorithm:MH}, with further detail
 \begin{algorithm}
  set $\psi^0$ to some initial value\;
  \For{$i = 1, \dots, M$}{
-  sample a proposal $\psi' \sim q(\psi' \mid \psi)$ \;
+  sample a proposal $\psi' \sim q(\psi' \mid \psi^{i-1})$ \;
   calculate the acceptance probability $\alpha(\psi, \psi') = \min \left( 1, \frac{\pi(\psi') q(\psi \mid \psi')}{\pi(\psi) q(\psi' \mid \psi)} \right)$ \;
   with probability $\alpha(\psi, \psi')$ set $\psi^i$ to $\psi'$, otherwise set $\psi^i$ to $\psi^{i-1}$ \;
  }
@@ -58,7 +58,7 @@ A more complex measure of convergence when running multiple MCMC chains is compa
 The principle here is that if all chains have converged then they are sampling from the same distribution.
 Therefore, the within-chain and between-chain variances are the same~\autocite[82]{brooksMCMCNotes}.
 
-Various metrics quantify this, I make use of the improved Rhat statistic~\autocite{vehtariRhat}.
+Various metrics quantify this; I make use of the improved Rhat statistic~\autocite{vehtariRhat}.
 A Rhat of 1 means that the within-chain and between-chain variance are equal, informally that convergence is perfect, as far as can be measured by this technique.
 Various rules-of-thumb exist for what should be considered an acceptable Rhat.
 Historically, 1.1 has commonly been recommended, although more recent work suggests that 1.01 or 1.05 is more appropriate~\autocite{vehtariRhat}.

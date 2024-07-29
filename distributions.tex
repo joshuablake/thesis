@@ -13,7 +13,7 @@ Name & Notation & Parameters & Mean & Variance & pdf\\
 Normal & $\N(\mu, \sigma^2)$ & $\mu$ (mean)\newline $\sigma^2 > 0$ (variance) & $\mu$ & $\sigma^2$ & $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ \\
 \makecell{Multivariate \\ normal} & $\MNorm(\vec{\mu}, \matr{\Sigma})$ & $\mu \in \reals^k$ (mean vector)\newline $\Sigma \in \reals^{k \times k}$ (covariance matrix, positive semi-definite) & $\vec{\mu}$ & $\matr{\Sigma}$ & $(2 \pi)^{-k / 2} \operatorname{det}(\matr{\Sigma})^{-1 / 2} \exp \left(-\frac{1}{2}(\vec{x}-\vec{\mu})^T \matr{\Sigma}^{-1}(\vec{x}-\vec{\mu})\right)$ \\
 Lognormal & $\LN(\mu, \sigma^2)$ & $\mu$ (mean of the logarithm)\newline $\sigma^2 > 0$ (variance of the logarithm) & $e^{\mu + \frac{\sigma^2}{2}}$ & $(e^{\sigma^2} - 1)e^{2\mu + \sigma^2}$ & $\frac{1}{x\sigma\sqrt{2\pi}}e^{-\frac{(\ln(x)-\mu)^2}{2\sigma^2}}$ \\
-Gamma & $\GamDist(\alpha, \beta)$ & $\alpha > 0$ (shape) \newline $\beta > 0$ (rate) & $\frac{\alpha}{\beta}$ & $\frac{\alpha}{\beta^2}$ & $\frac{\beta^\alpha}{\Gamma(\alpha)\theta}x^{\alpha-1}e^{-\beta x}$ \\
+Gamma & $\GamDist(\alpha, \beta)$ & $\alpha > 0$ (shape) \newline $\beta > 0$ (rate) & $\frac{\alpha}{\beta}$ & $\frac{\alpha}{\beta^2}$ & $\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x}$ \\
 Beta & $\BetaDist(\alpha, \beta)$ & $\alpha > 0$ (shape)\newline $\beta > 0$ (shape) & $\frac{\alpha}{\alpha+\beta}$ & $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ & $\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}$ \\
 Exponential & $\Exponential(\lambda)$ & $\lambda$ (rate) & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ & $\lambda e^{-\lambda x}$ \\
 LKJ* & $\LKJ(\eta)$ & $\eta > 0$ (shape) & $\matr{I}$ (identity matrix) & N/A & $C \det(\matr{x})^{\eta-1}$ \\

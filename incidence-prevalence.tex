@@ -39,7 +39,7 @@ I define this period as an \emph{infection episode}, beginning on day $B_i$ and 
 I model the $D_i$s as a discrete iid (independent and identically distributed) random variables; extending the methodology to account for covariates is left to further work.
 The duration is a positive integer, \ie $D_i \in \{1, 2, \dots, \dmax \}$, where $\dmax$ is the maximum duration.
 The distribution of $D_i$ can be expressed through the standard probability mass function (pmf), $f_{D}(d) = \prob(D = d)$; or cumulative density function (CDF), $F_{D}(d) = \prob(D \leq d) = \sum_{i=1}^d f_{D}(i)$.
-Alternatively, the \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(D - 1)$ with $S(1) = 1$.
+Alternatively, the \emph{survival function} gives the probability that the duration is at least $d$ days: $S(d) = \prob(D \geq d) = 1 - F_{D}(d - 1)$ with $S(1) = 1$.
 %(a common alternative convention for survival analysis with discrete variables is to define the survival function as $\prob(D >d)$).
 The \emph{hazard} on day $d$ is the probability of recovering on day $d$ conditional on still being positive on day $d$: $\lambda_{d} = \prob(D = d \mid D \geq d) = f_{D}(d) / S(d)$.
 Throughout this thesis, the survival function will be the primary quantity of interest, and normally parameterized in terms of the hazard; these two quantities are related by $S(d) = \prod_{i=1}^{d-1} (1 - \lambda_{i})$.
@@ -571,7 +571,7 @@ Therefore, the system can be written in matrix form:
 where $\vec{P} = [P_1, P_2, \dots]$.
 In \cref{E-backcalc}, I will need to solve for this system for $\vec{Z}$ given a known $\hat{P} = \E(\vec{P} \mid {Z})$.
 Assuming $\vec{P}$ and $\vec{Z}$ have the same dimension then $\matr{S}$ is lower-triangular with strictly positive diagonal elements; therefore, $\matr{S}$ is invertible, and the system has a unique solution~\autocite[424]{bernsteinFacts}.
-The lower-triangular structure of $\matr{S}$ makes allows solving the system through forward-substitution, an efficient method that avoids explicit matrix inversion~\autocite{cormenMatrix}.
+The lower-triangular structure of $\matr{S}$ allows solving the system through forward-substitution, an efficient method that avoids explicit matrix inversion~\autocite{cormenMatrix}.
 Forward-substitution sequentially solves the $t$th element of $\vec{Z}$ ($t = 1, \dots, T$) by calculating:
 \begin{align}
 Z_t

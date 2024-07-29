@@ -355,9 +355,9 @@ Therefore:
 \begin{align}
   1 - p_u
   &= 1 - \sum_{i=1}^{\Ncis} \prob(O(j) = \emptyset, i(j) = i \mid \vec{\theta}) \\
-  &= 1 - \sum_{i=1}^{\Ncis} \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta}) P(i(j) = i \mid \vec{\theta}) \\
-  &= 1 - \frac{1}{\Ncis}\sum_{i=1}^{\Ncis} \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta}) \\
-  &= \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} (1 - \prob(O(j) = \emptyset \mid i(j) = i \mid \vec{\theta}))
+  &= 1 - \sum_{i=1}^{\Ncis} \prob(O(j) = \emptyset \mid i(j) = i, \vec{\theta}) P(i(j) = i \mid \vec{\theta}) \\
+  &= 1 - \frac{1}{\Ncis}\sum_{i=1}^{\Ncis} \prob(O(j) = \emptyset \mid i(j) = i, \vec{\theta}) \\
+  &= \frac{1}{\Ncis} \sum_{i=1}^{\Ncis} (1 - \prob(O(j) = \emptyset \mid i(j) = i, \vec{\theta}))
   \label{perf-test:eq:pu}
 \end{align}
 assuming $P(i(j) = i \mid \vec{\theta}) = 1/\Ncis$ as before.
@@ -555,7 +555,7 @@ I simulate a dataset of detected episodes with the same characteristics as that 
     \item Simulate the test results based on the test schedule, $b_{j}$, and $e_{j}$. Tests between $b_{j}$ and $e_{j}$ (inclusive) are positive, all other tests are negative.
     \item Discard episodes where there are no positive tests (\ie undetected episodes) and then apply the same inclusions/exclusions as in \cref{perf-test:sec:problem}.
     \item Of these remaining episodes, sample \numprint{4800} to match the sample size of the true dataset. This is needed because in step 2 the entire cohort was infected, while in the real study only an (unknown) portion is infected.
-    \item For this final set of episodes, calculate $(l_j^{(b)}, r_j^{b}, l_j^{(e)}, r_j^{(e)})$ by taking the day after the last negative prior to any positives, the first positive, the last positive, and the day before the negative following the last positive respectively.
+    \item For this final set of episodes, calculate $(l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)})$ by taking the day after the last negative prior to any positives, the first positive, the last positive, and the day before the negative following the last positive respectively.
 \end{enumerate}
 
 Step 3 requires a distribution of the duration of detectability.
