@@ -588,6 +588,8 @@ f_S'(t) = \begin{cases}
 $$
 Then the distribution used in the simulation is the normalised version of this: $f_S(t) = f'_S(t)/\sum_i f_S'(i)$.
 These curves and the combined curve are compared in \cref{perf-test:fig:duration-dist}.
+Compared to the ATACCC estimate alone, incorporating the CIS portion shifts some probability mass into the tail of the distribution.
+Therefore, the survival probability is initially higher but later lower than ATACCC alone.
 Individual $i$'s duration of detectability, $D_i$, is then an independent draw from this distribution.
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/input-duration-dists}
