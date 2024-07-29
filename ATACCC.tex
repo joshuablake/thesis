@@ -132,7 +132,7 @@ To improve sampling efficiency, the multivariate version of the non-centred para
 This can be expressed as follows.
 \begin{align}
   \vec{\eta}_i &\dist \N(\vec{0}, \matr{C}_\phi) \\
-  \log \vec{\phi}_i &= \vec{\mu}_\phi + \vec{\sigma}_\phi \circ \vec{\eta}_i
+  \log \vec{\phi}_i &= \vec{\mu}_{\phi,g(i)} + \vec{\sigma}_\phi \circ \vec{\eta}_i
 \end{align}
 where $\vec{\sigma}_\phi$ is a vector of the standard deviations of the parameters, and $\matr{C}_\phi$ is a correlation matrix.
 These are defined such that, by construction, $(\matr{\Sigma}_\phi)_{ij} = (\vec{\sigma}_\phi)_i (\vec{\sigma}_\phi)_j (\matr{C}_\phi)_{ij}$.
@@ -210,10 +210,10 @@ d_i
 \end{align}
 
 From \cref{ATACCC:eq:di}, we can see that $d_i$ depends only on $i$'s random effects vector $\vec{\phi}_i$.
-Therefore, the distribution of $d_i$ across the population is determined by $\vec{\phi}_i$'s mean, $\vec{\mu}_\phi$, and covariance matrix, $\matr{\Sigma}_\phi$.
+Therefore, the distribution of $d_i$ across the population of group $g$ is determined by $\vec{\phi}_i$'s mean, $\vec{\mu}_{\phi,g}$, and covariance matrix, $\matr{\Sigma}_\phi$.
 % Hence, the uncertainty in the posterior distribution of the discretised duration cumulative distribution function for group $g$, $F_{D,g}(d) = \prob(D_i \leq d + 0.5)$ originate from the uncertainty in $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
 
-For a known $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$, $F_{D,g}$ is found as:
+For a known $\vec{\mu}_{\phi,g}$ and $\matr{\Sigma}_\phi$, $F_{D,g}$ is found as:
 \begin{align}
   F_{D,g}(d)
   &= \prob(D_i \leq d + 0.5) \\
@@ -237,14 +237,14 @@ Equivalent forms of $F_{D,g}$, such as the survival and hazard functions, can be
   \caption{%
   Algorithm to calculate the Monte Carlo integral in \cref{ATACCC:eq:FDintegral}, producing the posterior distribution of $F_{D,g}(d)$.
   The posterior distribution is represented as a sample $F_{D,g}^{(1)}, \dots, F_{D,g}^{(N)}$.
-  $\vec{\mu}_\phi^{(i)}$ and $\matr{\Sigma}_\phi^{(i)}$ denote the $i$th posterior sample of $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$ respectively, taken from the MCMC output which produced $N$ posterior samples.
+  $\vec{\mu}_{\phi,g}^{(i)}$ and $\matr{\Sigma}_\phi^{(i)}$ denote the $i$th posterior sample of $\vec{\mu}_{\phi,g}$ and $\matr{\Sigma}_\phi$ respectively, taken from the MCMC output which produced $N$ posterior samples.
   $M$ is the number of individuals to draw, I found $M =\numprint{100000}$ produced stable estimates of the tail of $F_{D,g}(d)$ if $\dmax = 45$.
  }
  \label{ATACCC:alg:MonteCarlo}
 \end{algorithm}
 
 Applying \cref{ATACCC:alg:MonteCarlo} produces a sample of the posterior distribution of $F_{D,g}(d)$.
-One sample is produced for each iteration of the MCMC output used to estimate $\vec{\mu}_\phi$ and $\matr{\Sigma}_\phi$.
+One sample is produced for each iteration of the MCMC output used to estimate $\vec{\mu}_{\phi,g}$ and $\matr{\Sigma}_\phi$.
 
 \section{Results} \label{ATACCC:sec:results}
 
