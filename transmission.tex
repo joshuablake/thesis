@@ -165,12 +165,12 @@ The algorithm uses a mean-field approximation to the relationship between incide
     \label{transmission:alg:calculate-Z}
 \end{algorithm}
 
-\Cref{transmission:eq:forward-substitute} is derived from \cref{inc-prev:eq:EPt-matrix}: $\vec{P} = \matr{S} \vec{I}$.
-For this to have a unique solution, $\vec{I}$ and $\vec{P}$ need the same dimension.
+\Cref{transmission:eq:forward-substitute} is derived from \cref{inc-prev:eq:EPt-matrix}: $\vec{P} = \matr{S} \vec{Z}$.
+For this to have a unique solution, $\vec{Z}$ and $\vec{P}$ need the same dimension.
 However, I am using a period of prevalence which starts after the first infections.
 These prior infections will still contribute to the prevalence.
 I assume that the incidence for $t \leq 1$ is constant.
-Therefore, $P_1 = I_0 \sum_{i=1}^{\dmax} S(i)$ and $I_t = P_1 / \sum_{i=1}^{\dmax} S(i)$ for $t \leq 1$.
+Therefore, $P_1 = Z_0 \sum_{i=1}^{\dmax} S(i)$ and $Z_t = P_1 / \sum_{i=1}^{\dmax} S(i)$ for $t \leq 1$.
 
 % First, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution (using the procedure described in \cref{transmission:sec:INLA:posterior}).
 % For each sample and stratum, I use the relationship in \cref{E-inc-prev:eq:EPt} to calculate the incidence proportion at each time point.
