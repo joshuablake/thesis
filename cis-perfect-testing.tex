@@ -214,20 +214,20 @@ Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ be an ar
 The target of inference is $\vec{\theta}$, the parameters of the survival function $S_{\vec{\theta}}(t)$.
 The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-priors}.
 
-Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_D}, \nnodet]^T$.
-Hence, $\ntot = \sum_{i=1}^{N_D} n_i + \nnodet$.
+Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_E}, \nnodet]^T$.
+Hence, $\ntot = \sum_{i=1}^{N_E} n_i + \nnodet$.
 
 Now define the probabilities of each possible outcome of $O(j)$.
 For detected outcomes, \ie $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
 For undetected outcomes, let $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$.
-Together, $\vec{p} = [p_1, \dots, p_D, p_u]^T$.
+Together, $\vec{p} = [p_1, \dots, p_{N_E}, p_u]^T$.
 Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
 
 Then:
 \begin{align}
   \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
 \intertext{that is:}
-  p(\vec{n} \mid \ntot, \vec{\theta}) &= \frac{\ntot!}{\nnodet!\prod_{k=1}^{N_D} n_k!} p_u^{\nnodet} \prod_{k=1}^{N_D} p_k^{n_k}.
+  p(\vec{n} \mid \ntot, \vec{\theta}) &= \frac{\ntot!}{\nnodet!\prod_{k=1}^{N_E} n_k!} p_u^{\nnodet} \prod_{k=1}^{N_E} p_k^{n_k}.
   \label{perf-test:eq:multinomial-ll}
 \end{align}
 \begin{figure}
