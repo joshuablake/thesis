@@ -46,7 +46,7 @@ beta_plot_dens = function(alpha, beta) {
     beta,
     function(p, a, b) p + stat_function(aes(colour = glue::glue("Beta({a}, {b})")),
                                         fun = dbeta, args = list(a, b)),
-    .init = ggplot(NULL) + labs(colour = "Dist", x = "Value", y = "Density")
+    .init = ggplot(NULL) + labs(colour = "Dist", x = "Hazard", y = "Density")
   ) +
   standard_plot_theming()
 }
@@ -106,7 +106,7 @@ p_vague_dens = beta_plot_dens(0.1, 1.9) +
   labs(subtitle = ("(A) Hazard density"))
 p_vague_surv = beta_plot_surv(0.1, 1.9, prior_len = 30) +
   theme(legend.position = "none") +
-  labs(subtitle = ("(B) survival"))
+  labs(subtitle = ("(B) Survival"))
 p_vague = p_vague_dens + p_vague_surv
 ggsave(
   filename = "cis-perfect-testing/vague-prior.pdf",
