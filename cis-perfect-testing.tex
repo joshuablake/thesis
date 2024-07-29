@@ -545,7 +545,7 @@ k_t = \begin{cases}
 
 \section{Simulation study} \label{perf-test:sec:simulation-study}
 
-\subsection{Setup}
+\subsection{Setup} \label{perf-test:sec:sim-setup}
 
 I simulate a dataset of detected episodes with the same characteristics as that in the CIS by the following procedure.
 \begin{enumerate}
@@ -629,12 +629,12 @@ There remains a difference because the hazard estimates are partially dependent 
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/survival-results}
-  \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. y-axis has either natural (left) or log (right) scale. I show only the first 100 days of the distribution for readability. \label{perf-test:fig:survival-results}}
+  \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. y-axis has either natural (left) or log (right) scale. I show only the first 100 days of the distribution for readability. Black line shows the value used in the simulation (see \cref{perf-test:sec:sim-setup}). \label{perf-test:fig:survival-results}}
 \end{figure}
 
 \begin{figure}
   \centering \includegraphics{cis-perfect-testing/hazard-results}
-  \caption[Comparison of hazard estimates under different priors]{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. \label{perf-test:fig:hazard-results}}
+  \caption[Comparison of hazard estimates under different priors]{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. Black line shows the value used in the simulation (see \cref{perf-test:sec:sim-setup}). \label{perf-test:fig:hazard-results}}
 \end{figure}
 
 \section{Discussion} \label{perf-test:sec:discussion}
