@@ -159,9 +159,13 @@ This increases the dimensionality of the problem greatly, making it computationa
 
 In this section, I develop a computationally feasible Bayesian statistical model accounting for double interval censoring and undetected episodes.
 In \cref{perf-test:sec:data}, I introduce the data, defining which quantities are observed and which are latent.
+In \cref{perf-test:sec:dgp}, I introduce the data generating process, defining the model for how infection episodes arise and how these are observed.
 In the remainder of the section, I derive the posterior density, adapting the general approach of \textcite{heiseyModelling}.
 I classify episodes based on how they would be observed (\ie the intervals that their beginning and end times would be censored to).
 These potential classification can then be compared to the actual observations.
+
+The target of inference is $\vec{\theta}$, the parameters of the survival function $S_{\vec{\theta}}(t)$.
+The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-priors}.
 
 Unlike in \textcite{heiseyModelling}, I must consider each individual's probability of undetected episodes separately because they are tested at different times.
 In addition, I include the information from the individuals without a detected episode.
@@ -169,9 +173,10 @@ Furthermore, I marginalise the posterior density over the number of undetected e
 This makes inference tractable using the large sample size and limited computing resources available within the SRS (see \cref{E-biology-data:sec:SRS}).
 % In particular, the posterior can be expressed within modern, high-performance Bayesian software such as Stan.
 
+
 \subsection{Data} \label{perf-test:sec:data}
 
-I analyse the $\ndet = \numprint{4800}$ episodes with their first positive test between 10 Oct 2020 and 6 Dec 2020 inclusive, with negatives bounding the start and end time of the episode; I refer to these episodes as \emph{detected}; in \cref{perf-test:sec:prob-undetected} I formalise the conditions for an episode to be detected.
+I analyse the $\ndet = \numprint{4800}$ episodes with their first positive test between 10 Oct 2020 and 6 Dec 2020 inclusive, with negatives bounding the start and end time of the episode; I refer to these episodes as \emph{detected}.
 Each day in this period is denoted as $t = 1, \dots, T$; \ie day $1$ is the 10 Oct 2020 and day $T$ is the 6 Dec 2020.
 I use these episodes because a negative test before the start of the episode provides a lower bound on the episode's start time; otherwise, there is little information on its length.
 Similar information comes from the negative test after the end of the episode, although a negligible number of episodes are missing a negative test after the end of the episode.
@@ -188,42 +193,31 @@ Each individual has exactly one test schedule, but it is possible that $\sched_i
 I assume that the test schedules are uninformative on all quantities of interest because they are part of the study design.
 Therefore, I condition on them implicitly in all probabilities that follow.
 
-For any episode $j$, define $O(j)$ as the observations of that episode; $j = 1, \dots, \ntot$ where $\ntot$ is the total number of infection episodes in the cohort.
-Test results are deterministic based on the time of the test and the individual's infection status.
-Therefore, $O(j)$ is fully determined by the triplet $(b_j, e_j, i(j))$ consisting of $j$'s beginning time, end time, and the individual in which the episode occurs respectively.
-The episode's duration is $d_j = e_j - b_j + 1$ (see \cref{E-inc-prev:sec:definitions}).
+\subsection{Data generating process} \label{perf-test:sec:dgp}
 
-If $j$ is detected, then $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)}$ and $r_j^{(b)}$ are the earliest and latest time the episode could have begun respectively; and $l_j^{(e)}$ and $r_j^{(e)}$ are the earliest and latest time the episode could have ended respectively.
+For our purposes, the $j$th infection episode ($j = 1, \dots, \ntot$) is $W_j = [B_j, E_j, i(j)]^T$ where $\ntot$ is the total number of infection episodes in the cohort; $i(j)$ is the individual the infection episode occurs in; $B_j$ is the day the episode begins (the first day $i(j)$ is detectable due to this infection episode); and $E_j$ is the day the episode ends (the last day $i(j)$ is detectable due to this infection episode).
+The episode's duration is a deterministic transformation of these variables, $D_j = E_j - B_j + 1$; and I assume that $B_j$, $D_j$, and $i(j)$ are independent.
+$D_j$'s distribution is determined by $\vec{\theta}$; both $B_j$ and $i(j)$ have uniform distributions over their respective state spaces.
 
-If $j$ is undetected, there are no observations; in which case, define $O(j) = \emptyset$.
-Let $\nnodet$ denote the (latent) number of undetected episodes experienced across all $\Ncis$ individuals.
-Therefore, the total number of infection episodes in the cohort is $\ntot = \ndet + \nnodet$.
+To make this problem tractable, I model infection episodes as independent conditional on $\ntot$, the total number of them that occur, and $\vec{\theta}$; \ie $W_j \ind W_{j'} \mid \ntot, \vec{\theta}$ for $j \neq j'$.
+This is true both for infection episodes within the same individual and across individuals; this assumption is discussed in \cref{perf-test:sec:discussion}.
 
-% Any infection episode, whether detected or not, is fully characterised by the triplet $(b_j, e_j, i(j))$ where $b_j$ and $e_j$ are the times the episode begin and end respectively; and $i(j)$ is the individual the episode occurred in.
-% $i(j)$ identifies the test schedule.
-% For all $j$, the exact values $b_j$ and $e_j$ are latent.
-% If $j$ is undetected then $i(j)$ is also latent and little is known about $b_j$ or $e_j$.
-% If $j$ is detected, then $i(j)$ is known; $b_j \in [l_j^{(b)}, r_j^{(b)}]$; and $e_j \in [l_j^{(e)}, r_j^{(e)}]$.
-% These latter two properties are what make the data doubly interval censored.
+The test results for any individual is fully determined by any infection episodes that occur in that individual and their test schedule.
+The set of times $i(j)$ tests positive at due to $W_j$ is $\posResults(W_j) = \{ t \in \sched_{i(j)} \ssep B_j \leq t \leq E_j \}$.
+The negative test immediately before the start of the episode (if there is one) is $\negResults^{(l)}(W_j) = \max \{ t \in \sched_{i(j)} \ssep t < B_j \}$.
+The negative test immediately after the end of the episode (if there is one) is $\negResults^{(r)}(W_j) = \min \{ t \in \sched_{i(j)} \ssep t > E_j \}$.
+
+Next, I define $O(j)$ to contain the test results due to $W_j$ that give information on $W_j$'s length, and hence are relevant to inference about $\vec{\theta}$.
+If $\posResults(W_j) = \emptyset$, $\min \posResults(W_j) \notin [1, T]$, or either $\negResults^{(l)}$ or $\negResults^{(r)}$ is undefined then the episode is undetected, in which case $O(j) = \emptyset$.
+Otherwise, $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)} = \negResults^{(l)}(W_j) + 1$ and $r_j^{(b)} = \min \posResults(W_j)$ are the earliest and latest time the episode could have begun and produced the observed series of test results respectively; and $l_j^{(e)} = \max \posResults(W_j)$ and $r_j^{(e)} = \negResults^{(r)}(W_j) - 1$ are the earliest and latest time the episode could have ended respectively.
+These definitions coincide with the way the dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}).
 
 \subsection{Posterior density} \label{perf-test:sec:posterior}
 
-Define an integer $N_E$ and $\set{E} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_E} \}$ as the set of all possible observations of detected episodes; that is, $O(j) \in \set{E}$ if and only if $j$ is a detected infection.
-Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ be an arbitrary vector of possible observations, visualised in \cref{perf-test:fig:partitionSpace}; the conditions for $\vec{\nu}_k \in \set{E}$ are in \cref{perf-test:sec:conditions-nu-E}.
-
-The target of inference is $\vec{\theta}$, the parameters of the survival function $S_{\vec{\theta}}(t)$.
-The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-priors}.
-
-For our purposes, an infection episode $j$ consists of the three random variables: $i(j)$, the individual it occurs in; $B_j$, the day it begins (the first day $i(j)$ is detectable due to this infection episode); $E_j$, the day it ends (the last day $i(j)$ is detectable due to this infection episode); the distribution of the episode's duration is a deterministic transformation of these variables, $D_j = E_j - B_j + 1$.
-I assume that $B_j$, $D_j$, and $i(j)$ are independent.
-$D_j$'s distribution is determined by $\vec{\theta}$; both $B_j$ and $i(j)$ have uniform priors over their respective state spaces.
-$O(j)$ is a deterministic function of $B_j$, $E_j$, and $\sched_{i(j)}$.
-
-To make this problem tractable, I model infection episodes as independent conditional on $\ntot$, the total number of them that occur, and $\vec{\theta}$; \ie $(B_j, E_j, i(j)) \ind (B_{j'}, E_{j'}, i(j')) \mid \ntot, \vec{\theta}$ for $j \neq j'$.
-This is true both for infection episodes within the same individual and across individuals; this assumption is discussed in \cref{perf-test:sec:discussion}.
-
-Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_E}, \nnodet]^T$.
-Hence, $\ntot = \sum_{i=1}^{N_E} n_i + \nnodet$.
+Define an integer $N_E$ and $\set{E} = \{ \vec{\nu}_1, \dots, \vec{\nu}_{N_E} \}$ as the set of all possible values $O(j)$ can take, excluding $\emptyset$, conditional on the test schedules but no other data; that is, $O(j) \in \set{E}$ if and only if $j$ is a detected infection; a full list of the formal conditions defining the elements of $\set{E}$ are in \cref{perf-test:sec:conditions-nu-E}.
+Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ be an arbitrary member of $\set{E}$, visualised in \cref{perf-test:fig:partitionSpace}.
+Let $n_k$ denote the number of times that $\vec{\nu}_k$ appears in the episodes dataset (\ie the observed data); $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_E}, \nnodet]^T$.
+Hence, $\ntot = \nnodet + \ndet = \sum_{i=1}^{N_E} n_i + \nnodet$.
 
 Now define the probabilities of each possible outcome of $O(j)$.
 For detected outcomes, \ie $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
@@ -332,7 +326,7 @@ p(\vec{\theta} \mid \na)
 
 \subsection{Deriving $p_k$}
 
-Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ are the observations of episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$.
+Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ is the random variable containing all relevant information for episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ is an arbitrary element from $O(j)$'s state space, excluding undetected infections.
 
 Decompose $p_k$ as $p_k = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$
 where $p_{ik} = \prob(O(j) = \vec{\nu}_k \mid i(j) = i_k, \vec{\theta})$.
