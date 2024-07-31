@@ -42,13 +42,11 @@ p_compare = bind_rows(
     theme(legend.position = "bottom") +
     scale_y_continuous(labels = scales::label_percent()) +
     labs(
-        x = "Date",
+        x = "Date (2020-1)",
         y = "Incidence proportion"
     )
-ggsave(
+save_plot(
     filename = here::here("transmission", "compare-NE.pdf"),
-    device = cairo_pdf,
     plot = p_compare,
-    width = 6,
-    height = 4
+    height = 12
 )

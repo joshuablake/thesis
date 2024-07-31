@@ -25,13 +25,11 @@ fig = posterior |>
     standard_plot_theming() +
     scale_x_log10() +
     labs(y = expression(n[tot]))
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/CIS_ntot.pdf"),
     plot = fig,
     width = 11,
-    height = 7,
-    units = "cm",
-    dpi = 300
+    height = 7
 )
 
 cis_mean = posterior |>

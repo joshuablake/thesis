@@ -72,13 +72,10 @@ p_55 = posterior_predictive |>
   ) +
   theme_trajectory()
   
-ggsave(
+save_plot(
   filename = "ATACCC/fit_individual_55.pdf",
   plot = p_55,
-  width = 15,
-  height = 9,
-  units = "cm",
-  dpi = 300
+  height = 9
 )
 
 produce_gof_plot = function(individuals) {
@@ -106,20 +103,14 @@ all_individuals = unique(posterior_summary$i)
 selected_individuals = all_individuals[all_individuals > 8 & all_individuals %% 2 == 1]
 appendix_individuals = all_individuals[!all_individuals %in% selected_individuals]
 
-ggsave(
+save_plot(
     filename = here::here("ATACCC/fits.pdf"),
     plot = produce_gof_plot(selected_individuals),
-    height = 15,
-    width = 15,
-    units = "cm",
-    dpi = 300
+    caption_lines = 6
 )
 
-ggsave(
+save_plot(
     filename = here::here("ATACCC/appendix_fits.pdf"),
     plot = produce_gof_plot(appendix_individuals),
-    height = 15,
-    width = 15,
-    units = "cm",
-    dpi = 300
+    caption_lines = 6
 )

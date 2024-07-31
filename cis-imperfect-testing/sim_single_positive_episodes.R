@@ -27,11 +27,8 @@ p_single_pos = sims |>
         colour = ""
     )
 
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/sim-single-positive-episodes.pdf"),
     plot = p_single_pos,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )

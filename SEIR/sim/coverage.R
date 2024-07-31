@@ -53,7 +53,6 @@ p_coverage = ggplot(coverage, aes(colour = factor(.width))) +
         aes(xmin = lower, xmax = upper, y = parameter),
         height = 0
     ) +
-    standard_plot_theming() +
     coord_cartesian(xlim = c(0, 1)) +
     scale_x_continuous(
         breaks = seq(0, 1, 0.2),
@@ -69,21 +68,15 @@ p_coverage = ggplot(coverage, aes(colour = factor(.width))) +
         y = "Parameter",
         colour = "CrI width"
     ) +
+    standard_plot_theming() +
     theme(
         legend.position = "bottom",
-        axis.text.y = element_text(
-            size = 5,
-            lineheight = 1.2
-        )
     ) +
     scale_y_discrete(labels = parameter_labels)
-ggsave(
+save_plot(
     filename = here::here("SEIR/sim/coverage.pdf"),
     plot = p_coverage,
-    width = 12,
-    height = 10,
-    unit = "cm",
-    device = cairo_pdf
+    height = 14
 )
 
 p_true_vs_posterior = posterior_intervals |>
@@ -110,14 +103,10 @@ p_true_vs_posterior = posterior_intervals |>
         y = "True value"
     ) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
-ggsave(
+save_plot(
     filename = here::here("SEIR/sim/true_vs_posterior.pdf"),
     plot = p_true_vs_posterior,
-    width = 20,
-    height = 22,
-    units = "cm",
-    dpi = 300,
-    device = cairo_pdf
+    caption_lines = 3
 )
 
 # Figure for combined posterior

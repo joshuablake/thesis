@@ -69,13 +69,10 @@ p_perfect = posterior_draws |>
         colour = ""
     ) +
     coord_cartesian(xlim = c(0, 45))
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/CIS_perfect.pdf"),
     plot = p_perfect,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )
 
 #############################################################################################
@@ -100,13 +97,10 @@ p_final = posterior_draws |>
         fill = "",
         colour = ""
     )
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/CIS_final.pdf"),
     plot = p_final,
-    width = 15,
     height = 9,
-    units = "cm",
-    dpi = 300
 )
 
 #############################################################################################
@@ -174,7 +168,7 @@ sens_curves = sens_draws |>
     theme_survival_time_series() +
     labs(colour = expression(p[sens]), fill = expression(p[sens]))
 
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/CIS_vary.pdf"),
     plot = (r_medians + r_day_50 + r_curves) / (sens_medians + sens_day_50 + sens_curves) +
         plot_annotation(tag_levels = "A") &
@@ -182,10 +176,7 @@ ggsave(
             text = element_text(size = 8),
             legend.key.size = unit(0.3, "cm")
         ),
-    width = 18,
-    height = 20,
-    units = "cm",
-    dpi = 300
+    caption_lines = 5
 )
 
 posterior_draws |>

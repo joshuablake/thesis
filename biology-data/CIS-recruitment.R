@@ -42,8 +42,8 @@ p_total = swabs |>
     ) +
     ggtitle("(B) Total swabs")
 
-ggsave(
+save_plot(
     filename = here::here("biology-data", "CIS-recruitment.pdf"),
     plot = p_recruit / p_total,
-    width = 6, height = 6
+    height = 16
 )

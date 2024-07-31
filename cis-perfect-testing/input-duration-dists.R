@@ -24,11 +24,8 @@ plot = ataccc_posterior |>
     colour = ""
   )
 
-ggsave(
+save_plot(
   filename = "cis-perfect-testing/input-duration-dists.pdf",
   plot = plot,
-  width = 15,
-  height = 9,
-  units = "cm",
-  dpi = 300
+  height = 9
 )

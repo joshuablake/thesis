@@ -27,7 +27,7 @@ incidence_plot = function(df) {
         stat_lineribbon(alpha = 0.3, .width = 0.95, linewidth = 0.5) +
         scale_y_continuous(labels = scales::label_percent()) +
         labs(
-            x = "Date",
+            x = "Date (2020-1)",
             y = "Incidence proportion",
         ) +
         standard_plot_theming() +
@@ -51,11 +51,10 @@ p_region = (
 ) +
     plot_layout(heights = c(1, 1.6))
 
-ggsave(
+save_plot(
     filename = here::here("transmission", "backcalc-regions.pdf"),
     plot = p_region,
-    width = 6.5,
-    height = 7
+    caption_lines = 1
 )
 
 tbl_min = tbl_regions |>
@@ -94,14 +93,13 @@ p_alpha = tbl_min |>
     standard_plot_theming() +
     geom_smooth(method = "lm", formula = y ~ x) +
     labs(
-        x = "Date Alpha rise",
-        y = "Date of minimum incidence",
+        x = "Date (2020) of Alpha rise",
+        y = "Date (2020) of minimum incidence",
         colour = "Region"
     ) +
     theme(legend.position = "bottom")
-ggsave(
+save_plot(
     filename = here::here("transmission", "backcalc-alpha.pdf"),
     plot = p_alpha,
-    width = 6,
-    height = 5.5
+    height = 10
 )

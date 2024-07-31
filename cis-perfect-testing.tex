@@ -435,7 +435,7 @@ An intuitive explanation of this follows from the fact that priors of this form 
 The expected survival time, $\E \left( \prod_{i=1}^{t-1} (1-\lambda_t) \right)$, is therefore equal to $0.5^{t-1}$, a quantity that declines rapidly.
 This prior expresses extreme scepticism in estimates from previous studies, such as \cref{E-ATACCC} and the meta-analysis of \textcite{cevikShedding}.
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/flat-prior}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/flat-prior}}
   \caption[Uninformative priors for the hazard]{
     (A) Density of Beta(1, 1) flat prior and Beta(0.5, 0.5) uninformative priors.
     (B) Prior predictive survival time (mean and 95\% CrI).
@@ -451,7 +451,7 @@ The central 95\% probability mass of Beta(0.1, 1.9) is 0.00--0.47.
 The central estimate, of 0.05, is in line with previous estimates that the median duration in the range 15--20 days~\autocite{cevikShedding}.
 This prior gives a very vague prior predictive distribution on the survival time (see \cref{perf-test:fig:vague-prior}).
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/vague-prior}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/vague-prior}}
   \caption[Vague prior for the hazard]{
     (A) Density of Beta(0.1, 1.9) vague prior.
     (B) Prior predictive survival time (mean and 95\% CrI).
@@ -484,7 +484,7 @@ Formally:
 The hyperparameters $\mu_{\lambda_1}$ and $\sigma_{\lambda_1}$ specify the prior on the hazard at time 1; $\mu_{\epsilon_1}$ and $\sigma_{\epsilon_1}$ specify the prior on the initial gradient, $\lambda_2 - \lambda_1$; and $\mu_\sigma$ specifies the smoothness of the random walk.
 I use $\mu_{\lambda_1} = -17.5$, $\sigma_{\lambda_1} = 6$, $\mu_\epsilon = 1.09$, $\sigma_\epsilon = 0.03$, and $\mu_\epsilon = 0.1$ based on the analysis in \cref{E-ATACCC} (see \cref{perf-test:fig:rw2-prior}).
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/rw2-prior}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/rw2-prior}}
   \caption[RW2 prior for the hazard]{The prior predictive survival time (mean and 95\% central interval) for the RW2 prior specified in the main text. The posterior mean estimate using ATACCC data in \cref{E-ATACCC} is shown for comparison. \label{perf-test:fig:rw2-prior}}
 \end{figure}
 
@@ -510,11 +510,11 @@ The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazar
 \begin{figure}
   \thisfloatpagestyle{empty}
   % \vspace{-1cm}
-  \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{cis-perfect-testing/ataccc-approximation-hazard}}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/ataccc-approximation-hazard}}
   \caption[Approximating the ATACCC posterior hazard as a logit-normal]{Comparison of the posterior estimate of the hazard from \cref{E-ATACCC} and its approximation with a logit-normal distribution (kernel density estimate smoothed) for hazards between day 4 and 15. The density for smaller hazards is concentrated very close to 0. \label{perf-test:fig:approximate-ATACCC-hazard}}
 \end{figure}
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/ataccc-approximation-survival}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/ataccc-approximation-survival}}
   \caption[Approximating the ATACCC posterior survival]{Comparison of the posterior estimate of the survival from \cref{E-ATACCC} and its approximation with a logit-normal distribution (median and central 95\% interval). The survival is a function of all the hazards up until that point, therefore the correlation between the hazards must be well-approximated to have these agree. \label{perf-test:fig:approximate-ATACCC-survival}}
 \end{figure}
 
@@ -541,7 +541,7 @@ k_t = \begin{cases}
 \end{align}
 
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/kt-prior}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/kt-prior}}
   \caption{Function used for $k_t$. \label{perf-test:fig:kt}}
 \end{figure}
 
@@ -593,7 +593,7 @@ Compared to the ATACCC estimate alone, incorporating the CIS portion shifts some
 Therefore, the survival probability is initially higher but later lower than ATACCC alone.
 Individual $i$'s duration of detectability, $D_i$, is then an independent draw from this distribution.
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/input-duration-dists}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/input-duration-dists}}
   \caption[Comparison of duration distributions]{Comparison of the duration distribution used for the simulation. ATACCC is the posterior mean from \cref{E-ATACCC}'s analysis, CIS is Sarah Walker's analysis, and Combined is the combination of these used for the simulation. \label{perf-test:fig:duration-dist}}
 \end{figure}
 
@@ -632,12 +632,12 @@ Therefore, the posterior distributions are almost identical.
 There remains a difference because the hazard estimates are partially dependent on earlier estimates.
 
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/survival-results}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/survival-results}}
   \caption[Comparison of survival function estimates under different priors]{Comparison of the posterior estimate of the survival distribution (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. y-axis has either natural (left) or log (right) scale. I show only the first 100 days of the distribution for readability. Black line shows the value used in the simulation (see \cref{perf-test:sec:sim-setup}). \label{perf-test:fig:survival-results}}
 \end{figure}
 
 \begin{figure}
-  \centering \includegraphics{cis-perfect-testing/hazard-results}
+  \makebox[\textwidth][c]{\includegraphics{cis-perfect-testing/hazard-results}}
   \caption[Comparison of hazard estimates under different priors]{Comparison of the posterior estimate of the hazard (pointwise median and 95\% CrI) when using different priors on the hazard. Results using each of the three different priors discussed in \cref{perf-test:sec:parameters-priors} are shown. Black line shows the value used in the simulation (see \cref{perf-test:sec:sim-setup}). \label{perf-test:fig:hazard-results}}
 \end{figure}
 

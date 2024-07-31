@@ -216,14 +216,15 @@ The most explored explanation for this is the emergence of the Alpha variant, wh
 There is weak evidence that when incidence starts increasing is correlated with the timing of the Alpha variant's spread (see \cref{transmission:fig:backcalc-alpha}).
 A second peak occurs in late December or early January in all regions; this second peak is larger than the first in all regions except the Northern three (North East, North West, and Yorkshire and the Humber).
 \begin{figure}
-    \includegraphics{transmission/backcalc-regions}
+    \thisfloatpagestyle{empty}
+    \makebox[\textwidth][c]{\includegraphics{transmission/backcalc-regions}}
     \caption[Incidence estimated using the phenomenological approach by region]{%
         Incidence proportion for (A) all of England and (B) its component regions.
     }
     \label{transmission:fig:backcalc-regions}
 \end{figure}
 \begin{figure}
-    \includegraphics{transmission/backcalc-alpha}
+    \makebox[\textwidth][c]{\includegraphics{transmission/backcalc-alpha}}
     \caption[Correlation of the emergence of Alpha and minimum incidence.]{%
         x-axis: time that S-gene target failure, a marker of the Alpha variant, is estimated to start increasing from baseline by region among CIS test results; from \textcite[table S3]{walkerTracking}.
         y-axis: posterior median and 95\% CrI of the date of minimum incidence in November or early December in each region.
@@ -240,7 +241,7 @@ The higher incidence in this age group prior to November means it could be an im
 Alternatively, it could be a consequence of schools remaining open in the November lockdown; 20--24 year olds rarely interact with school-aged children (see \cref{E-SEIR:fig:age-contacts}).
 Further work is required to determine causality.
 \begin{figure}
-    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{transmission/backcalc-ages}}
+    \makebox[\textwidth][c]{\includegraphics{transmission/backcalc-ages}}
     \caption[Incidence estimated using the phenomenological approach by age group]{%
         Incidence proportion for each age group, on both natural and log scales.
     }
@@ -253,7 +254,7 @@ Changing this assumption (\eg to exponential growth) modifies the estimated valu
 Therefore, the first day's estimate is unreliable, and has been excluded from all other results.
 However, the rest of the series is robust to this assumption.
 \begin{figure}
-    \centering \includegraphics{transmission/backcalc-start-effect}
+    \makebox[\textwidth][c]{\includegraphics{transmission/backcalc-start-effect}}
     \caption[Edge effects in the phenomenological approach]{%
         First seven days of incidence proportion estimate for the whole of England, highlighting the edge effect.
     }
@@ -664,7 +665,7 @@ This means that the simulations created realistic incidence and prevalence curve
 In particular, the October half-term school holiday is visible, especially in the school-age groups and the November lockdown is visible to some extent in all age groups.
 \begin{figure}
     \thisfloatpagestyle{empty}
-    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/sim/data}}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/sim/data}}
     \caption[Simulated data]{%
         (A) Incidence and (B) prevalence for the 100 simulated data sets as a proportion of each stratum.
         Prevalence shown is $\bar{p}_{kat}$, the true population prevalence on each day, excluding sampling noise.
@@ -691,7 +692,7 @@ There is a tendency for the coverage to be slightly lower than the nominal proba
 This is a common issue with random walk MCMC (see \cref{E-MCMC:sec:improving}).
 The same issue arises with the coverage for derived quantities incidence and prevalence (see \cref{SEIR:fig:sim-inc-prev}).
 \begin{figure}
-    \includegraphics{SEIR/sim/coverage}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/sim/coverage}}
     \caption[Coverage of simulation study]{%
         Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for each parameter; see text for full definition.
         Vertical lines show the nominal coverage.
@@ -699,7 +700,8 @@ The same issue arises with the coverage for derived quantities incidence and pre
     \label{SEIR:fig:sim-coverage}
 \end{figure}
 \begin{figure}
-    \makebox[\textwidth][c]{\includegraphics[width=0.9\paperwidth]{SEIR/sim/predictive_coverage}}
+    \thisfloatpagestyle{empty}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/sim/predictive_coverage}}
     \caption[Coverage of simulation study (derived quantities)]{%
         Point estimate and 95\% confidence interval for coverage of the 50\%, 75\%, and 95\% central credible intervals for (A) incidence and (B) prevalence; see main text for full definition.
         Horizontal lines show the nominal coverage.
@@ -716,6 +718,7 @@ This suggests that these parameters are not practically identifiable in this set
 The posteriors align very closely with the priors (not shown) which reinforces this finding.
 The lack of identifiability for $\vec{\pi}$ aligns with previous work showing this parameter is structurally unidentifiable, \ie not identifiable even in the limit of infinite data~\autocite{dankwaStructural}.
 \begin{figure}
+    \thisfloatpagestyle{empty}
     \makebox[\textwidth][c]{\includegraphics{SEIR/sim/true_vs_posterior}}
     \caption[True vs posterior parameter values]{%
         True vs posterior median parameter values for each parameter in each simulation.
@@ -734,14 +737,15 @@ A constant $\matr{\beta}(t)$ would lead to exponential growth following a period
 The estimated timing of the peak in incidence varies by region, with the most common time being late December 2020 (see \cref{SEIR:fig:peak-incidence}).
 In Yorkshire and the Humber, the October peak is estimated to be greater than the winter peak; for North West there is a significant probability on either being larger.
 \begin{figure}
-    \includegraphics{SEIR/CIS/incidence}
+    \thisfloatpagestyle{empty}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/incidence}}
     \caption[Posterior estimates of incidence]{%
         Posterior estimates (95\% CrI) of incidence proportion by region and age.
     }
     \label{SEIR:fig:incidence}
 \end{figure}
 \begin{figure}
-    \includegraphics{SEIR/CIS/p_peak}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/p_peak}}
     \caption[Posterior estimates of peak incidence timing]{%
         Posterior probability of the peak incidence proportion for each region and age combination occurring on each day.
     }
@@ -753,7 +757,8 @@ They trend downward and are then flat until they begin rising around the start o
 Correlation is clear across the regions even though each region is estimated independently, suggesting underlying biological or epidemiological changes across regions.
 
 \begin{figure}
-    \includegraphics{SEIR/CIS/beta_walk}
+    \thisfloatpagestyle{empty}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/beta_walk}}
     \caption[Posterior estimates of $\beta_w$]{%
         Posterior estimates $\beta_w$ for each week.
         Shown are ``violins'' where the width is proportional to the kernel-density estimated posterior density at that point.
@@ -777,9 +782,9 @@ Overall, the model fits the data well (see \cref{SEIR:fig:prev,SEIR:fig:prev-app
 There are a few features of the data which are not captured by the model and the posterior estimate appears to be a compromise with the prevalence too low in one age group and too high in another.
 For example, in the North East region, the 12--16 age group has its prevalence overestimated in October but the 17--25 age group has its prevalence underestimated.
 \begin{figure}
-    % \thisfloatpagestyle{empty}
+    \thisfloatpagestyle{empty}
     % \vspace{-3cm}
-    \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{SEIR/CIS/prev_main}}
+    \makebox[\textwidth][c]{\includegraphics{SEIR/CIS/prev_main}}
     \captionsetup{width=0.8\paperwidth}
     \captionof{figure}[SEIR prevalence goodness-of-fit]{%
         Goodness-of-fit to prevalence data by region and age for selected regions (see \cref{SEIR:fig:prev-appendix} for others).
@@ -866,7 +871,7 @@ The largest discrepancy is that the phenomenological approach model estimates a 
 However, except in London, the credible intervals still overlap.
 This is a specific case of a larger pattern: the SEIR model produces smoother estimates of incidence than the phenomenological model.
 \begin{figure}
-    \centering \includegraphics{transmission/compare-regions}
+    \makebox[\textwidth][c]{\includegraphics{transmission/compare-regions}}
     \caption[Comparing each models estimate of regional incidence.]{%
         Incidence proportion in England and each region estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.
@@ -894,7 +899,7 @@ I previously observed the quality of the SEIR model's fit is variable between di
 This is because the model is not flexible enough to capture the true age distribution of infections.
 The overestimation of prevalence in the 12--16 age group and underestimation in the 17--25 age group is reflected when comparing incidence estimates to those from the phenomenological model, which have reduced bias.
 \begin{figure}
-    \centering \includegraphics{transmission/compare-NE}
+    \makebox[\textwidth][c]{\includegraphics{transmission/compare-NE}}
     \caption[Comparing each models estimate of North East incidence proportion by age.]{%
         Incidence proportion in each age group in the North East estimated by the two models discussed in this chapter.
         Posterior median and 95\% CrI shown.

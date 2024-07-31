@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(tibble)
 library(tidyr)
+source(here::here("utils.R"))
 
 plot_testing_schedule = function(x, break_modifier = 0) {
   scale_colours = c(
@@ -36,7 +37,7 @@ plot_testing_schedule = function(x, break_modifier = 0) {
     scale_shape_manual(values = scale_shapes) +
     scale_colour_manual(values = scale_colours) +
     xlab("Time") +
-    theme_minimal() +
+    standard_plot_theming() +
     theme(
       axis.title.y = element_blank(),
       axis.text.y = element_blank(),
@@ -74,7 +75,11 @@ p_censor = tibble(
   )) %>% 
   mutate(individual = 1) %>% 
   plot_testing_schedule()
-ggsave("cis-perfect-testing/double-interval-censor.pdf", width = 6, height = 1.5, dpi = 300, unit = "in")
+save_plot(
+  filename = "cis-perfect-testing/double-interval-censor.pdf",
+  plot = p_censor,
+  height = 4
+)
 
 p_truncation = expand_grid(
   time = c((0:3) * 7, (1:3) * 28),
@@ -87,4 +92,8 @@ p_truncation = expand_grid(
     1, 43, "recovered",
   )) %>% 
   plot_testing_schedule()
-ggsave("cis-perfect-testing/truncation.pdf", width = 6, height = 2, dpi = 300, unit = "in")
+save_plot(
+  filename = "cis-perfect-testing/truncation.pdf",
+  plot = p_truncation,
+  height = 5
+)

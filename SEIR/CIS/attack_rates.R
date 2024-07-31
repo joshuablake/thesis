@@ -64,10 +64,8 @@ p_attack_rate = ggplot(attack_rate, aes(x = age, y = occupancy, colour = age)) +
     labs(x = "", y = "Attack rate", colour = "Age") +
     scale_x_discrete(breaks = c()) +
     coord_cartesian(y = c(0, NA))
-ggsave(
+save_plot(
     filename = here::here("SEIR/CIS/attack_rates.pdf"),
     plot = p_attack_rate,
-    width = 5,
-    height = 5,
-    device = cairo_pdf
+    height = 15
 )

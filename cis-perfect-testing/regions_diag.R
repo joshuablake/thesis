@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+source(here::here("utils.R"))
 
 neg_test_dates = c(0, 7, 14, 56)
 pos_test_dates = c(28, 21)
@@ -34,6 +35,7 @@ tbl_labels = inner_join(
 
 shade_alpha = 0.3
 plot = ggplot() +
+    standard_plot_theming() +
     test_lines(pos_test_dates, TRUE) +
     test_lines(neg_test_dates, FALSE) +
     geom_hline(aes(yintercept = all_test_dates - 0.5), linetype = "dashed") +
@@ -44,7 +46,6 @@ plot = ggplot() +
         aes(x, y, label = label),
         size = 10
     ) +
-    theme_minimal() +
     scale_x_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(-10, 60), expand = c(0, 0)) +
     scale_y_continuous(breaks = all_test_dates, minor_breaks = -100:100, limits = c(0, 59.5), expand = c(0, 0)) +
     geom_point(
@@ -147,4 +148,8 @@ plot = ggplot() +
         legend.position = "bottom",
         legend.box = "vertical"
     )
-ggsave("cis-perfect-testing/regions_diag.pdf", width = 19, height = 20, device = cairo_pdf, units = "cm")
+save_plot(
+    filename = "cis-perfect-testing/regions_diag.pdf",
+    plot = plot,
+    caption_lines = 8
+)

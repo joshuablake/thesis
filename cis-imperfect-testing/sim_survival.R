@@ -56,37 +56,28 @@ truth = readRDS(here::here("cisRuns-output/input_curves.rds")) |>
 p_constant_sensitivity = tbl_posteriors |>
     filter(sensitivity.simulation == sensitivity.model, sensitivity.simulation < 1) |>
     base_plot(survival_prior)
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/sim-constant-sensitivity.pdf"),
     plot = p_constant_sensitivity,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )
 
 p_misspecified_sensitivity = tbl_posteriors |>
     filter(sensitivity.simulation == 0.8, survival_prior == "Combination") |>
     base_plot(sensitivity.model, colour_key = expression(p[sens]^`(i)`), facet_suffix = "^{(i)}")
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/sim-misspecified-sensitivity.pdf"),
     plot = p_misspecified_sensitivity,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )
 
 p_variable_sensitivity = tbl_posteriors |>
     filter(is.na(sensitivity.simulation), survival_prior == "Combination") |>
     base_plot(sensitivity.model, colour_key = expression(p[sens]^`(i)`), facet_suffix = "^{(i)}")
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/sim-variable-sensitivity.pdf"),
     plot = p_variable_sensitivity,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )
 
 # tbl_posteriors |>
@@ -104,7 +95,7 @@ ggsave(
 #     count(sim_name, model_name, time) |>
 #     filter(n > 1)
 
-# ggsave(
+# save_plot(
 #     filename = here::here("cis-imperfect-testing/sim-all.pdf"),
 #     width = 15,
 #     height = 50,

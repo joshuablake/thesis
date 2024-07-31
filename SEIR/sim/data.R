@@ -16,8 +16,7 @@ do_plot = function(base_gg, y_axis_label) {
         geom_line(aes(date, group = sim), alpha = 0.2) +
         standard_plot_theming() +
         facet_wrap(~age) +
-        labs(x = "Date", y = y_axis_label) +
-        theme(text = element_text(size = 20))
+        labs(x = "Date (2020-1)", y = y_axis_label)
     )
 }
 
@@ -31,11 +30,8 @@ p_prevalence = inputs |>
     do_plot("Prevalence") +
     ggtitle("(B) Prevalence")
 
-ggsave(
+save_plot(
     filename = here::here("SEIR/sim/data.pdf"),
     plot = p_incidence / p_prevalence,
-    width = 20,
-    height = 25,
-    dpi = 300,
-    device = cairo_pdf
+    caption_lines = 3
 )

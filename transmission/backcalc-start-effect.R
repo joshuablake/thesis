@@ -12,14 +12,14 @@ p_start_effect = readRDS(file.path(output_dir, "region.rds")) |>
     scale_y_continuous(labels = scales::label_percent(), limits = c(0, NA)) +
     scale_fill_brewer() +
     labs(
-        x = "Date",
+        x = "Date (2020)",
         y = "Incidence proportion",
     ) +
     standard_plot_theming() +
     theme(legend.position = "none")
-ggsave(
+save_plot(
     filename = here::here("transmission", "backcalc-start-effect.pdf"),
     plot = p_start_effect,
-    width = 4,
-    height = 3.8
+    width = 10,
+    height = 10
 )

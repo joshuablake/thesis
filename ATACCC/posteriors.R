@@ -92,14 +92,12 @@ p_mean = bind_rows(
 p_combined = p_mean / p_cov + plot_layout(
     guides = "collect",
     heights = c(1, 2)
-)
-ggsave(
+) &
+theme(legend.position = "bottom")
+save_plot(
     filename = here::here("ATACCC/compare_hakki_modified.pdf"),
     plot = p_combined,
-    width = 15,
-    height = 15,
-    units = "cm",
-    dpi = 300
+    height = 17
 )
 
 p_mean_trajectories = modified |>
@@ -125,14 +123,12 @@ p_mean_trajectories = modified |>
         x = "Time from peak",
         y = "Log viral load",
     ) +
-    coord_cartesian(ylim = c(0, NA))
-ggsave(
+    coord_cartesian(ylim = c(0, NA)) +
+    theme(legend.position = "bottom")
+save_plot(
     filename = here::here("ATACCC/mean_trajectories.pdf"),
     plot = p_mean_trajectories,
-    width = 15,
-    height = 10,
-    units = "cm",
-    dpi = 300
+    height = 12
 )
 # tibble_diagnostics = function(sims) {
 #   tibble(

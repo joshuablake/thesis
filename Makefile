@@ -107,10 +107,10 @@ cis-imperfect-testing/CIS_ntot.pdf: cis-imperfect-testing/CIS_ntot.R utils.R cis
 cis-perfect-testing.pdf: $(PERF_DEPS) $(SHARED_DEPS)
 	$(LATEX_CMD)
 
-cis-perfect-testing/regions_diag.pdf: cis-perfect-testing/regions_diag.R
+cis-perfect-testing/regions_diag.pdf: cis-perfect-testing/regions_diag.R utils.R
 	Rscript $<
 
-cis-perfect-testing/double-interval-censor.pdf cis-perfect-testing/truncation.pdf: cis-perfect-testing/dgp-challenges.R
+cis-perfect-testing/double-interval-censor.pdf cis-perfect-testing/truncation.pdf: cis-perfect-testing/dgp-challenges.R utils.R
 	Rscript $<
 
 cis-perfect-testing/ataccc-approximation-%.pdf: cis-perfect-testing/ataccc-approximation.R ATACCC-distributions/posterior_samples.rds ATACCC-distributions/logit_hazard_mean.rds ATACCC-distributions/logit_hazard_cov.rds utils.R

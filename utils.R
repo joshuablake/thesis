@@ -1,6 +1,7 @@
 standard_plot_theming = function() {
     rlang::list2(
         theme_minimal(),
+        ggplot2::theme(text = ggplot2::element_text(size = 12)),
     )
 }
 
@@ -21,3 +22,21 @@ theme_survival_time_series = function() {
 
 logit = function(x) log(x) - log(1 - x)
 expit = function(x) 1 / (1 + exp(-x))
+
+# save a plot, defaults to full page
+save_plot = function(
+    filename, plot, caption_lines = 0,
+    width = 18, height = 25.7 - 0.6*caption_lines, units = "cm", dpi = 500,
+    device = cairo_pdf, ...
+) {
+    ggplot2::ggsave(
+        filename = filename,
+        plot = plot,
+        width = width,
+        height = height,
+        units = units,
+        dpi = dpi,
+        device = device,
+        ...
+    )
+}

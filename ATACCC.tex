@@ -84,7 +84,7 @@ $\vec{\phi}_i = (v_{\max,i}, a_i, b_i)^T$ are the random effects for individual 
 $\tau_{\max,i}$ is a fixed effect for each individual because time is defined for each individual based on when they are first tested.
 This time is based on logistical and behavioural factors such as delays in the NHS Test and Trace system and the study design.
 \begin{figure}[tbhp]
-  \centering \includegraphics{ATACCC/typical_trajectory}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/typical_trajectory}}
   \caption[Example viral load model trajectory.]{%
     Example viral load trajectory produced by \textcite{hakkiOnset}'s viral load model, using realistic parameter values.
     The increase and decrease in log viral load are approximately linear with a gradient of $a_i$ and $b_i$ respectively.
@@ -257,7 +257,7 @@ These are the main parameters of interest (as explained in \cref{ATACCC:sec:dura
 As the estimates are similar and the modified model converges better, I will use only the results from the modified model.
 In this study, $\vlod = 0$.
 \begin{figure}
-  \centering \includegraphics{ATACCC/compare_hakki_modified}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/compare_hakki_modified}}
   \caption[Comparison of population-level parameters between models.]{Kernel-density smoothed posterior densities for the population mean (top), $\vec{\mu}_{\phi,1}$, and covariance matrix (bottom), $\matr{\Sigma}_\phi$, for both the \textcite{hakkiOnset} model (described in \cref{ATACCC:sec:hakki}) and the model with a modified observation model to improve convergence (described in \cref{ATACCC:sec:observation-modification}). Mean only shown for the unvaccinated group, the primary group of interest. The groups share the covariance matrix. These parameters, which are the primary ones of interest (see \cref{ATACCC:sec:duration}), have very similar estimates between the models. \label{ATACCC:fig:compare-hakki-modified}}
 \end{figure}
 
@@ -265,7 +265,7 @@ Clear differences emerge between the vaccinated and unvaccinated groups (see \cr
 The rates of viral load increase at similar rates in the two groups, the vaccinated group have higher peak viral loads and clear the virus faster.
 This leads to a shorter duration of RT-PCR positivity in the vaccinated group.
 \begin{figure}
-  \centering \includegraphics{ATACCC/mean_trajectories}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/mean_trajectories}}
   \caption[Median viral load trajectories]{Trajectory (posterior median and 95\% CrI) using the population median parameter values, $\exp \vec{\mu}_{\phi,g}$, excluding the within-population variation. These assume $\tau_{\max,i}=0$, however modifying this simply translates the trajectories left or right. \label{ATACCC:fig:median-trajectories}}
 \end{figure}
 \begin{table}
@@ -287,14 +287,14 @@ The $F_{D,g}$ estimates for the two groups are in \cref{ATACCC:fig:duration}.
 The vaccinated population very likely has a shorter duration of RT-PCR positive (93\% posterior probability of a shorter median duration) than the unvaccinated population (see \cref{ATACCC:fig:duration}).
 The median duration of RT-PCR positivity for the vaccinated population is 13 days (95\% CrI: 11--16 days), but it is 16 days (95\% CrI: 14--19 days) for the unvaccinated population.
 \begin{figure}
-  \centering \includegraphics{ATACCC/duration}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/duration}}
   \caption[Duration of RT-PCR positivity.]{Estimated distribution (survival function) of duration of RT-PCR positivity for the two populations. The vaccinated population have shorter durations of RT-PCR positivity.  \label{ATACCC:fig:duration}}
 \end{figure}
 
 The modified model produced good fits to the data (see \cref{ATACCC:fig:goodness-of-fits,ATACCC:fig:appendix-goodness-of-fits}).
 Almost all test results are captured in the 95\% credible intervals.
 \begin{figure}
-  \makebox[\textwidth][c]{\includegraphics[width=.9\paperwidth]{ATACCC/fits}}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/fits}}
   \caption[Posterior predictive viral load fits]{Posterior predictive observed viral loads (median and 95\% CrI, lines and ribbon) for selected individuals, overlaid with their observed test results (dots). Posterior estimates are conditional on the result not being a false negative. Negative RT-PCR tests are plotted at the limit of detection, \ie a log viral load of 0. Each plot is labelled with the individual's position in the dataset, an arbitrary value.
   Remaining individuals shown in \cref{ATACCC:fig:appendix-goodness-of-fits}.
   \label{ATACCC:fig:goodness-of-fits}}
@@ -309,7 +309,7 @@ The first, found by two chains, increases very quickly, peaks 4.0 days after the
 The second, found by the other six chains, is more symmetrical, peaking 7.2 days after the first test.
 The population-level parameter estimates agree between the two sets of chains (not shown); therefore, the issue should not affect any estimates of interest.
 \begin{figure}
-  \centering \includegraphics{ATACCC/fit_individual_55}
+  \makebox[\textwidth][c]{\includegraphics{ATACCC/fit_individual_55}}
   \caption[Goodness-of-fit for individual 55]{Fit to individual 55's data coloured by MCMC chain. Two chains favour the quickly increasing viral load trajectory, peaking at day 4.0, the other six favour the slower trajectory, peaking at day 7.2. \label{ATACCC:fig:individual-55}}
 \end{figure}
 

@@ -52,16 +52,15 @@ plot_positivity = ggplot() +
     ) +
     scale_y_continuous(labels = scales::label_percent()) +
     labs(
-        x = "Date",
+        x = "Date (2020-1)",
         y = "Prevalence"
     ) +
     standard_plot_theming() +
     theme(legend.position = "none")
-ggsave(
+save_plot(
     here::here("biology-data", "CIS-positivity.pdf"),
     plot_positivity,
-    width = 6,
-    height = 3.5
+    height = 8
 )
 
 plot_num_tests = raw_counts |>
@@ -73,13 +72,12 @@ plot_num_tests = raw_counts |>
         c(min(corrected_model$date), max(corrected_model$date))
     ) +
     labs(
-        x = "Date",
+        x = "Date (2020-1)",
         y = "Number of tests"
     ) +
     standard_plot_theming()
-ggsave(
+save_plot(
     here::here("biology-data", "CIS-num-tests.pdf"),
     plot_num_tests,
-    width = 6,
-    height = 3.5
+    height = 8
 )

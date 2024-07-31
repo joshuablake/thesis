@@ -92,11 +92,8 @@ p_walk = walk |>
         x = "Date",
         y = expression(beta[t])
     )
-ggsave(
+save_plot(
     plot = p_walk,
     filename = here::here("SEIR/CIS/beta_walk.pdf"),
-    width = 15,
-    height = 20,
-    units = "cm",
-    dpi = 300
+    caption_lines = 3
 )

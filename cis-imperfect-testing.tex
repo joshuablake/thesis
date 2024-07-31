@@ -32,7 +32,7 @@ Applying the method of \cref{E-perf-test} to CIS data estimates a median duratio
 The \cref{E-ATACCC} estimates are more reliable over the first 2--3 weeks due to ATACCC's frequent data collection (see \cref{E-biology-data:sec:ataccc,E-ATACCC:sec:discussion}).
 This suggests an issue in the estimation using CIS data.
 \begin{figure}
-  \centering \includegraphics{cis-imperfect-testing/CIS_perfect}
+  \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/CIS_perfect}}
   \caption[Estimating survival using CIS data assuming perfect testing]{Estimates of the survival function using CIS data alongside the ATACCC-based estimates of \cref{E-perf-test}. \label{imperf-test:fig:problem-cis-estimates}}
 \end{figure}
 
@@ -58,7 +58,7 @@ Intermittent negatives (described in  \cref{E-biology-data:sec:PCR}) show that t
 Furthermore, in \cref{imperf-test:sec:simulate}, I expanded the simulation study of \cref{E-perf-test:sec:simulation-study} to include false negatives.
 This reproduced the CIS data more faithfully (see \cref{imperf-test:fig:sim-single-pos}) and exhibited the same issues when estimating the duration distribution (not shown).
 \begin{figure}
-  \centering \includegraphics{cis-imperfect-testing/sim-single-positive-episodes}
+  \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/sim-single-positive-episodes}}
   \caption[Single positive episodes in CIS simulation]{%
     Proportion of detected episodes which have a single positive episode.
     y-axis is the number of simulations, out of \numprint{1000}, with the indicated proportion.
@@ -385,7 +385,7 @@ The qualitative increase in long episodes is robust to the choice of prior for $
 However, the survival proportion over the first 4 weeks is sensitive to these choices.
 The estimate using a test sensitivity of 0.8 and $\NBc(\mu\inform, r\inform)$ give a median survival time most similar to that of \cref{E-ATACCC}.
 \begin{figure}
-  \centering \includegraphics{cis-imperfect-testing/CIS_final}
+  \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/CIS_final}}
   \caption[Comparing estimates of the duration distribution.]{
     Duration estimates using the model in this chapter (CIS) alongside those from \cref{E-ATACCC} (ATACCC).
     Uses the informative prior on $\ntot$, the model combination prior for the hazards, and $\psensi = 0.8$.
@@ -413,7 +413,7 @@ As discussed previously, the \cref{E-ATACCC} estimates are reliable for the firs
 The median using $r\inform$ matched \cref{E-ATACCC}'s median estimate and is a principled choice because it is based directly on the prior work \textcite{birrellRTM2}.
 Therefore, I use this estimate in the application to the CIS data.
 \begin{figure}
-  \centering \includegraphics{cis-imperfect-testing/CIS_ntot}
+  \makebox[\textwidth][c]{\includegraphics{cis-imperfect-testing/CIS_ntot}}
   \caption[Sensitivity of $\ntot$'s posterior to its prior.]{How the posterior estimate of $\ntot$ changes with the value of $r$ in the prior on $\ntot$.}
   \label{imperf-test:fig:ntot}
 \end{figure}

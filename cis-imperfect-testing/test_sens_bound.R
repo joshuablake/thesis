@@ -37,13 +37,11 @@ p_bound = bound_data |>
         x = "Days since first positive test",
         y = "Test sensitivity",
         colour = NULL
-    )
+    ) +
+    theme(legend.position = "bottom")
 
-ggsave(
+save_plot(
     filename = here::here("cis-imperfect-testing/test-sens-bound.pdf"),
     plot = p_bound,
-    width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 10
 )

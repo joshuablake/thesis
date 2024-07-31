@@ -19,7 +19,7 @@ make_plot = function(x) {
         standard_plot_theming() +
         facet_wrap(~age) +
         labs(
-            x = "Day",
+            x = "Day (2020-1)",
             y = "Coverage",
             fill = "Interval width",
             colour = "Interval width"
@@ -72,10 +72,8 @@ p_combined = p_incidence / p_prevalence +
     theme(
         legend.position = "bottom",
     )
-ggsave(
+save_plot(
     filename = "SEIR/sim/predictive_coverage.pdf",
     plot = p_combined,
-    width = 15,
-    height = 15,
-    device = cairo_pdf
+    caption_lines = 3
 )

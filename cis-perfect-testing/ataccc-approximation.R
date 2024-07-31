@@ -61,15 +61,13 @@ p_surv = tbl_priors |>
         colour = "",
         fill = ""
     )
-ggsave(
+save_plot(
     filename = here::here(
         "cis-perfect-testing/ataccc-approximation-survival.pdf"
     ),
     plot = p_surv,
     width = 15,
-    height = 9,
-    units = "cm",
-    dpi = 300
+    height = 9
 )
 
 p_hazard = tbl_priors |>
@@ -88,13 +86,10 @@ p_hazard = tbl_priors |>
         axis.text.x = element_text(angle = 45)
     )
 
-ggsave(
+save_plot(
     filename = here::here(
         "cis-perfect-testing/ataccc-approximation-hazard.pdf"
     ),
     plot = p_hazard,
-    width = 15,
-    height = 19,
-    units = "cm",
-    dpi = 300
+    caption_lines = 4
 )

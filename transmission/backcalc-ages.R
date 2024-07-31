@@ -13,7 +13,7 @@ p_age_base = readRDS(file.path(output_dir, "age.rds")) |>
     ggplot(aes(date, incidence, colour = age_group, fill = age_group)) +
     stat_lineribbon(alpha = 0.3, .width = 0.95, linewidth = 0.5) +
     labs(
-        x = "Date",
+        x = "Date (2020-1)",
         y = "Incidence proportion",
         fill = "Age group",
         colour = "Age group"
@@ -25,10 +25,8 @@ p_age = (p_age_base + scale_y_continuous(labels = scales::label_percent())) +
         plot_layout(guides = "collect") &
         theme(legend.position = "bottom")
 
-ggsave(
+save_plot(
     filename = here::here("transmission", "backcalc-ages.pdf"),
-    device = cairo_pdf,
     plot = p_age,
-    width = 6.5,
-    height = 3.6
+    height = 10
 )

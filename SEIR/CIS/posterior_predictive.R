@@ -93,7 +93,7 @@ create_prev_plot = function(regions, label) {
         facet_grid(age ~ region) +
         standard_plot_theming() +
         labs(
-            x = "Date",
+            x = "Date (2020-1)",
             y = "Prevalence"
         ) +
         theme(
@@ -102,16 +102,12 @@ create_prev_plot = function(regions, label) {
             axis.text.x = element_text(angle = 45, hjust = 1)
         )
 
-    ggsave(
-        device = cairo_pdf,
+    save_plot(
+        plot = plot,
         filename = here::here(
             glue::glue("SEIR/CIS/prev_{label}.pdf")
         ),
-        plot = plot,
-        width = 15,
-        height = 16,
-        units = "cm",
-        dpi = 300
+        caption_lines = 6
     )
 }
 
@@ -141,21 +137,15 @@ p_incidence = prediction_intervals |>
     ) +
     facet_wrap(~region, ncol = 2) +
     labs(
-        x = "Date",
+        x = "Date (2020-1)",
         y = "Incidence"
     ) +
     standard_plot_theming() +
     theme(legend.position = "bottom")
-ggsave(
-    device = cairo_pdf,
-    filename = here::here(
-        glue::glue("SEIR/CIS/incidence.pdf")
-    ),
+save_plot(
+    filename = here::here("SEIR/CIS/incidence.pdf"),
     plot = p_incidence,
-    width = 15,
-    height = 20,
-    units = "cm",
-    dpi = 300
+    caption_lines = 1
 )
 
 # Calculate when incidence peaks for each posterior sample (by age and region)
@@ -176,18 +166,14 @@ p_peak = peak_days |>
     standard_plot_theming() +
     theme(legend.position = "bottom") +
     labs(
-        x = "Day",
+        x = "Date (2020-1)",
         y = "Posterior probability",
         colour = "Age group"
     )
-ggsave(
-    device = cairo_pdf,
+save_plot(
     filename = here::here("SEIR/CIS/p_peak.pdf"),
     plot = p_peak,
-    width = 15,
-    height = 10,
-    units = "cm",
-    dpi = 300
+    height = 13
 )
     
 # Output peak incidence dates as a CSV for humans
