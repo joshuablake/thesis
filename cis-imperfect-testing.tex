@@ -134,8 +134,12 @@ Furthermore, it does not require low test sensitivities early in the infection, 
 
 \section{Posterior density modification for false negatives} \label{imperf-test:sec:modelling}
 
-In this section, I introduce a simple model of false negatives (\ie allowing $\psens < 1$) into the posterior density derived in \cref{E-perf-test:sec:model}.
+In this section, I introduce a simple model of false negatives (\ie allowing $\psens < 1$) into the posterior density derived in \cref{E-perf-test:sec:model}; I continue to assume the probability of a false positive is negligible.
 Using a simple model, in particular a constant test sensitivity, means calculating the likelihood remains tractable.
+Additionally, I limit the number of permutations of false negative and true positive tests that I consider have non-negligible probability.
+Specifically, I assume that, if $i(j)$ is tested during infection episode $j$, either: the individual has a single false negative test and the episode ends before their next test, or the first test is a false positive test.
+This assumption is reasonable because false negatives normally occur when the viral load is low, which is normally late in the infection episode.
+For the same reason, I assume there is at most one false negative test following the final true positive test in the episode.
 
 I start, in \cref{imperf-test:sec:notation}, by introducing some additional notation needed.
 I then modify the components of the likelihood in \cref{imperf-test:sec:modifying-p_ia,imperf-test:sec:modifying-p_iu} to incorporate false negatives.
@@ -180,8 +184,7 @@ However, this prior work was for singly interval censored data; incorporating th
 % \end{align}
 % I derive $p_k$ by considering the generating process that could have produced this episode.
 
-For tractability, assume that the negative test bounding the start of the episode, on day $l_k^{(b)}-1$, is a true negative.
-This assumption is reasonable because, since a positive test follows at $r_k^{(b)}$, the negative at $l_k^{(b)}-1$ is likely early in the infection and the test sensitivity is high early in an infection.
+By assumption, the negative test bounding the start of the episode, on day $l_k^{(b)}-1$, is a true negative.
 True negatives occur with probability 1, and hence this test does not contribute to the likelihood.
 
 As I assume that there are no false positives, the infection episode must span at least the period $[r^{(b)}_k, l^{(e)}_k]$, a period starting and ending with a positive test.
@@ -255,7 +258,7 @@ The episode has not yet ended at the time of the test if $e_j = b_j + d_j - 1 \g
 Conditional on the episode having not yet ended, the test result is negative with probability $1 - \psens$.
 
 For there to be no subsequent positive tests, all tests up until day $e_j$ are false negatives.
-I assume there is a negligible probability of two false negatives.
+By assumption, there is a negligible probability of two false negatives.
 Therefore, this can only occur if the episode ends before another test.
 Denote the number of days between $b_j$ and the test following the false negative as $\tau^2_{\sched_{i(j)}}(b_j) \stackrel{\text{def}}{=} \tau_{\sched_{i(j)}}(\tau_{\sched_{i(j)}}(b_j) + 1)$.
 Then, the episode ends before this test if $d_j \leq \tau^2_{\sched_{i(j)}}(b_j)$.
