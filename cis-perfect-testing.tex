@@ -214,6 +214,14 @@ Let $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ be an ar
 The target of inference is $\vec{\theta}$, the parameters of the survival function $S_{\vec{\theta}}(t)$.
 The contents of $\vec{\theta}$ are discussed in \cref{perf-test:sec:parameters-priors}.
 
+For our purposes, an infection episode $j$ consists of the three random variables: $i(j)$, the individual it occurs in; $B_j$, the day it begins (the first day $i(j)$ is detectable due to this infection episode); $E_j$, the day it ends (the last day $i(j)$ is detectable due to this infection episode); the distribution of the episode's duration is a deterministic transformation of these variables, $D_j = E_j - B_j + 1$.
+I assume that $B_j$, $D_j$, and $i(j)$ are independent.
+$D_j$'s distribution is determined by $\vec{\theta}$; both $B_j$ and $i(j)$ have uniform priors over their respective state spaces.
+$O(j)$ is a deterministic function of $B_j$, $E_j$, and $\sched_{i(j)}$.
+
+To make this problem tractable, I model infection episodes as independent conditional on $\ntot$, the total number of them that occur, and $\vec{\theta}$; \ie $(B_j, E_j, i(j)) \ind (B_{j'}, E_{j'}, i(j')) \mid \ntot, \vec{\theta}$ for $j \neq j'$.
+This is true both for infection episodes within the same individual and across individuals; this assumption is discussed in \cref{perf-test:sec:discussion}.
+
 Let $n_k$ denote the number of observations of $\vec{\nu}_k$; $\nnodet$ denote the latent number of undetected episodes; and $\vec{n} = [n_1, \dots, n_{N_E}, \nnodet]^T$.
 Hence, $\ntot = \sum_{i=1}^{N_E} n_i + \nnodet$.
 
@@ -221,9 +229,8 @@ Now define the probabilities of each possible outcome of $O(j)$.
 For detected outcomes, \ie $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$.
 For undetected outcomes, let $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$.
 Together, $\vec{p} = [p_1, \dots, p_{N_E}, p_u]^T$.
-Assume, for tractability, that the events $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$; this assumption is discussed in \cref{perf-test:sec:discussion}.
 
-Then:
+As we assume $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$:
 \begin{align}
   \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
 \intertext{that is:}
@@ -330,7 +337,7 @@ Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where
 Decompose $p_k$ as $p_k = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$
 where $p_{ik} = \prob(O(j) = \vec{\nu}_k \mid i(j) = i_k, \vec{\theta})$.
 % This is valid as $\prob(O(j) = \nu_k \mid i(j) \neq i_k) = 0$ due to the condition here being equivalent to equating the two vectors' final elements.
-Assume that each infection episode occurs independently and with equal probability in any individual, \ie $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
+As I assume that each infection episode occurs independently and with equal probability in any individual, $\prob(i(j) = i_k) = 1/\Ncis$ for all $j$ and $k$.
 
 If $i(j) = i_k$ then the event $O(j) = \vec{\nu}_k$ occurs if and only if the episode starts in the interval $[l^{(b)}_k, r^{(b)}_k]$ and ends in the interval $[l^{(e)}_k, r^{(e)}_k]$.
 Omitting the conditioning on $\vec{\theta}$ and $i(j) = i$, this gives:
@@ -344,7 +351,7 @@ p_{ik}
 \propto& \sum_{b = l_k^{(b)}}^{r_k^{(b)}} \left( S_{\vec{\theta}}(l_k^{(e)} - b + 1) - S_{\vec{\theta}}(r_k^{(e)} - b + 2) \right)
 \label{perf-test:eq:pia}
 \end{align}
-under the assumption of uniform probability of infection time.
+by the assumption of uniform probability of infection time.
 This is the standard form of the likelihood for doubly interval censored data without truncation~\autocite[e.g.][]{sunEmpirical}.
 
 \subsection{Deriving $1 - p_u$} \label{perf-test:sec:prob-undetected}
@@ -651,7 +658,7 @@ A smoothing prior performed poorly, although that may be influenced by the choic
 Reducing the amount of smoothing or changing the type of smoothing may help.
 More flexible smoothing priors could be used, such as a Gaussian Process for additional flexibility and smoothing and different timescales~\autocite{saulGaussian}.
 
-The derivation in \cref{perf-test:sec:model} relied on an assumption that $O(j)$ and $O(j')$ occur independently for $j \neq j'$.
+The derivation in \cref{perf-test:sec:model} relied on an assumption that infection episodes occur independently.
 This is not the case, as immunity means that an individual previously infected is less likely to be infected in the future.
 Additionally, the same individual cannot have multiple detected concurrent infections, due to the way that the episodes dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}); this limits certain combinations from occurring.
 In practice, this means that $n_k > 1$ cannot occur.
