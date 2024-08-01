@@ -505,7 +505,7 @@ I form the prior to include this prior information into the CIS analysis in two 
 
 I first approximate the \cref{E-ATACCC} posterior estimate of the hazard as $\logit{\vec{h}} \dist \MNorm(\vec{\mu}_A, \matr{\Sigma}_A)$ where $\vec{h} = [h_1, \dots, h_{\dmax}]^T$ is the hazard, and $\vec{\mu}_A$ and $\matr{\Sigma}_A$ are the mean and covariance matrix computed from the samples of $\logit{\vec{h}}$ derived using the method of \cref{E-ATACCC:sec:duration}.
 Therefore, $\vec{h}$ represents a sample from the approximation of \cref{E-ATACCC}'s posterior estimate of the hazard before increasing the uncertainty to account for the strong model assumptions.
-Using a multivariate normal, as opposed to multiple univariate distribution for each $h_t$, preserves the correlation between the hazards.
+Using a multivariate normal, as opposed to an independent univariate distribution for each $h_t$, preserves the correlation between the hazards.
 % The logit transformation maps from the $[0, 1]$ interval to the full real line.
 The approximation is very good (see \cref{perf-test:fig:approximate-ATACCC-hazard} and \cref{perf-test:fig:approximate-ATACCC-survival}).
 \begin{figure}
