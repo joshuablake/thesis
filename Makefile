@@ -227,8 +227,14 @@ diff: thesis-diff.pdf thesis-diff-list.pdf
 thesis-diff.pdf: thesis-diff.tex FORCE
 	$(LATEX_CMD)
 
-thesis-diff.tex: thesis.pdf
-	latexdiff ../thesis-repos/orig-submission/thesis.tex thesis.tex --append-textcmd="ifSubfilesClassLoaded" --flatten --math-markup=3 > thesis-diff.tex
+thesis-diff.tex: latex.out/thesis-prev.tex latex.out/thesis-cur.tex
+	latexdiff latex.out/thesis-prev.tex latex.out/thesis-cur.tex --math-markup=3 > thesis-diff.tex
+
+latex.out/thesis-prev.tex: ../thesis-repos/orig-submission/thesis.tex
+	python3 parse_subfiles.py ../thesis-repos/orig-submission/thesis.tex $@
+
+latex.out/thesis-cur.tex: thesis.pdf
+	python3 parse_subfiles.py thesis.tex $@
 
 thesis-diff-list.pdf: generate_changes_report.py thesis-diff.tex
 	python3 $< thesis-diff.tex $@
