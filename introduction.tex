@@ -197,7 +197,7 @@ In discrete time, it is:
     \E(W_t \mid Z_1, Z_2, \dots) &= \zeta \sum_{i=0}^\infty Z_{t-i} f(i)
     \label{intro:eq:disease-model}
 \end{align}
-where $Z_t$ is the incidence at time $t$; $\zeta$ is the proportion of infections that result in the consequence of interest; and, conditional on being observed, $f(i)$ describes the (discretised) probability that an infection is included in the count $W_t$ at $i$ time units after the infection.
+where $Z_t$ is the incidence at time $t$; $\zeta$ is the proportion of infections that result in the consequence of interest; and, conditional on suffering the consequence of interest, $f(i)$ describes the (discretised) probability that an infection is included in the count $W_t$ at $i$ time units after the infection.
 $f$ is an example of a \emph{delay function}, and $f$ is commonly the pdf (probability density function) of a distribution, or a transformation of it.
 
 Solving \cref{intro:eq:disease-model} for $Z$ is an ill-posed problem.
@@ -293,7 +293,7 @@ In addition to the problem of the delay between infection and antibody response,
 The extraordinary impact of SARS-CoV-2 led the UK Government to fund two large prevalence surveys which aimed to recruit representative samples of the general population; such surveys are considered the gold-standard for conducting population surveillance~\autocite{mccabeCISincidence}.
 To achieve this aim, they invited individuals selected at random from the population; however, not all individuals selected responded to the invite introducing some non-representativeness (see \cref{E-biology-data:sec:MRP}).
 These designs aim to avoid the biases of community testing and observe the general population.
-These surveys use RT-PCR (Real-Time Polymerase Chain Reaction, described in detail in \cref{E-biology-data:sec:PCR}) testing to detect the presence of the virus in a swab from an individual.
+These surveys use RT-PCR (Reverse Transcription Polymerase Chain Reaction, described in detail in \cref{E-biology-data:sec:PCR}) testing to detect the presence of the virus in a swab from an individual.
 The first survey was the CIS (Coronavirus (COVID-19) Infection Survey), run by the ONS (Office for National Statistics)~\autocite{CIS,cisMethodsONS}.
 The CIS was a longitudinal, household-based study, testing a large number of individuals weekly or monthly for SARS-CoV-2 infection (see \cref{E-intro:sec:cis} for a detailed description).
 

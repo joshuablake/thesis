@@ -356,7 +356,7 @@ The reproduction numbers in terms of the parameters are unchanged by this extens
 \end{figure}
 
 The SIR model assumes that individuals are immediately infectious upon infection, neglecting the latent period (see \cref{E-biology-data:sec:natural-history}).
-Ignoring the latent period will again overestimate the reproduction number~\autocite{wearingAppropriate}.
+Ignoring the latent period will again underestimate the reproduction number~\autocite{wearingAppropriate}.
 The SIR model can be extended by adding a latent compartment~\autocite[41]{keelingModeling}, also known as an \emph{exposed} compartment.
 This forms the susceptible-exposed-infectious-recovered (SEIR) model, shown in \cref{SEIR:fig:SEIR}.
 
@@ -469,7 +469,7 @@ As I assume these durations are independent~\autocite{paganoHIV}:
 \right).
 \end{align}
 Now, denote by $P_{t_z,t_p}$ the number of individuals infected at $t_z$ and prevalent at $t_p$.
-Formally, $P_{t_z,t_p}$ is the infection episodes with $B_i = t_z$ and $E_i \geq t_p$.
+Formally, $P_{t_z,t_p}$ is the number of infection episodes with $B_i = t_z$ and $E_i \geq t_p$.
 $P_{t_z,t_p}$ is $Z_{t_z}$ minus those that recover before $t_p$ (\ie at or up to $t_p - 1$).
 Hence:
 \begin{align}

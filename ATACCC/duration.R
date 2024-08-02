@@ -34,7 +34,11 @@ p_durations = bind_rows(
         .width = 0.95
     ) +
     theme_survival_time_series () +
-    coord_cartesian(xlim = c(0, 40))
+    coord_cartesian(xlim = c(0, 40)) +
+    labs(
+        colour = "Group",
+        fill = "Group"
+    )
 save_plot(
     filename = here::here("ATACCC/duration.pdf"),
     plot = p_durations,

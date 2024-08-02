@@ -209,7 +209,7 @@ The second wave enrolled 345 contacts between 24 May 2021 and 28 Oct 2021, when 
 Contacts were swabbed daily for up to 20 days, with a variety of tests performed on the swabs; relevant for this thesis is the RT-PCR test for SARS-CoV-2.
 For all positive test results, the viral load was measured using the Ct value and then converted to a viral load using a standard curve (see \cref{biology-data:sec:PCR-process}).
 Other data such as demography and symptoms were also collected.
-For further details see \textcite{singanayagamDuration,hakkiOnset}.
+For further details see \textcite{singanayagamCommunity,hakkiOnset}.
 
 Of the 738 contacts enrolled, 172 (23\%) had at least one positive test.
 \Textcite{hakkiOnset} analysed the 57 contacts who tested positive for SARS-CoV-2 and had the growth phase in their viral load measured.
@@ -346,7 +346,7 @@ The final step is poststratifying the incidence proportion to the CIS target pop
 To start, I draw a sample of 500 prevalence time series in each stratum from the approximate posterior distribution.
 Denote these by $p^{(j)}_{t,i}$ for the $j$th sample where $i$ is a stratum, \ie some value of $a$, $e$, and $s$.
 Define a (sub) population of interest as a set of strata $\set{S}$.
-Then the poststratified prevalence in the (sub)population on day $t$ is
+Then the $j$th posterior sample of poststratified prevalence in the (sub)population on day $t$ is
 \begin{align}
 p^{(j)}_t(\set{S})
 &= \frac{\sum_{i \in \set{S}} p^{(j)}_{t,i} N_i}{\sum_{i \in \set{S}} N_i}
