@@ -224,11 +224,11 @@ cis-perf-new-ll.pdf: cis-perf-new-ll.tex $(SHARED_DEPS)
 
 diff: thesis-diff.pdf thesis-diff-list.pdf
 
-thesis-diff.pdf: thesis-diff.tex FORCE
+thesis-diff.pdf: thesis-diff.tex $(SHARED_DEPS)
 	$(LATEX_CMD)
 
 thesis-diff.tex: latex.out/thesis-prev.tex latex.out/thesis-cur.tex
-	latexdiff latex.out/thesis-prev.tex latex.out/thesis-cur.tex --math-markup=3 > thesis-diff.tex
+	latexdiff --append-mboxsafecmd=autocite,textcite,cref --math-markup=3 latex.out/thesis-prev.tex latex.out/thesis-cur.tex > thesis-diff.tex
 
 latex.out/thesis-prev.tex: ../thesis-repos/orig-submission/thesis.tex
 	python3 parse_subfiles.py ../thesis-repos/orig-submission/thesis.tex $@
