@@ -150,8 +150,8 @@ First, the frequentist properties (\eg consistency and convergence rate) of exis
 Second, a prior can include information from previous studies, such as \cref{E-ATACCC}.
 Alternatively, the prior can favour a smoothly changing hazard, which is biologically sensible, and can overcome issues caused by the undetected episodes ~\autocite{caoBias}.
 
-A related problem is estimating how long insect and bird nests survive for, as detected events are doubly interval censored and some are undetected.
-In the context of nest survival, Bayesian methods have been by augmenting the data with the unobserved times of infection~\autocite{heBayesiana,heBayesian,caoModeling}.
+A related problem is estimating how long insect and bird nests survive for
+In this context detected events are doubly interval censored and some events are undetected; Bayesian methods have been developed which augment the data with the unobserved times of infection~\autocite{heBayesiana,heBayesian,caoModeling}.
 The data augmentation approach creates a parameter for each detected infection.
 This increases the dimensionality of the problem greatly, making it computationally infeasible with the large sample size of the CIS within the SRS.
 
@@ -205,12 +205,12 @@ This is true both for infection episodes within the same individual and across i
 
 The test results for any individual is fully determined by any infection episodes that occur in that individual and their test schedule.
 The set of times $i(j)$ tests positive at due to $W_j$ is $\posResults(W_j) = \{ t \in \sched_{i(j)} \ssep B_j \leq t \leq E_j \}$.
-The negative test immediately before the start of the episode (if there is one) is $\negResults^{(l)}(W_j) = \max \{ t \in \sched_{i(j)} \ssep t < B_j \}$.
-The negative test immediately after the end of the episode (if there is one) is $\negResults^{(r)}(W_j) = \min \{ t \in \sched_{i(j)} \ssep t > E_j \}$.
+The negative test immediately before the start of the episode (if there is one) is $\negResults^{(b)}(W_j) = \max \{ t \in \sched_{i(j)} \ssep t < B_j \}$.
+The negative test immediately after the end of the episode (if there is one) is $\negResults^{(e)}(W_j) = \min \{ t \in \sched_{i(j)} \ssep t > E_j \}$.
 
 Next, I define $O(j)$ to contain the test results due to $W_j$ that give information on $W_j$'s length, and hence are relevant to inference about $\vec{\theta}$.
-If $\posResults(W_j) = \emptyset$, $\min \posResults(W_j) \notin [1, T]$, or either $\negResults^{(l)}$ or $\negResults^{(r)}$ is undefined then the episode is undetected, in which case $O(j) = \emptyset$.
-Otherwise, $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)} = \negResults^{(l)}(W_j) + 1$ and $r_j^{(b)} = \min \posResults(W_j)$ are the earliest and latest time the episode could have begun and produced the observed series of test results respectively; and $l_j^{(e)} = \max \posResults(W_j)$ and $r_j^{(e)} = \negResults^{(r)}(W_j) - 1$ are the earliest and latest time the episode could have ended respectively.
+If $\posResults(W_j) = \emptyset$, $\min \posResults(W_j) \notin [1, T]$, or either $\negResults^{(b)}$ or $\negResults^{(e)}$ is undefined then the episode is undetected, in which case $O(j) = \emptyset$.
+Otherwise, $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$, where $i(j)$ is the individual in which the episode occurs; $l_j^{(b)} = \negResults^{(b)}(W_j) + 1$ and $r_j^{(b)} = \min \posResults(W_j)$ are the earliest and latest time the episode could have begun and produced the observed series of test results respectively; and $l_j^{(e)} = \max \posResults(W_j)$ and $r_j^{(e)} = \negResults^{(e)}(W_j) - 1$ are the earliest and latest time the episode could have ended respectively.
 These definitions coincide with the way the dataset is constructed (see \cref{E-biology-data:sec:cis-episodes}).
 
 \subsection{Posterior density} \label{perf-test:sec:posterior}
@@ -225,7 +225,7 @@ For detected outcomes, \ie $\vec{\nu}_k \in \set{E}$, let $p_k = \prob(O(j) = \v
 For undetected outcomes, let $p_u = \prob(O(j) = \emptyset \mid \vec{\theta})$.
 Together, $\vec{p} = [p_1, \dots, p_{N_E}, p_u]^T$.
 
-As we assume $O(j) = \vec{\nu}_k$ and $O(j') = \vec{\nu}_{k'}$ are independent for $j \neq j'$:
+By the independence assumption:
 \begin{align}
   \vec{n} \mid \ntot, \vec{\theta} &\dist \MN(\ntot, \vec{p})
 \intertext{that is:}
@@ -327,7 +327,7 @@ p(\vec{\theta} \mid \na)
 
 \subsection{Deriving $p_k$}
 
-Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ is the random variable containing all relevant information for episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ is an arbitrary element from $O(j)$'s state space, excluding undetected infections.
+Recall the definitions $p_k = \prob(O(j) = \vec{\nu}_k \mid \vec{\theta})$ where $O(j)$ contains the relevant test results for episode $j$ and $\vec{\nu}_k = [l^{(b)}_k, r^{(b)}_k, l^{(e)}_k, r^{(e)}_k, i_k]^T$ is an arbitrary element from $O(j)$'s state space, excluding undetected infections.
 
 Decompose $p_k$ as $p_k = p_{ik} \prob(i(j) = i_k \mid \vec{\theta})$
 where $p_{ik} = \prob(O(j) = \vec{\nu}_k \mid i(j) = i_k, \vec{\theta})$.
@@ -429,7 +429,7 @@ Each hazard, $\lambda_t$, is a (conditional) probability, and hence a Beta distr
 Uninformative Beta priors on the hazard are problematic in this context.
 An uninformative prior would be of the form $\lambda_t \dist \BetaDist(\alpha, \alpha)$.
 Commonly, $\alpha$ is chosen to be $0.5$ or $1$ (a uniform prior).
-The former, $\alpha = 0.5$, is Jefferys’ prior~\autocite{jeffreysInvariant}, commonly considered an uninformative prior because it is invariant to parameterization~\autocite[53]{gelmanBDA}.
+The former, $\alpha = 0.5$, is Jefferys' prior~\autocite{jeffreysInvariant}, commonly considered an uninformative prior because it is invariant to the parameterization used~\autocite[53]{gelmanBDA}.
 Even though these priors are uninformative on the hazard, they become highly informative on the survival. 
 Specifically, they tend to favour shorter survival times (see \cref{perf-test:fig:flat-prior}).
 An intuitive explanation of this follows from the fact that priors of this form have an expected value of 0.5.

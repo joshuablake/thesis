@@ -24,7 +24,7 @@ clean:
 
 .PHONY: FORCE
 
-all: thesis.pdf appendix-plots.pdf ATACCC-appendix-original-analysis.pdf ATACCC.pdf MCMC-appendix.pdf biology-data.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf conclusion.pdf distributions.pdf incidence-prevalence.pdf introduction.pdf transmission-appendix-INLA.pdf transmission-appendix-phase-type.pdf transmission.pdf 
+all: thesis.pdf diff appendix-plots.pdf ATACCC-appendix-original-analysis.pdf ATACCC.pdf MCMC-appendix.pdf biology-data.pdf cis-imperfect-testing.pdf cis-perfect-testing.pdf conclusion.pdf distributions.pdf incidence-prevalence.pdf introduction.pdf transmission-appendix-INLA.pdf transmission-appendix-phase-type.pdf transmission.pdf 
 
 #####################################################
 ## INTRODUCTION CHAPTER

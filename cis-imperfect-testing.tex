@@ -136,8 +136,8 @@ Furthermore, it does not require low test sensitivities early in the infection, 
 
 In this section, I introduce a simple model of false negatives (\ie allowing $\psens < 1$) into the posterior density derived in \cref{E-perf-test:sec:model}; I continue to assume the probability of a false positive is negligible.
 Using a simple model, in particular a constant test sensitivity, means calculating the likelihood remains tractable.
-Additionally, I limit the number of permutations of false negative and true positive tests that I consider have non-negligible probability.
-Specifically, I assume that, if $i(j)$ is tested during infection episode $j$, either: the individual has a single false negative test and the episode ends before their next test, or the first test is a false positive test.
+Additionally, I limit the number of permutations of false negative and true positive tests that I consider to have non-negligible probability.
+Specifically, I assume that, if $i(j)$ is tested during infection episode $j$, either: the individual has a single false negative test and the episode ends before their next test, or the first test is a true positive test.
 This assumption is reasonable because false negatives normally occur when the viral load is low, which is normally late in the infection episode.
 For the same reason, I assume there is at most one false negative test following the final true positive test in the episode.
 
@@ -146,7 +146,7 @@ I then modify the components of the likelihood in \cref{imperf-test:sec:modifyin
 
 \subsection{Notation} \label{imperf-test:sec:notation}
 
-Introducing false negatives means that $O(j)$, containing the relevant information for episode $j$, is now random, even if $B_j$ and $E_j$ are known.
+Introducing false negatives means that $O(j)$, containing the test results which would bound the length of episode $j$ in the absence of false negatives, is a random variable even after conditioning on $B_j$ and $E_j$.
 Therefore, the results between the tests that bound episode $j$'s beginning and end times should now enter into the likelihood.
 For tractability, I consider only tests between the negative tests providing an upper bound on the length of episode $j$.
 
