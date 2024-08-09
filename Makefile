@@ -1,5 +1,5 @@
 LATEX_CMD = ./latexrun --bibtex-cmd=biber $<
-SHARED_DEPS = thesis.tex references.bib refs-custom.bib cam-thesis.cls latex.out/thesis.aux FORCE
+SHARED_DEPS = thesis.tex references.bib cam-thesis.cls latex.out/thesis.aux FORCE
 INTRODUCTION_DEPS = introduction.tex MCMC-appendix.tex
 BIOLOGY_DATA_DEPS = biology-data.tex biology-data/natural-history.png biology-data/ct-calibration.jpg biology-data/CIS-positivity.pdf biology-data/CIS-num-tests.pdf biology-data/CIS-recruitment.pdf biology-data/STATS13734/data_viz.png
 INC_PREV_DEPS = incidence-prevalence.tex inc-prev/contact_matrices.png
