@@ -146,8 +146,9 @@ I then modify the components of the likelihood in \cref{imperf-test:sec:modifyin
 
 \subsection{Notation} \label{imperf-test:sec:notation}
 
-Introducing false negatives means that $O(j)$, containing the test results which would bound the length of episode $j$ in the absence of false negatives, is a random variable even after conditioning on $B_j$ and $E_j$.
-Therefore, the results between the tests that bound episode $j$'s beginning and end times should now enter into the likelihood.
+Recall that, for an undetected infection episode, $O(j) = \emptyset$ and, for a detected episode, $O(j) = [l_j^{(b)}, r_j^{(b)}, l_j^{(e)}, r_j^{(e)}, i(j)]^T$ where $r_j^{(b)}$ is the day of the first positive due to infection episode $j$; $l_j^{(b)}$ is the day after the negative preceding this positive; $l_j^{(e)}$ is the day of the final positive due to infection episode $j$; $r_j^{(e)}$ is the day before the negative test following this positive; and $i(j)$ is the individual episode $j$ occurred in.
+As $O(j)$ contains test results now subject to false negatives, it is now a random variable even after conditioning on $B_j$ and $E_j$ (previously it was deterministic).
+Additionally, the results between the tests that bound episode $j$'s beginning and end times are also random and hence should enter into the likelihood.
 For tractability, I consider only tests between the negative tests providing an upper bound on the length of episode $j$.
 
 To do so, define a random vector $O'(j)$ with state space $\{\emptyset\} \cup \set{E}'$ which will replace $O(j)$ from \cref{E-perf-test}.
